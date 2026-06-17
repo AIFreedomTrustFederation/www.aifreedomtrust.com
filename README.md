@@ -1,6 +1,38 @@
 # AI Freedom Trust Federation Website
 
-This folder contains the static public website for AI Freedom Trust Federation.
+Static public website, project map, and organization doorway for AI Freedom Trust Federation.
+
+## Federation Status
+
+| Field | Value |
+| --- | --- |
+| Status | Active |
+| Federation layer | Public Trust |
+| Repository role | Public portal |
+| Visibility | Public |
+| Deployment | GitHub Pages |
+| Live URL | https://aifreedomtrustfederation.github.io/www.aifreedomtrust.com/ |
+
+## Purpose
+
+This repository explains AI Freedom Trust Federation to public users, builders, collaborators, and community partners in clear human language.
+
+It is the canonical public doorway for:
+
+- the federation mission
+- public project inventory
+- operating model
+- repository standards
+- GitHub ecosystem links
+- current consolidation roadmap
+
+## Current Capabilities
+
+- One-page static website with no build step.
+- GitHub Pages deployment from `main` branch `/root`.
+- Public project map for active federation repositories.
+- Documentation pages for inventory, operating model, standards, and organization map.
+- Project-local generated hero image asset.
 
 ## Files
 
@@ -8,17 +40,54 @@ This folder contains the static public website for AI Freedom Trust Federation.
 - `styles.css` - responsive styling with no build step
 - `assets/aift-federation-hero.png` - generated hero image used by the site
 - `docs/organization-map.md` - umbrella structure and repository roles
+- `docs/public-repo-inventory.md` - public repository inventory
+- `docs/federation-operating-model.md` - operating model and layer definitions
+- `docs/repo-standards.md` - repository standards
 - `.nojekyll` - keeps GitHub Pages from applying Jekyll processing
+
+## Setup
+
+No dependency installation is required.
+
+To preview locally:
+
+```bash
+python -m http.server 4178 --bind 127.0.0.1
+```
+
+Then open:
+
+```text
+http://127.0.0.1:4178/
+```
+
+## Verification
+
+For this static site, verify:
+
+- `index.html` loads locally.
+- `styles.css` loads.
+- `assets/aift-federation-hero.png` loads.
+- Documentation links under `docs/` resolve.
+- The live GitHub Pages URL returns `200`.
 
 ## GitHub Pages
 
-This site can be hosted directly from a GitHub repository:
+This site is hosted directly from this repository:
 
-1. Commit these files to the public website repository, preferably `AIFreedomTrustFederation/www.aifreedomtrust.com`.
-2. In GitHub, open repository Settings.
-3. Go to Pages.
-4. Set the source to `Deploy from a branch`.
-5. Select the `main` branch and `/root`.
-6. Save.
+- Source: `main` branch
+- Path: `/root`
+- Build type: legacy GitHub Pages static hosting
 
 If using a custom domain, add the domain in the GitHub Pages settings and create a `CNAME` file containing that domain.
+
+## Roadmap
+
+1. Add a custom domain when the canonical domain is ready.
+2. Add clearer contributor and collaborator pathways.
+3. Keep the public inventory synchronized with active public repositories.
+4. Link active demos, deployments, and roadmap issues as they mature.
+
+## Public Claims Note
+
+This site should state what exists, what is planned, and what is experimental. Avoid unsupported claims about legal status, financial value, security guarantees, decentralization guarantees, partnerships, or production readiness.
