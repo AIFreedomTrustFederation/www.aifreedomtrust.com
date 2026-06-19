@@ -257,14 +257,16 @@ h3 {
 }
 
 .principles,
-.project-grid {
+.project-grid,
+.status-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
 }
 
 .principles article,
-.project-card {
+.project-card,
+.status-card {
   min-height: 210px;
   padding: 24px;
   border: 1px solid var(--line);
@@ -275,6 +277,7 @@ h3 {
 
 .principles p,
 .project-card p,
+.status-card p,
 .structure-list p {
   margin: 0;
   color: var(--muted);
@@ -290,6 +293,44 @@ h3 {
 .section-heading {
   max-width: 820px;
   margin-bottom: 34px;
+}
+
+.status-section {
+  background: #0d1412;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.status-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 250px;
+}
+
+.status-card.evidence {
+  border-color: rgba(71, 194, 122, 0.48);
+}
+
+.status-card.operations {
+  border-color: rgba(131, 162, 160, 0.42);
+}
+
+.status-card.doctrine {
+  border-color: rgba(210, 169, 77, 0.38);
+}
+
+.status-badge {
+  display: inline-flex;
+  width: fit-content;
+  margin-top: auto;
+  padding: 7px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  color: var(--text);
+  font-size: 0.76rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .project-card {
@@ -392,6 +433,7 @@ h3 {
   .intro,
   .principles,
   .project-grid,
+  .status-grid,
   .structure-list {
     grid-template-columns: 1fr;
   }

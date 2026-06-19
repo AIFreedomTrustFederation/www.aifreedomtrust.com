@@ -31,6 +31,7 @@ It is the canonical public doorway for:
 - One-page static website with no build step.
 - GitHub Pages deployment from `main` branch `/root`.
 - Public project map for active federation repositories.
+- Public evidence-status labels that distinguish empirical work, production-facing software, and doctrinal/conceptual papers.
 - Documentation pages for inventory, operating model, standards, and organization map.
 - Project-local generated hero image asset.
 
@@ -87,7 +88,15 @@ If using a custom domain, add the domain in the GitHub Pages settings and create
 2. Add clearer contributor and collaborator pathways.
 3. Keep the public inventory synchronized with active public repositories.
 4. Link active demos, deployments, and roadmap issues as they mature.
+5. Prepare the AetherCore empirical paper review packet for external reviewers.
+6. Publish a Capital City Provisions operating dashboard with verified orders, revenue, delivery success, refunds, and repeat-customer metrics.
 
 ## Public Claims Note
 
 This site should state what exists, what is planned, and what is experimental. Avoid unsupported claims about legal status, financial value, security guarantees, decentralization guarantees, partnerships, or production readiness.
+
+Current public maturity labels:
+
+- **Empirical / reproducible**: research package exists and can be checked, but external review is still pending.
+- **Production-facing, revenue unverified**: operational software exists, but public repo evidence does not verify live orders or revenue.
+- **Doctrinal / conceptual**: white papers and design documents that should not be treated as deployed or empirically validated unless paired with evidence.
