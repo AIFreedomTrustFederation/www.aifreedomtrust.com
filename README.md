@@ -32,6 +32,7 @@ It is the canonical public doorway for:
 - GitHub Pages deployment from `main` branch `/root`.
 - Public project map for active federation repositories.
 - Public evidence-status labels that distinguish empirical work, production-facing software, and doctrinal/conceptual papers.
+- Links to the canonical repository health dashboard and AetherCore external review packet.
 - Documentation pages for inventory, operating model, standards, and organization map.
 - Project-local generated hero image asset.
 
