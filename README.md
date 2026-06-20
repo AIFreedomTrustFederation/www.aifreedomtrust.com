@@ -45,6 +45,9 @@ It is the canonical public doorway for:
 - `docs/public-repo-inventory.md` - public repository inventory
 - `docs/federation-operating-model.md` - operating model and layer definitions
 - `docs/repo-standards.md` - repository standards
+- `docs/status.md` - current portal status and public claim boundaries
+- `docs/validation.md` - local validation checks
+- `docs/security-and-privacy.md` - static-site security, privacy, and public-claims boundaries
 - `.nojekyll` - keeps GitHub Pages from applying Jekyll processing
 
 ## Setup
@@ -72,6 +75,8 @@ For this static site, verify:
 - `assets/aift-federation-hero.png` loads.
 - Documentation links under `docs/` resolve.
 - The live GitHub Pages URL returns `200`.
+
+See [docs/validation.md](docs/validation.md) for the local verification procedure.
 
 ## GitHub Pages
 
@@ -101,3 +106,5 @@ Current public maturity labels:
 - **Empirical / reproducible**: research package exists and can be checked, but external review is still pending.
 - **Production-facing, revenue unverified**: operational software exists, but public repo evidence does not verify live orders or revenue.
 - **Doctrinal / conceptual**: white papers and design documents that should not be treated as deployed or empirically validated unless paired with evidence.
+
+See [docs/status.md](docs/status.md) and [docs/security-and-privacy.md](docs/security-and-privacy.md) for current public claim boundaries.

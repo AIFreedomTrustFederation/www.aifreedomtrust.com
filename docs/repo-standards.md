@@ -14,6 +14,7 @@ Each active repository README should include:
 - Setup
 - Verification
 - Deployment or publishing notes
+- Status, validation, and security/privacy docs when the repo is active
 - Roadmap
 - Safety, security, or public-claims notes when relevant
 
@@ -71,4 +72,3 @@ Do not make unsupported claims about:
 - production readiness
 
 State what exists, what is planned, and what is experimental.
-
