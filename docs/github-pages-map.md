@@ -25,6 +25,7 @@ https://aifreedomtrustfederation.github.io/<repo-name>/
 | `Aether_Coin_biozonecurrency` | https://aifreedomtrustfederation.github.io/Aether_Coin_biozonecurrency/ | Aetherion wallet and regenerative value protocol | Needs Pages source/custom-domain normalization |
 | `biozone-harmony-boost` | https://aifreedomtrustfederation.github.io/biozone-harmony-boost/ | Circleunchain/Biozoe UI prototype | Needs Pages source normalization |
 | `capital-city-provisions` | https://aifreedomtrustfederation.github.io/capital-city-provisions/ | Applied business proof and provisions operations | Active |
+| `TheMindofAll` | https://aifreedomtrustfederation.github.io/TheMindofAll/ | Local-first model and memory hub | Public now; run repair script to enable Pages |
 | `.github` | https://aifreedomtrustfederation.github.io/.github/ | Organization profile and standards | Not normally used as a Pages site |
 
 ## Private or internal repositories
@@ -33,7 +34,6 @@ Private repositories should not be advertised as public Pages sites unless inten
 
 | Repository | Pattern URL | Public status |
 | --- | --- | --- |
-| `TheMindofAll` | https://aifreedomtrustfederation.github.io/TheMindofAll/ | Private repo; Pages not public under current visibility/settings |
 | `tastycutz` | https://aifreedomtrustfederation.github.io/tastycutz/ | Private repo; do not publish until approved |
 | `repo-brainstorm-backend-forge` | https://aifreedomtrustfederation.github.io/repo-brainstorm-backend-forge/ | Private repo; internal |
 | `c-848263` | https://aifreedomtrustfederation.github.io/c-848263/ | Private repo; internal |
