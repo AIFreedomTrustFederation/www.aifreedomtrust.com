@@ -16,10 +16,10 @@ PUBLIC_GH_PAGES=(
   "Aether_Coin_biozonecurrency|gh-pages"
   "biozone-harmony-boost|gh-pages"
   "capital-city-provisions|gh-pages"
+  "TheMindofAll|gh-pages"
 )
 
 INTERNAL_REPOS=(
-  "TheMindofAll"
   "tastycutz"
   "repo-brainstorm-backend-forge"
   "c-848263"
@@ -51,7 +51,6 @@ normalize_pages(){
     return 0
   fi
 
-  # PUT updates existing Pages source. POST creates Pages when missing.
   if gh api "repos/$OWNER/$repo/pages" >/dev/null 2>&1; then
     gh api -X PUT "repos/$OWNER/$repo/pages" \
       -f source.branch="$branch" \
@@ -62,7 +61,6 @@ normalize_pages(){
       -f source.path="/" >/dev/null || log "POST Pages enable failed"
   fi
 
-  # Try to remove accidental custom domains. This may be unsupported on some gh versions/API previews.
   if gh api -X DELETE "repos/$OWNER/$repo/pages/cname" >/dev/null 2>&1; then
     log "custom domain removed if present"
   else
