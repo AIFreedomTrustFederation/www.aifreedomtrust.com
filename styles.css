@@ -241,6 +241,7 @@ h3 {
 
 .section {
   padding: 78px clamp(18px, 5vw, 64px);
+  scroll-margin-top: 92px;
 }
 
 .intro {
@@ -358,6 +359,8 @@ h3 {
 .aift-tree-explorer__node-list button,
 .aift-tree-explorer__relationship-list button,
 .aift-tree-explorer__domain-list button,
+.aift-tree-explorer__atlas-bridge button,
+.aift-tree-explorer__atlas-list button,
 .aift-tree-explorer__traversal button,
 .aift-tree-explorer__back {
   min-height: 38px;
@@ -380,6 +383,9 @@ h3 {
 .aift-tree-explorer__node-list button:hover,
 .aift-tree-explorer__relationship-list button:hover,
 .aift-tree-explorer__domain-list button:hover,
+.aift-tree-explorer__atlas-bridge button:hover,
+.aift-tree-explorer__atlas-list button:hover,
+.aift-tree-explorer__atlas-list button.is-active,
 .aift-tree-explorer__traversal button:hover,
 .aift-tree-explorer__back:hover {
   border-color: rgba(71, 194, 122, 0.72);
@@ -617,6 +623,14 @@ h3 {
   color: var(--muted);
 }
 
+.aift-tree-explorer__breadcrumb {
+  margin: 0;
+  color: var(--gold);
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
 .aift-tree-explorer__meta-grid {
   display: grid;
   grid-template-columns: minmax(120px, 0.55fr) minmax(0, 1fr);
@@ -645,12 +659,16 @@ h3 {
 }
 
 .aift-tree-explorer__relationships,
+.aift-tree-explorer__atlas-bridge,
+.aift-tree-explorer__atlas-entity,
 .aift-tree-explorer__traversal {
   display: grid;
   gap: 16px;
 }
 
 .aift-tree-explorer__relationships h4,
+.aift-tree-explorer__atlas-bridge h4,
+.aift-tree-explorer__atlas-entity h4,
 .aift-tree-explorer__sources h4 {
   margin: 0 0 8px;
   color: var(--gold);
@@ -663,6 +681,7 @@ h3 {
 .aift-tree-explorer__node-list,
 .aift-tree-explorer__relationship-list,
 .aift-tree-explorer__domain-list,
+.aift-tree-explorer__atlas-list,
 .aift-tree-explorer__source-list {
   display: grid;
   gap: 8px;
@@ -671,6 +690,8 @@ h3 {
 .aift-tree-explorer__node-list button,
 .aift-tree-explorer__relationship-list button,
 .aift-tree-explorer__domain-list button,
+.aift-tree-explorer__atlas-bridge button,
+.aift-tree-explorer__atlas-list button,
 .aift-tree-explorer__traversal button {
   display: grid;
   gap: 3px;
@@ -680,7 +701,9 @@ h3 {
 }
 
 .aift-tree-explorer__node-list small,
-.aift-tree-explorer__relationship-list small {
+.aift-tree-explorer__relationship-list small,
+.aift-tree-explorer__atlas-bridge small,
+.aift-tree-explorer__atlas-list small {
   color: var(--muted);
   font-size: 0.76rem;
 }
