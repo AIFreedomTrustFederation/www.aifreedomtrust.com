@@ -358,6 +358,7 @@ h3 {
 .aift-tree-explorer__node-list button,
 .aift-tree-explorer__relationship-list button,
 .aift-tree-explorer__domain-list button,
+.aift-tree-explorer__traversal button,
 .aift-tree-explorer__back {
   min-height: 38px;
   border: 1px solid rgba(255, 255, 255, 0.16);
@@ -379,9 +380,39 @@ h3 {
 .aift-tree-explorer__node-list button:hover,
 .aift-tree-explorer__relationship-list button:hover,
 .aift-tree-explorer__domain-list button:hover,
+.aift-tree-explorer__traversal button:hover,
 .aift-tree-explorer__back:hover {
   border-color: rgba(71, 194, 122, 0.72);
   background: rgba(71, 194, 122, 0.16);
+}
+
+.aift-tree-explorer__lens-panel {
+  display: flex;
+  flex: 1 1 420px;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: end;
+}
+
+.aift-tree-explorer__select {
+  display: grid;
+  gap: 6px;
+  color: var(--gold);
+  font-size: 0.74rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.aift-tree-explorer__select select {
+  min-height: 38px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #0b1110;
+  color: var(--text);
+  font: inherit;
+  letter-spacing: 0;
 }
 
 .aift-tree-explorer__search {
@@ -433,20 +464,62 @@ h3 {
   min-height: 640px;
 }
 
+.aift-tree-explorer__edge-hit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 18;
+  pointer-events: stroke;
+}
+
+.aift-tree-explorer__edge-group {
+  cursor: pointer;
+  outline: none;
+}
+
 .aift-tree-explorer__edge {
   fill: none;
   stroke: rgba(131, 162, 160, 0.42);
   stroke-width: 2;
+  pointer-events: none;
 }
 
-.aift-tree-explorer__edge.is-primary {
+.aift-tree-explorer__edge-group.is-primary .aift-tree-explorer__edge {
   stroke: rgba(71, 194, 122, 0.56);
   stroke-width: 2.5;
 }
 
-.aift-tree-explorer__edge.is-cross-link {
+.aift-tree-explorer__edge-group.is-cross-link .aift-tree-explorer__edge {
   stroke: rgba(210, 169, 77, 0.42);
   stroke-dasharray: 7 8;
+}
+
+.aift-tree-explorer__edge-group:hover .aift-tree-explorer__edge,
+.aift-tree-explorer__edge-group:focus .aift-tree-explorer__edge,
+.aift-tree-explorer__edge-group.is-selected .aift-tree-explorer__edge {
+  stroke: var(--gold);
+  stroke-width: 4;
+}
+
+.aift-tree-explorer__edge-group.is-selected .aift-tree-explorer__edge {
+  stroke-dasharray: 2 6;
+}
+
+.aift-tree-explorer__edge-label {
+  fill: var(--text);
+  paint-order: stroke;
+  stroke: #0b1110;
+  stroke-width: 5;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+  text-transform: uppercase;
+}
+
+.aift-tree-explorer__edge-group.is-dimmed,
+.aift-tree-explorer__domain-node.is-dimmed,
+.aift-tree-explorer__tree-node.is-dimmed {
+  opacity: 0.32;
 }
 
 .aift-tree-explorer__domain-node,
@@ -477,12 +550,19 @@ h3 {
 }
 
 .aift-tree-explorer__domain-count,
-.aift-tree-explorer__node-meta {
+.aift-tree-explorer__domain-lens,
+.aift-tree-explorer__node-meta,
+.aift-tree-explorer__node-badge {
   fill: var(--muted);
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+.aift-tree-explorer__domain-lens,
+.aift-tree-explorer__node-badge {
+  fill: var(--gold);
 }
 
 .aift-tree-explorer__tree-node rect {
@@ -499,6 +579,21 @@ h3 {
 .aift-tree-explorer__tree-node.is-selected rect {
   fill: rgba(210, 169, 77, 0.18);
   stroke: rgba(210, 169, 77, 0.86);
+}
+
+.aift-tree-explorer__tree-node.is-epistemic-doctrinal rect,
+.aift-tree-explorer__tree-node.is-epistemic-aspirational rect {
+  stroke-dasharray: 5 5;
+}
+
+.aift-tree-explorer__tree-node.is-epistemic-active-research rect,
+.aift-tree-explorer__tree-node.is-epistemic-prototype rect {
+  stroke-dasharray: 2 4;
+}
+
+.aift-tree-explorer__tree-node.is-epistemic-engineering rect,
+.aift-tree-explorer__tree-node.is-epistemic-architectural rect {
+  stroke-width: 2.5;
 }
 
 .aift-tree-explorer__detail {
@@ -549,7 +644,8 @@ h3 {
   text-transform: uppercase;
 }
 
-.aift-tree-explorer__relationships {
+.aift-tree-explorer__relationships,
+.aift-tree-explorer__traversal {
   display: grid;
   gap: 16px;
 }
@@ -574,7 +670,8 @@ h3 {
 
 .aift-tree-explorer__node-list button,
 .aift-tree-explorer__relationship-list button,
-.aift-tree-explorer__domain-list button {
+.aift-tree-explorer__domain-list button,
+.aift-tree-explorer__traversal button {
   display: grid;
   gap: 3px;
   justify-items: start;
@@ -770,9 +867,15 @@ h3 {
   }
 
   .aift-tree-explorer__domains,
+  .aift-tree-explorer__lens-panel,
   .aift-tree-explorer__search {
     flex-basis: 100%;
     margin-left: 0;
+  }
+
+  .aift-tree-explorer__select,
+  .aift-tree-explorer__select select {
+    width: 100%;
   }
 
   .hero {
