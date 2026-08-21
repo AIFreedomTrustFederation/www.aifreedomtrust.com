@@ -24,6 +24,7 @@
       </a>
       <nav class="nav" aria-label="Site sections">
         <a href="#umbrella">Umbrella</a>
+        <a href="#tree-explorer">Tree</a>
         <a href="#projects">Projects</a>
         <a href="#docs-title">Docs</a>
         <a href="#roadmap">Roadmap</a>
@@ -49,6 +50,7 @@
           </p>
           <div class="hero-actions" aria-label="Primary actions">
             <a class="button primary" href="#projects">View Project Map</a>
+            <a class="button secondary" href="#tree-explorer">Explore Tree</a>
             <a class="button secondary" href="https://aifreedomtrustfederation.github.io/AI-Freedom-Trust/docs/pdf/aetherion-flight-paper-post-quantum-sovereign-network.pdf">Read Flight Paper</a>
             <a class="button secondary" href="https://github.com/AIFreedomTrustFederation">GitHub</a>
           </div>
@@ -98,6 +100,22 @@
           <h3>Repair Over Hype</h3>
           <p>Progress is measured by working systems, better stewardship, clearer ownership, and practical service.</p>
         </article>
+      </section>
+
+      <section class="section tree-explorer-section" id="tree-explorer" aria-labelledby="tree-explorer-title">
+        <div class="section-heading">
+          <p class="eyebrow">Canonical graph</p>
+          <h2 id="tree-explorer-title">Tree Explorer v1</h2>
+          <p class="section-copy">The public Explorer loads the Genesis manifest and uses the reusable Forge engine.</p>
+        </div>
+        <div class="tree-source-strip" aria-label="Explorer source boundary">
+          <span>Source: AIFT-Genesis <code>manifests/tree.manifest.json</code></span>
+          <span>Engine: AIFT-Forge <code>@aift/tree-explorer</code></span>
+          <span>Composition: public portal</span>
+        </div>
+        <div data-aift-tree-explorer>
+          <div class="aift-tree-explorer__loading">Loading canonical Tree manifest...</div>
+        </div>
       </section>
 
       <section class="section status-section" id="status" aria-labelledby="status-title">
@@ -239,7 +257,7 @@
           </div>
           <div>
             <h3>Tree Explorer v1</h3>
-            <p><a href="https://github.com/AIFreedomTrustFederation/AIFT-Genesis/blob/main/docs/tree-explorer-v1.md">Review the next-phase explorer roadmap</a></p>
+            <p><a href="#tree-explorer">Open the public Explorer</a></p>
           </div>
           <div>
             <h3>Repository Standards</h3>
@@ -296,5 +314,49 @@
       <a href="https://aifreedomtrustfederation.github.io/AI-Freedom-Trust/docs/aethercore-external-review-packet.md">Review Packet</a>
       <a href="https://aifreedomtrustfederation.github.io/AI-Freedom-Trust/docs/pdf/aetherion-flight-paper-post-quantum-sovereign-network.pdf">Aetherion Flight Paper</a>
     </footer>
+    <script type="module">
+      const explorerRoot = document.querySelector("[data-aift-tree-explorer]");
+      const explorerModuleUrls = [
+        "https://cdn.jsdelivr.net/gh/AIFreedomTrustFederation/AIFT-Forge@main/packages/tree-explorer/src/tree-explorer.mjs",
+        "https://aifreedomtrustfederation.github.io/AIFT-Forge/packages/tree-explorer/src/tree-explorer.mjs",
+      ];
+
+      async function importExplorerModule() {
+        let lastError;
+        for (const moduleUrl of explorerModuleUrls) {
+          try {
+            return await import(moduleUrl);
+          } catch (error) {
+            lastError = error;
+          }
+        }
+        throw lastError || new Error("No Explorer module URL was available.");
+      }
+
+      function showExplorerError(error) {
+        if (!explorerRoot) return;
+        explorerRoot.replaceChildren();
+        const message = document.createElement("div");
+        message.className = "aift-tree-explorer__error";
+        message.setAttribute("role", "alert");
+        message.textContent = `Tree Explorer unavailable: ${error.message}`;
+        explorerRoot.append(message);
+      }
+
+      if (explorerRoot) {
+        try {
+          const { mountTreeExplorer } = await importExplorerModule();
+          await mountTreeExplorer({
+            root: explorerRoot,
+            manifestUrl:
+              "https://raw.githubusercontent.com/AIFreedomTrustFederation/AIFT-Genesis/main/manifests/tree.manifest.json",
+            genesisBaseUrl:
+              "https://github.com/AIFreedomTrustFederation/AIFT-Genesis/blob/main/",
+          });
+        } catch (error) {
+          showExplorerError(error);
+        }
+      }
+    </script>
   </body>
 </html>
