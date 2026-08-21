@@ -37,7 +37,7 @@ The public map should resemble this constellation: readers can see the relations
 The portal points outward to project-specific sources of truth:
 
 - **AI-Freedom-Trust — `doctrine`:** trust research, alignment papers, constitutional philosophy, ALO'ha Scrolls, Aetherion doctrine, and public reading editions.
-- **AIFT-Genesis — `genesis`:** trust identity, constitution, schemas, templates, the Tree of Life, the canonical Tree of Emergence graph, and the civilization genome inherited by local trust seeds.
+- **AIFT-Genesis — `genesis`:** trust identity, constitution, schemas, templates, the Tree of Life, the canonical Tree of Emergence graph, the Tree Explorer roadmap, and the civilization genome inherited by local trust seeds.
 - **AIFT-Forge — `forge`:** technical coordination, repository/build/package patterns, reusable application foundations, and agent orchestration.
 - **AIFT-OS — `operating-system`:** federation control plane, discovery, registry, runtime intelligence, dashboards, scheduling, evidence, and orchestration.
 - **AIFT-Runtime — `runtime`:** local repository awareness, health, graph, governed synchronization, intelligence, and execution services.
