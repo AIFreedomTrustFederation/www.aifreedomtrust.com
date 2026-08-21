@@ -110,6 +110,7 @@
         </div>
         <div class="tree-source-strip" aria-label="Explorer source boundary">
           <span>Source: AIFT-Genesis <code>manifests/tree.manifest.json</code></span>
+          <span>Atlas: AIFT-Genesis <code>manifests/living-atlas.manifest.json</code></span>
           <span>Engine: AIFT-Forge <code>@aift/tree-explorer</code></span>
           <span>Composition: public portal</span>
         </div>
@@ -317,7 +318,7 @@
     <script type="module">
       const explorerRoot = document.querySelector("[data-aift-tree-explorer]");
       const explorerModuleUrls = [
-        "https://cdn.jsdelivr.net/gh/AIFreedomTrustFederation/AIFT-Forge@9901d2fbe5d961e6a59704fff65b4ecb69df3fea/packages/tree-explorer/src/tree-explorer.mjs",
+        "https://cdn.jsdelivr.net/gh/AIFreedomTrustFederation/AIFT-Forge@483426cdf67ae3ed7e2c31f93f5ac6780089644d/packages/tree-explorer/src/tree-explorer.mjs",
         "https://cdn.jsdelivr.net/gh/AIFreedomTrustFederation/AIFT-Forge@main/packages/tree-explorer/src/tree-explorer.mjs",
         "https://aifreedomtrustfederation.github.io/AIFT-Forge/packages/tree-explorer/src/tree-explorer.mjs",
       ];
@@ -351,6 +352,8 @@
             root: explorerRoot,
             manifestUrl:
               "https://raw.githubusercontent.com/AIFreedomTrustFederation/AIFT-Genesis/main/manifests/tree.manifest.json",
+            atlasManifestUrl:
+              "https://raw.githubusercontent.com/AIFreedomTrustFederation/AIFT-Genesis/main/manifests/living-atlas.manifest.json",
             genesisBaseUrl:
               "https://github.com/AIFreedomTrustFederation/AIFT-Genesis/blob/main/",
           });
