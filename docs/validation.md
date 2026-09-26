@@ -2,12 +2,28 @@
 
 This document is the local validation source of truth for `www.aifreedomtrust.com`.
 
-## Current local gate
+## Canonical automated gate
+
+Run the same dependency-free validation enforced by CI:
+
+```sh
+export PYTHONPYCACHEPREFIX="${TMPDIR:-/tmp}/aift-portal-pycache"
+python -m py_compile scripts/validate_static_site.py
+python scripts/validate_static_site.py
+git diff --check
+test -z "$(git status --porcelain)"
+```
+
+Keeping Python bytecode outside the checkout makes the final command a reliable
+check that validation did not modify or add repository files. Run this gate from
+a clean checkout; before committing work, use `git status --short` to confirm
+that only the intended files are changed.
+
+## Manual preview
 
 For documentation and static-site changes, run:
 
 ```powershell
-git diff --check
 python -m http.server 4178 --bind 127.0.0.1
 ```
 
