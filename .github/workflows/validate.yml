@@ -11,6 +11,9 @@
   "permissions": {
     "contents": "read"
   },
+  "env": {
+    "PYTHONPYCACHEPREFIX": "/tmp/aift-portal-pycache"
+  },
   "concurrency": {
     "group": "portal-validation-${{ github.workflow }}-${{ github.ref }}",
     "cancel-in-progress": true
@@ -41,6 +44,10 @@
         {
           "name": "Validate static portal",
           "run": "python scripts/validate_static_site.py"
+        },
+        {
+          "name": "Verify clean checkout",
+          "run": "test -z \"$(git status --porcelain)\""
         }
       ]
     }
