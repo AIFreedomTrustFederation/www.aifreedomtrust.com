@@ -8,6 +8,7 @@ from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parent.parent
 HTML_FILES = ("index.html", "pages.html")
+REMOTE_RESOURCE_TAGS = {"iframe", "img", "link", "script"}
 REQUIRED_FILES = (
     "index.html",
     "pages.html",
@@ -23,8 +24,11 @@ class LocalReferenceParser(HTMLParser):
     def __init__(self) -> None:
         super().__init__()
         self.references: list[tuple[str, str]] = []
+        self.forbidden_elements: list[str] = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if tag == "form":
+            self.forbidden_elements.append("form")
         for name, value in attrs:
             if name in {"href", "src"} and value:
                 self.references.append((tag, value))
@@ -58,7 +62,13 @@ def main() -> int:
 
         parser = LocalReferenceParser()
         parser.feed(source.read_text(encoding="utf-8"))
+        for element in parser.forbidden_elements:
+            failures.append(f"{relative}: forbidden data-capture element: {element}")
         for tag, reference in parser.references:
+            parsed = urlsplit(reference)
+            if tag in REMOTE_RESOURCE_TAGS and (parsed.scheme or parsed.netloc):
+                failures.append(f"{relative}: remote {tag} resource is not allowed: {reference}")
+                continue
             try:
                 target = local_target(source, reference)
             except ValueError as error:
