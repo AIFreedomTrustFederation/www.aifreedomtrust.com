@@ -29,6 +29,9 @@ class LocalReferenceParser(HTMLParser):
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         if tag == "form":
             self.forbidden_elements.append("form")
+        # Canonical links describe page identity; they do not load remote resources.
+        if tag == "link" and dict(attrs).get("rel") == "canonical":
+            return
         for name, value in attrs:
             if name in {"href", "src"} and value:
                 self.references.append((tag, value))
