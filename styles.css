@@ -994,3 +994,56 @@ h3 {
     scroll-behavior: auto !important;
   }
 }
+
+
+/* Cinematic constellation: CSS-only, progressively enhanced, and motion-aware. */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: -25%;
+  z-index: 1;
+  pointer-events: none;
+  opacity: .65;
+  background:
+    radial-gradient(circle at 78% 28%, rgba(71, 194, 122, .25), transparent 24%),
+    radial-gradient(circle at 63% 63%, rgba(210, 169, 77, .18), transparent 27%),
+    repeating-radial-gradient(circle at 78% 40%, transparent 0 72px, rgba(131, 162, 160, .09) 73px 74px, transparent 75px 130px);
+  animation: constellation-drift 28s ease-in-out infinite alternate;
+}
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(243, 247, 242, .52) .8px, transparent 1.4px);
+  background-size: 47px 47px;
+  mask-image: linear-gradient(90deg, transparent 20%, black 100%);
+  opacity: .22;
+}
+.hero-content {
+  z-index: 2;
+}
+.hero h1 {
+  text-wrap: balance;
+  background: linear-gradient(115deg, #fff 8%, #d4f8de 53%, #d2a94d 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 8px 28px rgba(0, 0, 0, .35));
+}
+.hero .button {
+  transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+}
+.hero .button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(71, 194, 122, .15);
+}
+@keyframes constellation-drift {
+  from { transform: translate3d(-1%, 0, 0) rotate(-3deg); }
+  to { transform: translate3d(2%, -2%, 0) rotate(3deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero::before { animation: none; }
+  .hero .button { transition: none; }
+}
