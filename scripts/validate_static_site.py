@@ -24,9 +24,16 @@ class LocalReferenceParser(HTMLParser):
     def __init__(self) -> None:
         super().__init__()
         self.references: list[tuple[str, str]] = []
+        self.ids: set[str] = set()
+        self.duplicate_ids: set[str] = set()
         self.forbidden_elements: list[str] = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        element_id = dict(attrs).get("id")
+        if element_id:
+            if element_id in self.ids:
+                self.duplicate_ids.add(element_id)
+            self.ids.add(element_id)
         if tag == "form":
             self.forbidden_elements.append("form")
         # Canonical links describe page identity; they do not load remote resources.
@@ -65,6 +72,8 @@ def main() -> int:
 
         parser = LocalReferenceParser()
         parser.feed(source.read_text(encoding="utf-8"))
+        for element_id in sorted(parser.duplicate_ids):
+            failures.append(f"{relative}: duplicate fragment id: #{element_id}")
         for element in parser.forbidden_elements:
             failures.append(f"{relative}: forbidden data-capture element: {element}")
         for tag, reference in parser.references:
@@ -72,6 +81,11 @@ def main() -> int:
             if tag in REMOTE_RESOURCE_TAGS and (parsed.scheme or parsed.netloc):
                 failures.append(f"{relative}: remote {tag} resource is not allowed: {reference}")
                 continue
+            if parsed.fragment and not parsed.scheme and not parsed.netloc:
+                fragment = unquote(parsed.fragment)
+                fragment_source = (source if not parsed.path else local_target(source, reference))
+                if fragment_source == source and fragment not in parser.ids:
+                    failures.append(f"{relative}: broken fragment link: {reference}")
             try:
                 target = local_target(source, reference)
             except ValueError as error:
