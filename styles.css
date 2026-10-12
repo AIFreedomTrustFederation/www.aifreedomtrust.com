@@ -1047,3 +1047,83 @@ h3 {
   .hero::before { animation: none; }
   .hero .button { transition: none; }
 }
+
+
+/* Federation spectrum: one ribbon language across the homepage and linked pages map. */
+:root {
+  --shift-red: #f15a63;
+  --shift-orange: #f39b55;
+  --shift-yellow: #e9cf75;
+  --shift-green: #47c27a;
+  --shift-aqua: #60d9ce;
+  --shift-blue: #639bea;
+  --shift-indigo: #8b7ce3;
+  --shift-violet: #ba83e8;
+  --spectral-ribbon: linear-gradient(90deg, var(--shift-red), var(--shift-orange), var(--shift-yellow), var(--shift-green), var(--shift-aqua), var(--shift-blue), var(--shift-indigo), var(--shift-violet), #f7e8c2);
+}
+.site-header::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: var(--spectral-ribbon);
+  opacity: .82;
+  pointer-events: none;
+}
+body:has(#pages-title) main {
+  padding-top: 80px;
+}
+body:has(#pages-title) .intro {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-bottom: 1px solid var(--line);
+  background:
+    radial-gradient(ellipse at 84% 25%, rgba(96, 217, 206, .12), transparent 45%),
+    radial-gradient(ellipse at 15% 80%, rgba(241, 90, 99, .10), transparent 50%);
+}
+body:has(#pages-title) .intro::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  width: min(65vw, 600px);
+  aspect-ratio: 1;
+  right: -12%;
+  top: -65%;
+  border: 1px solid rgba(96, 217, 206, .23);
+  border-radius: 50%;
+  box-shadow: 0 0 0 55px rgba(96, 217, 206, .035), 0 0 0 110px rgba(186, 131, 232, .025), 0 0 110px rgba(71, 194, 122, .08);
+  pointer-events: none;
+}
+body:has(#pages-title) #pages-title {
+  max-width: 12ch;
+  font-size: clamp(3rem, 7vw, 6.6rem);
+  line-height: 1.02;
+  text-wrap: balance;
+  background: var(--spectral-ribbon);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+body:has(#pages-title) .project-card {
+  position: relative;
+  overflow: hidden;
+  transition: transform .2s ease, border-color .2s ease;
+}
+body:has(#pages-title) .project-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: var(--spectral-ribbon);
+  opacity: .85;
+}
+body:has(#pages-title) .project-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(96, 217, 206, .48);
+}
+@media (prefers-reduced-motion: reduce) {
+  body:has(#pages-title) .project-card { transition: none; }
+}
