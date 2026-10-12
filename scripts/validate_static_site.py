@@ -81,11 +81,6 @@ def main() -> int:
             if tag in REMOTE_RESOURCE_TAGS and (parsed.scheme or parsed.netloc):
                 failures.append(f"{relative}: remote {tag} resource is not allowed: {reference}")
                 continue
-            if parsed.fragment and not parsed.scheme and not parsed.netloc:
-                fragment = unquote(parsed.fragment)
-                fragment_source = (source if not parsed.path else local_target(source, reference))
-                if fragment_source == source and fragment not in parser.ids:
-                    failures.append(f"{relative}: broken fragment link: {reference}")
             try:
                 target = local_target(source, reference)
             except ValueError as error:
@@ -93,6 +88,19 @@ def main() -> int:
                 continue
             if target is not None and not target.exists():
                 failures.append(f"{relative}: missing local target for {tag}: {reference}")
+                continue
+            if parsed.fragment and not parsed.scheme and not parsed.netloc:
+                fragment = unquote(parsed.fragment)
+                fragment_source = target if target is not None else source
+                if fragment_source.suffix.lower() == ".html" and fragment_source.is_file():
+                    if fragment_source == source:
+                        destination_ids = parser.ids
+                    else:
+                        destination_parser = LocalReferenceParser()
+                        destination_parser.feed(fragment_source.read_text(encoding="utf-8"))
+                        destination_ids = destination_parser.ids
+                    if fragment not in destination_ids:
+                        failures.append(f"{relative}: broken fragment link: {reference}")
 
     if failures:
         for failure in failures:
