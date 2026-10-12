@@ -1127,3 +1127,66 @@ body:has(#pages-title) .project-card:hover {
 @media (prefers-reduced-motion: reduce) {
   body:has(#pages-title) .project-card { transition: none; }
 }
+
+
+/* Four symbolic shifts: accessible, linked gateways into the Federation. */
+.spectrum-section {
+  position: relative;
+  background: radial-gradient(ellipse at 50% 0, rgba(96, 217, 206, .07), transparent 65%);
+}
+.spectrum-section .section-heading > p:last-child {
+  max-width: 68ch;
+  color: var(--muted);
+}
+.spectrum-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 30px;
+}
+.spectrum-card {
+  --shift: var(--shift-green);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 285px;
+  padding: 25px 22px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--shift) 48%, transparent);
+  border-radius: 12px;
+  background: radial-gradient(circle at 80% 5%, color-mix(in srgb, var(--shift) 15%, transparent), transparent 62%), var(--panel);
+  color: var(--text);
+  text-decoration: none;
+  transition: transform .2s ease, border-color .2s ease;
+}
+.spectrum-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: var(--shift);
+}
+.spectrum-red { --shift: var(--shift-red); }
+.spectrum-green { --shift: var(--shift-green); }
+.spectrum-blue { --shift: var(--shift-blue); }
+.spectrum-violet { --shift: var(--shift-violet); }
+.spectrum-card:hover { transform: translateY(-4px); border-color: var(--shift); }
+.spectrum-card strong { font-size: clamp(1.4rem, 2vw, 2rem); line-height: 1.1; }
+.spectrum-index { color: var(--shift); font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.spectrum-card > span:not(.spectrum-index, .spectrum-orbit, .spectrum-link) { color: var(--muted); }
+.spectrum-link { margin-top: auto; font-weight: 800; }
+.spectrum-orbit {
+  position: absolute;
+  top: -38px;
+  right: -45px;
+  width: 160px;
+  aspect-ratio: 1;
+  border: 1px solid color-mix(in srgb, var(--shift) 38%, transparent);
+  border-radius: 50%;
+  box-shadow: 0 0 0 24px color-mix(in srgb, var(--shift) 5%, transparent), 0 0 0 48px color-mix(in srgb, var(--shift) 3%, transparent);
+  pointer-events: none;
+}
+@media (max-width: 1050px) { .spectrum-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 580px) { .spectrum-grid { grid-template-columns: 1fr; } .spectrum-card { min-height: 220px; } }
+@media (prefers-reduced-motion: reduce) { .spectrum-card { transition: none; } }
