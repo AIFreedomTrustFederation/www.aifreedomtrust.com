@@ -8,7 +8,8 @@ Run the same dependency-free validation enforced by CI:
 
 ```sh
 export PYTHONPYCACHEPREFIX="${TMPDIR:-/tmp}/aift-portal-pycache"
-python -m py_compile scripts/validate_static_site.py
+python -m py_compile scripts/validate_static_site.py tests/test_static_site_validator.py
+python -m unittest discover -s tests -v
 python scripts/validate_static_site.py
 git diff --check
 test -z "$(git status --porcelain)"
@@ -18,6 +19,8 @@ Keeping Python bytecode outside the checkout makes the final command a reliable
 check that validation did not modify or add repository files. Run this gate from
 a clean checkout; before committing work, use `git status --short` to confirm
 that only the intended files are changed.
+
+The validator rejects navigation links with executable or otherwise unsupported URL schemes (for example `javascript:` and `data:`), in addition to missing local targets, broken fragments, and forbidden remote resource loads. The tests use isolated local fixtures; this gate does not verify external websites or browser-side JavaScript behavior.
 
 ## Manual preview
 

@@ -9,6 +9,7 @@ from urllib.parse import unquote, urlsplit
 ROOT = Path(__file__).resolve().parent.parent
 HTML_FILES = ("index.html", "pages.html")
 REMOTE_RESOURCE_TAGS = {"iframe", "img", "link", "script"}
+ALLOWED_URL_SCHEMES = {"http", "https", "mailto", "tel"}
 REQUIRED_FILES = (
     "index.html",
     "pages.html",
@@ -78,6 +79,9 @@ def main() -> int:
             failures.append(f"{relative}: forbidden data-capture element: {element}")
         for tag, reference in parser.references:
             parsed = urlsplit(reference)
+            if parsed.scheme and parsed.scheme.lower() not in ALLOWED_URL_SCHEMES:
+                failures.append(f"{relative}: unsafe URL scheme for {tag}: {reference}")
+                continue
             if tag in REMOTE_RESOURCE_TAGS and (parsed.scheme or parsed.netloc):
                 failures.append(f"{relative}: remote {tag} resource is not allowed: {reference}")
                 continue
