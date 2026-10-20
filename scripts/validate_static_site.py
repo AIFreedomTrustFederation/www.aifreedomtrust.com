@@ -8,7 +8,7 @@ from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parent.parent
 HTML_FILES = ("index.html", "pages.html")
-REMOTE_RESOURCE_TAGS = {"iframe", "img", "link", "script"}
+REMOTE_RESOURCE_TAGS = {"iframe", "img", "link", "script", "source"}
 ALLOWED_URL_SCHEMES = {"http", "https", "mailto", "tel"}
 REQUIRED_FILES = (
     "index.html",
@@ -43,6 +43,14 @@ class LocalReferenceParser(HTMLParser):
         for name, value in attrs:
             if name in {"href", "src"} and value:
                 self.references.append((tag, value))
+            elif name == "srcset" and tag in {"img", "source"} and value:
+                # Each responsive-image candidate is a separate resource URL.
+                # Validate it using the same scheme, containment, and existence
+                # checks as an ordinary src attribute.
+                for candidate in value.split(","):
+                    fields = candidate.strip().split()
+                    if fields:
+                        self.references.append((tag, fields[0]))
 
 
 def local_target(source: Path, reference: str) -> Path | None:

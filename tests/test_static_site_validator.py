@@ -57,6 +57,43 @@ class StaticPortalValidationTests(unittest.TestCase):
         self.assertEqual(status, 1, output)
         self.assertIn("remote script resource", output)
 
+    def test_remote_img_srcset_is_rejected(self):
+        (self.root / "index.html").write_text(
+            '<main id="top"></main><img src="assets/aift-federation-hero.png" srcset="assets/aift-federation-hero.png 1x, https://example.org/track.png 2x">',
+            encoding="utf-8")
+        status, output = self.validate()
+        self.assertEqual(status, 1, output)
+        self.assertIn("remote img resource", output)
+
+    def test_protocol_relative_source_srcset_is_rejected(self):
+        (self.root / "index.html").write_text(
+            '<main id="top"></main><picture><source srcset="//example.org/track.webp 2x"><img src="assets/aift-federation-hero.png"></picture>',
+            encoding="utf-8")
+        status, output = self.validate()
+        self.assertEqual(status, 1, output)
+        self.assertIn("remote source resource", output)
+
+    def test_data_scheme_in_srcset_is_rejected(self):
+        (self.root / "index.html").write_text(
+            '<main id="top"></main><img srcset="data:image/svg+xml,evil 1x">', encoding="utf-8")
+        status, output = self.validate()
+        self.assertEqual(status, 1, output)
+        self.assertIn("unsafe URL scheme", output)
+
+    def test_remote_source_src_is_rejected(self):
+        (self.root / "index.html").write_text(
+            '<main id="top"></main><video><source src="https://example.org/video.mp4"></video>',
+            encoding="utf-8")
+        status, output = self.validate()
+        self.assertEqual(status, 1, output)
+        self.assertIn("remote source resource", output)
+
+    def test_local_srcset_candidates_pass(self):
+        (self.root / "index.html").write_text(
+            '<main id="top"></main><picture><source srcset="assets/aift-federation-hero.png 1x, /assets/aift-federation-hero.png 2x"><img src="assets/aift-federation-hero.png"></picture>',
+            encoding="utf-8")
+        self.assertEqual(self.validate()[0], 0)
+
     def test_broken_fragment_still_rejected(self):
         (self.root / "index.html").write_text('<main id="top"><a href="#missing">Click</a></main>', encoding="utf-8")
         status, output = self.validate()

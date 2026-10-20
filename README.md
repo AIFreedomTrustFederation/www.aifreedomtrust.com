@@ -78,7 +78,7 @@ Then open:
 http://127.0.0.1:4178/
 ```
 
-The dependency-free local gate is `python -m unittest discover -s tests -v && python scripts/validate_static_site.py`. It checks local files and fragments, rejects unsafe URL schemes in HTML navigation, and rejects remote resource loads; it does not check external destinations or prove the live Pages deployment. Verification should also confirm that `index.html`, `styles.css`, `assets/aift-federation-hero.png`, documentation links, and the live GitHub Pages route resolve as expected. Project status and security boundaries live in `docs/status.md`, `docs/validation.md`, and `docs/security-and-privacy.md`.
+The dependency-free local gate is `python -m unittest discover -s tests -v && python scripts/validate_static_site.py`. It checks local files and fragments, rejects unsafe URL schemes in HTML navigation, and rejects remote resources referenced through `href`, `src`, and responsive-image `srcset` on `<img>` and `<source>`; it does not inspect CSS `url()` references, every HTML resource-loading attribute, external destinations, or the live Pages deployment. Verification should also confirm that `index.html`, `styles.css`, `assets/aift-federation-hero.png`, documentation links, and the live GitHub Pages route resolve as expected. Project status and security boundaries live in `docs/status.md`, `docs/validation.md`, and `docs/security-and-privacy.md`.
 
 ---
 
