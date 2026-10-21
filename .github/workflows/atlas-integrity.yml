@@ -1,0 +1,35 @@
+name: Federation Atlas integrity
+on:
+  push:
+    paths:
+      - 'index.html'
+      - 'atlas.html'
+      - 'atlas-v3.js'
+      - 'atlas-v3.css'
+      - 'fruit-atlas.js'
+      - 'fruit-atlas.css'
+      - 'scripts/check-atlas-integrity.cjs'
+      - '.github/workflows/atlas-integrity.yml'
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'atlas.html'
+      - 'atlas-v3.js'
+      - 'atlas-v3.css'
+      - 'fruit-atlas.js'
+      - 'fruit-atlas.css'
+      - 'scripts/check-atlas-integrity.cjs'
+      - '.github/workflows/atlas-integrity.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify fruit anchors, source text, and return navigation
+        run: node scripts/check-atlas-integrity.cjs
