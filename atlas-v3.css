@@ -1,0 +1,30 @@
+/* Living Atlas 3.0: additive mobile-first enhancement */
+body.atlas-v3{background:radial-gradient(ellipse at 50% 10%,#112d2d,#060d19 68%)}
+.atlas-v3 .hero{padding:clamp(1.1rem,3vw,2.8rem) 1rem .3rem}
+.atlas-v3 .hero h1{font-size:clamp(2.2rem,5.7vw,5.2rem);line-height:1.08;letter-spacing:-.035em}
+.atlas-v3 .hero p{margin:.7rem auto;font-size:clamp(.88rem,1.4vw,1.08rem);max-width:690px}
+.atlas-v3 .layout{max-width:1600px}
+.atlas-v3 .world{box-shadow:0 0 0 1px #f4d68e20,0 22px 85px #01070bd9,inset 0 0 80px #2f9b8122}
+.atlas-v3 .world:after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 55%,transparent 40%,#070f2029 85%)}
+.atlas-v3 .scene{height:min(78vh,870px);min-height:520px}
+.atlas-v3 .fruit .label{font-size:23px}
+.atlas-v3 .fruit .sub{font-size:13px}
+.atlas-v3 .fruit{transition:filter .18s}
+.atlas-v3 .fruit:hover,.atlas-v3 .fruit.active{filter:drop-shadow(0 0 14px #b9ffe97d)}
+.atlas-v3 .panel{box-shadow:inset 0 1px #d9fbe419}
+.atlas-v3 .sphere-paths{display:grid;gap:.55rem;margin-top:1rem}
+.atlas-v3 .sphere-paths a{display:block;text-decoration:none;border:1px solid #b4e6d744;background:#ffffff0a;border-radius:12px;padding:.65rem .75rem;color:#e5f5ec;font-size:.86rem}
+.atlas-v3 .sphere-paths a:hover{background:#92efc522}
+.atlas-v3 .sphere-paths a span{display:block;color:#a8d8c6;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase}
+.atlas-v3 .v3-modal[hidden]{display:none}
+.atlas-v3 .v3-modal{position:fixed;inset:0;z-index:100;background:#020914ed;display:flex;flex-direction:column;padding:clamp(.35rem,2vw,1.2rem);backdrop-filter:blur(14px)}
+.atlas-v3 .v3-modal__box{display:flex;flex-direction:column;flex:1;min-height:0;border:1px solid #9edcbe66;border-radius:18px;overflow:hidden;background:#091820;box-shadow:0 0 60px #000}
+.atlas-v3 .v3-modal__bar{display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding:.6rem 1rem;background:#112b2d}
+.atlas-v3 .v3-modal__bar strong{font:1.05rem Georgia,serif}
+.atlas-v3 .v3-modal__bar button{background:#e3c889;color:#09201a;border:0;border-radius:30px;padding:.6rem .9rem;font-weight:800}
+.atlas-v3 .v3-modal iframe{flex:1;min-height:0;width:100%;border:0;background:#0b1110}
+.atlas-v3 .v3-read{margin-top:.6rem;width:100%;padding:.8rem;border:1px solid #cceac5;border-radius:30px;background:#173b34;color:#f4fff8;font-weight:750}
+.atlas-v3 .v3-status{font-size:.78rem;color:#b6d9cc}
+@media(max-width:950px){.atlas-v3 .layout{gap:.6rem}.atlas-v3 .scene{height:65vh;min-height:520px}.atlas-v3 .aside{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.atlas-v3 .hero{padding:1rem .85rem .5rem}.atlas-v3 .hero h1{font-size:clamp(2.25rem,10vw,3.3rem)}.atlas-v3 .hero p{font-size:.91rem;line-height:1.5}.atlas-v3 .layout{margin:.5rem auto 2rem}.atlas-v3 .scene{height:min(71vh,670px);min-height:480px}.atlas-v3 .worldbar{align-items:flex-start}.atlas-v3 .worldbar .pill{max-width:55%;line-height:1.3}.atlas-v3 .worldbar .controls{gap:.25rem}.atlas-v3 .aside{display:flex}.atlas-v3 .panel{padding:1rem}.atlas-v3 .top nav a:nth-child(3){display:none}}
+@media(prefers-reduced-motion:reduce){.atlas-v3 .fruit{transition:none}}
