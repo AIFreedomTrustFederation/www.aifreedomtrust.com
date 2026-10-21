@@ -1,0 +1,14 @@
+/* Atlas 3.2 · high-chroma prismatic illumination; symbolic spectrum, not flame thermometry */
+.atlas-v3 .world{background:radial-gradient(ellipse at 50% 43%,#0b3036 0%,#03111f 50%,#01050e 100%);box-shadow:0 0 0 1px #00f6d030,0 30px 105px #000,inset 0 0 110px #00ffc515}
+.atlas-v3 .world:before{opacity:.28;background-image:radial-gradient(#9ffff4 1px,transparent 1px)}
+.atlas-v3 .fruit{filter:drop-shadow(0 0 11px var(--fruit-glow,#38fff0)) drop-shadow(0 0 25px var(--fruit-glow,#38fff0));transition:filter .22s ease}
+.atlas-v3 .fruit:hover,.atlas-v3 .fruit.active{filter:drop-shadow(0 0 15px var(--fruit-glow,#fff)) drop-shadow(0 0 38px var(--fruit-glow,#fff)) drop-shadow(0 0 62px var(--fruit-glow,#fff))}
+.atlas-v3 .fruit .ring{stroke:#fff;stroke-width:2.5}
+.atlas-v3 .fruit .label{fill:#fff!important;stroke:#020711;stroke-width:6px;font-weight:800}
+.atlas-v3 .fruit .sub{fill:#eafff9!important;stroke:#020711;stroke-width:4px;font-weight:700}
+.atlas-v3 .branch{stroke-width:7;opacity:1;filter:drop-shadow(0 0 7px currentColor)}
+.atlas-v3 .spectrum{height:5px;background:linear-gradient(90deg,#ff244f 0%,#ff7900 16%,#fff000 32%,#00ff78 49%,#00bfff 65%,#413bff 82%,#b638ff 100%);box-shadow:0 0 18px #14dfff70}
+.atlas-v3 .hero h1{background:linear-gradient(100deg,#ffcf4b,#fff 36%,#00ffbd 70%,#9c60ff);background-clip:text;color:transparent}
+.atlas-v3 .worldbar .pill{border-color:#4af8c3a8;box-shadow:0 0 22px #00ffb420}
+.atlas-v3 .controls button:hover{background:#145f66;box-shadow:0 0 20px #00e5ff88}
+@media(prefers-reduced-motion:reduce){.atlas-v3 .fruit{transition:none}}
