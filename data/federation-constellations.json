@@ -1,0 +1,64 @@
+{
+  "version": 1,
+  "source": "Verified repository README descriptions and AIFT-Genesis tree manifest",
+  "fruits": [
+    {
+      "id": "umbrella",
+      "label": "Federation",
+      "repos": [
+        "AI-Freedom-Trust",
+        "AIFT-Genesis",
+        "AIFT-Forge",
+        "www.aifreedomtrust.com"
+      ]
+    },
+    {
+      "id": "tree-explorer",
+      "label": "Tree of Emergence",
+      "repos": [
+        "AIFT-Genesis"
+      ],
+      "graph": "AIFT-Genesis/manifests/tree.manifest.json"
+    },
+    {
+      "id": "projects",
+      "label": "Applied Work",
+      "repos": [
+        "capital-city-provisions",
+        "booksmith-ai",
+        "BookSmith-Federation-OS"
+      ]
+    },
+    {
+      "id": "structure",
+      "label": "Federation Systems",
+      "repos": [
+        "AIFT-OS",
+        "AIFT-Runtime",
+        "AIFT-Forge",
+        "VPS"
+      ]
+    },
+    {
+      "id": "roadmap",
+      "label": "Development",
+      "repos": [
+        "VPS",
+        "AIFT-OS",
+        "AIFT-Runtime",
+        "AIFT-Forge"
+      ]
+    },
+    {
+      "id": "docs-title",
+      "label": "Knowledge & Stewardship",
+      "repos": [
+        "AIFT-Genesis",
+        "AI-Freedom-Trust",
+        "booksmith-ai",
+        "BookSmith-Federation-OS",
+        "Aether_Coin_biozonecurrency"
+      ]
+    }
+  ]
+}
