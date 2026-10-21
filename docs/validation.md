@@ -20,7 +20,7 @@ check that validation did not modify or add repository files. Run this gate from
 a clean checkout; before committing work, use `git status --short` to confirm
 that only the intended files are changed.
 
-The validator rejects navigation links with executable or otherwise unsupported URL schemes (for example `javascript:` and `data:`), in addition to missing local targets, broken fragments, and forbidden remote resource loads. The tests use isolated local fixtures; this gate does not verify external websites or browser-side JavaScript behavior.
+The validator rejects navigation links with executable or otherwise unsupported URL schemes (for example `javascript:` and `data:`), in addition to missing local targets, broken fragments, and forbidden remote resource loads. The tests use isolated local fixtures. The gate covers `index.html`, `pages.html`, `atlas.html`, `constellations.html`, and `docs/organization-map.html`, and requires each to exist; this gate does not verify external websites or browser-side JavaScript behavior.
 
 ## Manual preview
 

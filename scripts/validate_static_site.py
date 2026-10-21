@@ -7,12 +7,17 @@ from urllib.parse import unquote, urlsplit
 
 
 ROOT = Path(__file__).resolve().parent.parent
-HTML_FILES = ("index.html", "pages.html")
+HTML_FILES = (
+    "index.html",
+    "pages.html",
+    "atlas.html",
+    "constellations.html",
+    "docs/organization-map.html",
+)
 REMOTE_RESOURCE_TAGS = {"iframe", "img", "link", "script"}
 ALLOWED_URL_SCHEMES = {"http", "https", "mailto", "tel"}
 REQUIRED_FILES = (
-    "index.html",
-    "pages.html",
+    *HTML_FILES,
     "styles.css",
     "assets/aift-federation-hero.png",
     "docs/public-repo-inventory.md",

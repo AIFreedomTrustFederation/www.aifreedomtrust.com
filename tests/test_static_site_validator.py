@@ -64,5 +64,37 @@ class StaticPortalValidationTests(unittest.TestCase):
         self.assertIn("broken fragment", output)
 
 
+    def test_atlas_remote_script_is_rejected(self):
+        (self.root / "atlas.html").write_text(
+            '<main id="atlas"><script src="https://example.org/tracker.js"></script></main>',
+            encoding="utf-8",
+        )
+        status, output = self.validate()
+        self.assertEqual(status, 1, output)
+        self.assertIn("atlas.html: remote script resource", output)
+
+    def test_constellations_broken_fragment_is_rejected(self):
+        (self.root / "constellations.html").write_text(
+            '<main id="sky"><a href="#missing">Explore</a></main>', encoding="utf-8"
+        )
+        status, output = self.validate()
+        self.assertEqual(status, 1, output)
+        self.assertIn("constellations.html: broken fragment link", output)
+
+    def test_organization_map_unsafe_navigation_is_rejected(self):
+        (self.root / "docs/organization-map.html").write_text(
+            '<main><a href="javascript:alert(1)">Open</a></main>', encoding="utf-8"
+        )
+        status, output = self.validate()
+        self.assertEqual(status, 1, output)
+        self.assertIn("docs/organization-map.html: unsafe URL scheme", output)
+
+    def test_missing_immersive_page_fails_validation(self):
+        (self.root / "atlas.html").write_text("<main></main>", encoding="utf-8")
+        (self.root / "atlas.html").unlink()
+        status, output = self.validate()
+        self.assertEqual(status, 1, output)
+        self.assertIn("required file missing: atlas.html", output)
+
 if __name__ == "__main__":
     unittest.main()
