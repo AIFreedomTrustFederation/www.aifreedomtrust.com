@@ -11,7 +11,7 @@ const sections=['umbrella','tree-explorer','projects','structure','roadmap','doc
 const errors=[];
 function check(label,condition){if(!condition)errors.push(label);else console.log('PASS '+label)}
 for(const id of sections){
- check('homepage anchor #'+id,new RegExp('id=["\\\']'+id+'["\\\']').test(homepage));
+ check('homepage anchor #'+id,homepage.includes('id="'+id+'"')||homepage.includes("id='"+id+"'"));
  check('homepage fruit mapping '+id,fruit.includes('id:"'+id+'"')||fruit.includes('"id":"'+id+'"'));
  check('Atlas destination '+id,atlas.includes("id:'"+id+"'"));
  check('v3 reader destination '+id,v3.includes("id:'"+id+"'"));
@@ -22,7 +22,7 @@ check('original project constellation heading retained',homepage.includes('Diffe
 check('original structure heading retained',homepage.includes('The Federation is organized so that vision can move without losing accountability.'));
 check('original roadmap heading retained',homepage.includes('The next chapter is convergence.'));
 check('original published Tree Explorer retained',homepage.includes('data-aift-tree-explorer'));
-check('published library PDF links retained',(homepage.match(/\\.pdf/g)||[]).length>=6);
+check('published library PDF links retained',(homepage.match(/\.pdf/g)||[]).length>=6);
 check('homepage has fruit atlas',homepage.includes('id="fruit-atlas"'));
 check('homepage links to immersive atlas',homepage.includes('href="atlas.html"'));
 check('return-to-fruit control',fruit.includes('Return to '));
