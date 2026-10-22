@@ -14,7 +14,7 @@ HTML_FILES = (
     "constellations.html",
     "docs/organization-map.html",
 )
-REMOTE_RESOURCE_TAGS = {"iframe", "img", "link", "script"}
+REMOTE_RESOURCE_TAGS = {"iframe", "img", "link", "script", "source"}
 ALLOWED_URL_SCHEMES = {"http", "https", "mailto", "tel"}
 REQUIRED_FILES = (
     *HTML_FILES,
@@ -24,6 +24,28 @@ REQUIRED_FILES = (
     "docs/status.md",
     "docs/security-and-privacy.md",
 )
+
+
+def srcset_urls(value: str):
+    """Yield srcset URLs, preserving commas embedded within a URL token."""
+    pos = 0
+    while pos < len(value):
+        while pos < len(value) and (value[pos].isspace() or value[pos] == ","):
+            pos += 1
+        start = pos
+        while pos < len(value) and not value[pos].isspace():
+            pos += 1
+        token = value[start:pos]
+        url = token.rstrip(",")
+        if url:
+            yield url
+        if token.endswith(","):
+            continue
+        # Skip optional width/density descriptors up to the next candidate.
+        while pos < len(value) and value[pos] != ",":
+            pos += 1
+        if pos < len(value):
+            pos += 1
 
 
 class LocalReferenceParser(HTMLParser):
@@ -48,6 +70,8 @@ class LocalReferenceParser(HTMLParser):
         for name, value in attrs:
             if name in {"href", "src"} and value:
                 self.references.append((tag, value))
+            elif name == "srcset" and tag in {"img", "source"} and value:
+                self.references.extend((tag, url) for url in srcset_urls(value))
 
 
 def local_target(source: Path, reference: str) -> Path | None:

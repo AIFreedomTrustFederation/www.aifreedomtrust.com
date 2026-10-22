@@ -96,5 +96,60 @@ class StaticPortalValidationTests(unittest.TestCase):
         self.assertEqual(status, 1, output)
         self.assertIn("required file missing: atlas.html", output)
 
+    def test_remote_img_srcset_is_rejected(self):
+        (self.root / "index.html").write_text(
+            '<main id="top"><picture><img src="assets/aift-federation-hero.png" '
+            'srcset="assets/aift-federation-hero.png 1x, https://tracker.example/pixel.png 2x"></picture>',
+            encoding="utf-8",
+        )
+        status, output = self.validate()
+        self.assertEqual(status, 1, output)
+        self.assertIn("remote img resource", output)
+
+    def test_protocol_relative_source_srcset_is_rejected(self):
+        (self.root / "index.html").write_text(
+            '<main id="top"><picture><source srcset="//tracker.example/pixel.webp 2x">'
+            '<img src="assets/aift-federation-hero.png"></picture>', encoding="utf-8",
+        )
+        status, output = self.validate()
+        self.assertEqual(status, 1, output)
+        self.assertIn("remote source resource", output)
+
+    def test_remote_source_src_is_rejected(self):
+        (self.root / "index.html").write_text(
+            '<main id="top"><video><source src="https://tracker.example/video.mp4"></video>', encoding="utf-8",
+        )
+        status, output = self.validate()
+        self.assertEqual(status, 1, output)
+        self.assertIn("remote source resource", output)
+
+    def test_missing_local_srcset_candidate_is_rejected(self):
+        (self.root / "index.html").write_text(
+            '<main id="top"><img src="assets/aift-federation-hero.png" '
+            'srcset="assets/aift-federation-hero.png 1x, assets/missing-2x.png 2x">',
+            encoding="utf-8",
+        )
+        status, output = self.validate()
+        self.assertEqual(status, 1, output)
+        self.assertIn("missing local target for img: assets/missing-2x.png", output)
+
+    def test_valid_srcset_url_with_comma_is_not_split(self):
+        (self.root / "assets" / "image,wide.png").write_bytes(b"fixture")
+        (self.root / "index.html").write_text(
+            '<main id="top"><img srcset="assets/image,wide.png 1x, assets/aift-federation-hero.png 2x">',
+            encoding="utf-8",
+        )
+        status, output = self.validate()
+        self.assertEqual(status, 0, output)
+
+    def test_unsafe_srcset_url_is_rejected(self):
+        (self.root / "index.html").write_text(
+            '<main id="top"><img srcset="assets/aift-federation-hero.png 1x, JaVaScRiPt&#58;alert(1) 2x">',
+            encoding="utf-8",
+        )
+        status, output = self.validate()
+        self.assertEqual(status, 1, output)
+        self.assertIn("unsafe URL scheme", output)
+
 if __name__ == "__main__":
     unittest.main()
