@@ -94,6 +94,15 @@ node scripts/check-atlas-integrity.cjs
 
 The [Portal Validation workflow](.github/workflows/validate.yml) runs the Python checks on pushes to `main` and pull requests, including local HTML files, fragments, unsafe URL schemes, and prohibited remote HTML resources. The separate [Atlas integrity workflow](.github/workflows/atlas-integrity.yml) runs the Node check for selected Atlas-related file changes and on manual dispatch; it checks six fruit mappings, retained homepage language, source-reader controls, and required local assets. These are **static/source-level checks**: they do not exercise browser interactions, verify external GitHub destinations, test the remote Genesis fetch, or establish that the live GitHub Pages deployment is healthy. Preview the Atlas and Constellations pages in a browser and inspect the relevant Pages deployment result before reporting those outcomes as verified.
 
+
+### Living Tree: remote executable module and manifest boundary
+
+The homepage [Tree Explorer loader](index.html) runs in the visitor's browser. It first attempts a commit-pinned [AIFT-Forge Tree Explorer module](https://github.com/AIFreedomTrustFederation/AIFT-Forge/blob/main/packages/tree-explorer/src/tree-explorer.mjs) from jsDelivr, then falls back to a **mutable** Forge `main` CDN URL and a GitHub Pages module URL if imports fail. A pinned *first choice* does **not** pin the complete execution path: fallback code can change independently of this portal's commit. Unlike an ordinary outbound repository link, a successful module import executes JavaScript in the portal page.
+
+The loader passes two separately mutable [AIFT-Genesis Tree](https://github.com/AIFreedomTrustFederation/AIFT-Genesis/blob/main/manifests/tree.manifest.json) and [Living Atlas](https://github.com/AIFreedomTrustFederation/AIFT-Genesis/blob/main/manifests/living-atlas.manifest.json) manifest URLs on `main`. These are cross-repository, browser-network dependencies, not locally bundled or release-locked artifacts. A module import, network request, manifest-schema change, or cross-origin access failure can leave the interactive Tree unavailable; the homepage displays an error message rather than silently proving readiness.
+
+The Python static-site gate checks HTML references but **does not evaluate inline JavaScript, dynamic `import()`, runtime `fetch()`, module integrity, cross-origin behavior, or the compatibility of the two Genesis manifests**. Before declaring the Living Tree verified, preview the homepage in a real browser, open its Tree Explorer, inspect which module URL actually loaded and whether both manifests succeeded, exercise navigation and source links, and record the exact Forge and Genesis revisions used. For a reproducible release, pin or vendor the executable module and its manifests together and validate that locked combination in browser-level tests; those release guarantees are **not** provided by the current portal gate.
+
 ---
 
 ## Book IV — A Portal That Returns the Reader to the Source
