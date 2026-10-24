@@ -14,7 +14,7 @@ HTML_FILES = (
     "constellations.html",
     "docs/organization-map.html",
 )
-REMOTE_RESOURCE_TAGS = {"iframe", "img", "link", "script"}
+REMOTE_RESOURCE_TAGS = {"iframe", "img", "link", "script", "source"}
 ALLOWED_URL_SCHEMES = {"http", "https", "mailto", "tel"}
 REQUIRED_FILES = (
     *HTML_FILES,
@@ -24,6 +24,42 @@ REQUIRED_FILES = (
     "docs/status.md",
     "docs/security-and-privacy.md",
 )
+
+def responsive_image_urls(value: str):
+    """Yield URLs from an HTML srcset/imagesrcset attribute.
+
+    A candidate URL extends to whitespace, not to the first comma: data
+    URLs and filenames may themselves contain commas. Commas separating
+    candidates are consumed with the descriptors, as in the HTML algorithm.
+    """
+    position = 0
+    while position < len(value):
+        while position < len(value) and (value[position].isspace() or value[position] == ","):
+            position += 1
+        start = position
+        while position < len(value) and not value[position].isspace():
+            position += 1
+        url = value[start:position]
+        if not url:
+            break
+        if url.endswith(","):
+            url = url.rstrip(",")
+            if url:
+                yield url
+            continue
+        yield url
+
+        # Consume density/width descriptors, respecting parentheses.
+        in_parentheses = False
+        while position < len(value):
+            char = value[position]
+            position += 1
+            if char == "(":
+                in_parentheses = True
+            elif char == ")":
+                in_parentheses = False
+            elif char == "," and not in_parentheses:
+                break
 
 
 class LocalReferenceParser(HTMLParser):
@@ -48,6 +84,11 @@ class LocalReferenceParser(HTMLParser):
         for name, value in attrs:
             if name in {"href", "src"} and value:
                 self.references.append((tag, value))
+            elif value and (
+                (name == "srcset" and tag in {"img", "source"})
+                or (name == "imagesrcset" and tag == "link")
+            ):
+                self.references.extend((tag, url) for url in responsive_image_urls(value))
 
 
 def local_target(source: Path, reference: str) -> Path | None:
