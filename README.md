@@ -80,6 +80,20 @@ http://127.0.0.1:4178/
 
 The dependency-free local gate is `python -m unittest discover -s tests -v && python scripts/validate_static_site.py`. It checks local files, fragments, unsafe navigation URL schemes, and remote resource loads across all five public HTML pages (index, pages, atlas, constellations, and the organization map); it does not check external destinations or prove the live Pages deployment. Verification should also confirm that `index.html`, `styles.css`, `assets/aift-federation-hero.png`, documentation links, and the live GitHub Pages route resolve as expected. Project status and security boundaries live in `docs/status.md`, `docs/validation.md`, and `docs/security-and-privacy.md`.
 
+### Atlas and constellation verification boundaries
+
+The [Living Federation Atlas](atlas.html) maps six fruit destinations back to the corresponding published homepage sections. Its reader loads `index.html` in an iframe rather than maintaining a second copy of the original prose. The [Constellations directory](constellations.html) uses a curated repository list and role descriptions embedded in that page; its domain connections indicate shared categorization, **not verified runtime integrations**. For the Tree of Emergence view, the directory attempts to fetch the [AIFT-Genesis Tree manifest](https://github.com/AIFreedomTrustFederation/AIFT-Genesis/blob/main/manifests/tree.manifest.json) at runtime. That optional remote fetch may fail or change independently of this site's deployment; neither the curated catalog nor a successful fetch proves repository readiness.
+
+Two complementary local gates cover different boundaries:
+
+```bash
+python -m unittest discover -s tests -v
+python scripts/validate_static_site.py
+node scripts/check-atlas-integrity.cjs
+```
+
+The [Portal Validation workflow](.github/workflows/validate.yml) runs the Python checks on pushes to `main` and pull requests, including local HTML files, fragments, unsafe URL schemes, and prohibited remote HTML resources. The separate [Atlas integrity workflow](.github/workflows/atlas-integrity.yml) runs the Node check for selected Atlas-related file changes and on manual dispatch; it checks six fruit mappings, retained homepage language, source-reader controls, and required local assets. These are **static/source-level checks**: they do not exercise browser interactions, verify external GitHub destinations, test the remote Genesis fetch, or establish that the live GitHub Pages deployment is healthy. Preview the Atlas and Constellations pages in a browser and inspect the relevant Pages deployment result before reporting those outcomes as verified.
+
 ---
 
 ## Book IV — A Portal That Returns the Reader to the Source
