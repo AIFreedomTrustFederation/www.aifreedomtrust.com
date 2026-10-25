@@ -84,6 +84,8 @@ The dependency-free local gate is `python -m unittest discover -s tests -v && py
 
 The [Living Federation Atlas](atlas.html) maps six fruit destinations back to the corresponding published homepage sections. Its reader loads `index.html` in an iframe rather than maintaining a second copy of the original prose. The [Constellations directory](constellations.html) uses a curated repository list and role descriptions embedded in that page; its domain connections indicate shared categorization, **not verified runtime integrations**. For the Tree of Emergence view, the directory attempts to fetch the [AIFT-Genesis Tree manifest](https://github.com/AIFreedomTrustFederation/AIFT-Genesis/blob/main/manifests/tree.manifest.json) at runtime. That optional remote fetch may fail or change independently of this site's deployment; neither the curated catalog nor a successful fetch proves repository readiness.
 
+The [machine-readable constellation index](data/federation-constellations.json) is a separately maintained snapshot: `constellations.html` embeds its own fruit catalog and repository descriptions rather than loading that JSON file. The current Python and Atlas gates do not compare the two catalogs, validate repository roles against commit-pinned source READMEs, or verify outbound GitHub destinations. When fruit membership changes, keep the JSON and embedded catalog aligned and treat their role labels as curated descriptions, not independently attested provenance.
+
 Two complementary local gates cover different boundaries:
 
 ```bash
