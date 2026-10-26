@@ -96,6 +96,8 @@ node scripts/check-atlas-integrity.cjs
 
 The [Portal Validation workflow](.github/workflows/validate.yml) runs the Python checks on pushes to `main` and pull requests, including local HTML files, fragments, unsafe URL schemes, and prohibited remote HTML resources. The separate [Atlas integrity workflow](.github/workflows/atlas-integrity.yml) runs the Node check for selected Atlas-related file changes and on manual dispatch; it checks six fruit mappings, retained homepage language, source-reader controls, and required local assets. These are **static/source-level checks**: they do not exercise browser interactions, verify external GitHub destinations, test the remote Genesis fetch, or establish that the live GitHub Pages deployment is healthy. Preview the Atlas and Constellations pages in a browser and inspect the relevant Pages deployment result before reporting those outcomes as verified.
 
+**Federation manifest verification boundary.** The `verify` command in [`aift.repo.json`](aift.repo.json) is `git status --short`, which only lists working-tree changes; it does not run the Python or Atlas validation gates and can exit successfully even with modified files. The separate [capability snapshot](.aift/capabilities.json) still marks `verify` and `test` as `planned`, although the [Portal Validation workflow](.github/workflows/validate.yml) executes Python tests and the static validator. Treat manifest declarations, CI test results, and deployed-site health as separate evidence; a successful manifest `verify` command does not establish portal validation.
+
 
 ### Living Tree: remote executable module and manifest boundary
 
