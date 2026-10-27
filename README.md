@@ -117,6 +117,8 @@ The portal should never become a second, stale copy of every repository. Its tas
 
 The live portal is published through GitHub Pages at <https://aifreedomtrustfederation.github.io/www.aifreedomtrust.com/>.
 
+**Canonical URL metadata boundary.** The homepage `index.html` currently declares `https://aifreedomtrust.com/` in both its canonical-link and Open Graph URL metadata, while this checkout has no `CNAME` file and documents the GitHub Pages project URL above as its publication address. Those metadata values alone do not establish that a custom domain is configured, resolves, or serves this revision. Verify domain ownership, DNS, Pages settings, and the live response separately before claiming custom-domain publication; changing public-domain or publishing settings remains subject to the repository's approval requirements.
+
 ### The Return of the Word
 
 At the public boundary, the Word returns as direction. A reader encounters the mission, understands the architecture, sees the difference between doctrine, implementation, and applied service, and arrives at the repository where the real work can be inspected. The portal succeeds when it does not trap the reader in branding, but leads them toward truth.
