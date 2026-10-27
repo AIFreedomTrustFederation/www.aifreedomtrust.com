@@ -27,10 +27,42 @@ INTERNAL_REPOS=(
 
 log(){ echo "$*" | tee -a "$REPORT"; }
 
-pkg install -y gh jq git curl >/dev/null
+# Auditing is the default. Changes to Pages publishing require explicit approval.
+APPLY=0
+REMOVE_CUSTOM_DOMAINS=0
+while (( $# )); do
+  case "$1" in
+    --apply) APPLY=1 ;;
+    --remove-custom-domains) REMOVE_CUSTOM_DOMAINS=1 ;;
+    --help|-h)
+      printf '%s\n' 'Usage: bash scripts/aift-pages-repair.sh [--apply [--remove-custom-domains]]' \
+        'Default: read-only audit. --apply changes Pages sources.' \
+        '--remove-custom-domains additionally removes Pages custom domains; requires --apply and separate approval.'
+      exit 0 ;;
+    *) printf 'Unknown option: %s\n' "$1" >&2; exit 2 ;;
+  esac
+  shift
+done
+if (( REMOVE_CUSTOM_DOMAINS && ! APPLY )); then
+  echo '--remove-custom-domains requires --apply' >&2
+  exit 2
+fi
+for tool in gh jq curl; do
+  if ! command -v "$tool" >/dev/null 2>&1; then
+    printf 'Missing %s; install it before running the audit\n' "$tool" >&2
+    exit 1
+  fi
+done
 : > "$REPORT"
-
-gh auth status >/dev/null || gh auth login --hostname github.com --web
+if ! gh auth status >/dev/null 2>&1; then
+  log 'GitHub CLI authentication required; run gh auth login separately.'
+  exit 1
+fi
+if (( ! APPLY )); then
+  log 'READ-ONLY AUDIT: no Pages or custom-domain changes will be made.'
+else
+  log 'APPLY MODE: Pages sources may be changed; verify approval before proceeding.'
+fi
 
 repo_exists(){ gh repo view "$OWNER/$1" >/dev/null 2>&1; }
 branch_exists(){ gh api "repos/$OWNER/$1/branches/$2" >/dev/null 2>&1; }
@@ -52,22 +84,34 @@ normalize_pages(){
   fi
 
   if gh api "repos/$OWNER/$repo/pages" >/dev/null 2>&1; then
-    gh api -X PUT "repos/$OWNER/$repo/pages" \
-      -f source.branch="$branch" \
-      -f source.path="/" >/dev/null || log "PUT Pages source failed"
+    if (( APPLY )); then
+      gh api -X PUT "repos/$OWNER/$repo/pages" \
+        -f source.branch="$branch" \
+        -f source.path="/" >/dev/null || log "PUT Pages source failed"
+    else
+      log "would update Pages source to $branch (no change made)"
+    fi
   else
-    gh api -X POST "repos/$OWNER/$repo/pages" \
-      -f source.branch="$branch" \
-      -f source.path="/" >/dev/null || log "POST Pages enable failed"
+    if (( APPLY )); then
+      gh api -X POST "repos/$OWNER/$repo/pages" \
+        -f source.branch="$branch" \
+        -f source.path="/" >/dev/null || log "POST Pages enable failed"
+    else
+      log "would enable Pages from $branch (no change made)"
+    fi
   fi
 
-  if gh api -X DELETE "repos/$OWNER/$repo/pages/cname" >/dev/null 2>&1; then
-    log "custom domain removed if present"
+  if (( APPLY && REMOVE_CUSTOM_DOMAINS )); then
+    if gh api -X DELETE "repos/$OWNER/$repo/pages/cname" >/dev/null 2>&1; then
+      log "custom domain removed if present"
+    else
+      log "custom domain unchanged or no permission/API support"
+    fi
   else
-    log "custom domain unchanged or no permission/API support"
+    log "custom domain preserved (removal requires --apply --remove-custom-domains)"
   fi
 
-  sleep 1
+  if (( APPLY )); then sleep 1; fi
 
   if out="$(gh api "repos/$OWNER/$repo/pages" 2>&1)"; then
     log "enabled: yes"
