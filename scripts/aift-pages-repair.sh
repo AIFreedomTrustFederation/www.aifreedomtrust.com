@@ -83,7 +83,12 @@ normalize_pages(){
     return 0
   fi
 
-  if gh api "repos/$OWNER/$repo/pages" >/dev/null 2>&1; then
+  # Only an explicit 404 means Pages is absent. Permission, rate-limit,
+  # transport and server errors must never trigger a Pages-creation POST.
+  local pages_probe pages_rc=0 pages_status
+  pages_probe="$(gh api --include "repos/$OWNER/$repo/pages" 2>&1)" || pages_rc=$?
+  pages_status="$(printf '%s\n' "$pages_probe" | tr -d '\r' | sed -nE 's/^HTTP\/[0-9.]+[[:space:]]+([0-9]{3})([[:space:]].*)?$/\1/p' | tail -n 1)"
+  if [[ "$pages_status" == 200 && "$pages_rc" == 0 ]]; then
     if (( APPLY )); then
       gh api -X PUT "repos/$OWNER/$repo/pages" \
         -f source.branch="$branch" \
@@ -91,7 +96,7 @@ normalize_pages(){
     else
       log "would update Pages source to $branch (no change made)"
     fi
-  else
+  elif [[ "$pages_status" == 404 && "$pages_rc" != 0 ]]; then
     if (( APPLY )); then
       gh api -X POST "repos/$OWNER/$repo/pages" \
         -f source.branch="$branch" \
@@ -99,6 +104,9 @@ normalize_pages(){
     else
       log "would enable Pages from $branch (no change made)"
     fi
+  else
+    log "Pages probe failed (HTTP ${pages_status:-unknown}); refusing changes for $repo"
+    return 1
   fi
 
   if (( APPLY && REMOVE_CUSTOM_DOMAINS )); then

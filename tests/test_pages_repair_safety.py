@@ -14,6 +14,18 @@ if [ "$1" = api ]; then
   case " $* " in *" -X "*) exit 0 ;; esac
   case " $* " in *" --jq "*) printf 'public\n'; exit 0 ;; esac
   case " $* " in *"/branches/"*) exit 0 ;; esac
+  case " $* " in *" --include "*)
+    if [ "$PROBE_STATUS" != 0 ]; then
+      if [ "$PROBE_STATUS" != none ]; then printf 'HTTP/2.0 %s Error\n\n' "$PROBE_STATUS"; fi
+      exit 1
+    fi
+    if [ "$MISSING_PAGES" = 1 ]; then
+      case " $* " in *"booksmith-ai/pages"*) printf 'HTTP/2.0 404 Not Found\n\n'; exit 1 ;; esac
+    fi
+    printf 'HTTP/2.0 200 OK\n\n'
+    printf '%s\n' '{"html_url":"https://example.invalid","status":"built","source":{"branch":"main"},"cname":"preserve.example"}'
+    exit 0 ;;
+  esac
   case " $* " in *"/pages "*)
     if [ "$MISSING_PAGES" = 1 ]; then
       case " $* " in *"booksmith-ai/pages"*) exit 1 ;; esac
@@ -23,10 +35,10 @@ if [ "$1" = api ]; then
   esac
 fi
 exit 3
-''' 
+'''
 
 class PagesRepairSafetyTests(unittest.TestCase):
-    def invoke(self, *args, missing_pages=False):
+    def invoke(self, *args, missing_pages=False, probe_status='0'):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             bindir = root / 'bin'
@@ -43,7 +55,7 @@ class PagesRepairSafetyTests(unittest.TestCase):
             calls = root / 'calls.jsonl'
             env = dict(os.environ, HOME=str(root), GH_CALLS=str(calls),
                        PATH=str(bindir) + os.pathsep + os.environ['PATH'],
-                       MISSING_PAGES='1' if missing_pages else '0')
+                       MISSING_PAGES='1' if missing_pages else '0', PROBE_STATUS=probe_status)
             result = subprocess.run(['bash', str(SCRIPT), *args], env=env,
                                     capture_output=True, text=True, timeout=15)
             lines = calls.read_text().splitlines() if calls.exists() else []
@@ -83,6 +95,21 @@ class PagesRepairSafetyTests(unittest.TestCase):
         result, calls, _ = self.invoke('--unexpected')
         self.assertEqual(result.returncode, 2)
         self.assertEqual(calls, [])
+
+    def test_pages_probe_denied_or_unavailable_fails_closed(self):
+        for status in ('401', '403', '429', '500', 'none'):
+            with self.subTest(status=status):
+                result, calls, report = self.invoke('--apply', '--remove-custom-domains', probe_status=status)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertEqual(self.mutations(calls), [])
+                self.assertIn('refusing changes', report)
+
+    def test_read_only_audit_does_not_report_permission_error_as_missing_pages(self):
+        result, calls, report = self.invoke(probe_status='403')
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(self.mutations(calls), [])
+        self.assertNotIn('would enable Pages', report)
+        self.assertIn('HTTP 403', report)
 
 if __name__ == '__main__':
     unittest.main()
