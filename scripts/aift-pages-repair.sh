@@ -90,17 +90,23 @@ normalize_pages(){
   pages_status="$(printf '%s\n' "$pages_probe" | tr -d '\r' | sed -nE 's/^HTTP\/[0-9.]+[[:space:]]+([0-9]{3})([[:space:]].*)?$/\1/p' | tail -n 1)"
   if [[ "$pages_status" == 200 && "$pages_rc" == 0 ]]; then
     if (( APPLY )); then
-      gh api -X PUT "repos/$OWNER/$repo/pages" \
+      if ! gh api -X PUT "repos/$OWNER/$repo/pages" \
         -f source.branch="$branch" \
-        -f source.path="/" >/dev/null || log "PUT Pages source failed"
+        -f source.path="/" >/dev/null; then
+        log "PUT Pages source failed; stopping before custom-domain changes"
+        return 1
+      fi
     else
       log "would update Pages source to $branch (no change made)"
     fi
   elif [[ "$pages_status" == 404 && "$pages_rc" != 0 ]]; then
     if (( APPLY )); then
-      gh api -X POST "repos/$OWNER/$repo/pages" \
+      if ! gh api -X POST "repos/$OWNER/$repo/pages" \
         -f source.branch="$branch" \
-        -f source.path="/" >/dev/null || log "POST Pages enable failed"
+        -f source.path="/" >/dev/null; then
+        log "POST Pages enable failed; stopping before custom-domain changes"
+        return 1
+      fi
     else
       log "would enable Pages from $branch (no change made)"
     fi
