@@ -28,6 +28,7 @@ class PagesReconcileTests(unittest.TestCase):
             journal = root / "writes.jsonl"
             default_snapshot = {
                 "schema_version": 1, "repository": "www.aifreedomtrust.com",
+                "intended_source": {"branch": "gh-pages", "path": "/"},
                 "existed": True,
                 "previous": {"source": {"branch": "main", "path": "/"}, "cname": "old.example"},
             }
@@ -80,6 +81,32 @@ class PagesReconcileTests(unittest.TestCase):
 
     def test_invalid_journal_fails_without_api_calls(self):
         result, output, calls = self.invoke(["{bad json"])
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(output["status"], "invalid_evidence")
+        self.assertEqual(calls, [])
+
+    def test_mixed_run_snapshot_branch_rejected_before_live_lookup(self):
+        snapshot = {"schema_version": 1, "repository": "www.aifreedomtrust.com",
+                    "intended_source": {"branch": "main", "path": "/"},
+                    "existed": True, "previous": {"source": {"branch": "main", "path": "/"}}}
+        result, output, calls = self.invoke([self.event()], snapshots=[snapshot])
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(output["status"], "invalid_evidence")
+        self.assertEqual(calls, [])
+
+    def test_missing_snapshot_intent_rejected_before_live_lookup(self):
+        snapshot = {"schema_version": 1, "repository": "www.aifreedomtrust.com",
+                    "existed": True, "previous": {"source": {"branch": "main", "path": "/"}}}
+        result, output, calls = self.invoke([self.event()], snapshots=[snapshot])
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(output["status"], "invalid_evidence")
+        self.assertEqual(calls, [])
+
+    def test_malformed_snapshot_intent_rejected_without_events(self):
+        snapshot = {"schema_version": 1, "repository": "www.aifreedomtrust.com",
+                    "intended_source": {"branch": "gh-pages", "path": "/docs"},
+                    "existed": True, "previous": {"source": {"branch": "main", "path": "/"}}}
+        result, output, calls = self.invoke([], snapshots=[snapshot])
         self.assertEqual(result.returncode, 1)
         self.assertEqual(output["status"], "invalid_evidence")
         self.assertEqual(calls, [])

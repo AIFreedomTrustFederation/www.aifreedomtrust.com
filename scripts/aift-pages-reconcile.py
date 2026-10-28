@@ -38,11 +38,19 @@ def validate_repo(repo):
     return repo
 
 
+def valid_intended_source(source):
+    return (isinstance(source, dict)
+            and isinstance(source.get("branch"), str)
+            and bool(source["branch"])
+            and source.get("path") == "/")
+
+
 def reconcile(snapshots, events):
     prior = {}
     for item in snapshots:
         repo = validate_repo(item.get("repository"))
-        if repo in prior or not isinstance(item.get("existed"), bool):
+        if (repo in prior or not isinstance(item.get("existed"), bool)
+                or not valid_intended_source(item.get("intended_source"))):
             raise ValueError(f"duplicate or invalid pre-change snapshot for {repo}")
         prior[repo] = item
 
@@ -54,8 +62,8 @@ def reconcile(snapshots, events):
         phase = item.get("phase")
         source = item.get("intended_source")
         if (repo not in prior or operation not in OPERATIONS or phase not in ("attempted", "verified")
-                or not isinstance(source, dict) or not isinstance(source.get("branch"), str)
-                or source.get("path") != "/"):
+                or not valid_intended_source(source)
+                or source != prior[repo]["intended_source"]):
             raise ValueError(f"invalid journal event for {repo}")
         key = (repo, operation)
         if phase == "attempted":
