@@ -60,7 +60,7 @@ count=0
 count=$((count + 1))
 printf '%s\\n' "$count" > "$HOME/dd-count"
 case " $* " in
-  *" oflag=append "*" conv=notrunc,fsync "*) ;;
+  *" oflag=append "*"conv=notrunc,fsync"*) ;;
   *) exit 73 ;;
 esac
 if [ "$count" -eq "$DD_FAIL_AT" ]; then exit 74; fi
