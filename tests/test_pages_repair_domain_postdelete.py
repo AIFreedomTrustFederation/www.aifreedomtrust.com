@@ -14,10 +14,7 @@ SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "aift-pages-repair.sh
 GH_STUB = r'''#!/bin/sh
 printf '%s\n' "$*" >> "$GH_CALLS"
 if [ "$1" = auth ] && [ "$2" = status ]; then exit 0; fi
-if [ "$1" = repo ] && [ "$2" = view ]; then
-  [ "$3" = 'AIFreedomTrustFederation/aifreedomtrustfederation.github.io' ]
-  exit $?
-fi
+if [ "$1" = repo ] && [ "$2" = view ]; then exit 0; fi
 if [ "$1" = api ]; then
   case " $* " in
     *"/branches/"*) exit 0 ;;
@@ -37,6 +34,13 @@ if [ "$1" = api ]; then
       else
         printf '{"source":{"branch":"main","path":"/"},"cname":"before.example"}\n'
       fi
+      exit 0 ;;
+    *"/pages "*) 
+      case "$2" in
+        */aifreedomtrustfederation.github.io/pages|*/AI-Freedom-Trust/pages) branch=main ;;
+        *) branch=gh-pages ;;
+      esac
+      printf '{"source":{"branch":"%s","path":"/"},"cname":null}\n' "$branch"
       exit 0 ;;
   esac
 fi
