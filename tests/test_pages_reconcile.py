@@ -89,6 +89,26 @@ class PagesReconcileTests(unittest.TestCase):
         self.assertEqual(output["status"], "invalid_evidence")
         self.assertEqual(calls, [])
 
+    def test_duplicate_journal_phase_rejected_before_live_lookup(self):
+        # The last value is valid, so ordinary json.loads silently accepted it.
+        raw = json.dumps(self.event()).replace(
+            '"phase": "attempted"', '"phase": "verified", "phase": "attempted"')
+        result, output, calls = self.invoke([raw])
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(output["status"], "invalid_evidence")
+        self.assertIn("duplicate JSON field", output["error"])
+        self.assertEqual(calls, [])
+
+    def test_duplicate_nested_branch_rejected_before_live_lookup(self):
+        # Duplicate nested source keys must not be resolved by last-value wins.
+        raw = json.dumps(self.event()).replace(
+            '"branch": "gh-pages"', '"branch": "main", "branch": "gh-pages"')
+        result, output, calls = self.invoke([raw])
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(output["status"], "invalid_evidence")
+        self.assertIn("duplicate JSON field", output["error"])
+        self.assertEqual(calls, [])
+
     def test_mixed_run_snapshot_branch_rejected_before_live_lookup(self):
         snapshot = {"schema_version": 1, "repository": "www.aifreedomtrust.com",
                     "intended_source": {"branch": "main", "path": "/"},

@@ -18,15 +18,25 @@ REPO_NAME = re.compile(r"^[A-Za-z0-9_.-]+$")
 RUN_ID_PATTERN = re.compile(r"^[A-Za-z0-9_.-]{8,128}$")
 
 
+def unique_json_object(pairs):
+    """Reject duplicate keys at any JSON nesting level in recovery evidence."""
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"duplicate JSON field {key!r}")
+        result[key] = value
+    return result
+
+
 def records(path):
     result = []
     for number, line in enumerate(Path(path).read_text(encoding="utf-8").splitlines(), 1):
         if not line.strip():
             continue
         try:
-            item = json.loads(line)
-        except json.JSONDecodeError as exc:
-            raise ValueError(f"{path}:{number}: invalid JSON") from exc
+            item = json.loads(line, object_pairs_hook=unique_json_object)
+        except (json.JSONDecodeError, ValueError) as exc:
+            raise ValueError(f"{path}:{number}: invalid or ambiguous JSON: {exc}") from exc
         if not isinstance(item, dict) or item.get("schema_version") != 1:
             raise ValueError(f"{path}:{number}: invalid record schema")
         result.append(item)
