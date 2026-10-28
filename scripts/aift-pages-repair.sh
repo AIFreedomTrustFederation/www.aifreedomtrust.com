@@ -184,7 +184,7 @@ snapshot_pages_before_write(){
       return 1
     fi
     if ! printf '%s' "$prior" | validate_unique_pages_json; then
-      log "Invalid or ambiguous Pages pre-change JSON for $repo; refusing write"
+      log "Invalid Pages pre-change state for $repo (ambiguous JSON); refusing write"
       return 1
     fi
     # Match the reconciler's previous-state contract before any approved write.
