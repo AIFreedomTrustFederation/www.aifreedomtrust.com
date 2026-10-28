@@ -7,6 +7,7 @@ BASE_URL="https://aifreedomtrustfederation.github.io"
 REPORT="$HOME/aift-pages-repair-report.txt"
 SNAPSHOT_FILE=""
 JOURNAL_FILE=""
+RUN_ID=""
 
 PUBLIC_GH_PAGES=(
   "aifreedomtrustfederation.github.io|main"
@@ -73,6 +74,10 @@ if (( APPLY )); then
     log "Cannot create recovery snapshot file; refusing all mutations"
     exit 1
   fi
+  # The unique mktemp basename correlates evidence from this execution.
+  # It is not a cryptographic authenticity guarantee.
+  RUN_ID="${SNAPSHOT_FILE##*/}"
+  log "Recovery execution ID: $RUN_ID"
   log "Pre-change recovery snapshots: $SNAPSHOT_FILE (not a rollback or success record)"
   if ! JOURNAL_FILE="$(mktemp "$HOME/aift-pages-writes.XXXXXXXX.jsonl")"; then
     log "Cannot create private write-outcome journal; refusing all mutations"
@@ -122,14 +127,14 @@ snapshot_pages_before_write(){
       log "Invalid Pages pre-change state for $repo; refusing write"
       return 1
     fi
-    if ! record="$(printf '%s' "$prior" | jq -cs --arg repo "$repo" --arg branch "$intended_branch" \
-      '.[0] | {schema_version:1, repository:$repo, intended_source:{branch:$branch,path:"/"}, existed:true, previous:{source:{branch:.source.branch,path:.source.path}, cname:.cname, cname_observed:has("cname")}}')"; then
+    if ! record="$(printf '%s' "$prior" | jq -cs --arg repo "$repo" --arg branch "$intended_branch" --arg run_id "$RUN_ID" \
+      '.[0] | {schema_version:1, run_id:$run_id, repository:$repo, intended_source:{branch:$branch,path:"/"}, existed:true, previous:{source:{branch:.source.branch,path:.source.path}, cname:.cname, cname_observed:has("cname")}}')"; then
       log "Cannot encode Pages pre-change state for $repo; refusing write"
       return 1
     fi
   elif [[ "$pages_status" == 404 ]]; then
-    if ! record="$(jq -nc --arg repo "$repo" --arg branch "$intended_branch" \
-      '{schema_version:1, repository:$repo, intended_source:{branch:$branch,path:"/"}, existed:false, previous:null}')"; then
+    if ! record="$(jq -nc --arg repo "$repo" --arg branch "$intended_branch" --arg run_id "$RUN_ID" \
+      '{schema_version:1, run_id:$run_id, repository:$repo, intended_source:{branch:$branch,path:"/"}, existed:false, previous:null}')"; then
       log "Cannot encode absent Pages state for $repo; refusing write"
       return 1
     fi
@@ -148,8 +153,8 @@ snapshot_pages_before_write(){
 journal_event(){
   local repo="$1" operation="$2" phase="$3" branch="$4" event
   if ! event="$(jq -nc --arg repo "$repo" --arg operation "$operation" \
-      --arg phase "$phase" --arg branch "$branch" \
-      '{schema_version:1, observed_at:(now|todateiso8601), repository:$repo, operation:$operation, phase:$phase, intended_source:{branch:$branch,path:"/"}}')"; then
+      --arg phase "$phase" --arg branch "$branch" --arg run_id "$RUN_ID" \
+      '{schema_version:1, run_id:$run_id, observed_at:(now|todateiso8601), repository:$repo, operation:$operation, phase:$phase, intended_source:{branch:$branch,path:"/"}}')"; then
     log "Cannot encode write outcome for $repo; stopping"
     return 1
   fi

@@ -16,7 +16,7 @@ cat "$GH_STATE"
 
 
 class PagesReconcileTests(unittest.TestCase):
-    def invoke(self, events, *, mode="ok", current=None, snapshots=None):
+    def invoke(self, events, *, mode="ok", current=None, snapshots=None, run_id=None):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             binpath = root / "bin"
@@ -32,6 +32,8 @@ class PagesReconcileTests(unittest.TestCase):
                 "existed": True,
                 "previous": {"source": {"branch": "main", "path": "/"}, "cname": "old.example"},
             }
+            if run_id is not None:
+                default_snapshot["run_id"] = run_id
             snapshot.write_text("\n".join(json.dumps(x) for x in (snapshots if snapshots is not None else [default_snapshot])) + "\n")
             journal.write_text("\n".join(json.dumps(x) if not isinstance(x, str) else x for x in events) + "\n")
             state = root / "state.json"
@@ -56,6 +58,7 @@ class PagesReconcileTests(unittest.TestCase):
         result, output, calls = self.invoke([self.event(), self.event(phase="verified")])
         self.assertEqual(result.returncode, 0)
         self.assertEqual(output["verified_events"], 1)
+        self.assertEqual(output["run_id_binding"], "legacy_unbound")
         self.assertEqual(output["unmatched_attempts"], [])
         self.assertEqual(calls, [])
 
@@ -117,6 +120,53 @@ class PagesReconcileTests(unittest.TestCase):
         self.assertEqual(output["status"], "invalid_evidence")
         self.assertEqual(calls, [])
 
+
+    def test_matching_execution_id_is_bound_without_claiming_authenticity(self):
+        run_id = "aift-pages-before.ABCDEFGH.jsonl"
+        event = self.event()
+        event["run_id"] = run_id
+        result, output, calls = self.invoke([event], run_id=run_id)
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(output["run_id"], run_id)
+        self.assertEqual(output["run_id_binding"], "bound")
+        self.assertIn("not authenticity proof", output["warning"])
+        self.assertEqual(len(calls), 1)
+
+    def test_different_execution_ids_fail_before_live_lookup(self):
+        event = self.event()
+        event["run_id"] = "aift-pages-before.DIFFERNT.jsonl"
+        result, output, calls = self.invoke(
+            [event], run_id="aift-pages-before.ABCDEFGH.jsonl")
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(output["status"], "invalid_evidence")
+        self.assertEqual(calls, [])
+
+    def test_bound_snapshot_with_legacy_journal_fails_closed(self):
+        result, output, calls = self.invoke(
+            [self.event()], run_id="aift-pages-before.ABCDEFGH.jsonl")
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(output["status"], "invalid_evidence")
+        self.assertEqual(calls, [])
+
+    def test_invalid_execution_identifier_rejected(self):
+        event = self.event()
+        event["run_id"] = "../bad"
+        result, output, calls = self.invoke([event], run_id="../bad")
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(output["status"], "invalid_evidence")
+        self.assertEqual(calls, [])
+
+    def test_mixed_snapshot_execution_ids_rejected_without_events(self):
+        first = {"schema_version": 1, "repository": "www.aifreedomtrust.com",
+                 "run_id": "aift-pages-before.ABCDEFGH.jsonl",
+                 "intended_source": {"branch": "gh-pages", "path": "/"},
+                 "existed": False, "previous": None}
+        second = {**first, "repository": "booksmith-ai",
+                  "run_id": "aift-pages-before.DIFFERNT.jsonl"}
+        result, output, calls = self.invoke([], snapshots=[first, second])
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(output["status"], "invalid_evidence")
+        self.assertEqual(calls, [])
 
 if __name__ == "__main__":
     unittest.main()
