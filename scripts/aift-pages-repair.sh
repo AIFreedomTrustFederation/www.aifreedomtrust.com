@@ -121,8 +121,10 @@ snapshot_pages_before_write(){
       log "Cannot capture Pages pre-change state for $repo; refusing write"
       return 1
     fi
+    # Match the reconciler's previous-state contract before any approved write.
+    # Otherwise a successful mutation could leave unusable rollback evidence.
     if ! printf '%s' "$prior" | jq -es \
-      'length == 1 and (.[0] | type == "object" and (.source | type == "object") and (.source.branch | type == "string") and (.source.path | type == "string"))' \
+      'length == 1 and (.[0] | type == "object" and (.source | type == "object") and (.source.branch | type == "string" and length > 0) and (.source.path == "/" or .source.path == "/docs") and (.cname == null or (.cname | type == "string")))' \
       >/dev/null 2>&1; then
       log "Invalid Pages pre-change state for $repo; refusing write"
       return 1

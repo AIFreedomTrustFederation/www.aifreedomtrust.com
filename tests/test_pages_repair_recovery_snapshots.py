@@ -28,9 +28,13 @@ if [ "$1" = api ]; then
       printf 'HTTP/2.0 200 OK\n\n'
       exit 0 ;;
     *"aifreedomtrustfederation.github.io/pages "*)
-      if [ "$GH_MODE" = malformed ]; then printf '{invalid json}\n'; else
-        printf '{"source":{"branch":"original-branch","path":"/docs"},"cname":"original.example"}\n'
-      fi
+      case "$GH_MODE" in
+        malformed) printf '{invalid json}\n' ;;
+        empty_branch) printf '{"source":{"branch":"","path":"/"},"cname":null}\n' ;;
+        invalid_path) printf '{"source":{"branch":"main","path":"/bad"},"cname":null}\n' ;;
+        invalid_cname) printf '{"source":{"branch":"main","path":"/"},"cname":123}\n' ;;
+        *) printf '{"source":{"branch":"original-branch","path":"/docs"},"cname":"original.example"}\n' ;;
+      esac
       exit 0 ;;
   esac
 fi
@@ -98,6 +102,24 @@ class PagesRecoverySnapshotTests(unittest.TestCase):
         self.assertEqual(records, [])
         self.assertFalse(any(" -X " in f" {call} " for call in calls))
         self.assertIn("Invalid Pages pre-change state", report)
+
+    def assert_invalid_prechange_blocks_writes(self, mode):
+        result, files, records, calls, report, _ = self.invoke(mode)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(len(files), 1)
+        self.assertEqual(records, [])
+        self.assertFalse(any(" -X " in f" {call} " for call in calls))
+        self.assertIn("Invalid Pages pre-change state", report)
+
+    def test_empty_previous_branch_blocks_all_writes(self):
+        self.assert_invalid_prechange_blocks_writes("empty_branch")
+
+    def test_invalid_previous_path_blocks_all_writes(self):
+        self.assert_invalid_prechange_blocks_writes("invalid_path")
+
+    def test_invalid_previous_domain_blocks_all_writes(self):
+        self.assert_invalid_prechange_blocks_writes("invalid_cname")
+
 
 if __name__ == "__main__":
     unittest.main()
