@@ -75,8 +75,16 @@ def valid_previous_snapshot(item):
         return False
     if "cname" in previous and previous["cname"] is not None and not isinstance(previous["cname"], str):
         return False
-    if "cname_observed" in previous and not isinstance(previous["cname_observed"], bool):
-        return False
+    if "cname_observed" in previous:
+        observed = previous["cname_observed"]
+        if not isinstance(observed, bool):
+            return False
+        # A claimed observation must include the observed field. When the API
+        # omitted cname, the serialized null is not evidence of an empty domain.
+        if observed and "cname" not in previous:
+            return False
+        if not observed and previous.get("cname") is not None:
+            return False
     return True
 
 

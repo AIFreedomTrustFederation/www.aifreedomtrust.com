@@ -266,5 +266,49 @@ class PagesReconcileTests(unittest.TestCase):
         self.assertEqual(output["unmatched_attempts"][0]["operation"], "remove_custom_domain")
         self.assertEqual(len(calls), 1)
 
+    def test_observed_domain_flag_without_cname_rejected(self):
+        snapshot = {"schema_version": 1, "repository": "www.aifreedomtrust.com",
+                    "intended_source": {"branch": "gh-pages", "path": "/"},
+                    "existed": True, "previous": {
+                        "source": {"branch": "main", "path": "/"},
+                        "cname_observed": True}}
+        result, output, calls = self.invoke([self.event()], snapshots=[snapshot])
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(output["status"], "invalid_evidence")
+        self.assertEqual(calls, [])
+
+    def test_unobserved_domain_flag_with_named_domain_rejected(self):
+        snapshot = {"schema_version": 1, "repository": "www.aifreedomtrust.com",
+                    "intended_source": {"branch": "gh-pages", "path": "/"},
+                    "existed": True, "previous": {
+                        "source": {"branch": "main", "path": "/"},
+                        "cname": "old.example", "cname_observed": False}}
+        result, output, calls = self.invoke([self.event()], snapshots=[snapshot])
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(output["status"], "invalid_evidence")
+        self.assertEqual(calls, [])
+
+    def test_unobserved_domain_with_null_keeps_unknown_evidence(self):
+        snapshot = {"schema_version": 1, "repository": "www.aifreedomtrust.com",
+                    "intended_source": {"branch": "gh-pages", "path": "/"},
+                    "existed": True, "previous": {
+                        "source": {"branch": "main", "path": "/"},
+                        "cname": None, "cname_observed": False}}
+        result, output, calls = self.invoke([self.event()], snapshots=[snapshot])
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(output["unmatched_attempts"][0]["previous"]["cname_observed"], False)
+        self.assertEqual(len(calls), 1)
+
+    def test_observed_empty_domain_with_null_is_valid(self):
+        snapshot = {"schema_version": 1, "repository": "www.aifreedomtrust.com",
+                    "intended_source": {"branch": "gh-pages", "path": "/"},
+                    "existed": True, "previous": {
+                        "source": {"branch": "main", "path": "/"},
+                        "cname": None, "cname_observed": True}}
+        result, output, calls = self.invoke([self.event()], snapshots=[snapshot])
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(output["unmatched_attempts"][0]["previous"]["cname_observed"], True)
+        self.assertEqual(len(calls), 1)
+
 if __name__ == "__main__":
     unittest.main()
