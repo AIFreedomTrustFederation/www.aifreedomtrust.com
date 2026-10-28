@@ -31,9 +31,7 @@ if [ "$1" = api ]; then
     exit 0 ;;
   esac
   case " $* " in *"/pages "*)
-    if [ "$MISSING_PAGES" = 1 ]; then
-      case " $* " in *"booksmith-ai/pages"*) exit 1 ;; esac
-    fi
+    # A successful synthetic POST makes the later Pages GET available.
     branch=gh-pages
     case " $* " in
       *"aifreedomtrustfederation.github.io/pages"*|*"AI-Freedom-Trust/pages"*) branch=main ;;
