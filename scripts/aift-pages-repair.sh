@@ -56,6 +56,11 @@ for tool in gh jq curl; do
     exit 1
   fi
 done
+# Only approved apply mode requires GNU dd for fsync-backed recovery writes.
+if (( APPLY )) && ! command -v dd >/dev/null 2>&1; then
+  printf 'Missing dd; cannot safely persist apply-mode recovery evidence\n' >&2
+  exit 1
+fi
 : > "$REPORT"
 if ! gh auth status >/dev/null 2>&1; then
   log 'GitHub CLI authentication required; run gh auth login separately.'
@@ -113,6 +118,14 @@ if (( APPLY )); then
   preflight_pages_targets || exit 1
 fi
 
+# Flush each recovery record before any subsequent API mutation. A successful
+# dd conv=fsync waits for file data/metadata to reach the storage stack; this
+# is not an atomic multi-repository transaction or a directory-fsync guarantee.
+append_recovery_record(){
+  local path="$1" record="$2"
+  printf '%s\n' "$record" | dd of="$path" oflag=append conv=notrunc,fsync status=none
+}
+
 snapshot_pages_before_write(){
   local repo="$1" intended_branch="$2" pages_status="$3" prior record
   if [[ "$pages_status" == 200 ]]; then
@@ -144,14 +157,15 @@ snapshot_pages_before_write(){
     log "Unknown Pages pre-change state for $repo; refusing write"
     return 1
   fi
-  if ! printf '%s\n' "$record" >> "$SNAPSHOT_FILE"; then
+  if ! append_recovery_record "$SNAPSHOT_FILE" "$record"; then
     log "Cannot persist Pages pre-change state for $repo; refusing write"
     return 1
   fi
 }
 
 # Write-ahead attempt events are conservative; an unmatched attempt is NOT
-# proof of a successful write. This JSONL is not an fsync'd transaction log.
+# proof of a successful write. Records are fsync'd, but directory durability,
+# multi-repository atomicity and automatic rollback are not established.
 journal_event(){
   local repo="$1" operation="$2" phase="$3" branch="$4" event
   if ! event="$(jq -nc --arg repo "$repo" --arg operation "$operation" \
@@ -160,7 +174,7 @@ journal_event(){
     log "Cannot encode write outcome for $repo; stopping"
     return 1
   fi
-  if ! printf '%s\n' "$event" >> "$JOURNAL_FILE"; then
+  if ! append_recovery_record "$JOURNAL_FILE" "$event"; then
     log "Cannot append write outcome for $repo; stopping"
     return 1
   fi

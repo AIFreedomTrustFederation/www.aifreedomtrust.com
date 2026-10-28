@@ -1,6 +1,7 @@
 """Black-box tests for Pages mutation evidence; all GitHub calls are stubs."""
 import json
 import os
+import shutil
 from pathlib import Path
 import stat
 import subprocess
@@ -36,7 +37,7 @@ exit 3
 '''
 
 class PagesWriteOutcomeTests(unittest.TestCase):
-    def invoke(self, mode, *flags):
+    def invoke(self, mode, *flags, dd_fail_at=None):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             bindir = root / "bin"
@@ -49,9 +50,28 @@ class PagesWriteOutcomeTests(unittest.TestCase):
                 p = bindir / name
                 p.write_text(body)
                 p.chmod(0o755)
+            if dd_fail_at is not None:
+                real_dd = shutil.which("dd")
+                self.assertIsNotNone(real_dd)
+                dd = bindir / "dd"
+                dd.write_text("""#!/bin/sh
+count=0
+[ ! -f "$HOME/dd-count" ] || count=$(cat "$HOME/dd-count")
+count=$((count + 1))
+printf '%s\\n' "$count" > "$HOME/dd-count"
+case " $* " in
+  *" oflag=append "*" conv=notrunc,fsync "*) ;;
+  *) exit 73 ;;
+esac
+if [ "$count" -eq "$DD_FAIL_AT" ]; then exit 74; fi
+exec "$REAL_DD" "$@"
+""")
+                dd.chmod(0o755)
             calls_file = root / "calls.txt"
             env = dict(os.environ, HOME=str(root), GH_CALLS=str(calls_file),
-                       GH_MODE=mode, PATH=str(bindir) + os.pathsep + os.environ["PATH"])
+                       GH_MODE=mode, DD_FAIL_AT=str(dd_fail_at or 0),
+                       REAL_DD=shutil.which("dd") or "",
+                       PATH=str(bindir) + os.pathsep + os.environ["PATH"])
             result = subprocess.run(["bash", str(SCRIPT), *flags],
                                     env=env, capture_output=True, text=True, timeout=20)
             journals = list(root.glob("aift-pages-writes.*.jsonl"))
@@ -94,6 +114,37 @@ class PagesWriteOutcomeTests(unittest.TestCase):
         )
         self.assertTrue(any(" -X DELETE " in f" {c} " for c in calls))
         self.assertFalse(any("www.aifreedomtrust.com/pages" in c for c in calls))
+
+    def test_snapshot_fsync_failure_blocks_first_write(self):
+        result, _, records, _, calls, report = self.invoke(
+            "normal", "--apply", dd_fail_at=1
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(records, [])
+        self.assertFalse(any(" -X " in f" {c} " for c in calls))
+        self.assertIn("Cannot persist Pages pre-change state", report)
+
+    def test_attempt_fsync_failure_blocks_first_write(self):
+        result, _, records, _, calls, report = self.invoke(
+            "normal", "--apply", dd_fail_at=2
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(records, [])
+        self.assertFalse(any(" -X " in f" {c} " for c in calls))
+        self.assertIn("Cannot append write outcome", report)
+
+    def test_verification_fsync_failure_retains_unmatched_attempt(self):
+        result, _, records, _, calls, report = self.invoke(
+            "normal", "--apply", dd_fail_at=3
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(
+            [(r["operation"], r["phase"]) for r in records],
+            [("update_pages_source", "attempted")],
+        )
+        self.assertTrue(any(" -X PUT " in f" {c} " for c in calls))
+        self.assertFalse(any("www.aifreedomtrust.com/pages" in c for c in calls))
+        self.assertIn("Cannot append write outcome", report)
 
     def test_read_only_has_no_journal_or_writes(self):
         result, journals, records, _, calls, report = self.invoke("read_only")
