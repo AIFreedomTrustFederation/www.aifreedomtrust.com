@@ -211,5 +211,21 @@ class PagesReconcileTests(unittest.TestCase):
         self.assertEqual(output["unmatched_attempts"][0]["previous"]["source"]["branch"], "main")
         self.assertEqual(len(calls), 1)
 
+    def test_update_operation_rejected_when_pages_previously_absent(self):
+        snapshot = {"schema_version": 1, "repository": "www.aifreedomtrust.com",
+                    "intended_source": {"branch": "gh-pages", "path": "/"},
+                    "existed": False, "previous": None}
+        result, output, calls = self.invoke([self.event("update_pages_source")],
+                                            snapshots=[snapshot])
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(output["status"], "invalid_evidence")
+        self.assertEqual(calls, [])
+
+    def test_enable_operation_rejected_when_pages_previously_existed(self):
+        result, output, calls = self.invoke([self.event("enable_pages")])
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(output["status"], "invalid_evidence")
+        self.assertEqual(calls, [])
+
 if __name__ == "__main__":
     unittest.main()

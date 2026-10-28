@@ -103,6 +103,8 @@ def reconcile(snapshots, events):
         phase = item.get("phase")
         source = item.get("intended_source")
         if (repo not in prior or operation not in OPERATIONS or phase not in ("attempted", "verified")
+                or (operation == "update_pages_source" and not prior[repo]["existed"])
+                or (operation == "enable_pages" and prior[repo]["existed"])
                 or not valid_intended_source(source)
                 or source != prior[repo]["intended_source"]
                 or evidence_run_id(item) != run_id):
