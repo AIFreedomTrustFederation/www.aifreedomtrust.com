@@ -12,12 +12,14 @@ printf '%s\n' "$*" >> "$GH_CALLS"
 if [ "$1" = auth ] && [ "$2" = status ]; then exit 0; fi
 if [ "$1" = repo ] && [ "$2" = view ]; then exit 0; fi
 if [ "$1" = api ]; then
-  case " $* " in *" -X "*) exit 0 ;; esac
+  case " $* " in *" -X "*)
+    case " $* " in *" -X PUT "*) touch "$GH_WROTE" ;; esac
+    exit 0 ;; esac
   case " $* " in *" --jq "*) printf 'public\n'; exit 0 ;; esac
   case " $* " in *"/branches/"*) exit 0 ;; esac
   case " $* " in *" --include "*) printf 'HTTP/2.0 200 OK\n\n'; exit 0 ;; esac
   case " $* " in *"aifreedomtrustfederation.github.io/pages "*) 
-    if [ "$POSTWRITE_STATUS" = fail ]; then
+    if [ "$POSTWRITE_STATUS" = fail ] && [ -f "$GH_WROTE" ]; then
       printf 'synthetic API error\n' >&2
       exit 22
     fi
@@ -45,7 +47,7 @@ class PagesPostwriteVerificationTests(unittest.TestCase):
             calls_file = root / "calls.txt"
             env = dict(os.environ, HOME=str(root), GH_CALLS=str(calls_file),
                        POSTWRITE_BRANCH=branch, POSTWRITE_PATH=path,
-                       POSTWRITE_STATUS=status,
+                       POSTWRITE_STATUS=status, GH_WROTE=str(root / "wrote"),
                        PATH=str(bindir) + os.pathsep + os.environ["PATH"])
             result = subprocess.run(
                 ["bash", str(SCRIPT), "--apply", "--remove-custom-domains"],
