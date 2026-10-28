@@ -80,5 +80,17 @@ class PagesWriteFailureTests(unittest.TestCase):
         self.assertFalse(any('AI-Freedom-Trust/pages' in call for call in writes), writes)
         self.assertIn('POST Pages enable failed', report)
 
+
+    def test_failed_delete_aborts_before_next_repository(self):
+        result, calls, report = self.invoke('DELETE')
+        self.assertNotEqual(result.returncode, 0, 'A failed DELETE must fail the run')
+        writes = [call for call in calls if ' -X ' in f' {call} ']
+        self.assertEqual(len(writes), 2, writes)
+        self.assertIn('-X PUT', writes[0])
+        self.assertIn('-X DELETE', writes[1])
+        self.assertIn('aifreedomtrustfederation.github.io/pages/cname', writes[1])
+        self.assertFalse(any('www.aifreedomtrust.com/pages' in call for call in calls), calls)
+        self.assertIn('DELETE custom domain failed', report)
+
 if __name__ == '__main__':
     unittest.main()

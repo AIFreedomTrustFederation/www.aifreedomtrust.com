@@ -119,7 +119,8 @@ normalize_pages(){
     if gh api -X DELETE "repos/$OWNER/$repo/pages/cname" >/dev/null 2>&1; then
       log "custom domain removed if present"
     else
-      log "custom domain unchanged or no permission/API support"
+      log "DELETE custom domain failed for $repo; stopping before subsequent repositories"
+      return 1
     fi
   else
     log "custom domain preserved (removal requires --apply --remove-custom-domains)"
