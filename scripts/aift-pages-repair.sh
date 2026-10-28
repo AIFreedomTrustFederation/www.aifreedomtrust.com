@@ -5,6 +5,7 @@ OWNER="AIFreedomTrustFederation"
 ROOT_REPO="aifreedomtrustfederation.github.io"
 BASE_URL="https://aifreedomtrustfederation.github.io"
 REPORT="$HOME/aift-pages-repair-report.txt"
+SNAPSHOT_FILE=""
 
 PUBLIC_GH_PAGES=(
   "aifreedomtrustfederation.github.io|main"
@@ -64,8 +65,53 @@ else
   log 'APPLY MODE: Pages sources may be changed; verify approval before proceeding.'
 fi
 
+# Keep each approved apply run's recovery evidence separate and private.
+# These are pre-change observations, not proof that writes succeeded.
+if (( APPLY )); then
+  if ! SNAPSHOT_FILE="$(mktemp "$HOME/aift-pages-before.XXXXXXXX.jsonl")"; then
+    log "Cannot create recovery snapshot file; refusing all mutations"
+    exit 1
+  fi
+  log "Pre-change recovery snapshots: $SNAPSHOT_FILE (not a rollback or success record)"
+fi
+
 repo_exists(){ gh repo view "$OWNER/$1" >/dev/null 2>&1; }
 branch_exists(){ gh api "repos/$OWNER/$1/branches/$2" >/dev/null 2>&1; }
+
+snapshot_pages_before_write(){
+  local repo="$1" intended_branch="$2" pages_status="$3" prior record
+  if [[ "$pages_status" == 200 ]]; then
+    # A fresh GET avoids relying on HTTP headers or an unvalidated response.
+    if ! prior="$(gh api "repos/$OWNER/$repo/pages" 2>&1)"; then
+      log "Cannot capture Pages pre-change state for $repo; refusing write"
+      return 1
+    fi
+    if ! printf '%s' "$prior" | jq -es \
+      'length == 1 and (.[0] | type == "object" and (.source | type == "object") and (.source.branch | type == "string") and (.source.path | type == "string"))' \
+      >/dev/null 2>&1; then
+      log "Invalid Pages pre-change state for $repo; refusing write"
+      return 1
+    fi
+    if ! record="$(printf '%s' "$prior" | jq -cs --arg repo "$repo" --arg branch "$intended_branch" \
+      '.[0] | {schema_version:1, repository:$repo, intended_source:{branch:$branch,path:"/"}, existed:true, previous:{source:{branch:.source.branch,path:.source.path}, cname:.cname, cname_observed:has("cname")}}')"; then
+      log "Cannot encode Pages pre-change state for $repo; refusing write"
+      return 1
+    fi
+  elif [[ "$pages_status" == 404 ]]; then
+    if ! record="$(jq -nc --arg repo "$repo" --arg branch "$intended_branch" \
+      '{schema_version:1, repository:$repo, intended_source:{branch:$branch,path:"/"}, existed:false, previous:null}')"; then
+      log "Cannot encode absent Pages state for $repo; refusing write"
+      return 1
+    fi
+  else
+    log "Unknown Pages pre-change state for $repo; refusing write"
+    return 1
+  fi
+  if ! printf '%s\n' "$record" >> "$SNAPSHOT_FILE"; then
+    log "Cannot persist Pages pre-change state for $repo; refusing write"
+    return 1
+  fi
+}
 
 normalize_pages(){
   local repo="$1" branch="$2"
@@ -90,6 +136,7 @@ normalize_pages(){
   pages_status="$(printf '%s\n' "$pages_probe" | tr -d '\r' | sed -nE 's/^HTTP\/[0-9.]+[[:space:]]+([0-9]{3})([[:space:]].*)?$/\1/p' | tail -n 1)"
   if [[ "$pages_status" == 200 && "$pages_rc" == 0 ]]; then
     if (( APPLY )); then
+      snapshot_pages_before_write "$repo" "$branch" 200 || return 1
       if ! gh api -X PUT "repos/$OWNER/$repo/pages" \
         -f source.branch="$branch" \
         -f source.path="/" >/dev/null; then
@@ -101,6 +148,7 @@ normalize_pages(){
     fi
   elif [[ "$pages_status" == 404 && "$pages_rc" != 0 ]]; then
     if (( APPLY )); then
+      snapshot_pages_before_write "$repo" "$branch" 404 || return 1
       if ! gh api -X POST "repos/$OWNER/$repo/pages" \
         -f source.branch="$branch" \
         -f source.path="/" >/dev/null; then
