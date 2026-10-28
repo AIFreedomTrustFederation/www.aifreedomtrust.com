@@ -21,14 +21,28 @@ if [ "$1" = api ]; then
       case "$GH_MODE:$*" in
         fail_second:*"www.aifreedomtrust.com/pages"*) exit 22 ;;
       esac
+      touch "$HOME/pages-source-written"
       exit 0 ;;
     *" -X POST "*) exit 0 ;;
-    *" -X DELETE "*) exit 22 ;;
+    *" -X DELETE "*)
+      if [ "$GH_MODE" = duplicate_postdelete ]; then
+        touch "$HOME/pages-domain-deleted"
+        exit 0
+      fi
+      exit 22 ;;
     *"/pages "*)
       case "$*" in
         *"www.aifreedomtrust.com/pages"*) branch=gh-pages ;;
         *) branch=main ;;
       esac
+      if [ "$GH_MODE" = duplicate_postwrite ] && [ -f "$HOME/pages-source-written" ]; then
+        printf '{"source":{"branch":"old","branch":"%s","path":"/"},"cname":null}\n' "$branch"
+        exit 0
+      fi
+      if [ "$GH_MODE" = duplicate_postdelete ] && [ -f "$HOME/pages-domain-deleted" ]; then
+        printf '{"source":{"branch":"%s","path":"/"},"cname":"still.example","cname":null}\n' "$branch"
+        exit 0
+      fi
       printf '{"source":{"branch":"%s","path":"/"},"cname":null,"status":"built"}\n' "$branch"
       exit 0 ;;
   esac
@@ -166,6 +180,38 @@ exec "$REAL_DD" "$@"
         self.assertIn("Recovery directory entries synchronized before publishing writes", report)
         self.assertTrue(any(r["phase"] == "attempted" for r in records))
         self.assertTrue(any(" -X PUT " in f" {c} " for c in calls))
+
+
+    def test_duplicate_postwrite_branch_does_not_count_as_verified(self):
+        result, _, records, _, calls, report = self.invoke(
+            "duplicate_postwrite", "--apply", "--remove-custom-domains"
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(
+            [(r["operation"], r["phase"]) for r in records],
+            [("update_pages_source", "attempted")],
+        )
+        self.assertTrue(any(" -X PUT " in f" {c} " for c in calls))
+        self.assertFalse(any(" -X DELETE " in f" {c} " for c in calls))
+        self.assertFalse(any("www.aifreedomtrust.com/pages" in c for c in calls))
+        self.assertIn("Invalid Pages post-write verification JSON", report)
+
+    def test_duplicate_postdelete_domain_does_not_count_as_verified(self):
+        result, _, records, _, calls, report = self.invoke(
+            "duplicate_postdelete", "--apply", "--remove-custom-domains"
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(
+            [(r["operation"], r["phase"]) for r in records],
+            [
+                ("update_pages_source", "attempted"),
+                ("update_pages_source", "verified"),
+                ("remove_custom_domain", "attempted"),
+            ],
+        )
+        self.assertTrue(any(" -X DELETE " in f" {c} " for c in calls))
+        self.assertFalse(any("www.aifreedomtrust.com/pages" in c for c in calls))
+        self.assertIn("Invalid custom domain post-delete verification JSON", report)
 
     def test_read_only_has_no_journal_or_writes(self):
         result, journals, records, _, calls, report = self.invoke("read_only")
