@@ -303,6 +303,10 @@ normalize_pages(){
       log "Pages post-write verification GET failed for $repo; stopping before custom-domain changes"
       return 1
     fi
+    if ! printf '%s' "$verified_pages" | validate_unique_pages_json; then
+      log "Invalid Pages post-write verification JSON for $repo; stopping before custom-domain changes"
+      return 1
+    fi
     verified_branch="$(printf '%s' "$verified_pages" | jq -er '.source.branch // empty' 2>/dev/null)" || verified_branch=""
     verified_path="$(printf '%s' "$verified_pages" | jq -er '.source.path // empty' 2>/dev/null)" || verified_path=""
     if [[ "$verified_branch" != "$branch" || "$verified_path" != "/" ]]; then
@@ -321,6 +325,10 @@ normalize_pages(){
       local verified_domain
       if ! verified_domain="$(gh api "repos/$OWNER/$repo/pages" 2>&1)"; then
         log "custom domain post-delete verification GET failed for $repo; stopping before subsequent repositories"
+        return 1
+      fi
+      if ! printf '%s' "$verified_domain" | validate_unique_pages_json; then
+        log "Invalid custom domain post-delete verification JSON for $repo; stopping before subsequent repositories"
         return 1
       fi
       if ! printf '%s' "$verified_domain" | jq -es \
