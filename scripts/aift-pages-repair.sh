@@ -237,6 +237,10 @@ normalize_pages(){
     log "branch: $(printf '%s' "$out" | jq -r '.source.branch // empty')"
     log "cname: $(printf '%s' "$out" | jq -r '.cname // empty')"
   else
+    if (( APPLY )); then
+      log "Final Pages status lookup failed for $repo; stopping before subsequent repositories"
+      return 1
+    fi
     log "enabled: no"
     log "$out"
   fi
