@@ -1,0 +1,95 @@
+"""Black-box checks for read-only reconciliation of Pages write evidence."""
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
+import unittest
+
+SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "aift-pages-reconcile.py"
+GH = '''#!/bin/sh
+printf '%s\n' "$*" >> "$GH_CALLS"
+[ "$GH_MODE" = error ] && exit 22
+cat "$GH_STATE"
+'''
+
+
+class PagesReconcileTests(unittest.TestCase):
+    def invoke(self, events, *, mode="ok", current=None, snapshots=None):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            binpath = root / "bin"
+            binpath.mkdir()
+            gh = binpath / "gh"
+            gh.write_text(GH)
+            gh.chmod(0o755)
+            snapshot = root / "before.jsonl"
+            journal = root / "writes.jsonl"
+            default_snapshot = {
+                "schema_version": 1, "repository": "www.aifreedomtrust.com",
+                "existed": True,
+                "previous": {"source": {"branch": "main", "path": "/"}, "cname": "old.example"},
+            }
+            snapshot.write_text("\n".join(json.dumps(x) for x in (snapshots if snapshots is not None else [default_snapshot])) + "\n")
+            journal.write_text("\n".join(json.dumps(x) if not isinstance(x, str) else x for x in events) + "\n")
+            state = root / "state.json"
+            state.write_text(json.dumps(current if current is not None else {
+                "source": {"branch": "gh-pages", "path": "/"}, "cname": None,
+            }))
+            calls = root / "calls.txt"
+            env = dict(os.environ, GH_CALLS=str(calls), GH_STATE=str(state), GH_MODE=mode,
+                       PATH=str(binpath) + os.pathsep + os.environ["PATH"])
+            result = subprocess.run([sys.executable, str(SCRIPT), "--snapshot", str(snapshot),
+                                     "--journal", str(journal)], env=env, capture_output=True,
+                                    text=True, timeout=15)
+            return result, json.loads(result.stdout), calls.read_text().splitlines() if calls.exists() else []
+
+    @staticmethod
+    def event(operation="update_pages_source", phase="attempted"):
+        return {"schema_version": 1, "repository": "www.aifreedomtrust.com",
+                "operation": operation, "phase": phase,
+                "intended_source": {"branch": "gh-pages", "path": "/"}}
+
+    def test_verified_attempt_needs_no_live_lookup(self):
+        result, output, calls = self.invoke([self.event(), self.event(phase="verified")])
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(output["verified_events"], 1)
+        self.assertEqual(output["unmatched_attempts"], [])
+        self.assertEqual(calls, [])
+
+    def test_unmatched_attempt_matching_live_state_remains_unresolved(self):
+        result, output, calls = self.invoke([self.event()])
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(output["unmatched_attempts"][0]["current_observation"], "observed_matches_intent")
+        self.assertEqual(calls, ["api repos/AIFreedomTrustFederation/www.aifreedomtrust.com/pages"])
+        self.assertIn("cannot prove", output["warning"])
+
+    def test_unmatched_domain_delete_with_domain_still_present(self):
+        result, output, calls = self.invoke([self.event("remove_custom_domain")],
+                                            current={"cname": "still.example"})
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(output["unmatched_attempts"][0]["current_observation"], "observed_differs")
+        self.assertEqual(len(calls), 1)
+
+    def test_api_error_is_unknown_not_success(self):
+        result, output, calls = self.invoke([self.event()], mode="error")
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(output["unmatched_attempts"][0]["current_observation"], "unknown")
+        self.assertEqual(len(calls), 1)
+
+    def test_invalid_journal_fails_without_api_calls(self):
+        result, output, calls = self.invoke(["{bad json"])
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(output["status"], "invalid_evidence")
+        self.assertEqual(calls, [])
+
+    def test_orphan_verified_event_fails_closed(self):
+        result, output, calls = self.invoke([self.event(phase="verified")])
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(output["status"], "invalid_evidence")
+        self.assertEqual(calls, [])
+
+
+if __name__ == "__main__":
+    unittest.main()
