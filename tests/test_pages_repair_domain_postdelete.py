@@ -79,7 +79,7 @@ class DomainPostdeleteVerificationTests(unittest.TestCase):
         result, calls, report = self.invoke("stale")
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("post-delete verification", report)
-        self.assertFalse(any("www.aifreedomtrust.com" in call for call in calls))
+        self.assertFalse(any("www.aifreedomtrust.com/pages" in call for call in calls))
 
     def test_missing_cname_field_fails_closed(self):
         result, calls, report = self.invoke("missing")

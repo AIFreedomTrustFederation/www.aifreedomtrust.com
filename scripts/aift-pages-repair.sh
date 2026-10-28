@@ -78,6 +78,30 @@ fi
 repo_exists(){ gh repo view "$OWNER/$1" >/dev/null 2>&1; }
 branch_exists(){ gh api "repos/$OWNER/$1/branches/$2" >/dev/null 2>&1; }
 
+# Resolve every configured publishing target before the first approved write.
+# A branch lookup also establishes that the repository is accessible.
+# Read-only audits retain their existing best-effort behavior.
+preflight_pages_targets(){
+  local item repo branch failed=0
+  log "Preflight: checking every Pages target before any publishing write"
+  for item in "${PUBLIC_GH_PAGES[@]}"; do
+    IFS="|" read -r repo branch <<< "$item"
+    if ! branch_exists "$repo" "$branch"; then
+      log "Preflight failed: missing or inaccessible repository/branch $repo:$branch"
+      failed=1
+    fi
+  done
+  if (( failed )); then
+    log "Preflight aborted: no Pages publishing writes attempted"
+    return 1
+  fi
+  log "Preflight passed: all ${#PUBLIC_GH_PAGES[@]} target repositories and branches accessible"
+}
+
+if (( APPLY )); then
+  preflight_pages_targets || exit 1
+fi
+
 snapshot_pages_before_write(){
   local repo="$1" intended_branch="$2" pages_status="$3" prior record
   if [[ "$pages_status" == 200 ]]; then
