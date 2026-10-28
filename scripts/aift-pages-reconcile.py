@@ -56,6 +56,30 @@ def valid_intended_source(source):
             and source.get("path") == "/")
 
 
+def valid_previous_snapshot(item):
+    """Validate recovery state before presenting it as a rollback reference.
+
+    Legacy snapshots may omit cname_observed; missing evidence is not proof
+    that a custom domain was absent.
+    """
+    previous = item.get("previous")
+    if not item["existed"]:
+        return previous is None
+    if not isinstance(previous, dict):
+        return False
+    source = previous.get("source")
+    if (not isinstance(source, dict)
+            or not isinstance(source.get("branch"), str)
+            or not source["branch"]
+            or source.get("path") not in ("/", "/docs")):
+        return False
+    if "cname" in previous and previous["cname"] is not None and not isinstance(previous["cname"], str):
+        return False
+    if "cname_observed" in previous and not isinstance(previous["cname_observed"], bool):
+        return False
+    return True
+
+
 def reconcile(snapshots, events):
     prior = {}
     run_ids = set()
@@ -63,7 +87,8 @@ def reconcile(snapshots, events):
         run_ids.add(evidence_run_id(item))
         repo = validate_repo(item.get("repository"))
         if (repo in prior or not isinstance(item.get("existed"), bool)
-                or not valid_intended_source(item.get("intended_source"))):
+                or not valid_intended_source(item.get("intended_source"))
+                or not valid_previous_snapshot(item)):
             raise ValueError(f"duplicate or invalid pre-change snapshot for {repo}")
         prior[repo] = item
     if len(run_ids) > 1:

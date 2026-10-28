@@ -168,5 +168,48 @@ class PagesReconcileTests(unittest.TestCase):
         self.assertEqual(output["status"], "invalid_evidence")
         self.assertEqual(calls, [])
 
+    def test_existing_pages_without_prior_state_rejected_before_api_lookup(self):
+        snapshot = {"schema_version": 1, "repository": "www.aifreedomtrust.com",
+                    "intended_source": {"branch": "gh-pages", "path": "/"},
+                    "existed": True, "previous": None}
+        result, output, calls = self.invoke([self.event()], snapshots=[snapshot])
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(output["status"], "invalid_evidence")
+        self.assertEqual(calls, [])
+
+    def test_existing_pages_with_invalid_prior_source_rejected(self):
+        snapshot = {"schema_version": 1, "repository": "www.aifreedomtrust.com",
+                    "intended_source": {"branch": "gh-pages", "path": "/"},
+                    "existed": True, "previous": {"source": {"branch": "", "path": "/"}}}
+        result, output, calls = self.invoke([self.event()], snapshots=[snapshot])
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(output["status"], "invalid_evidence")
+        self.assertEqual(calls, [])
+
+    def test_absent_pages_with_invented_prior_state_rejected(self):
+        snapshot = {"schema_version": 1, "repository": "www.aifreedomtrust.com",
+                    "intended_source": {"branch": "gh-pages", "path": "/"},
+                    "existed": False, "previous": {"source": {"branch": "main", "path": "/"}}}
+        result, output, calls = self.invoke([self.event()], snapshots=[snapshot])
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(output["status"], "invalid_evidence")
+        self.assertEqual(calls, [])
+
+    def test_malformed_prior_domain_evidence_rejected(self):
+        snapshot = {"schema_version": 1, "repository": "www.aifreedomtrust.com",
+                    "intended_source": {"branch": "gh-pages", "path": "/"},
+                    "existed": True, "previous": {"source": {"branch": "main", "path": "/"},
+                    "cname": "old.example", "cname_observed": "yes"}}
+        result, output, calls = self.invoke([self.event()], snapshots=[snapshot])
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(output["status"], "invalid_evidence")
+        self.assertEqual(calls, [])
+
+    def test_legacy_prior_source_without_domain_observed_flag_is_accepted(self):
+        result, output, calls = self.invoke([self.event()])
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(output["unmatched_attempts"][0]["previous"]["source"]["branch"], "main")
+        self.assertEqual(len(calls), 1)
+
 if __name__ == "__main__":
     unittest.main()
