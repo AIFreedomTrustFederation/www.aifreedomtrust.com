@@ -134,7 +134,20 @@ normalize_pages(){
 
   if (( APPLY && REMOVE_CUSTOM_DOMAINS )); then
     if gh api -X DELETE "repos/$OWNER/$repo/pages/cname" >/dev/null 2>&1; then
-      log "custom domain removed if present"
+      # A successful DELETE alone does not establish that the domain is gone.
+      # Require one valid Pages object with an explicitly empty cname field.
+      local verified_domain
+      if ! verified_domain="$(gh api "repos/$OWNER/$repo/pages" 2>&1)"; then
+        log "custom domain post-delete verification GET failed for $repo; stopping before subsequent repositories"
+        return 1
+      fi
+      if ! printf '%s' "$verified_domain" | jq -es \
+        'length == 1 and (.[0] | type == "object" and has("cname") and (.cname == null or .cname == ""))' \
+        >/dev/null 2>&1; then
+        log "custom domain post-delete verification mismatch for $repo; stopping before subsequent repositories"
+        return 1
+      fi
+      log "custom domain removal verified for $repo"
     else
       log "DELETE custom domain failed for $repo; stopping before subsequent repositories"
       return 1

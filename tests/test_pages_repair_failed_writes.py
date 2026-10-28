@@ -17,6 +17,7 @@ if [ "$1" = api ]; then
         printf '%s failed (synthetic)\n' "$3" >&2
         exit 22
       fi
+      if [ "$3" = DELETE ]; then touch "$GH_DOMAIN_DELETED"; fi
       exit 0 ;;
   esac
   case " $* " in *" --jq "*) printf 'public\n'; exit 0 ;; esac
@@ -38,7 +39,9 @@ if [ "$1" = api ]; then
     case " $* " in
       *"aifreedomtrustfederation.github.io/pages"*|*"AI-Freedom-Trust/pages"*) branch=main ;;
     esac
-    printf '{"html_url":"https://example.invalid","status":"built","source":{"branch":"%s","path":"/"},"cname":"example.invalid"}\n' "$branch"
+    cname='"example.invalid"'
+    [ -f "$GH_DOMAIN_DELETED" ] && cname='null'
+    printf '{"html_url":"https://example.invalid","status":"built","source":{"branch":"%s","path":"/"},"cname":%s}\n' "$branch" "$cname"
     exit 0 ;;
   esac
 fi
@@ -61,6 +64,7 @@ class PagesWriteFailureTests(unittest.TestCase):
                 path.chmod(0o755)
             calls_file = root / 'calls.txt'
             env = dict(os.environ, HOME=str(root), GH_CALLS=str(calls_file),
+                       GH_DOMAIN_DELETED=str(root / 'domain-deleted'),
                        FAIL_METHOD=method, PATH=str(bin_dir) + os.pathsep + os.environ['PATH'])
             result = subprocess.run(['bash', str(SCRIPT), '--apply', '--remove-custom-domains'],
                                     env=env, capture_output=True, text=True, timeout=20)

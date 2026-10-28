@@ -11,7 +11,10 @@ printf '%s\n' "$*" >> "$GH_CALLS"
 if [ "$1" = auth ] && [ "$2" = status ]; then exit 0; fi
 if [ "$1" = repo ] && [ "$2" = view ]; then exit 0; fi
 if [ "$1" = api ]; then
-  case " $* " in *" -X "*) exit 0 ;; esac
+  case " $* " in
+    *" -X DELETE "*) touch "$GH_DOMAIN_DELETED"; exit 0 ;;
+    *" -X "*) exit 0 ;;
+  esac
   case " $* " in *" --jq "*) printf 'public\n'; exit 0 ;; esac
   case " $* " in *"/branches/"*) exit 0 ;; esac
   case " $* " in *" --include "*)
@@ -36,7 +39,9 @@ if [ "$1" = api ]; then
     case " $* " in
       *"aifreedomtrustfederation.github.io/pages"*|*"AI-Freedom-Trust/pages"*) branch=main ;;
     esac
-    printf '{"html_url":"https://example.invalid","status":"built","source":{"branch":"%s","path":"/"},"cname":"preserve.example"}\n' "$branch"
+    cname='"preserve.example"'
+    [ -f "$GH_DOMAIN_DELETED" ] && cname='null'
+    printf '{"html_url":"https://example.invalid","status":"built","source":{"branch":"%s","path":"/"},"cname":%s}\n' "$branch" "$cname"
     exit 0 ;;
   esac
 fi
@@ -60,6 +65,7 @@ class PagesRepairSafetyTests(unittest.TestCase):
             sleep.chmod(0o755)
             calls = root / 'calls.jsonl'
             env = dict(os.environ, HOME=str(root), GH_CALLS=str(calls),
+                       GH_DOMAIN_DELETED=str(root / 'domain-deleted'),
                        PATH=str(bindir) + os.pathsep + os.environ['PATH'],
                        MISSING_PAGES='1' if missing_pages else '0', PROBE_STATUS=probe_status)
             result = subprocess.run(['bash', str(SCRIPT), *args], env=env,
