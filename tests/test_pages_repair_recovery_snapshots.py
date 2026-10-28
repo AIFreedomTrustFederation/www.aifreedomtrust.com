@@ -33,6 +33,8 @@ if [ "$1" = api ]; then
         empty_branch) printf '{"source":{"branch":"","path":"/"},"cname":null}\n' ;;
         invalid_path) printf '{"source":{"branch":"main","path":"/bad"},"cname":null}\n' ;;
         invalid_cname) printf '{"source":{"branch":"main","path":"/"},"cname":123}\n' ;;
+        duplicate_cname) printf '{"source":{"branch":"main","path":"/"},"cname":"still.example","cname":null}\n' ;;
+        duplicate_source) printf '{"source":{"branch":"","branch":"main","path":"/"},"cname":null}\n' ;;
         *) printf '{"source":{"branch":"original-branch","path":"/docs"},"cname":"original.example"}\n' ;;
       esac
       exit 0 ;;
@@ -119,6 +121,12 @@ class PagesRecoverySnapshotTests(unittest.TestCase):
 
     def test_invalid_previous_domain_blocks_all_writes(self):
         self.assert_invalid_prechange_blocks_writes("invalid_cname")
+
+    def test_duplicate_domain_fields_block_all_writes(self):
+        self.assert_invalid_prechange_blocks_writes("duplicate_cname")
+
+    def test_duplicate_nested_source_fields_block_all_writes(self):
+        self.assert_invalid_prechange_blocks_writes("duplicate_source")
 
 
 if __name__ == "__main__":
