@@ -115,6 +115,23 @@ normalize_pages(){
     return 1
   fi
 
+  # Verify the actual Pages source before any optional domain removal.
+  # A successful API write is not proof that the requested state was applied.
+  if (( APPLY )); then
+    local verified_pages verified_branch verified_path
+    if ! verified_pages="$(gh api "repos/$OWNER/$repo/pages" 2>&1)"; then
+      log "Pages post-write verification GET failed for $repo; stopping before custom-domain changes"
+      return 1
+    fi
+    verified_branch="$(printf '%s' "$verified_pages" | jq -er '.source.branch // empty' 2>/dev/null)" || verified_branch=""
+    verified_path="$(printf '%s' "$verified_pages" | jq -er '.source.path // empty' 2>/dev/null)" || verified_path=""
+    if [[ "$verified_branch" != "$branch" || "$verified_path" != "/" ]]; then
+      log "Pages post-write verification mismatch for $repo (expected source $branch /); stopping before custom-domain changes"
+      return 1
+    fi
+    log "Pages source verified: $branch /"
+  fi
+
   if (( APPLY && REMOVE_CUSTOM_DOMAINS )); then
     if gh api -X DELETE "repos/$OWNER/$repo/pages/cname" >/dev/null 2>&1; then
       log "custom domain removed if present"

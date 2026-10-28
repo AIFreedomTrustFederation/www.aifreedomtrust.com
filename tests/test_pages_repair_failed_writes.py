@@ -26,11 +26,19 @@ if [ "$1" = api ]; then
       *"booksmith-ai/pages"*) printf 'HTTP/2.0 404 Not Found\n\n'; exit 1 ;;
     esac
     printf 'HTTP/2.0 200 OK\n\n'
-    printf '%s\n' '{"html_url":"https://example.invalid","status":"built","source":{"branch":"main"},"cname":"example.invalid"}'
+    branch=gh-pages
+    case " $* " in
+      *"aifreedomtrustfederation.github.io/pages"*|*"AI-Freedom-Trust/pages"*) branch=main ;;
+    esac
+    printf '{"html_url":"https://example.invalid","status":"built","source":{"branch":"%s","path":"/"},"cname":"example.invalid"}\n' "$branch"
     exit 0 ;;
   esac
   case " $* " in *"/pages "*)
-    printf '%s\n' '{"html_url":"https://example.invalid","status":"built","source":{"branch":"main"},"cname":"example.invalid"}'
+    branch=gh-pages
+    case " $* " in
+      *"aifreedomtrustfederation.github.io/pages"*|*"AI-Freedom-Trust/pages"*) branch=main ;;
+    esac
+    printf '{"html_url":"https://example.invalid","status":"built","source":{"branch":"%s","path":"/"},"cname":"example.invalid"}\n' "$branch"
     exit 0 ;;
   esac
 fi
