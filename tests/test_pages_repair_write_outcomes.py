@@ -37,7 +37,7 @@ exit 3
 '''
 
 class PagesWriteOutcomeTests(unittest.TestCase):
-    def invoke(self, mode, *flags, dd_fail_at=None):
+    def invoke(self, mode, *flags, dd_fail_at=None, directory_sync_fail=False):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             bindir = root / "bin"
@@ -50,6 +50,10 @@ class PagesWriteOutcomeTests(unittest.TestCase):
                 p = bindir / name
                 p.write_text(body)
                 p.chmod(0o755)
+            if directory_sync_fail:
+                python = bindir / "python3"
+                python.write_text("#!/bin/sh\nexit 71\n")
+                python.chmod(0o755)
             if dd_fail_at is not None:
                 real_dd = shutil.which("dd")
                 self.assertIsNotNone(real_dd)
@@ -145,6 +149,23 @@ exec "$REAL_DD" "$@"
         self.assertTrue(any(" -X PUT " in f" {c} " for c in calls))
         self.assertFalse(any("www.aifreedomtrust.com/pages" in c for c in calls))
         self.assertIn("Cannot append write outcome", report)
+
+    def test_directory_fsync_failure_blocks_all_writes(self):
+        result, _, records, _, calls, report = self.invoke(
+            "normal", "--apply", directory_sync_fail=True
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(records, [])
+        self.assertFalse(any(" -X " in f" {c} " for c in calls))
+        self.assertFalse(any("/branches/" in c for c in calls))
+        self.assertIn("Cannot persist recovery file directory entries", report)
+
+    def test_directory_fsync_success_precedes_mutation(self):
+        result, _, records, _, calls, report = self.invoke("fail_second", "--apply")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Recovery directory entries synchronized before publishing writes", report)
+        self.assertTrue(any(r["phase"] == "attempted" for r in records))
+        self.assertTrue(any(" -X PUT " in f" {c} " for c in calls))
 
     def test_read_only_has_no_journal_or_writes(self):
         result, journals, records, _, calls, report = self.invoke("read_only")

@@ -61,6 +61,10 @@ if (( APPLY )) && ! command -v dd >/dev/null 2>&1; then
   printf 'Missing dd; cannot safely persist apply-mode recovery evidence\n' >&2
   exit 1
 fi
+if (( APPLY )) && ! command -v python3 >/dev/null 2>&1; then
+  printf 'Missing python3; cannot synchronize recovery directory entries\n' >&2
+  exit 1
+fi
 : > "$REPORT"
 if ! gh auth status >/dev/null 2>&1; then
   log 'GitHub CLI authentication required; run gh auth login separately.'
@@ -71,6 +75,21 @@ if (( ! APPLY )); then
 else
   log 'APPLY MODE: Pages sources may be changed; verify approval before proceeding.'
 fi
+
+# File fsync alone does not persist newly created filenames. Synchronize the
+# recovery directory after both mktemp calls and before any Pages mutation.
+# This protects directory entries, not cross-repository atomicity or rollback.
+sync_recovery_directory(){
+  python3 - "$HOME" <<'PY'
+import os
+import sys
+fd = os.open(sys.argv[1], os.O_RDONLY | getattr(os, "O_DIRECTORY", 0))
+try:
+    os.fsync(fd)
+finally:
+    os.close(fd)
+PY
+}
 
 # Keep each approved apply run's recovery evidence separate and private.
 # These are pre-change observations, not proof that writes succeeded.
@@ -89,6 +108,11 @@ if (( APPLY )); then
     exit 1
   fi
   log "Write-outcome journal: $JOURNAL_FILE (unmatched attempted events require manual reconciliation)"
+  if ! sync_recovery_directory; then
+    log "Cannot persist recovery file directory entries; refusing all mutations"
+    exit 1
+  fi
+  log "Recovery directory entries synchronized before publishing writes"
 fi
 
 repo_exists(){ gh repo view "$OWNER/$1" >/dev/null 2>&1; }
