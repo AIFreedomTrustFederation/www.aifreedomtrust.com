@@ -167,11 +167,19 @@ normalize_pages(){
 
   if ! repo_exists "$repo"; then
     log "missing repo"
+    if (( APPLY )); then
+      log "Repository $repo became inaccessible after preflight; stopping before subsequent repositories"
+      return 1
+    fi
     return 0
   fi
 
   if ! branch_exists "$repo" "$branch"; then
     log "missing branch $branch; cannot set Pages source"
+    if (( APPLY )); then
+      log "Branch $repo:$branch became inaccessible after preflight; stopping before subsequent repositories"
+      return 1
+    fi
     return 0
   fi
 
