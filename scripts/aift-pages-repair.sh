@@ -6,6 +6,7 @@ ROOT_REPO="aifreedomtrustfederation.github.io"
 BASE_URL="https://aifreedomtrustfederation.github.io"
 REPORT="$HOME/aift-pages-repair-report.txt"
 SNAPSHOT_FILE=""
+JOURNAL_FILE=""
 
 PUBLIC_GH_PAGES=(
   "aifreedomtrustfederation.github.io|main"
@@ -73,6 +74,11 @@ if (( APPLY )); then
     exit 1
   fi
   log "Pre-change recovery snapshots: $SNAPSHOT_FILE (not a rollback or success record)"
+  if ! JOURNAL_FILE="$(mktemp "$HOME/aift-pages-writes.XXXXXXXX.jsonl")"; then
+    log "Cannot create private write-outcome journal; refusing all mutations"
+    exit 1
+  fi
+  log "Write-outcome journal: $JOURNAL_FILE (unmatched attempted events require manual reconciliation)"
 fi
 
 repo_exists(){ gh repo view "$OWNER/$1" >/dev/null 2>&1; }
@@ -137,6 +143,22 @@ snapshot_pages_before_write(){
   fi
 }
 
+# Write-ahead attempt events are conservative; an unmatched attempt is NOT
+# proof of a successful write. This JSONL is not an fsync'd transaction log.
+journal_event(){
+  local repo="$1" operation="$2" phase="$3" branch="$4" event
+  if ! event="$(jq -nc --arg repo "$repo" --arg operation "$operation" \
+      --arg phase "$phase" --arg branch "$branch" \
+      '{schema_version:1, observed_at:(now|todateiso8601), repository:$repo, operation:$operation, phase:$phase, intended_source:{branch:$branch,path:"/"}}')"; then
+    log "Cannot encode write outcome for $repo; stopping"
+    return 1
+  fi
+  if ! printf '%s\n' "$event" >> "$JOURNAL_FILE"; then
+    log "Cannot append write outcome for $repo; stopping"
+    return 1
+  fi
+}
+
 normalize_pages(){
   local repo="$1" branch="$2"
 
@@ -155,12 +177,14 @@ normalize_pages(){
 
   # Only an explicit 404 means Pages is absent. Permission, rate-limit,
   # transport and server errors must never trigger a Pages-creation POST.
-  local pages_probe pages_rc=0 pages_status
+  local pages_probe pages_rc=0 pages_status pages_operation=""
   pages_probe="$(gh api --include "repos/$OWNER/$repo/pages" 2>&1)" || pages_rc=$?
   pages_status="$(printf '%s\n' "$pages_probe" | tr -d '\r' | sed -nE 's/^HTTP\/[0-9.]+[[:space:]]+([0-9]{3})([[:space:]].*)?$/\1/p' | tail -n 1)"
   if [[ "$pages_status" == 200 && "$pages_rc" == 0 ]]; then
     if (( APPLY )); then
       snapshot_pages_before_write "$repo" "$branch" 200 || return 1
+      pages_operation="update_pages_source"
+      journal_event "$repo" "$pages_operation" "attempted" "$branch" || return 1
       if ! gh api -X PUT "repos/$OWNER/$repo/pages" \
         -f source.branch="$branch" \
         -f source.path="/" >/dev/null; then
@@ -173,6 +197,8 @@ normalize_pages(){
   elif [[ "$pages_status" == 404 && "$pages_rc" != 0 ]]; then
     if (( APPLY )); then
       snapshot_pages_before_write "$repo" "$branch" 404 || return 1
+      pages_operation="enable_pages"
+      journal_event "$repo" "$pages_operation" "attempted" "$branch" || return 1
       if ! gh api -X POST "repos/$OWNER/$repo/pages" \
         -f source.branch="$branch" \
         -f source.path="/" >/dev/null; then
@@ -202,9 +228,11 @@ normalize_pages(){
       return 1
     fi
     log "Pages source verified: $branch /"
+    journal_event "$repo" "$pages_operation" "verified" "$branch" || return 1
   fi
 
   if (( APPLY && REMOVE_CUSTOM_DOMAINS )); then
+    journal_event "$repo" "remove_custom_domain" "attempted" "$branch" || return 1
     if gh api -X DELETE "repos/$OWNER/$repo/pages/cname" >/dev/null 2>&1; then
       # A successful DELETE alone does not establish that the domain is gone.
       # Require one valid Pages object with an explicitly empty cname field.
@@ -220,6 +248,7 @@ normalize_pages(){
         return 1
       fi
       log "custom domain removal verified for $repo"
+      journal_event "$repo" "remove_custom_domain" "verified" "$branch" || return 1
     else
       log "DELETE custom domain failed for $repo; stopping before subsequent repositories"
       return 1
