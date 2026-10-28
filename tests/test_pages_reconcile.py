@@ -70,7 +70,8 @@ class PagesReconcileTests(unittest.TestCase):
         self.assertIn("cannot prove", output["warning"])
 
     def test_unmatched_domain_delete_with_domain_still_present(self):
-        result, output, calls = self.invoke([self.event("remove_custom_domain")],
+        result, output, calls = self.invoke([self.event(), self.event(phase="verified"),
+                                            self.event("remove_custom_domain")],
                                             current={"cname": "still.example"})
         self.assertEqual(result.returncode, 2)
         self.assertEqual(output["unmatched_attempts"][0]["current_observation"], "observed_differs")
@@ -226,6 +227,44 @@ class PagesReconcileTests(unittest.TestCase):
         self.assertEqual(result.returncode, 1)
         self.assertEqual(output["status"], "invalid_evidence")
         self.assertEqual(calls, [])
+
+    def test_domain_attempt_requires_verified_source_first(self):
+        events = [self.event(), self.event("remove_custom_domain")]
+        result, output, calls = self.invoke(events)
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(output["status"], "invalid_evidence")
+        self.assertEqual(calls, [])
+
+    def test_duplicate_source_attempt_rejected_before_live_lookup(self):
+        result, output, calls = self.invoke([self.event(), self.event()])
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(output["status"], "invalid_evidence")
+        self.assertEqual(calls, [])
+
+    def test_repeated_source_write_after_verification_rejected(self):
+        events = [self.event(), self.event(phase="verified"), self.event()]
+        result, output, calls = self.invoke(events)
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(output["status"], "invalid_evidence")
+        self.assertEqual(calls, [])
+
+    def test_duplicate_domain_attempt_rejected(self):
+        events = [self.event(), self.event(phase="verified"),
+                  self.event("remove_custom_domain"), self.event("remove_custom_domain")]
+        result, output, calls = self.invoke(events)
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(output["status"], "invalid_evidence")
+        self.assertEqual(calls, [])
+
+    def test_valid_source_then_unmatched_domain_still_needs_reconciliation(self):
+        events = [self.event(), self.event(phase="verified"),
+                  self.event("remove_custom_domain")]
+        result, output, calls = self.invoke(events)
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(output["verified_events"], 1)
+        self.assertEqual(len(output["unmatched_attempts"]), 1)
+        self.assertEqual(output["unmatched_attempts"][0]["operation"], "remove_custom_domain")
+        self.assertEqual(len(calls), 1)
 
 if __name__ == "__main__":
     unittest.main()

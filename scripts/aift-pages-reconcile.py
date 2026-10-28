@@ -96,6 +96,9 @@ def reconcile(snapshots, events):
     run_id = next(iter(run_ids), None)
 
     pending = defaultdict(deque)
+    # A single repair pass can write one source change, then one optional
+    # domain removal per repository. Reject impossible journal sequences.
+    stage = defaultdict(lambda: "start")
     verified = 0
     for item in events:
         repo = validate_repo(item.get("repository"))
@@ -110,14 +113,21 @@ def reconcile(snapshots, events):
                 or evidence_run_id(item) != run_id):
             raise ValueError(f"invalid journal event for {repo}")
         key = (repo, operation)
+        is_domain = operation == "remove_custom_domain"
         if phase == "attempted":
+            expected = "source_verified" if is_domain else "start"
+            if stage[repo] != expected:
+                raise ValueError(f"out-of-order or duplicate attempt for {repo}/{operation}")
             pending[key].append(item)
+            stage[repo] = "domain_pending" if is_domain else "source_pending"
         else:
-            if not pending[key]:
-                raise ValueError(f"verified event without matching attempt for {repo}/{operation}")
+            expected = "domain_pending" if is_domain else "source_pending"
+            if stage[repo] != expected or not pending[key]:
+                raise ValueError(f"out-of-order or unmatched verification for {repo}/{operation}")
             attempt = pending[key].popleft()
             if attempt["intended_source"] != source:
                 raise ValueError(f"verification intent mismatch for {repo}/{operation}")
+            stage[repo] = "domain_verified" if is_domain else "source_verified"
             verified += 1
     unresolved = []
     for (repo, operation), queue in pending.items():
