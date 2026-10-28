@@ -150,12 +150,41 @@ append_recovery_record(){
   printf '%s\n' "$record" | dd of="$path" oflag=append conv=notrunc,fsync status=none
 }
 
+# Pages API responses are untrusted input. jq silently selects the last
+# duplicate JSON key, which can make contradictory recovery evidence appear
+# valid. Reject duplicate keys at every nesting level before snapshotting.
+validate_unique_pages_json(){
+  python3 -c '
+import json
+import sys
+
+def unique_pairs(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("duplicate JSON field")
+        result[key] = value
+    return result
+
+try:
+    value = json.load(sys.stdin, object_pairs_hook=unique_pairs)
+    if not isinstance(value, dict):
+        raise ValueError("expected JSON object")
+except (ValueError, UnicodeError):
+    sys.exit(1)
+'
+}
+
 snapshot_pages_before_write(){
   local repo="$1" intended_branch="$2" pages_status="$3" prior record
   if [[ "$pages_status" == 200 ]]; then
     # A fresh GET avoids relying on HTTP headers or an unvalidated response.
     if ! prior="$(gh api "repos/$OWNER/$repo/pages" 2>&1)"; then
       log "Cannot capture Pages pre-change state for $repo; refusing write"
+      return 1
+    fi
+    if ! printf '%s' "$prior" | validate_unique_pages_json; then
+      log "Invalid or ambiguous Pages pre-change JSON for $repo; refusing write"
       return 1
     fi
     # Match the reconciler's previous-state contract before any approved write.
