@@ -37,7 +37,7 @@ class PagesReconcileTests(unittest.TestCase):
             snapshot.write_text("\n".join(json.dumps(x) for x in (snapshots if snapshots is not None else [default_snapshot])) + "\n")
             journal.write_text("\n".join(json.dumps(x) if not isinstance(x, str) else x for x in events) + "\n")
             state = root / "state.json"
-            state.write_text(json.dumps(current if current is not None else {
+            state.write_text(current if isinstance(current, str) else json.dumps(current if current is not None else {
                 "source": {"branch": "gh-pages", "path": "/"}, "cname": None,
             }))
             calls = root / "calls.txt"
@@ -75,6 +75,24 @@ class PagesReconcileTests(unittest.TestCase):
                                             current={"cname": "still.example"})
         self.assertEqual(result.returncode, 2)
         self.assertEqual(output["unmatched_attempts"][0]["current_observation"], "observed_differs")
+        self.assertEqual(len(calls), 1)
+
+    def test_duplicate_live_source_fields_cannot_claim_matching_state(self):
+        # Without strict parsing, Python keeps the final branch value.
+        ambiguous = '{"source":{"branch":"main","branch":"gh-pages","path":"/"},"cname":null}'
+        result, output, calls = self.invoke([self.event()], current=ambiguous)
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(output["unmatched_attempts"][0]["current_observation"], "unknown")
+        self.assertEqual(len(calls), 1)
+
+    def test_duplicate_live_domain_fields_cannot_claim_removal(self):
+        # A second null cname must not conceal a still-present domain.
+        ambiguous = '{"source":{"branch":"gh-pages","path":"/"},"cname":"still.example","cname":null}'
+        events = [self.event(), self.event(phase="verified"),
+                  self.event("remove_custom_domain")]
+        result, output, calls = self.invoke(events, current=ambiguous)
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(output["unmatched_attempts"][0]["current_observation"], "unknown")
         self.assertEqual(len(calls), 1)
 
     def test_api_error_is_unknown_not_success(self):

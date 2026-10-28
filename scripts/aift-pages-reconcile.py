@@ -168,9 +168,11 @@ def observe(repo):
         )
         if result.returncode != 0:
             return None
-        payload = json.loads(result.stdout)
+        # Live GitHub observations are untrusted JSON too: never let a
+        # duplicate key silently select a favorable observed state.
+        payload = json.loads(result.stdout, object_pairs_hook=unique_json_object)
         return payload if isinstance(payload, dict) else None
-    except (OSError, subprocess.TimeoutExpired, json.JSONDecodeError):
+    except (OSError, subprocess.TimeoutExpired, ValueError):
         return None
 
 
