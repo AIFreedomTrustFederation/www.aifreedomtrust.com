@@ -99,7 +99,7 @@ class PagesTornAppendRecoveryTests(unittest.TestCase):
             self.assertEqual(reconciliation.returncode, 1, reconciliation.stderr)
             outcome = json.loads(reconciliation.stdout)
             self.assertEqual(outcome["status"], "invalid_evidence")
-            self.assertIn("invalid or ambiguous JSON", outcome["error"])
+            self.assertIn("unterminated recovery record", outcome["error"])
             self.assertEqual(calls_path.read_text().splitlines(), calls_before,
                              "Invalid evidence must fail before live API lookups")
 
