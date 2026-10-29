@@ -350,6 +350,12 @@ normalize_pages(){
   if (( APPLY )); then sleep 1; fi
 
   if out="$(gh api "repos/$OWNER/$repo/pages" 2>&1)"; then
+    # A final informational lookup must not turn ambiguous JSON into a
+    # success report or allow the next repository to be mutated.
+    if ! printf '%s' "$out" | validate_unique_pages_json; then
+      log "Invalid final Pages status JSON for $repo; stopping before subsequent repositories"
+      return 1
+    fi
     log "enabled: yes"
     log "url: $(printf '%s' "$out" | jq -r '.html_url // empty')"
     log "status: $(printf '%s' "$out" | jq -r '.status // empty')"
