@@ -182,11 +182,16 @@ def observation_status(item, pages):
     if pages is None:
         return "unknown"
     if item["operation"] == "remove_custom_domain":
-        if "cname" not in pages:
+        # A malformed live field is not evidence of a different domain.
+        if "cname" not in pages or (pages["cname"] is not None
+                                     and not isinstance(pages["cname"], str)):
             return "unknown"
         return "observed_matches_intent" if pages["cname"] in (None, "") else "observed_differs"
     source = pages.get("source")
-    if not isinstance(source, dict):
+    # Incomplete or malformed API state is unknown, not an observed mismatch.
+    if (not isinstance(source, dict)
+            or not isinstance(source.get("branch"), str) or not source["branch"]
+            or source.get("path") not in ("/", "/docs")):
         return "unknown"
     desired = item["intended_source"]
     return ("observed_matches_intent" if source.get("branch") == desired["branch"]

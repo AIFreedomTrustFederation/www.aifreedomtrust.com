@@ -368,5 +368,37 @@ class PagesReconcileTests(unittest.TestCase):
         self.assertEqual(calls, [])
 
 
+
+    def test_malformed_live_source_is_unknown_not_confirmed_difference(self):
+        for current in (
+            {"source": {"branch": None, "path": "/"}},
+            {"source": {"branch": "main"}},
+            {"source": {"branch": "", "path": "/"}},
+            {"source": {"branch": "main", "path": "/invalid"}},
+        ):
+            with self.subTest(current=current):
+                result, output, calls = self.invoke([self.event()], current=current)
+                self.assertEqual(result.returncode, 2)
+                self.assertEqual(output["unmatched_attempts"][0]["current_observation"], "unknown")
+                self.assertEqual(len(calls), 1)
+        result, output, _ = self.invoke(
+            [self.event()], current={"source": {"branch": "main", "path": "/"}})
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(output["unmatched_attempts"][0]["current_observation"], "observed_differs")
+
+    def test_malformed_live_domain_is_unknown_not_confirmed_difference(self):
+        events = [self.event(), self.event(phase="verified"),
+                  self.event("remove_custom_domain")]
+        for current in ({"cname": False}, {"cname": 42}, {"cname": []}):
+            with self.subTest(current=current):
+                result, output, calls = self.invoke(events, current=current)
+                self.assertEqual(result.returncode, 2)
+                self.assertEqual(output["unmatched_attempts"][0]["current_observation"], "unknown")
+                self.assertEqual(len(calls), 1)
+        result, output, _ = self.invoke(events, current={"cname": "old.example"})
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(output["unmatched_attempts"][0]["current_observation"], "observed_differs")
+
+
 if __name__ == "__main__":
     unittest.main()
