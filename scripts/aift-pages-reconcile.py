@@ -192,7 +192,19 @@ def observation_status(item, pages):
         if "cname" not in pages or (pages["cname"] is not None
                                      and not isinstance(pages["cname"], str)):
             return "unknown"
-        return "observed_matches_intent" if pages["cname"] in (None, "") else "observed_differs"
+        if pages["cname"] not in (None, ""):
+            return "observed_differs"
+        # An absent domain alone does not establish a coherent Pages state:
+        # source drift after deletion must not be presented as a match.
+        source = pages.get("source")
+        if (not isinstance(source, dict)
+                or not isinstance(source.get("branch"), str) or not source["branch"]
+                or source.get("path") not in ("/", "/docs")):
+            return "unknown"
+        desired = item["intended_source"]
+        return ("observed_matches_intent"
+                if source["branch"] == desired["branch"] and source["path"] == desired["path"]
+                else "observed_differs")
     source = pages.get("source")
     # Incomplete or malformed API state is unknown, not an observed mismatch.
     if (not isinstance(source, dict)
