@@ -30,7 +30,13 @@ def unique_json_object(pairs):
 
 def records(path):
     result = []
-    for number, line in enumerate(Path(path).read_text(encoding="utf-8").splitlines(), 1):
+    content = Path(path).read_text(encoding="utf-8")
+    # The repair writer always terminates fsync-backed JSONL records with a
+    # newline. A valid JSON object without that terminator may be a torn
+    # append whose durability was never confirmed; fail closed.
+    if content and not content.endswith("\n"):
+        raise ValueError(f"{path}: unterminated recovery record")
+    for number, line in enumerate(content.splitlines(), 1):
         # A blank JSONL line can be a torn append. Never silently discard
         # incomplete recovery evidence and report a clean journal.
         if not line.strip():
