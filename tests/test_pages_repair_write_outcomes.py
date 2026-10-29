@@ -43,7 +43,11 @@ if [ "$1" = api ]; then
         printf '{"source":{"branch":"%s","path":"/"},"cname":"still.example","cname":null}\n' "$branch"
         exit 0
       fi
-      printf '{"source":{"branch":"%s","path":"/"},"cname":null,"status":"built"}\n' "$branch"
+      cname=null
+      case "$GH_MODE" in
+        delete_fail|duplicate_postdelete) cname='"existing.example"' ;;
+      esac
+      printf '{"source":{"branch":"%s","path":"/"},"cname":%s,"status":"built"}\n' "$branch" "$cname"
       exit 0 ;;
   esac
 fi
