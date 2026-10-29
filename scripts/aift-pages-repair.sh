@@ -356,6 +356,15 @@ normalize_pages(){
       log "Invalid final Pages status JSON for $repo; stopping before subsequent repositories"
       return 1
     fi
+    # A later actor may change Pages after our successful post-write GET.
+    # In apply mode, refuse to proceed to another repository if the final
+    # observation no longer matches the source that was just verified.
+    if (( APPLY )) && ! printf '%s' "$out" | jq -es --arg branch "$branch" \
+      'length == 1 and (.[0] | type == "object" and (.source | type == "object") and (.source.branch == $branch) and (.source.path == "/"))' \
+      >/dev/null 2>&1; then
+      log "Final Pages source drift for $repo (expected $branch /); stopping before subsequent repositories"
+      return 1
+    fi
     log "enabled: yes"
     log "url: $(printf '%s' "$out" | jq -r '.html_url // empty')"
     log "status: $(printf '%s' "$out" | jq -r '.status // empty')"
