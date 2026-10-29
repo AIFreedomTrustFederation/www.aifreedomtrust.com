@@ -5,12 +5,12 @@ configuration as matching the intended publishing state. No live API calls.
 """
 import unittest
 
-from test_pages_reconcile import PagesReconcileTests
+import test_pages_reconcile
 
 
 class PagesDomainSourceCoherenceTests(unittest.TestCase):
     def assert_observation(self, current, expected):
-        fixture = PagesReconcileTests()
+        fixture = test_pages_reconcile.PagesReconcileTests()
         events = [
             fixture.event(),
             fixture.event(phase="verified"),
