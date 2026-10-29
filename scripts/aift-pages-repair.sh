@@ -351,8 +351,8 @@ normalize_pages(){
         log "Invalid custom domain post-delete verification JSON for $repo; stopping before subsequent repositories"
         return 1
       fi
-      if ! printf '%s' "$verified_domain" | jq -es \
-        'length == 1 and (.[0] | type == "object" and has("cname") and (.cname == null or .cname == ""))' \
+      if ! printf '%s' "$verified_domain" | jq -es --arg branch "$branch" \
+        'length == 1 and (.[0] | type == "object" and has("cname") and (.cname == null or .cname == "") and (.source | type == "object") and (.source.branch == $branch) and (.source.path == "/"))' \
         >/dev/null 2>&1; then
         log "custom domain post-delete verification mismatch for $repo; stopping before subsequent repositories"
         return 1
