@@ -20,7 +20,12 @@ if [ "$1" = api ]; then
     *"/branches/"*) exit 0 ;;
     *" --include "*) printf 'HTTP/2.0 200 OK\n\n'; exit 0 ;;
     *" -X PUT "*) exit 0 ;;
-    *" -X DELETE "*) touch "$GH_DELETED"; exit 0 ;;
+    *" -X DELETE "*)
+      if [ "$PREDELETE_MODE" = absent ]; then
+        printf 'synthetic 404: no custom domain\n' >&2
+        exit 22
+      fi
+      touch "$GH_DELETED"; exit 0 ;;
     *"aifreedomtrustfederation.github.io/pages "*)
       if [ -f "$GH_DELETED" ]; then
         case "$POSTDELETE_MODE" in
@@ -32,7 +37,11 @@ if [ "$1" = api ]; then
           *) exit 91 ;;
         esac
       else
-        printf '{"source":{"branch":"main","path":"/"},"cname":"before.example"}\n'
+        if [ "$PREDELETE_MODE" = absent ]; then
+          printf '{"source":{"branch":"main","path":"/"},"cname":null}\n'
+        else
+          printf '{"source":{"branch":"main","path":"/"},"cname":"before.example"}\n'
+        fi
       fi
       exit 0 ;;
     *"/pages "*) 
@@ -48,7 +57,7 @@ exit 3
 '''
 
 class DomainPostdeleteVerificationTests(unittest.TestCase):
-    def invoke(self, mode):
+    def invoke(self, mode, *, predelete_mode="present"):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             bindir = root / "bin"
@@ -64,6 +73,7 @@ class DomainPostdeleteVerificationTests(unittest.TestCase):
             calls_file = root / "calls.txt"
             env = dict(os.environ, HOME=str(root), GH_CALLS=str(calls_file),
                        GH_DELETED=str(root / "deleted"), POSTDELETE_MODE=mode,
+                       PREDELETE_MODE=predelete_mode,
                        PATH=str(bindir) + os.pathsep + os.environ["PATH"])
             result = subprocess.run(
                 ["bash", str(SCRIPT), "--apply", "--remove-custom-domains"],
@@ -78,6 +88,14 @@ class DomainPostdeleteVerificationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("custom domain removal verified", report)
         self.assertTrue(any("-X DELETE" in call for call in calls))
+
+    def test_absent_domain_is_not_deleted_or_journaled(self):
+        # A DELETE for an already absent domain returns synthetic 404.
+        # Avoid unnecessary destructive calls and partial federation updates.
+        result, calls, report = self.invoke("cleared", predelete_mode="absent")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertFalse(any("-X DELETE" in call for call in calls))
+        self.assertIn("custom domain already absent", report)
 
     def test_stale_domain_blocks_subsequent_repositories(self):
         result, calls, report = self.invoke("stale")
