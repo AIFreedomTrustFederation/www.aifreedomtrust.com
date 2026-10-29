@@ -82,7 +82,7 @@ class PagesSigtermRecoveryTests(unittest.TestCase):
             self.assertIn("cannot prove", result["warning"])
             calls_after = calls_path.read_text().splitlines()
             self.assertEqual([c for c in calls_after if " -X " in f" {c} "],
-                             mutations_before, "Reconciliation must remain r
+                             mutations_before, "Reconciliation must remain read-only")
 
     def test_sigkill_after_source_write_preserves_unmatched_attempt(self):
         marker = 'touch "$HOME/pages-source-written"\n      exit 0 ;;'
