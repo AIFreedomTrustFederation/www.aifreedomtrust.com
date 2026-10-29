@@ -3,6 +3,7 @@
 Run the actual Pages repair script with synthetic GitHub API responses; never
 contact GitHub or mutate real Pages settings.
 """
+import json
 import os
 from pathlib import Path
 import subprocess
@@ -37,11 +38,11 @@ if [ "$1" = api ]; then
           *) exit 91 ;;
         esac
       else
-        if [ "$PREDELETE_MODE" = absent ]; then
-          printf '{"source":{"branch":"main","path":"/"},"cname":null}\n'
-        else
-          printf '{"source":{"branch":"main","path":"/"},"cname":"before.example"}\n'
-        fi
+        case "$PREDELETE_MODE" in
+          absent) printf '{"source":{"branch":"main","path":"/"},"cname":null}\n' ;;
+          missing) printf '{"source":{"branch":"main","path":"/"}}\n' ;;
+          *) printf '{"source":{"branch":"main","path":"/"},"cname":"before.example"}\n' ;;
+        esac
       fi
       exit 0 ;;
     *"/pages "*) 
@@ -81,10 +82,13 @@ class DomainPostdeleteVerificationTests(unittest.TestCase):
             )
             calls = calls_file.read_text().splitlines() if calls_file.exists() else []
             report = (root / "aift-pages-repair-report.txt").read_text()
-            return result, calls, report
+            journals = list(root.glob("aift-pages-writes.*.jsonl"))
+            events = [json.loads(line) for journal in journals
+                      for line in journal.read_text().splitlines()]
+            return result, calls, report, events
 
     def test_confirmed_absent_domain_allows_completion(self):
-        result, calls, report = self.invoke("cleared")
+        result, calls, report, events = self.invoke("cleared")
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("custom domain removal verified", report)
         self.assertTrue(any("-X DELETE" in call for call in calls))
@@ -92,29 +96,38 @@ class DomainPostdeleteVerificationTests(unittest.TestCase):
     def test_absent_domain_is_not_deleted_or_journaled(self):
         # A DELETE for an already absent domain returns synthetic 404.
         # Avoid unnecessary destructive calls and partial federation updates.
-        result, calls, report = self.invoke("cleared", predelete_mode="absent")
+        result, calls, report, events = self.invoke("cleared", predelete_mode="absent")
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertFalse(any("-X DELETE" in call for call in calls))
         self.assertIn("custom domain already absent", report)
+        self.assertFalse(any(event["operation"] == "remove_custom_domain" for event in events))
+
+    def test_missing_predelete_cname_blocks_domain_mutation(self):
+        result, calls, report, events = self.invoke("cleared", predelete_mode="missing")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse(any("-X DELETE" in call for call in calls))
+        self.assertFalse(any("www.aifreedomtrust.com/pages" in call for call in calls))
+        self.assertFalse(any(event["operation"] == "remove_custom_domain" for event in events))
+        self.assertIn("Cannot establish current custom domain", report)
 
     def test_stale_domain_blocks_subsequent_repositories(self):
-        result, calls, report = self.invoke("stale")
+        result, calls, report, events = self.invoke("stale")
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("post-delete verification", report)
         self.assertFalse(any("www.aifreedomtrust.com/pages" in call for call in calls))
 
     def test_missing_cname_field_fails_closed(self):
-        result, calls, report = self.invoke("missing")
+        result, calls, report, events = self.invoke("missing")
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("post-delete verification", report)
 
     def test_malformed_response_fails_closed(self):
-        result, calls, report = self.invoke("malformed")
+        result, calls, report, events = self.invoke("malformed")
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("post-delete verification", report)
 
     def test_api_failure_fails_closed(self):
-        result, calls, report = self.invoke("error")
+        result, calls, report, events = self.invoke("error")
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("post-delete verification", report)
 
