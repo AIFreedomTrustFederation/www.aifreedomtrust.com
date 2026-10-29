@@ -348,5 +348,25 @@ class PagesReconcileTests(unittest.TestCase):
         self.assertEqual(output["unmatched_attempts"][0]["previous"]["cname_observed"], True)
         self.assertEqual(len(calls), 1)
 
+
+    def test_blank_journal_append_rejected_before_live_lookup(self):
+        # A torn append may leave a newline without a JSON record. Ignoring
+        # it would allow incomplete evidence to appear clean.
+        events = [self.event(), "", self.event(phase="verified")]
+        result, output, calls = self.invoke(events)
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(output["status"], "invalid_evidence")
+        self.assertIn("empty recovery record", output["error"])
+        self.assertEqual(calls, [])
+
+    def test_truncated_verification_append_rejected_before_live_lookup(self):
+        # Simulate an interrupted append after a valid attempted event.
+        partial = '{"schema_version":1,"repository":"www.aifreedomtrust.com","phase":"veri'
+        result, output, calls = self.invoke([self.event(), partial])
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(output["status"], "invalid_evidence")
+        self.assertEqual(calls, [])
+
+
 if __name__ == "__main__":
     unittest.main()

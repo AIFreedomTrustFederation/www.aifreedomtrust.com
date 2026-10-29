@@ -31,8 +31,10 @@ def unique_json_object(pairs):
 def records(path):
     result = []
     for number, line in enumerate(Path(path).read_text(encoding="utf-8").splitlines(), 1):
+        # A blank JSONL line can be a torn append. Never silently discard
+        # incomplete recovery evidence and report a clean journal.
         if not line.strip():
-            continue
+            raise ValueError(f"{path}:{number}: empty recovery record")
         try:
             item = json.loads(line, object_pairs_hook=unique_json_object)
         except (json.JSONDecodeError, ValueError) as exc:
