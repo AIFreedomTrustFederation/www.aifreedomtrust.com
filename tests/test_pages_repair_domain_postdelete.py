@@ -30,6 +30,7 @@ if [ "$1" = api ]; then
     *"aifreedomtrustfederation.github.io/pages "*)
       if [ -f "$GH_DELETED" ]; then
         case "$POSTDELETE_MODE" in
+          drift) printf '{"source":{"branch":"unexpected","path":"/"},"cname":null}\n' ;;
           stale) printf '{"source":{"branch":"main","path":"/"},"cname":"still.example"}\n' ;;
           missing) printf '{"source":{"branch":"main","path":"/"}}\n' ;;
           malformed) printf '{not json}\n' ;;
@@ -115,6 +116,16 @@ class DomainPostdeleteVerificationTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("post-delete verification", report)
         self.assertFalse(any("www.aifreedomtrust.com/pages" in call for call in calls))
+
+    def test_postdelete_source_drift_is_not_journaled_as_verified(self):
+        # A cleared domain is not sufficient if the publishing source drifted.
+        result, calls, report, events = self.invoke("drift")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("custom domain post-delete verification mismatch", report)
+        self.assertFalse(any("www.aifreedomtrust.com/pages" in c for c in calls))
+        domain_events = [event for event in events
+                         if event["operation"] == "remove_custom_domain"]
+        self.assertEqual([event["phase"] for event in domain_events], ["attempted"])
 
     def test_missing_cname_field_fails_closed(self):
         result, calls, report, events = self.invoke("missing")
