@@ -317,7 +317,27 @@ normalize_pages(){
     journal_event "$repo" "$pages_operation" "verified" "$branch" || return 1
   fi
 
+  # The source-verification GET is also our most recent domain observation.
+  # DELETE of an already absent domain commonly returns 404 after a source
+  # update, stranding an otherwise successful multi-repository repair. Never
+  # mutate or journal a removal without an explicitly observed domain.
+  local domain_removal_needed=$REMOVE_CUSTOM_DOMAINS
   if (( APPLY && REMOVE_CUSTOM_DOMAINS )); then
+    if ! printf '%s' "$verified_pages" | jq -es \
+      'length == 1 and (.[0] | type == "object" and has("cname") and (.cname == null or ((.cname | type) == "string")))' \
+      >/dev/null 2>&1; then
+      log "Cannot establish current custom domain for $repo; stopping before deletion"
+      return 1
+    fi
+    if printf '%s' "$verified_pages" | jq -es \
+      'length == 1 and (.[0] | .cname == null or .cname == "")' \
+      >/dev/null 2>&1; then
+      log "custom domain already absent for $repo; skipping DELETE"
+      domain_removal_needed=0
+    fi
+  fi
+
+  if (( APPLY && domain_removal_needed )); then
     journal_event "$repo" "remove_custom_domain" "attempted" "$branch" || return 1
     if gh api -X DELETE "repos/$OWNER/$repo/pages/cname" >/dev/null 2>&1; then
       # A successful DELETE alone does not establish that the domain is gone.
@@ -344,7 +364,9 @@ normalize_pages(){
       return 1
     fi
   else
-    log "custom domain preserved (removal requires --apply --remove-custom-domains)"
+    if (( ! APPLY || ! REMOVE_CUSTOM_DOMAINS )); then
+      log "custom domain preserved (removal requires --apply --remove-custom-domains)"
+    fi
   fi
 
   if (( APPLY )); then sleep 1; fi
