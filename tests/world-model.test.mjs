@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {validateWorldModel,contributingRoots,lineagePaths} from '../world-model.mjs';
+const graph=JSON.parse(readFileSync(new URL('../data/living-universe.json',import.meta.url),'utf8'));
+assert.deepEqual(validateWorldModel(graph),[],'world graph must validate');
+const portal=graph.nodes.find(n=>n.kind==='fruit');
+assert.ok(portal,'real public portal fruit must exist');
+const roots=contributingRoots(graph,portal.id).map(n=>n.id);
+assert.deepEqual(roots,['r-portal'],'membership must not imply product contribution');
+assert.ok(lineagePaths(graph,portal.id).some(path=>path[0].id==='r-portal'&&path.at(-1).id===portal.id));
+const cloned=structuredClone(graph);cloned.edges=cloned.edges.filter(e=>e.relation!=='implements');
+assert.ok(validateWorldModel(cloned).some(e=>e.includes('fruit lacks explicit contributing root')),'unproven fruits must fail validation');
+const cyclic=structuredClone(graph);cyclic.edges.push({from:'b-public',to:'r-portal',relation:'implements'});
+assert.ok(lineagePaths(cyclic,portal.id).length>0,'cycles must terminate safely');
+const html=readFileSync(new URL('../living-universe.html',import.meta.url),'utf8');
+for(const marker of ['id="provenance-lab"','id="provenance-target"','id="provenance-paths"','provenance-lab.mjs','prefers-reduced-motion'])assert.ok(html.includes(marker),'missing UI marker '+marker);
+console.log('Provenance contract passed:',graph.nodes.length,'nodes,',graph.edges.length,'edges');
