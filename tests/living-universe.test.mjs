@@ -38,3 +38,9 @@ for(const marker of ['id="search"','id="kind"','id="world"','id="universe-index"
 for(const marker of ['id="journey-heading"','id="journey-ribbon"','id="journey-cards"','id="journey-prev"','id="journey-next"','function showLayer(index)','root','trunk','branch','leaf','fruit','prefers-reduced-motion'])assert.ok(html.includes(marker),'missing journey contract: '+marker);
 assert.equal(graph.nodes.filter(n=>n.kind==='fruit'&&n.url.includes('github.com/')).length,0,'repository incorrectly classified as fruit');
 console.log('Living Universe contract OK:',graph.nodes.length,'nodes,',graph.edges.length,'edges');
+
+const bridge=readFileSync(new URL('../genesis-bridge.js',import.meta.url),'utf8');
+for(const marker of ['id="genesis-bridge"','src="genesis-bridge.js"','genesis-grid','genesis-controls'])assert.ok(html.includes(marker),'missing Genesis bridge UI: '+marker);
+for(const marker of ["living-atlas.manifest.json","data.status !== 'canonical-draft'","data.treeMappings.some","e.visibility==='public'","m.atlasEntityId===entity.id","textContent=entity.label","noopener noreferrer","no live status claimed"])assert.ok(bridge.includes(marker),'missing Genesis evidence boundary: '+marker);
+assert.ok(!bridge.includes('innerHTML'),'Genesis entity content must never be injected as HTML');
+console.log('Genesis bridge contract OK: canonical draft validated, public-only, source-linked');
