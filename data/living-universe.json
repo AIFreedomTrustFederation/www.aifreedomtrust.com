@@ -1,7 +1,7 @@
 {
-  "version": "0.1.0",
+  "version": "0.2.0",
   "status": "curated-source-map",
-  "description": "Public source-linked map, not a live health or deployment attestation. Only verified public experience is represented as fruit.",
+  "description": "Curated federation structure and explicitly sourced contribution paths. Organization membership is not product provenance; no live deployment or CI attestation.",
   "nodes": [
     {
       "id": "r-portal",
@@ -85,88 +85,184 @@
       "kind": "leaf",
       "label": "Tree exploration",
       "url": "https://aifreedomtrustfederation.github.io/www.aifreedomtrust.com/atlas.html",
-      "evidence": "public-page"
+      "evidence": "public-page",
+      "source": "https://github.com/AIFreedomTrustFederation/www.aifreedomtrust.com/blob/main/atlas.html"
     },
     {
       "id": "f-portal",
       "kind": "fruit",
       "label": "Federation public portal",
       "url": "https://aifreedomtrustfederation.github.io/www.aifreedomtrust.com/",
-      "evidence": "public-page"
+      "evidence": "public-page",
+      "source": "https://github.com/AIFreedomTrustFederation/www.aifreedomtrust.com/blob/main/index.html"
+    },
+    {
+      "id": "l-constellations",
+      "kind": "leaf",
+      "label": "Constellation navigation",
+      "url": "https://aifreedomtrustfederation.github.io/www.aifreedomtrust.com/constellations.html",
+      "evidence": "public-page",
+      "source": "https://github.com/AIFreedomTrustFederation/www.aifreedomtrust.com/blob/main/constellations.html"
+    },
+    {
+      "id": "l-operator",
+      "kind": "leaf",
+      "label": "MoBox UXI interface",
+      "url": "https://github.com/AIFreedomTrustFederation/AIFT-OS/blob/main/internal/uxihttp/index.html",
+      "evidence": "source-file"
+    },
+    {
+      "id": "l-tree-manifest",
+      "kind": "leaf",
+      "label": "Genesis Tree manifest",
+      "url": "https://github.com/AIFreedomTrustFederation/AIFT-Genesis/blob/main/manifests/tree.manifest.json",
+      "evidence": "canonical-draft"
+    },
+    {
+      "id": "l-atlas-manifest",
+      "kind": "leaf",
+      "label": "Genesis Living Atlas",
+      "url": "https://github.com/AIFreedomTrustFederation/AIFT-Genesis/blob/main/manifests/living-atlas.manifest.json",
+      "evidence": "canonical-draft"
     }
   ],
   "edges": [
     {
       "from": "r-portal",
       "to": "trunk",
-      "relation": "source-lineage",
+      "relation": "member-of",
       "status": "curated"
     },
     {
       "from": "r-os",
       "to": "trunk",
-      "relation": "source-lineage",
+      "relation": "member-of",
       "status": "curated"
     },
     {
       "from": "r-runtime",
       "to": "trunk",
-      "relation": "source-lineage",
+      "relation": "member-of",
       "status": "curated"
     },
     {
       "from": "r-vps",
       "to": "trunk",
-      "relation": "source-lineage",
+      "relation": "member-of",
       "status": "curated"
     },
     {
       "from": "r-genesis",
       "to": "trunk",
-      "relation": "source-lineage",
+      "relation": "member-of",
       "status": "curated"
     },
     {
       "from": "trunk",
       "to": "b-public",
-      "relation": "source-lineage",
+      "relation": "organizes",
       "status": "curated"
     },
     {
       "from": "trunk",
       "to": "b-operator",
-      "relation": "source-lineage",
+      "relation": "organizes",
       "status": "curated"
     },
     {
       "from": "trunk",
       "to": "b-execution",
-      "relation": "source-lineage",
+      "relation": "organizes",
       "status": "curated"
     },
     {
       "from": "trunk",
       "to": "b-infra",
-      "relation": "source-lineage",
+      "relation": "organizes",
       "status": "curated"
     },
     {
       "from": "trunk",
       "to": "b-knowledge",
-      "relation": "source-lineage",
+      "relation": "organizes",
       "status": "curated"
     },
     {
       "from": "b-public",
       "to": "l-atlas",
-      "relation": "source-lineage",
-      "status": "curated"
+      "relation": "produces",
+      "status": "curated",
+      "source": "https://github.com/AIFreedomTrustFederation/www.aifreedomtrust.com/blob/main/atlas.html"
     },
     {
       "from": "b-public",
       "to": "f-portal",
-      "relation": "source-lineage",
-      "status": "curated"
+      "relation": "produces",
+      "status": "curated",
+      "source": "https://github.com/AIFreedomTrustFederation/www.aifreedomtrust.com/blob/main/index.html"
+    },
+    {
+      "from": "r-portal",
+      "to": "b-public",
+      "relation": "implements",
+      "status": "curated",
+      "source": "https://github.com/AIFreedomTrustFederation/www.aifreedomtrust.com"
+    },
+    {
+      "from": "r-os",
+      "to": "b-operator",
+      "relation": "implements",
+      "status": "curated",
+      "source": "https://github.com/AIFreedomTrustFederation/AIFT-OS"
+    },
+    {
+      "from": "r-runtime",
+      "to": "b-execution",
+      "relation": "implements",
+      "status": "curated",
+      "source": "https://github.com/AIFreedomTrustFederation/AIFT-Runtime"
+    },
+    {
+      "from": "r-vps",
+      "to": "b-infra",
+      "relation": "implements",
+      "status": "curated",
+      "source": "https://github.com/AIFreedomTrustFederation/VPS"
+    },
+    {
+      "from": "r-genesis",
+      "to": "b-knowledge",
+      "relation": "implements",
+      "status": "curated",
+      "source": "https://github.com/AIFreedomTrustFederation/AIFT-Genesis"
+    },
+    {
+      "from": "b-public",
+      "to": "l-constellations",
+      "relation": "documents",
+      "status": "curated",
+      "source": "https://aifreedomtrustfederation.github.io/www.aifreedomtrust.com/constellations.html"
+    },
+    {
+      "from": "b-operator",
+      "to": "l-operator",
+      "relation": "documents",
+      "status": "curated",
+      "source": "https://github.com/AIFreedomTrustFederation/AIFT-OS/blob/main/internal/uxihttp/index.html"
+    },
+    {
+      "from": "b-knowledge",
+      "to": "l-tree-manifest",
+      "relation": "documents",
+      "status": "curated",
+      "source": "https://github.com/AIFreedomTrustFederation/AIFT-Genesis/blob/main/manifests/tree.manifest.json"
+    },
+    {
+      "from": "b-knowledge",
+      "to": "l-atlas-manifest",
+      "relation": "documents",
+      "status": "curated",
+      "source": "https://github.com/AIFreedomTrustFederation/AIFT-Genesis/blob/main/manifests/living-atlas.manifest.json"
     }
   ]
 }
