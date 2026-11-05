@@ -1,0 +1,41 @@
+name: Living Universe constellation contracts
+on:
+  pull_request:
+    paths:
+      - 'data/living-universe.json'
+      - 'world-*.mjs'
+      - 'world-*.css'
+      - 'living-universe.html'
+      - 'tests/*universe*.mjs'
+      - 'tests/world-*.mjs'
+      - '.github/workflows/living-universe-constellation.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'data/living-universe.json'
+      - 'world-*.mjs'
+      - 'world-*.css'
+      - 'living-universe.html'
+      - 'tests/*universe*.mjs'
+      - 'tests/world-*.mjs'
+permissions:
+  contents: read
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Check module syntax
+        run: |
+          node --check world-model-contract.mjs
+          node --check world-evolution.mjs
+          node --check world-constellation.mjs
+      - name: Run world contracts
+        run: |
+          node tests/living-universe.test.mjs
+          node tests/world-evolution.test.mjs
+          node tests/world-constellation.test.mjs
