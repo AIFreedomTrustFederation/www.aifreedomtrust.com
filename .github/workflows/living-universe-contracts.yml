@@ -1,0 +1,39 @@
+name: Living Universe contracts
+on:
+  pull_request:
+    paths:
+      - 'data/living-universe.json'
+      - 'living-universe.html'
+      - 'world-model-contract.mjs'
+      - 'world-evolution.mjs'
+      - 'world-evolution.css'
+      - 'tests/**'
+      - '.github/workflows/living-universe-contracts.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'data/living-universe.json'
+      - 'living-universe.html'
+      - 'world-model-contract.mjs'
+      - 'world-evolution.mjs'
+      - 'world-evolution.css'
+      - 'tests/**'
+permissions:
+  contents: read
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate world contracts
+        run: |
+          node tests/living-universe.test.mjs
+          node tests/world-evolution.test.mjs
+      - name: JavaScript syntax
+        run: |
+          node --check world-model-contract.mjs
+          node --check world-evolution.mjs
