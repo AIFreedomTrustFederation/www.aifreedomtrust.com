@@ -1,0 +1,172 @@
+{
+  "version": "0.1.0",
+  "status": "curated-source-map",
+  "description": "Public source-linked map, not a live health or deployment attestation. Only verified public experience is represented as fruit.",
+  "nodes": [
+    {
+      "id": "r-portal",
+      "kind": "root",
+      "label": "www.aifreedomtrust.com",
+      "url": "https://github.com/AIFreedomTrustFederation/www.aifreedomtrust.com",
+      "evidence": "repository"
+    },
+    {
+      "id": "r-os",
+      "kind": "root",
+      "label": "AIFT-OS",
+      "url": "https://github.com/AIFreedomTrustFederation/AIFT-OS",
+      "evidence": "repository"
+    },
+    {
+      "id": "r-runtime",
+      "kind": "root",
+      "label": "AIFT-Runtime",
+      "url": "https://github.com/AIFreedomTrustFederation/AIFT-Runtime",
+      "evidence": "repository"
+    },
+    {
+      "id": "r-vps",
+      "kind": "root",
+      "label": "VPS",
+      "url": "https://github.com/AIFreedomTrustFederation/VPS",
+      "evidence": "repository"
+    },
+    {
+      "id": "r-genesis",
+      "kind": "root",
+      "label": "AIFT-Genesis",
+      "url": "https://github.com/AIFreedomTrustFederation/AIFT-Genesis",
+      "evidence": "repository"
+    },
+    {
+      "id": "trunk",
+      "kind": "trunk",
+      "label": "AIFT Federation",
+      "url": "https://github.com/AIFreedomTrustFederation",
+      "evidence": "organization"
+    },
+    {
+      "id": "b-public",
+      "kind": "branch",
+      "label": "Public experience",
+      "url": "https://github.com/AIFreedomTrustFederation/www.aifreedomtrust.com",
+      "evidence": "source-backed"
+    },
+    {
+      "id": "b-operator",
+      "kind": "branch",
+      "label": "Operator interface",
+      "url": "https://github.com/AIFreedomTrustFederation/AIFT-OS",
+      "evidence": "source-backed"
+    },
+    {
+      "id": "b-execution",
+      "kind": "branch",
+      "label": "Local execution",
+      "url": "https://github.com/AIFreedomTrustFederation/AIFT-Runtime",
+      "evidence": "source-backed"
+    },
+    {
+      "id": "b-infra",
+      "kind": "branch",
+      "label": "Infrastructure",
+      "url": "https://github.com/AIFreedomTrustFederation/VPS",
+      "evidence": "source-backed"
+    },
+    {
+      "id": "b-knowledge",
+      "kind": "branch",
+      "label": "Genesis knowledge",
+      "url": "https://github.com/AIFreedomTrustFederation/AIFT-Genesis",
+      "evidence": "source-backed"
+    },
+    {
+      "id": "l-atlas",
+      "kind": "leaf",
+      "label": "Tree exploration",
+      "url": "https://aifreedomtrustfederation.github.io/www.aifreedomtrust.com/atlas.html",
+      "evidence": "public-page"
+    },
+    {
+      "id": "f-portal",
+      "kind": "fruit",
+      "label": "Federation public portal",
+      "url": "https://aifreedomtrustfederation.github.io/www.aifreedomtrust.com/",
+      "evidence": "public-page"
+    }
+  ],
+  "edges": [
+    {
+      "from": "r-portal",
+      "to": "trunk",
+      "relation": "source-lineage",
+      "status": "curated"
+    },
+    {
+      "from": "r-os",
+      "to": "trunk",
+      "relation": "source-lineage",
+      "status": "curated"
+    },
+    {
+      "from": "r-runtime",
+      "to": "trunk",
+      "relation": "source-lineage",
+      "status": "curated"
+    },
+    {
+      "from": "r-vps",
+      "to": "trunk",
+      "relation": "source-lineage",
+      "status": "curated"
+    },
+    {
+      "from": "r-genesis",
+      "to": "trunk",
+      "relation": "source-lineage",
+      "status": "curated"
+    },
+    {
+      "from": "trunk",
+      "to": "b-public",
+      "relation": "source-lineage",
+      "status": "curated"
+    },
+    {
+      "from": "trunk",
+      "to": "b-operator",
+      "relation": "source-lineage",
+      "status": "curated"
+    },
+    {
+      "from": "trunk",
+      "to": "b-execution",
+      "relation": "source-lineage",
+      "status": "curated"
+    },
+    {
+      "from": "trunk",
+      "to": "b-infra",
+      "relation": "source-lineage",
+      "status": "curated"
+    },
+    {
+      "from": "trunk",
+      "to": "b-knowledge",
+      "relation": "source-lineage",
+      "status": "curated"
+    },
+    {
+      "from": "b-public",
+      "to": "l-atlas",
+      "relation": "source-lineage",
+      "status": "curated"
+    },
+    {
+      "from": "b-public",
+      "to": "f-portal",
+      "relation": "source-lineage",
+      "status": "curated"
+    }
+  ]
+}
