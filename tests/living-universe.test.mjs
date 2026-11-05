@@ -24,5 +24,15 @@ for(const fruit of graph.nodes.filter(n=>n.kind==='fruit')){
  while(queue.length){const id=queue.shift();if(visited.has(id))continue;visited.add(id);const n=graph.nodes.find(n=>n.id===id);if(n.kind==='root')rooted=true;queue.push(...incoming.get(id))}
  assert.ok(rooted,fruit.id+' fruit lacks source-root lineage');
 }
+const contributions=new Set(['implements','produces','documents']);
+for(const e of graph.edges)assert.ok(['member-of','organizes',...contributions].includes(e.relation),'unknown edge relation');
+function sourcedRoots(id){
+ const seen=new Set(),queue=[id],roots=new Set();
+ while(queue.length){const current=queue.shift();if(seen.has(current))continue;seen.add(current);const node=graph.nodes.find(n=>n.id===current);if(node.kind==='root')roots.add(current);for(const edge of graph.edges)if(edge.to===current&&contributions.has(edge.relation))queue.push(edge.from)}
+ return roots;
+}
+assert.deepEqual([...sourcedRoots('f-portal')],['r-portal'],'public fruit must not inherit unrelated member repositories');
+for(const leaf of graph.nodes.filter(n=>n.kind==='leaf'))assert.ok(sourcedRoots(leaf.id).size,'leaf lacks explicit source');
+for(const marker of ['function lineage(id)','function renderPath(id)','function renderMilestones()','id="path-steps"','id="milestones"','sourceRelations.has(edge.relation)'])assert.ok(html.includes(marker),'missing provenance UI: '+marker);
 for(const marker of ['id="search"','id="kind"','id="world"','id="universe-index"','prefers-reduced-motion','role="status"','function parents(id)','data/living-universe.json'])assert.ok(html.includes(marker),'missing explorer contract: '+marker);
 console.log('Living Universe contract OK:',graph.nodes.length,'nodes,',graph.edges.length,'edges');
