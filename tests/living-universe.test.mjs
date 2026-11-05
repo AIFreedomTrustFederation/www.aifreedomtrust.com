@@ -44,3 +44,7 @@ for(const marker of ['id="genesis-bridge"','src="genesis-bridge.js"','genesis-gr
 for(const marker of ["living-atlas.manifest.json","data.status !== 'canonical-draft'","data.treeMappings.some","e.visibility==='public'","m.atlasEntityId===entity.id","textContent=entity.label","noopener noreferrer","no live status claimed"])assert.ok(bridge.includes(marker),'missing Genesis evidence boundary: '+marker);
 assert.ok(!bridge.includes('innerHTML'),'Genesis entity content must never be injected as HTML');
 console.log('Genesis bridge contract OK: canonical draft validated, public-only, source-linked');
+
+for(const marker of ['id="world-quests"','id="quest-grid"','id="quest-status"','The Rootkeeper','The Systems Cartographer','The Knowledge Gardener','The Fruit Steward','visited.add(next.id)','No verified CI or product achievements are inferred.']) {
+ assert.ok(html.includes(marker),'missing evidence expedition contract: '+marker);
+}
