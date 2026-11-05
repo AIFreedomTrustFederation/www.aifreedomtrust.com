@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {validateWorld,contributionRoots,MEMBERSHIP_RELATIONS,KINDS} from '../world-model-contract.mjs';
+const read=p=>readFileSync(new URL(p,import.meta.url),'utf8');
+const model=JSON.parse(read('../data/living-universe.json'));
+assert.equal(validateWorld(model).valid,true,'curated model must validate');
+assert.deepEqual(contributionRoots(model,'f-portal').roots.map(n=>n.id),['r-portal'],'portal fruit must not inherit unrelated roots');
+assert.ok(model.edges.some(e=>MEMBERSHIP_RELATIONS.includes(e.relation)),'membership must be separate from contribution');
+const html=read('../living-universe.html'),ui=read('../world-constellation.mjs'),css=read('../world-constellation.css');
+for(const token of ['id="world-constellation"','world-constellation.mjs','world-constellation.css','world-evolution.mjs','id="universe-index"'])assert.ok(html.includes(token),'missing additive page integration '+token);
+for(const token of ['validateWorld','contributionRoots','MEMBERSHIP_RELATIONS','KINDS','aria-label','cos-mini','cos-index','historyIndex','zoomIn','zoomOut','textContent','role'])assert.ok(ui.includes(token),'missing constellation behavior '+token);
+assert.ok(css.includes('prefers-reduced-motion')&&css.includes('focus-visible'),'accessibility CSS absent');
+assert.ok(KINDS.includes('flower')&&KINDS.includes('fruit'),'growth taxonomy incomplete');
+console.log('Constellation integration contract passed: '+model.nodes.length+' nodes, '+model.edges.length+' typed relationships');
