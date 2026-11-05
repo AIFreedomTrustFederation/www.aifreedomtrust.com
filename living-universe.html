@@ -42,4 +42,20 @@ byId('journey-prev').addEventListener('click',()=>showLayer(active-1));byId('jou
 fetch('data/living-universe.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.json()}).then(data=>{if(!Array.isArray(data.nodes))throw Error('Invalid source model');graph=data;showLayer(0)}).catch(error=>{byId('journey-status').textContent='Journey unavailable: '+error.message});
 })();
 </script>
-</body></html>
+<section id="genesis-bridge" aria-label="Genesis canonical atlas correspondence"></section><style>
+#genesis-bridge{margin:3rem 0;padding:clamp(1rem,3vw,2rem);border:1px solid #7c83ca88;border-radius:24px;background:radial-gradient(ellipse at 50% 0%,#2b2158,#09162a 65%);box-shadow:0 25px 80px #0007}
+#genesis-bridge h2{font:clamp(1.8rem,4vw,3rem)/1.15 Georgia,serif;color:#e4c4ff}
+#genesis-bridge>p{max-width:900px;color:#c8d7e8;line-height:1.65}
+.genesis-controls{display:flex;gap:.7rem;flex-wrap:wrap;margin:1rem 0}
+.genesis-controls input,.genesis-controls select{background:#101d31;color:#fff;border:1px solid #8c85c6;border-radius:12px;padding:.85rem;min-width:190px;flex:1}
+.genesis-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:1rem;margin:1rem 0}
+.genesis-card{border:1px solid #ffffff35;border-radius:16px;background:#101a31;padding:1.2rem;overflow-wrap:anywhere}
+.genesis-card h3{font:1.45rem Georgia,serif;color:#ffe0ab}
+.genesis-card p{color:#c5d7e8;line-height:1.6}
+.genesis-card small{color:#a7e5d5}
+.genesis-card details{margin:.8rem 0;color:#d7d9f9}
+.genesis-card summary{cursor:pointer}
+.genesis-card li{margin:.5rem 0}
+.genesis-card a{display:inline-block;margin:.3rem .6rem .3rem 0;color:#98f7df}
+@media(prefers-reduced-motion:reduce){#genesis-bridge *{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+</style><script defer src="genesis-bridge.js"></script></body></html>
