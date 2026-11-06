@@ -21,6 +21,9 @@ const html=read('../living-universe.html'),ui=read('../world-constellation.mjs')
 for(const token of ['id="world-constellation"','world-constellation.mjs','world-constellation.css','id="federation-flightdeck"','federation-flightdeck.mjs'])assert.ok(html.includes(token),'lost portal surface '+token);
 for(const token of ['world-constellation-contract.mjs','historyIndex','cos-mini','cos-index','cos-journey','Evidence Expedition','setSelected(root.id)','Open documented outcome'])assert.ok(ui.includes(token),'missing spatial behavior '+token);
 assert.ok(ui.includes("'stroke-dasharray':attested?'none':'5 7'"));
+for(const token of ['cos-spatial-nav','Pan left','Pan right','Pan up','Pan down','cameraX','cameraY','windowWidth','windowHeight','scale=1.4'])assert.ok(ui.includes(token),'missing semantic camera or minimap behavior '+token);
+assert.ok(css.includes('.cos-spatial-nav button:focus-visible'),'camera controls need visible keyboard focus');
+assert.ok(css.includes('min-height:2.75rem'),'camera controls need touch targets');
 assert.ok(css.includes('prefers-reduced-motion')&&css.includes('focus-visible'));
 assert.ok(!ui.includes('localStorage'),'no fabricated persistent achievements');
 console.log('Canonical constellation integration passed');
