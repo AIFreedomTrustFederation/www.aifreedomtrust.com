@@ -1,6 +1,7 @@
 import {projectWorld,LAYERS} from './world-projection.mjs';
 import {evidenceItinerary,evidenceTrail} from './world-evidence-journeys.mjs';
 import {evidenceTopology,topologyPositions} from './world-evidence-topology.mjs';
+import {readinessBoard} from './world-evidence-readiness.mjs';
 const host=document.getElementById('world-evidence-atlas');
 if(host){
  const el=(tag,cls='',value)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(value!==undefined)n.textContent=value;return n};
@@ -21,6 +22,24 @@ if(host){
   const trailPanel=el('section','wea-trail-panel');trailPanel.setAttribute('aria-label','Reversible source journey');shell.append(trailPanel);
   const topologyPanel=el('section','wea-topology-panel');topologyPanel.setAttribute('aria-label','Evidence relationship constellation');shell.append(topologyPanel);
   const tally=el('div','wea-tally');shell.append(tally);
+  const readiness=el('section','wea-readiness');readiness.setAttribute('aria-label','Outcome evidence readiness');shell.append(readiness);
+  function renderReadiness(){
+   readiness.replaceChildren();
+   readiness.append(el('h3','','Outcome evidence readiness'),el('p','','Curated provenance only. These are not live CI, deployment, security or release checks.'));
+   const entries=readinessBoard(model),grid=el('div','wea-readiness-grid');
+   for(const entry of entries){
+    const card=el('article','wea-readiness-card');
+    card.append(el('h4','',entry.label),el('p','',entry.readiness==='source-lineage-attested'?'Attested source lineage recorded':'Evidence gap: contributing source lineage unverified'));
+    const open=link('Open actual outcome',entry.url);card.append(open);
+    const inspectButton=el('button','','Inspect lineage');inspectButton.type='button';inspectButton.onclick=()=>{layer.value='fruit';render();navigate(entry.id)};card.append(inspectButton);
+    if(entry.roots.length){const roots=el('p','',entry.roots.length+' contributing repository roots');card.append(roots);
+     for(const root of entry.roots)card.append(link(root.label,root.url));
+    }else card.append(el('p','wea-gap',entry.missing.join('; ')));
+    grid.append(card);
+   }
+   if(!entries.length)readiness.append(el('p','wea-gap','No documented outcomes. No fruits have been invented.'));
+   readiness.append(grid);
+  }
   const history=[];let cursor=-1;
   function navigate(id){if(history[cursor]!==id){history.splice(cursor+1);history.push(id);cursor=history.length-1}inspect(id)}
   function renderTrail(id){trailPanel.replaceChildren();const trail=evidenceTrail(model,id);trailPanel.append(el('h3','','Source-to-outcome journey'));
@@ -102,6 +121,6 @@ if(host){
   search.addEventListener('input',render);layer.addEventListener('change',render);
   previous.onclick=()=>{layer.value=LAYERS[Math.max(0,LAYERS.indexOf(layer.value)-1)];render()};
   next.onclick=()=>{layer.value=LAYERS[Math.min(LAYERS.length-1,LAYERS.indexOf(layer.value)+1)];render()};
-  render();renderExpedition();status.textContent='Curated source projection loaded · '+model.nodes.length+' entities · '+model.edges.length+' documented relationships';
+  render();renderExpedition();renderReadiness();status.textContent='Curated source projection loaded · '+model.nodes.length+' entities · '+model.edges.length+' documented relationships';
  }catch(error){status.textContent='Evidence Atlas unavailable: '+error.message+'. Existing portal exploration remains accessible.'}
 }
