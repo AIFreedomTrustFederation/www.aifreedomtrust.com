@@ -3,3 +3,16 @@
 
 /* Semantic-zoom journey: navigation and provenance share the spectral progression. */
 .cos-journey{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:.5rem;margin:1.2rem 0 .5rem}.cos-step{position:relative;min-height:4rem;border:1px solid #ffffff55;border-radius:12px;background:#11273c;color:#fff;padding:.7rem .5rem;font:600 .83rem/1.35 system-ui;cursor:pointer;overflow-wrap:anywhere}.cos-step:nth-child(1){border-top:4px solid #ff6969}.cos-step:nth-child(2){border-top:4px solid #f5c76b}.cos-step:nth-child(3){border-top:4px solid #69d999}.cos-step:nth-child(4){border-top:4px solid #60b7ff}.cos-step:nth-child(5){border-top:4px solid #bb8bff}.cos-step:nth-child(6){border-top:4px solid #ffab74}.cos-step[aria-pressed=true]{background:#244660;box-shadow:inset 0 0 0 1px #fff8,0 0 22px #79cfff33}.cos-step:disabled{opacity:.45;cursor:not-allowed}.cos-crumb{display:flex;align-items:center;flex-wrap:wrap;gap:.4rem;color:#cbdde7;min-height:2rem}.cos-crumb button{border:0;background:none;color:#b0f6e9;text-decoration:underline;cursor:pointer;font:inherit}.cos-crumb button[aria-current=location]{color:#ffe2a4;text-decoration:none}.cos-gap{border-left:3px solid #f5c76b;padding:.7rem;background:#352b25}.cos-step:focus-visible,.cos-crumb button:focus-visible{outline:3px solid #fff;outline-offset:3px}@media(max-width:850px){.cos-journey{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:480px){.cos-journey{grid-template-columns:repeat(2,minmax(0,1fr))}.cos-step{min-height:3.5rem}}
+
+/* Evidence expedition: transparent milestones without fabricated XP or readiness. */
+.cos-expedition{margin:1.6rem 0;padding:clamp(1rem,2.5vw,1.8rem);border:1px solid #f5c76b77;border-radius:22px;background:radial-gradient(circle at 8% 0%,#45332a88,transparent 52%),#0c1929;color:#f5f9ff}
+.cos-expedition h3{font:clamp(1.5rem,3vw,2.3rem) Georgia,serif;color:#ffe3a3;margin:.2rem 0 .7rem}
+.cos-progress{color:#d5e6ee;line-height:1.6}
+.cos-expedition-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:1rem}
+.cos-expedition-card{border:1px solid #ffffff42;border-top:4px solid #ffab74;border-radius:15px;background:#13283d;padding:1.1rem;display:flex;flex-direction:column;align-items:flex-start;gap:.6rem}
+.cos-expedition-card h4{margin:0;font:1.25rem Georgia,serif;color:#ffe2a4}
+.cos-expedition-card p{line-height:1.55;margin:.2rem 0;color:#d2e5ed}
+.cos-expedition-card a,.cos-expedition-card button{font:inherit;border:1px solid #8cdccf;border-radius:9px;padding:.55rem .7rem;color:#b2fff1;background:#0b2538;text-decoration:none;cursor:pointer}
+.cos-expedition-card a:hover,.cos-expedition-card button:hover{background:#1c4456}
+.cos-expedition-card :focus-visible{outline:3px solid white;outline-offset:3px}
+@media(max-width:540px){.cos-expedition{padding:1rem}.cos-expedition-grid{grid-template-columns:1fr}}
