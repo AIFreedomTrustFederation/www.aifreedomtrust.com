@@ -5,6 +5,8 @@ on:
       - 'world-evidence-atlas.mjs'
       - 'world-evidence-atlas.css'
       - 'world-evidence-journeys.mjs'
+      - 'world-evidence-readiness.mjs'
+      - 'tests/world-evidence-readiness.test.mjs'
       - 'world-projection.mjs'
       - 'data/living-universe.json'
       - 'living-universe.html'
@@ -28,11 +30,13 @@ jobs:
         run: |
           node --check world-evidence-atlas.mjs
           node --check world-evidence-journeys.mjs
+          node --check world-evidence-readiness.mjs
           node --check tests/world-evidence-journeys.test.mjs
           node --check tests/world-evidence-atlas.test.mjs
       - name: Run evidence and projection contracts
         run: |
           node tests/world-evidence-atlas.test.mjs
+          node tests/world-evidence-readiness.test.mjs
           node tests/world-evidence-journeys.test.mjs
           node tests/world-projection.test.mjs
           node tests/world-constellation.test.mjs
