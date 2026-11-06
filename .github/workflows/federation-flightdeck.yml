@@ -1,0 +1,27 @@
+name: Federation Flight Deck contracts
+on:
+  pull_request:
+    paths:
+      - 'federation-flightdeck.mjs'
+      - 'living-universe.html'
+      - 'world-projection.mjs'
+      - 'data/living-universe.json'
+      - 'tests/federation-flightdeck.test.mjs'
+      - '.github/workflows/federation-flightdeck.yml'
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check federation-flightdeck.mjs
+      - run: node --check tests/federation-flightdeck.test.mjs
+      - run: node tests/federation-flightdeck.test.mjs
+      - run: node tests/world-projection.test.mjs
