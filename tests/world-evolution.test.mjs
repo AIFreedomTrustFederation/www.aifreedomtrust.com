@@ -14,6 +14,17 @@ const fake=structuredClone(model);fake.nodes.push({id:'f-fake',kind:'fruit',labe
 assert.equal(validateWorld(fake).valid,false,'repository URLs cannot be fruits');
 const broken=structuredClone(model);broken.edges.push({from:'missing',to:'f-portal',relation:'contributes-to-outcome'});assert.equal(validateWorld(broken).valid,false);
 const cyclic=structuredClone(model);cyclic.edges.push({from:'f-portal',to:'b-public',relation:'contributes-to-outcome'});assert.equal(contributionRoots(cyclic,'f-portal').roots.length,1,'cycle-safe traversal');
+const undocumented=structuredClone(model);
+undocumented.edges=undocumented.edges.filter(e=>e.relation!=='contributes-to-outcome');
+assert.equal(contributionRoots(undocumented,'f-portal').roots.length,0,'structural links must not prove fruit contribution');
+const missingEvidence=structuredClone(model);
+missingEvidence.edges.find(e=>e.relation==='contributes-to-outcome').evidenceUrl=undefined;
+assert.equal(validateWorld(missingEvidence).valid,false,'missing HTTPS attestation must fail validation');
+assert.equal(contributionRoots(missingEvidence,'f-portal').roots.length,0,'unattested path must not prove fruit contribution');
+const badEvidence=structuredClone(model);
+badEvidence.edges.find(e=>e.relation==='contributes-to-outcome').evidenceUrl='http://example.com/claim';
+assert.equal(validateWorld(badEvidence).valid,false,'insecure evidence must fail');
+assert.equal(contributionRoots(badEvidence,'f-portal').roots.length,0,'insecure evidence must not establish lineage');
 const quests=evidenceQuests(model);assert.equal(quests.length,4);assert.ok(quests.every(q=>q.status==='available-for-exploration'));
 const html=read('../living-universe.html'),css=read('../world-evolution.css'),ui=read('../world-evolution.mjs');
 for(const token of ['world-evolution','world-evolution.mjs','world-evolution.css','universe-index'])assert.ok(html.includes(token),'missing page hook '+token);
