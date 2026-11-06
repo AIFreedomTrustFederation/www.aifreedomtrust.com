@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {projectWorld} from '../world-projection.mjs';
-import {validateWorld,contributionRoots,CONTRIBUTION_RELATIONS,MEMBERSHIP_RELATIONS,KINDS} from '../world-constellation-contract.mjs';
+import {validateWorld,contributionRoots,CONTRIBUTION_RELATIONS,MEMBERSHIP_RELATIONS,KINDS,contributionTrails} from '../world-constellation-contract.mjs';
 const read=p=>readFileSync(new URL(p,import.meta.url),'utf8');
 const model=JSON.parse(read('../data/living-universe.json'));
 assert.deepEqual(validateWorld(model),{valid:true,errors:[]});
@@ -26,7 +26,24 @@ assert.ok(css.includes('.cos-spatial-nav button:focus-visible'),'camera controls
 assert.ok(css.includes('min-height:2.75rem'),'camera controls need touch targets');
 assert.ok(css.includes('prefers-reduced-motion')&&css.includes('focus-visible'));
 assert.ok(!ui.includes('localStorage'),'no fabricated persistent achievements');
-for(const token of ['cos-evidence-trail','Attested source journey','Review attestation','setSelected(step.id)','trail.append(button)','edge.evidenceUrl.startsWith(\'https://\')'])assert.ok(ui.includes(token),'missing interactive attestation trail '+token);
+for(const token of ['cos-evidence-trail','Attested source journey','Review attestation','setSelected(step.id)','trail.append(button)','proof.href=edge.evidenceUrl'])assert.ok(ui.includes(token),'missing interactive attestation trail '+token);
 for(const token of ['.cos-evidence-trail', '.cos-trail-step', '.cos-trail-proof', 'min-height:44px', '.cos-evidence-trail :focus-visible'])assert.ok(css.includes(token),'missing accessible provenance trail style '+token);
 assert.ok(contributionRoots(model,'f-portal').paths.length>0,'source journey requires real attested paths');
+const trails=contributionTrails(model,'f-portal');
+assert.ok(trails.length>0,'outcome needs attested trail');
+for(const trail of trails){
+ assert.equal(trail.ids[0],'r-portal');
+ assert.equal(trail.ids.at(-1),'f-portal');
+ assert.equal(trail.edges.length,trail.ids.length-1);
+ for(let i=0;i<trail.edges.length;i++){
+  assert.equal(trail.edges[i].from,trail.ids[i]);
+  assert.equal(trail.edges[i].to,trail.ids[i+1]);
+  assert.match(trail.edges[i].evidenceUrl,/^https:\\/\\//);
+ }
+}
+const labelCollision=structuredClone(model);
+labelCollision.nodes.find(n=>n.id==='b-operator').label=labelCollision.nodes.find(n=>n.id==='r-portal').label;
+assert.deepEqual(contributionTrails(labelCollision,'f-portal').map(t=>t.ids),trails.map(t=>t.ids),'duplicate labels must not change lineage');
+assert.ok(ui.includes('contributionTrails(model,selected)'),'spatial UI must consume exact-ID trails');
+assert.ok(!ui.includes('nodes.find(n=>n.label===path[i])'),'never resolve provenance by nonunique labels');
 console.log('Canonical constellation integration passed');
