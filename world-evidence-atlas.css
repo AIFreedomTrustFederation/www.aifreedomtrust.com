@@ -34,3 +34,11 @@
 .wea-topology-index button:focus-visible{outline:3px solid #ffe2a6;outline-offset:3px}
 @media(max-width:600px){.wea-topology-viewport svg{min-width:680px}.wea-topology-index button{flex:1 1 180px}}
 @media(prefers-reduced-motion:reduce){.wea-topology-panel *{animation:none!important;transition:none!important}}
+
+/* Evidence readiness: spectral cards with readable touch-first provenance. */
+.wea-readiness{margin-block:2rem;padding:clamp(1rem,3vw,2rem);border:1px solid #bca46b77;border-radius:24px;background:linear-gradient(130deg,#271727,#102a32 48%,#121a38);color:#f5f6ff}
+.wea-readiness-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:1rem}
+.wea-readiness-card{border:1px solid #84a8b777;border-radius:16px;padding:1rem;background:#101b2dcc;display:flex;flex-direction:column;align-items:flex-start;gap:.65rem;overflow-wrap:anywhere}
+.wea-readiness-card button,.wea-readiness-card a{min-height:44px;display:inline-flex;align-items:center;color:#f4dba1}
+.wea-readiness-card :focus-visible{outline:3px solid #78e9ff;outline-offset:3px}
+@media(prefers-reduced-motion:reduce){.wea-readiness-card *{animation:none!important;transition:none!important}}
