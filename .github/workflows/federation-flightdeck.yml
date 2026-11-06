@@ -3,6 +3,10 @@ on:
   pull_request:
     paths:
       - 'federation-flightdeck.mjs'
+      - 'world-constellation.mjs'
+      - 'world-constellation-contract.mjs'
+      - 'world-constellation.css'
+      - 'tests/canonical-constellation.test.mjs'
       - 'living-universe.html'
       - 'world-projection.mjs'
       - 'data/living-universe.json'
@@ -25,3 +29,6 @@ jobs:
       - run: node --check tests/federation-flightdeck.test.mjs
       - run: node tests/federation-flightdeck.test.mjs
       - run: node tests/world-projection.test.mjs
+      - run: node --check world-constellation.mjs
+      - run: node --check world-constellation-contract.mjs
+      - run: node tests/canonical-constellation.test.mjs
