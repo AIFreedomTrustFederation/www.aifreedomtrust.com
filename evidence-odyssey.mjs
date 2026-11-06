@@ -1,0 +1,35 @@
+import {validateWorld,contributingRoots,evidenceState,layers,palette} from './world-contract.mjs';
+const host=document.getElementById('evidence-odyssey');if(host){
+const css=document.createElement('style');css.textContent=`
+#evidence-odyssey{margin:2rem 0;padding:clamp(1rem,3vw,2.5rem);border:1px solid #71ebd066;border-radius:28px;background:radial-gradient(ellipse at 25% 5%,#19365e,#0a162b 60%,#080b18);box-shadow:0 22px 90px #0009;color:#f8f5f0}
+#evidence-odyssey h2{font:clamp(2rem,4vw,3.5rem)/1.1 Georgia,serif;margin:.4rem 0;background:linear-gradient(95deg,#ff9d83,#f8d58b,#5bf6b4,#6bbcff,#b58bff);background-clip:text;color:transparent}
+#evidence-odyssey p{color:#d3dfeb;line-height:1.65}
+.odyssey-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(240px,1fr);gap:1rem}
+.odyssey-layers{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:.4rem;margin:1.2rem 0}
+.odyssey-layers button{min-width:0;border:1px solid #ffffff55;border-radius:13px;background:#0d2035;color:#fff;padding:.8rem .3rem;cursor:pointer}
+.odyssey-layers button[aria-pressed=true]{border-color:#fff;box-shadow:0 0 20px #5bf6b450;background:#25455c}
+.odyssey-layers span{display:block;height:5px;border-radius:10px;margin:0 .4rem .6rem}
+.odyssey-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.65rem;align-content:start}
+.odyssey-list button{border:1px solid #ffffff3d;border-radius:16px;padding:1rem;text-align:left;color:#fff;background:#13253c;cursor:pointer;min-height:96px}
+.odyssey-list button[aria-pressed=true]{border-color:#ffe4a2;background:#29455a}
+.odyssey-list small{display:block;margin-top:.5rem;color:#b7ccdc}
+.odyssey-detail{border:1px solid #ffffff40;border-radius:18px;background:#081726;padding:1.2rem}
+.odyssey-detail h3{font:1.6rem Georgia,serif;color:#ffe3aa;margin:.4rem 0}
+.odyssey-detail a{color:#a6f4e5;overflow-wrap:anywhere}
+.odyssey-quests{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.6rem;margin:1.2rem 0}
+.odyssey-quest{border:1px solid #ffffff35;border-radius:14px;padding:1rem;background:#12253b}
+.odyssey-quest strong{display:block;color:#f7d68e}.odyssey-quest small{color:#c6d7e5}
+.odyssey-quest[data-visited=true]{border-color:#67edb2}
+.odyssey-status{font-size:.9rem;color:#b8d9d2}
+@media(max-width:760px){.odyssey-grid{grid-template-columns:1fr}.odyssey-layers{grid-template-columns:repeat(3,1fr)}}
+@media(prefers-reduced-motion:reduce){#evidence-odyssey *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+`;document.head.append(css);
+host.innerHTML='<p class="eyebrow">The living current · Evidence Odyssey</p><h2>Follow the source. Discover the fruit.</h2><p>Explore the federation layer by layer. Every product must trace to a documented contributing root. Exploring a layer is learning, not certification or CI success.</p><div class="odyssey-layers" role="group" aria-label="Choose a growth layer"></div><div class="odyssey-grid"><div class="odyssey-list" aria-label="World nodes"></div><div class="odyssey-detail" aria-live="polite"><h3>Choose a source</h3><p>Evidence and contributing roots appear here.</p></div></div><h3>Exploration journey</h3><div class="odyssey-quests"></div><p class="odyssey-status" role="status">Loading verified source map…</p>';
+const layerBar=host.querySelector('.odyssey-layers'),list=host.querySelector('.odyssey-list'),detail=host.querySelector('.odyssey-detail'),quests=host.querySelector('.odyssey-quests'),status=host.querySelector('.odyssey-status');
+let world,active='root',selected=null;const visited=new Set();
+function renderQuests(){quests.replaceChildren();for(const kind of ['root','branch','leaf','fruit']){const card=document.createElement('div');card.className='odyssey-quest';card.dataset.visited=String(visited.has(kind));const title=document.createElement('strong');title.textContent=({root:'Find the source',branch:'Trace a system',leaf:'Explore a capability',fruit:'Visit a real outcome'})[kind];const note=document.createElement('small');note.textContent=visited.has(kind)?'Explored this session · not a verified achievement':'Explore a '+kind+' to learn its evidence status';card.append(title,note);quests.append(card)}}
+function inspect(node){selected=node.id;visited.add(node.kind);detail.replaceChildren();const eyebrow=document.createElement('small');eyebrow.textContent=node.kind.toUpperCase()+' · '+node.evidence;const h=document.createElement('h3');h.textContent=node.label;const p=document.createElement('p');p.textContent=evidenceState(world,node);const a=document.createElement('a');a.href=node.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=node.kind==='fruit'?'Open real experience':'Open documented source';detail.append(eyebrow,h,p,a);const roots=contributingRoots(world,node.id),sub=document.createElement('h4');sub.textContent='Contributing roots';detail.append(sub);if(roots.length){for(const root of roots){const link=document.createElement('a');link.href=root.url;link.textContent=root.label;link.target='_blank';link.rel='noopener noreferrer';const line=document.createElement('p');line.append(link);detail.append(line)}}else{const gap=document.createElement('p');gap.textContent='No explicit verified contribution path is recorded for this node. Organizational membership is not proof.';detail.append(gap)}renderQuests();renderList()}
+function renderList(){list.replaceChildren();const nodes=world.nodes.filter(n=>n.kind===active);for(const node of nodes){const b=document.createElement('button');b.type='button';b.setAttribute('aria-pressed',String(selected===node.id));b.textContent=node.label;const small=document.createElement('small');small.textContent=node.evidence;b.append(small);b.addEventListener('click',()=>inspect(node));list.append(b)}if(!nodes.length){const p=document.createElement('p');p.textContent='No documented '+active+' entries yet. No outcomes have been invented.';list.append(p)}status.textContent=nodes.length+' '+active+' entries · '+visited.size+' layers explored in this session · no live status claims'}
+function chooseLayer(kind){active=kind;for(const b of layerBar.querySelectorAll('button'))b.setAttribute('aria-pressed',String(b.dataset.kind===kind));renderList()}
+try{const response=await fetch('data/living-universe.json',{cache:'no-store'});if(!response.ok)throw Error('Manifest HTTP '+response.status);world=validateWorld(await response.json());for(const kind of layers){const b=document.createElement('button');b.type='button';b.dataset.kind=kind;b.setAttribute('aria-pressed','false');const stripe=document.createElement('span');stripe.style.background=palette[kind];b.append(stripe,document.createTextNode(kind[0].toUpperCase()+kind.slice(1)));b.addEventListener('click',()=>chooseLayer(kind));layerBar.append(b)}chooseLayer('root');renderQuests()}catch(error){status.textContent='Evidence Odyssey unavailable: '+error.message}
+}
