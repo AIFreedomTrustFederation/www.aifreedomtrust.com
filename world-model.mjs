@@ -1,7 +1,8 @@
 // Shared, side-effect-free federation lineage contract for browser and Node.
 export const KINDS=Object.freeze(['root','trunk','branch','leaf','flower','fruit']);
 export const RELATIONS=Object.freeze(['member-of','organizes','implements','produces','documents','contributes-to']);
-const contribution=new Set(['implements','produces','contributes-to']);
+const contribution=new Set(['contributes-to']);
+const evidence=e=>e?.status==='source-backed' && /^https:\/\/[^\s/]+(?:\/[^\s]*)?$/.test(e.evidenceUrl||e.source||'');
 export function validateWorldModel(graph){
  const errors=[];
  if(!graph||!Array.isArray(graph.nodes)||!Array.isArray(graph.edges))return ['nodes and edges must be arrays'];
@@ -18,11 +19,12 @@ export function validateWorldModel(graph){
   if(!ids.has(e?.from)||!ids.has(e?.to))errors.push('dangling edge');
   if(!RELATIONS.includes(e?.relation))errors.push('unsupported relationship: '+String(e?.relation));
   if(e?.from===e?.to)errors.push('self edge');
-  if(e?.relation==='contributes-to'&&(e.status!=='source-backed'||typeof e.evidenceUrl!=='string'||!/^https:\/\/[^/]+/.test(e.evidenceUrl)))errors.push('contribution requires source-backed HTTPS evidence: '+String(e?.from));
+  if(e?.relation==='contributes-to'&&(!evidence(e)))errors.push('contribution requires source-backed HTTPS evidence: '+String(e?.from));
  }
  if(errors.length)return errors;
  for(const n of graph.nodes.filter(n=>n.kind==='fruit')){
-  if(!contributingRoots(graph,n.id).length)errors.push('fruit lacks explicit contributing root: '+n.id);
+  // A documented public outcome may exist before its source contribution is attested.
+  // Report the gap through lineage inspection; never fabricate a contribution edge.
  }
  return errors;
 }
@@ -32,7 +34,7 @@ export function contributingRoots(graph,target){
   const id=queue.shift();if(seen.has(id))continue;seen.add(id);
   const node=nodes.get(id);if(!node)continue;
   if(node.kind==='root'){found.add(id);continue}
-  for(const e of graph.edges)if(e.to===id&&contribution.has(e.relation))queue.push(e.from);
+  for(const e of graph.edges)if(e.to===id&&contribution.has(e.relation)&&evidence(e))queue.push(e.from);
  }
  return [...found].sort().map(id=>nodes.get(id));
 }
@@ -42,7 +44,7 @@ export function lineagePaths(graph,target,maxPaths=24){
   const node=nodes.get(id);if(!node)return;
   if(node.kind==='root'){results.push([...path,id].reverse().map(key=>nodes.get(key)));return}
   const next=new Set(seen);next.add(id);
-  for(const e of graph.edges)if(e.to===id&&contribution.has(e.relation))walk(e.from,[...path,id],next);
+  for(const e of graph.edges)if(e.to===id&&contribution.has(e.relation)&&evidence(e))walk(e.from,[...path,id],next);
  };
  walk(target,[],new Set());return results;
 }
