@@ -1,0 +1,33 @@
+name: Federation Evidence Atlas contracts
+on:
+  pull_request:
+    paths:
+      - 'world-evidence-atlas.mjs'
+      - 'world-evidence-atlas.css'
+      - 'world-projection.mjs'
+      - 'data/living-universe.json'
+      - 'living-universe.html'
+      - 'tests/world-evidence-atlas.test.mjs'
+      - '.github/workflows/world-evidence-atlas.yml'
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  evidence-atlas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate syntax
+        run: |
+          node --check world-evidence-atlas.mjs
+          node --check tests/world-evidence-atlas.test.mjs
+      - name: Run evidence and projection contracts
+        run: |
+          node tests/world-evidence-atlas.test.mjs
+          node tests/world-projection.test.mjs
+          node tests/world-constellation.test.mjs
