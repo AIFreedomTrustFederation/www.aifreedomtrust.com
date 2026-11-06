@@ -3,6 +3,7 @@ import {evidenceItinerary,evidenceTrail} from './world-evidence-journeys.mjs';
 import {evidenceTopology,topologyPositions} from './world-evidence-topology.mjs';
 import {readinessBoard} from './world-evidence-readiness.mjs';
 import {evidenceQuests} from './world-evidence-quests.mjs';
+import {buildEvidenceMissions} from './world-evidence-missions.mjs';
 const host=document.getElementById('world-evidence-atlas');
 if(host){
  const el=(tag,cls='',value)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(value!==undefined)n.textContent=value;return n};
@@ -74,6 +75,40 @@ if(host){
     }
    }
    filter.addEventListener('change',show);show();
+  }
+  // One evidence-derived mission map complements spatial inspection without creating fictional achievements.
+  const missionPanel=el('section','wea-mission-map');
+  missionPanel.setAttribute('aria-label','Federation mission map and provenance gaps');
+  shell.append(missionPanel);
+  function renderMissionMap(){
+   const plan=buildEvidenceMissions(model);missionPanel.replaceChildren();
+   missionPanel.append(el('h3','','Federation mission map'),el('p','',plan.disclaimer));
+   const summary=el('p','wea-mission-summary',plan.attested+' of '+plan.outcomes.length+' documented outcomes have attested source lineage');
+   missionPanel.append(summary);
+   const stages=el('div','wea-mission-stages');
+   for(const name of LAYERS){
+    const b=el('button','wea-mission-stage',name+' · '+plan.counts[name]);b.type='button';
+    b.onclick=()=>{layer.value=name;render();results.scrollIntoView({behavior:'auto',block:'nearest'})};
+    stages.append(b);
+   }
+   missionPanel.append(stages);
+   const grid=el('div','wea-mission-grid');
+   for(const item of plan.outcomes){
+    const card=el('article','wea-mission-card');
+    card.append(el('h4','',item.label),el('p','',item.attested?'Attested source path':'Evidence gap'),el('p','',item.next));
+    const go=el('button','','Explore journey');go.type='button';go.onclick=()=>{layer.value='fruit';render();navigate(item.id)};
+    card.append(go);
+    if(item.url)card.append(link('Open outcome',item.url));
+    if(item.attested){
+     const details=el('details'),caption=el('summary','','Contributing roots and attestations');details.append(caption);
+     for(const root of item.roots)details.append(link(root.label,root.url));
+     for(const source of item.sources)details.append(link('Source attestation',source));
+     card.append(details);
+    }
+    grid.append(card);
+   }
+   if(!plan.outcomes.length)grid.append(el('p','wea-gap','No documented outcomes yet; no fruits are invented.'));
+   missionPanel.append(grid);
   }
   const history=[];let cursor=-1;
   function navigate(id){if(history[cursor]!==id){history.splice(cursor+1);history.push(id);cursor=history.length-1}inspect(id)}
@@ -156,6 +191,6 @@ if(host){
   search.addEventListener('input',render);layer.addEventListener('change',render);
   previous.onclick=()=>{layer.value=LAYERS[Math.max(0,LAYERS.indexOf(layer.value)-1)];render()};
   next.onclick=()=>{layer.value=LAYERS[Math.min(LAYERS.length-1,LAYERS.indexOf(layer.value)+1)];render()};
-  render();renderExpedition();renderReadiness();renderQuestAtlas();status.textContent='Curated source projection loaded · '+model.nodes.length+' entities · '+model.edges.length+' documented relationships';
+  render();renderExpedition();renderReadiness();renderQuestAtlas();renderMissionMap();status.textContent='Curated source projection loaded · '+model.nodes.length+' entities · '+model.edges.length+' documented relationships';
  }catch(error){status.textContent='Evidence Atlas unavailable: '+error.message+'. Existing portal exploration remains accessible.'}
 }
