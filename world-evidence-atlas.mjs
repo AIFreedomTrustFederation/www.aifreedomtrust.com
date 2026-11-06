@@ -1,5 +1,6 @@
 import {projectWorld,LAYERS} from './world-projection.mjs';
 import {evidenceItinerary,evidenceTrail} from './world-evidence-journeys.mjs';
+import {evidenceTopology,topologyPositions} from './world-evidence-topology.mjs';
 const host=document.getElementById('world-evidence-atlas');
 if(host){
  const el=(tag,cls='',value)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(value!==undefined)n.textContent=value;return n};
@@ -18,6 +19,7 @@ if(host){
   const layout=el('div','wea-layout'),results=el('div','wea-results'),inspector=el('aside','wea-inspector');inspector.setAttribute('aria-label','Evidence inspector');layout.append(results,inspector);shell.append(layout);
   const expedition=el('section','wea-expedition');expedition.setAttribute('aria-label','Evidence-backed exploration missions');shell.append(expedition);
   const trailPanel=el('section','wea-trail-panel');trailPanel.setAttribute('aria-label','Reversible source journey');shell.append(trailPanel);
+  const topologyPanel=el('section','wea-topology-panel');topologyPanel.setAttribute('aria-label','Evidence relationship constellation');shell.append(topologyPanel);
   const tally=el('div','wea-tally');shell.append(tally);
   const history=[];let cursor=-1;
   function navigate(id){if(history[cursor]!==id){history.splice(cursor+1);history.push(id);cursor=history.length-1}inspect(id)}
@@ -31,6 +33,41 @@ if(host){
     for(const candidate of quest.candidates){const b=el('button','',candidate.label+' · '+candidate.evidence);b.type='button';b.onclick=()=>{layer.value=quest.kind;render();navigate(candidate.id)};card.append(b)}grid.append(card)}expedition.append(grid)}
   let selected=null;
   const link=(text,url)=>{const a=el('a','wea-link',text);a.href=url;a.target='_blank';a.rel='noopener noreferrer';return a};
+  function renderTopology(id){
+   topologyPanel.replaceChildren();
+   topologyPanel.append(el('h3','','Evidence constellation'),el('p','','Solid gold connections carry source-backed contribution attestations. Dashed connections describe structure only. Select any node to inspect its actual lineage.'));
+   const topology=evidenceTopology(model,id),positions=topologyPositions(topology);
+   if(!topology.nodes.length){topologyPanel.append(el('p','wea-gap',topology.gap));return}
+   const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+   svg.setAttribute('viewBox','0 0 1040 540');svg.setAttribute('role','img');
+   svg.setAttribute('aria-label','Evidence neighborhood diagram; use the accessible entity list below for navigation');
+   const ns='http://www.w3.org/2000/svg';
+   for(const edge of topology.edges){
+    const from=positions.get(edge.from),to=positions.get(edge.to);if(!from||!to)continue;
+    const line=document.createElementNS(ns,'line');
+    for(const [key,value] of Object.entries({x1:from.x,y1:from.y,x2:to.x,y2:to.y}))line.setAttribute(key,String(value));
+    line.setAttribute('class',edge.attested?'wea-edge-attested':'wea-edge-structural');
+    const title=document.createElementNS(ns,'title');title.textContent=edge.relation+(edge.attested?' · source-backed':' · structural');line.append(title);svg.append(line);
+   }
+   for(const node of topology.nodes){
+    const p=positions.get(node.id),g=document.createElementNS(ns,'g');
+    g.setAttribute('class','wea-graph-node'+(node.id===id?' is-selected':''));
+    const circle=document.createElementNS(ns,'circle');circle.setAttribute('cx',String(p.x));circle.setAttribute('cy',String(p.y));circle.setAttribute('r','13');
+    const label=document.createElementNS(ns,'text');label.setAttribute('x',String(p.x));label.setAttribute('y',String(p.y+30));label.textContent=node.label.length>19?node.label.slice(0,18)+'…':node.label;
+    const title=document.createElementNS(ns,'title');title.textContent=node.kind+' · '+node.label;
+    g.append(circle,label,title);svg.append(g);
+   }
+   const frame=el('div','wea-topology-viewport');frame.append(svg);topologyPanel.append(frame);
+   const index=el('div','wea-topology-index');index.setAttribute('aria-label','Constellation accessible entity navigation');
+   for(const node of topology.nodes){
+    const b=el('button','',node.kind+' · '+node.label);b.type='button';
+    b.setAttribute('aria-current',String(node.id===id));
+    b.onclick=()=>{layer.value=node.kind;render();navigate(node.id)};index.append(b);
+   }
+   topologyPanel.append(index);
+   if(topology.gap)topologyPanel.append(el('p','wea-gap','Evidence gap: '+topology.gap));
+   if(topology.omitted>0)topologyPanel.append(el('p','wea-gap',topology.omitted+' additional related entities omitted from this view; use the inspector for full relationships.'));
+  }
   function inspect(id){
    selected=id;inspector.replaceChildren();const detail=model.inspect(id);
    if(!detail){inspector.append(el('p','','Select an entity to inspect its source evidence.'));return}
@@ -49,7 +86,7 @@ if(host){
    inspector.append(el('h4','','Related entities'));
    const rel=el('div','wea-related');for(const edge of relationships){const other=model.inspect(edge.from===id?edge.to:edge.from)?.node;if(!other)continue;const b=el('button','',other.label+' · '+edge.relation);b.type='button';b.onclick=()=>{layer.value=other.kind;render();navigate(other.id)};rel.append(b)}inspector.append(rel);
    for(const b of results.querySelectorAll('button[data-node]'))b.setAttribute('aria-pressed',String(b.dataset.node===id));
-   renderTrail(id);
+   renderTrail(id);renderTopology(id);
   }
   function render(){
    ribbon.replaceChildren();for(const name of LAYERS){const b=el('button','wea-stage',name);b.type='button';b.dataset.layer=name;b.setAttribute('aria-current',String(name===layer.value));b.onclick=()=>{layer.value=name;render()};b.append(el('strong','',String(model.nodes.filter(n=>n.kind===name).length)));ribbon.append(b)}
