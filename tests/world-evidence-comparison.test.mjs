@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+const js=readFileSync(new URL('../world-evidence-atlas.mjs',import.meta.url),'utf8');
+const css=readFileSync(new URL('../world-evidence-atlas.css',import.meta.url),'utf8');
+assert.match(js,/function renderComparison\(\)/);
+assert.match(js,/readinessBoard\(model\)/);
+assert.match(js,/entry\.roots\.filter\(root=>entries\[1\]\.roots\.some\(other=>other\.id===root\.id\)\)/);
+assert.match(js,/entry\.missing\.join\('; '\)/);
+assert.match(js,/navigate\(entry\.id\)/);
+assert.match(js,/renderMissionMap\(\);renderComparison\(\);/);
+assert.match(js,/At least two documented outcomes are needed/);
+assert.match(css,/\.wea-comparison-grid/);
+assert.match(css,/@media\(max-width:650px\)/);
+assert.match(css,/:focus-visible/);
+assert.doesNotMatch(js.slice(js.indexOf('function renderComparison()'),js.indexOf('const history=[]')),/fetch\(|localStorage|Math\.random|XP awarded|deploy\(/);
+console.log('Evidence comparison static contracts passed');
