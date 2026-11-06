@@ -16,3 +16,6 @@
 .cos-expedition-card a:hover,.cos-expedition-card button:hover{background:#1c4456}
 .cos-expedition-card :focus-visible{outline:3px solid white;outline-offset:3px}
 @media(max-width:540px){.cos-expedition{padding:1rem}.cos-expedition-grid{grid-template-columns:1fr}}
+
+/* Reversible evidence trail from outcomes to contributing repository roots. */
+.cos-lineage-nav{display:flex;flex-wrap:wrap;gap:.5rem;width:100%;padding:.45rem 0;border-top:1px solid #ffffff33}.cos-lineage-nav .cos-root-jump{border-color:#59ecad;color:#c5ffea;background:#10352f}.cos-lineage-nav .cos-root-jump:hover{background:#20594c}.cos-lineage-nav .cos-gap{margin:0;width:100%;font-size:.9rem}.cos-lineage-nav :focus-visible{outline:3px solid #fff;outline-offset:3px}
