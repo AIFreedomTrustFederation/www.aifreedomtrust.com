@@ -42,3 +42,18 @@
 .wea-readiness-card button,.wea-readiness-card a{min-height:44px;display:inline-flex;align-items:center;color:#f4dba1}
 .wea-readiness-card :focus-visible{outline:3px solid #78e9ff;outline-offset:3px}
 @media(prefers-reduced-motion:reduce){.wea-readiness-card *{animation:none!important;transition:none!important}}
+
+
+/* Evidence Quest Atlas: real outcome milestones, no synthetic scores. */
+.wea-quest-atlas{margin-block:2rem;padding:clamp(1rem,3vw,2rem);border:1px solid #d8b56e88;border-radius:24px;background:radial-gradient(ellipse at 5% 0%,#652a4080,transparent 48%),radial-gradient(ellipse at 95% 95%,#145a5970,transparent 48%),#0a1429}
+.wea-quest-atlas h3{font:clamp(1.8rem,4vw,3rem) Georgia,serif;color:#ffe4ac;margin:.3rem 0}.wea-quest-atlas>p{color:#d6e5f1;line-height:1.6;max-width:75ch}
+.wea-quest-controls{display:flex;flex-wrap:wrap;margin:1rem 0}.wea-quest-controls select{background:#142c42;border:1px solid #86c8c0;border-radius:12px;color:#fff;padding:.8rem;min-height:44px;max-width:100%}
+.wea-quest-atlas-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:1rem}
+.wea-quest-atlas-card{border:1px solid #7599ae;border-top:5px solid #f49a71;border-radius:18px;background:linear-gradient(145deg,#192d44,#0a182b);padding:1.15rem;display:flex;flex-direction:column;gap:.65rem;min-width:0;overflow-wrap:anywhere}
+.wea-quest-atlas-card[data-evidence=evidence-attested]{border-top-color:#6be4ac}.wea-quest-atlas-card h4{font:1.4rem Georgia,serif;color:#ffe2ad;margin:0}.wea-quest-atlas-card p{color:#d5e5ef;line-height:1.5;margin:.2rem 0}
+.wea-quest-atlas-card small{color:#b1e7d9}.wea-quest-actions{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}
+.wea-quest-actions button,.wea-quest-actions a{display:inline-flex;align-items:center;min-height:44px;border:1px solid #8bc5ce;border-radius:10px;background:#16364b;color:#fff;padding:.6rem .8rem;font:inherit;cursor:pointer;text-decoration:none}
+.wea-quest-evidence{width:100%;border-top:1px solid #66899a;padding-top:.7rem}.wea-quest-evidence summary{cursor:pointer;min-height:44px;display:flex;align-items:center;color:#f9d99b}.wea-quest-evidence li{margin:.6rem 0;overflow-wrap:anywhere}
+.wea-quest-atlas :focus-visible{outline:3px solid #ffe6aa;outline-offset:3px}
+@media(max-width:540px){.wea-quest-atlas-grid{grid-template-columns:1fr}.wea-quest-actions>*{flex:1 1 150px;justify-content:center}}
+@media(prefers-reduced-motion:reduce){.wea-quest-atlas *, .wea-quest-atlas *::before{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
