@@ -8,4 +8,5 @@ assert.throws(()=>validateWorld({...world,edges:[...world.edges,{from:'missing',
 const cyclic={...world,edges:[...world.edges,{from:'f-portal',to:'b-public',relation:'contributes-to',evidenceUrl:'https://example.com'}]};assert.deepEqual(contributingRoots(cyclic,'f-portal').map(n=>n.id),['r-portal']);
 const page=readFileSync(new URL('../living-universe.html',import.meta.url),'utf8');assert.ok(page.includes('id="evidence-odyssey"')&&page.includes('evidence-odyssey.mjs'));
 const ui=readFileSync(new URL('../evidence-odyssey.mjs',import.meta.url),'utf8');for(const token of ['prefers-reduced-motion','aria-pressed','Contributing roots','evidenceState','visited'])assert.ok(ui.includes(token));
+for(const token of ['id="odyssey-search"','Search documented nodes','Evidence trail','Source evidence','focus-visible','search.addEventListener'])assert.ok(ui.includes(token),'missing searchable provenance UX: '+token);
 console.log('Evidence Odyssey contract: PASS; '+world.nodes.length+' nodes, '+world.edges.length+' edges');
