@@ -10,7 +10,7 @@ export function validateWorld(data){
   if(n.kind==='fruit'&&/github\.com\/AIFreedomTrustFederation\//.test(n.url))throw Error('Repository cannot be fruit');
   ids.add(n.id);
  }
- for(const e of data.edges)if(!ids.has(e.from)||!ids.has(e.to)||!['member-of','organizes','documents','contributes-to'].includes(e.relation))throw Error('Invalid world edge');
+ for(const e of data.edges)if(!ids.has(e.from)||!ids.has(e.to)||!['member-of','organizes','implements','produces','documents','contributes-to'].includes(e.relation)||(e.relation==='contributes-to'&&(e.status!=='source-backed'||!/^https:\/\/[^\s/]+(?:\/[^\s]*)?$/.test(e.evidenceUrl||e.source||''))))throw Error('Invalid world edge');
  return data;
 }
 export function contributingRoots(data,target){
@@ -18,7 +18,7 @@ export function contributingRoots(data,target){
  while(queue.length){
   const id=queue.shift();if(visited.has(id))continue;visited.add(id);
   const n=byId.get(id);if(n?.kind==='root'){roots.add(id);continue}
-  for(const e of data.edges)if(e.to===id&&e.relation==='contributes-to'&&e.evidenceUrl?.startsWith('https://'))queue.push(e.from);
+  for(const e of data.edges)if(e.to===id&&e.relation==='contributes-to'&&e.status==='source-backed'&&/^https:\/\/[^\s/]+(?:\/[^\s]*)?$/.test(e.evidenceUrl||e.source||''))queue.push(e.from);
  }
  return [...roots].map(id=>byId.get(id));
 }

@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {projectWorld} from '../world-projection.mjs';
+const world=JSON.parse(readFileSync(new URL('../data/living-universe.json',import.meta.url),'utf8'));
+const p=projectWorld(world);
+assert.ok(p.search('AIFT-OS','root').length);
+assert.equal(p.nodes.filter(n=>n.kind==='root').length,5);
+assert.equal(p.inspect('f-portal').outcomeVerified,true,'source-backed contributions establish fruit proof');
+const unverified=projectWorld({...world,edges:world.edges.filter(e=>e.relation!=='contributes-to')});
+assert.equal(unverified.inspect('f-portal').outcomeVerified,false,'membership/implements/produces must not imply fruit proof');
+assert.match(unverified.inspect('f-portal').lineage.evidenceGap,/No documented/);
+assert.throws(()=>projectWorld({...world,nodes:[...world.nodes,{...world.nodes[0],id:'bad-fruit',kind:'fruit'}]}),/Repository cannot be a fruit/);
+const graph={nodes:[{id:'r',kind:'root',url:'https://github.com/example/repo'},{id:'b',kind:'branch',url:'https://example.com/system'},{id:'f',kind:'fruit',url:'https://example.com/product'}],edges:[{from:'r',to:'b',relation:'contributes-to',status:'source-backed',source:'https://example.com/evidence1'},{from:'b',to:'f',relation:'contributes-to',status:'source-backed',source:'https://example.com/evidence2'}]};
+assert.equal(projectWorld(graph).inspect('f').outcomeVerified,true);
+assert.throws(()=>projectWorld({...graph,edges:[{...graph.edges[0],source:''}]}),/HTTPS evidence/);
+assert.throws(()=>projectWorld({...graph,edges:[{...graph.edges[0],status:'curated'}]}),/source-backed/);
+assert.equal(projectWorld({...graph,edges:[...graph.edges,{from:'f',to:'b',relation:'contributes-to',status:'source-backed',source:'https://example.com/cycle'}]}).lineage('f').roots.length,1);
+console.log('World projection contracts passed');

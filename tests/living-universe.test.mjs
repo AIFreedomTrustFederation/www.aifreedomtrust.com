@@ -24,5 +24,27 @@ for(const fruit of graph.nodes.filter(n=>n.kind==='fruit')){
  while(queue.length){const id=queue.shift();if(visited.has(id))continue;visited.add(id);const n=graph.nodes.find(n=>n.id===id);if(n.kind==='root')rooted=true;queue.push(...incoming.get(id))}
  assert.ok(rooted,fruit.id+' fruit lacks source-root lineage');
 }
-for(const marker of ['id="search"','id="kind"','id="world"','id="universe-index"','prefers-reduced-motion','role="status"','function parents(id)','data/living-universe.json'])assert.ok(html.includes(marker),'missing explorer contract: '+marker);
+const contributions=new Set(['implements','produces','documents']);
+for(const e of graph.edges)assert.ok(['member-of','organizes','contributes-to',...contributions].includes(e.relation),'unknown edge relation');
+function sourcedRoots(id){
+ const seen=new Set(),queue=[id],roots=new Set();
+ while(queue.length){const current=queue.shift();if(seen.has(current))continue;seen.add(current);const node=graph.nodes.find(n=>n.id===current);if(node.kind==='root')roots.add(current);for(const edge of graph.edges)if(edge.to===current&&contributions.has(edge.relation))queue.push(edge.from)}
+ return roots;
+}
+assert.deepEqual([...sourcedRoots('f-portal')],['r-portal'],'public fruit must not inherit unrelated member repositories');
+for(const leaf of graph.nodes.filter(n=>n.kind==='leaf'))assert.ok(sourcedRoots(leaf.id).size,'leaf lacks explicit source');
+for(const marker of ['function lineage(id)','function renderPath(id)','function renderMilestones()','id="path-steps"','id="milestones"','sourceRelations.has(edge.relation)'])assert.ok(html.includes(marker),'missing provenance UI: '+marker);
+for(const marker of ['id="search"','id="kind"','id="world"','id="universe-index"','prefers-reduced-motion','role="status"','function lineage(id)','data/living-universe.json'])assert.ok(html.includes(marker),'missing explorer contract: '+marker);
+for(const marker of ['id="journey-heading"','id="journey-ribbon"','id="journey-cards"','id="journey-prev"','id="journey-next"','function showLayer(index)','root','trunk','branch','leaf','fruit','prefers-reduced-motion'])assert.ok(html.includes(marker),'missing journey contract: '+marker);
+assert.equal(graph.nodes.filter(n=>n.kind==='fruit'&&n.url.includes('github.com/')).length,0,'repository incorrectly classified as fruit');
 console.log('Living Universe contract OK:',graph.nodes.length,'nodes,',graph.edges.length,'edges');
+
+const bridge=readFileSync(new URL('../genesis-bridge.js',import.meta.url),'utf8');
+for(const marker of ['id="genesis-bridge"','src="genesis-bridge.js"','genesis-grid','genesis-controls'])assert.ok(html.includes(marker),'missing Genesis bridge UI: '+marker);
+for(const marker of ["living-atlas.manifest.json","data.status !== 'canonical-draft'","data.treeMappings.some","e.visibility==='public'","m.atlasEntityId===entity.id","textContent=entity.label","noopener noreferrer","no live status claimed"])assert.ok(bridge.includes(marker),'missing Genesis evidence boundary: '+marker);
+assert.ok(!bridge.includes('innerHTML'),'Genesis entity content must never be injected as HTML');
+console.log('Genesis bridge contract OK: canonical draft validated, public-only, source-linked');
+
+for(const marker of ['id="world-quests"','id="quest-grid"','id="quest-status"','The Rootkeeper','The Systems Cartographer','The Knowledge Gardener','The Fruit Steward','visited.add(next.id)','No verified CI or product achievements are inferred.']) {
+ assert.ok(html.includes(marker),'missing evidence expedition contract: '+marker);
+}
