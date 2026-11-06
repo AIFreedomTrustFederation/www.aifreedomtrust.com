@@ -1,7 +1,7 @@
 // Shared, side-effect-free federation lineage contract for browser and Node.
 export const KINDS=Object.freeze(['root','trunk','branch','leaf','flower','fruit']);
-export const RELATIONS=Object.freeze(['member-of','organizes','implements','produces','documents']);
-const contribution=new Set(['implements','produces','documents']);
+export const RELATIONS=Object.freeze(['member-of','organizes','implements','produces','documents','contributes-to']);
+const contribution=new Set(['implements','produces','contributes-to']);
 export function validateWorldModel(graph){
  const errors=[];
  if(!graph||!Array.isArray(graph.nodes)||!Array.isArray(graph.edges))return ['nodes and edges must be arrays'];
@@ -18,6 +18,7 @@ export function validateWorldModel(graph){
   if(!ids.has(e?.from)||!ids.has(e?.to))errors.push('dangling edge');
   if(!RELATIONS.includes(e?.relation))errors.push('unsupported relationship: '+String(e?.relation));
   if(e?.from===e?.to)errors.push('self edge');
+  if(e?.relation==='contributes-to'&&(e.status!=='source-backed'||typeof e.evidenceUrl!=='string'||!/^https:\/\/[^/]+/.test(e.evidenceUrl)))errors.push('contribution requires source-backed HTTPS evidence: '+String(e?.from));
  }
  if(errors.length)return errors;
  for(const n of graph.nodes.filter(n=>n.kind==='fruit')){
