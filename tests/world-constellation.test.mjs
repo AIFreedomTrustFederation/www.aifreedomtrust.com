@@ -17,6 +17,10 @@ for(const token of ['cos-journey','cos-crumb','aria-pressed','aria-current','cos
 for(const token of ['.cos-journey','.cos-step[aria-pressed=true]','.cos-crumb','max-width:480px'])assert.ok(css.includes(token),'missing responsive spectral journey '+token);
 for(const token of ['cos-expedition','Evidence Expedition','contributionRoots(model,n.id)','evidenceEdges','Open documented outcome','Inspect contribution evidence','No achievement awarded','aria-label'])assert.ok(ui.includes(token),'missing source-backed expedition '+token);
 for(const token of ['.cos-expedition-grid','.cos-expedition-card',':focus-visible','max-width:540px'])assert.ok(css.includes(token),'missing responsive evidence expedition '+token);
+assert.ok(ui.includes("e.evidenceUrl.startsWith('https://')"),'expedition must use valid HTTPS evidence predicate');
+assert.ok(!ui.includes('/^https:\\\\/\\\\//i'),'malformed regex must not regress');
+for(const token of ['cos-lineage-nav','cos-root-jump','Inspect root · ','setSelected(root.id)','No attested root contribution'])assert.ok(ui.includes(token),'missing reversible root trail '+token);
+assert.ok(css.includes('.cos-lineage-nav')&&css.includes('.cos-root-jump'),'missing root trail styling');
 assert.ok(!ui.includes('localStorage'),'expedition must not manufacture persistent progress');
 assert.ok(KINDS.includes('flower')&&KINDS.includes('fruit'),'growth taxonomy incomplete');
 console.log('Constellation integration contract passed: '+model.nodes.length+' nodes, '+model.edges.length+' typed relationships');
