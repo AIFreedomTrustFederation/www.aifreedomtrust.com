@@ -1,7 +1,7 @@
 {
-  "version": "0.1.0",
+  "version": "0.2.0",
   "status": "curated-source-map",
-  "description": "Public source-linked map, not a live health or deployment attestation. Only verified public experience is represented as fruit.",
+  "description": "Curated source map: membership is not contribution. Only explicit contributes-to edges prove product lineage. No live CI or deployment claims.",
   "nodes": [
     {
       "id": "r-portal",
@@ -99,74 +99,95 @@
     {
       "from": "r-portal",
       "to": "trunk",
-      "relation": "source-lineage",
+      "relation": "member-of",
       "status": "curated"
     },
     {
       "from": "r-os",
       "to": "trunk",
-      "relation": "source-lineage",
+      "relation": "member-of",
       "status": "curated"
     },
     {
       "from": "r-runtime",
       "to": "trunk",
-      "relation": "source-lineage",
+      "relation": "member-of",
       "status": "curated"
     },
     {
       "from": "r-vps",
       "to": "trunk",
-      "relation": "source-lineage",
+      "relation": "member-of",
       "status": "curated"
     },
     {
       "from": "r-genesis",
       "to": "trunk",
-      "relation": "source-lineage",
+      "relation": "member-of",
       "status": "curated"
     },
     {
       "from": "trunk",
       "to": "b-public",
-      "relation": "source-lineage",
+      "relation": "organizes",
       "status": "curated"
     },
     {
       "from": "trunk",
       "to": "b-operator",
-      "relation": "source-lineage",
+      "relation": "organizes",
       "status": "curated"
     },
     {
       "from": "trunk",
       "to": "b-execution",
-      "relation": "source-lineage",
+      "relation": "organizes",
       "status": "curated"
     },
     {
       "from": "trunk",
       "to": "b-infra",
-      "relation": "source-lineage",
+      "relation": "organizes",
       "status": "curated"
     },
     {
       "from": "trunk",
       "to": "b-knowledge",
-      "relation": "source-lineage",
+      "relation": "organizes",
       "status": "curated"
     },
     {
       "from": "b-public",
       "to": "l-atlas",
-      "relation": "source-lineage",
+      "relation": "documents",
       "status": "curated"
     },
     {
       "from": "b-public",
       "to": "f-portal",
-      "relation": "source-lineage",
+      "relation": "documents",
       "status": "curated"
+    },
+    {
+      "from": "r-portal",
+      "to": "b-public",
+      "relation": "contributes-to",
+      "status": "source-backed",
+      "evidenceUrl": "https://github.com/AIFreedomTrustFederation/www.aifreedomtrust.com"
+    },
+    {
+      "from": "b-public",
+      "to": "f-portal",
+      "relation": "contributes-to",
+      "status": "source-backed",
+      "evidenceUrl": "https://github.com/AIFreedomTrustFederation/www.aifreedomtrust.com"
+    },
+    {
+      "from": "b-public",
+      "to": "l-atlas",
+      "relation": "contributes-to",
+      "status": "source-backed",
+      "evidenceUrl": "https://github.com/AIFreedomTrustFederation/www.aifreedomtrust.com"
     }
   ]
 }
