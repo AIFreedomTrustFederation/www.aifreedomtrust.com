@@ -38,7 +38,7 @@ for(const trail of trails){
  for(let i=0;i<trail.edges.length;i++){
   assert.equal(trail.edges[i].from,trail.ids[i]);
   assert.equal(trail.edges[i].to,trail.ids[i+1]);
-  assert.match(trail.edges[i].evidenceUrl,/^https:\\/\\//);
+  assert.ok(trail.edges[i].evidenceUrl.startsWith('https://'),'attestation must use HTTPS');
  }
 }
 const labelCollision=structuredClone(model);
