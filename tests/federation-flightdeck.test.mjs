@@ -1,0 +1,20 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {projectWorld,LAYERS} from '../world-projection.mjs';
+const manifest=JSON.parse(readFileSync(new URL('../data/living-universe.json',import.meta.url)));
+const world=projectWorld(manifest);
+const html=readFileSync(new URL('../living-universe.html',import.meta.url),'utf8');
+const module=readFileSync(new URL('../federation-flightdeck.mjs',import.meta.url),'utf8');
+assert.match(html,/id="federation-flightdeck"/);
+assert.match(html,/src="federation-flightdeck.mjs"/);
+assert.match(html,/prefers-reduced-motion:reduce/);
+assert.match(module,/projectWorld\(data\)/);
+assert.match(module,/textContent/);
+assert.match(module,/aria-pressed/);
+assert.match(module,/noopener noreferrer/);
+assert.match(module,/No documented matches/);
+assert.deepEqual(LAYERS,['root','trunk','branch','leaf','flower','fruit']);
+for(const node of world.nodes){const info=world.inspect(node.id);assert.ok(info);if(node.kind==='root')assert.match(node.url,/^https:\/\/github\.com\//);if(node.kind==='fruit'){assert.ok(!node.url.startsWith('https://github.com/'));if(info.outcomeVerified)assert.ok(info.lineage.paths.every(p=>p.edges.length&&p.edges.every(e=>e.relation==='contributes-to'&&e.status==='source-backed'&&/^https:\/\//.test(e.evidenceUrl||e.source))))}}
+const unverified={nodes:[{id:'r',kind:'root',label:'Repository',url:'https://github.com/example/source'},{id:'f',kind:'fruit',label:'Experience',url:'https://example.org/app'}],edges:[{from:'r',to:'f',relation:'documents'}]};
+assert.equal(projectWorld(unverified).inspect('f').outcomeVerified,false);
+console.log('Flight deck source, accessibility and evidence contracts passed');

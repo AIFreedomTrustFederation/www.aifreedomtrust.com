@@ -5,7 +5,10 @@ for(const id of ['b-operator','b-infra','b-execution','b-knowledge'])assert.equa
 const fruit=world.nodes.find(n=>n.id==='f-portal');assert.ok(evidenceState(world,fruit).includes('Documented'));
 assert.throws(()=>validateWorld({...world,nodes:[...world.nodes,{id:'fake',kind:'fruit',label:'Repo masquerade',url:'https://github.com/AIFreedomTrustFederation/VPS'}]}),/Repository cannot be fruit/);
 assert.throws(()=>validateWorld({...world,edges:[...world.edges,{from:'missing',to:'f-portal',relation:'contributes-to'}]}),/Invalid world edge/);
-const cyclic={...world,edges:[...world.edges,{from:'f-portal',to:'b-public',relation:'contributes-to',evidenceUrl:'https://example.com'}]};assert.deepEqual(contributingRoots(cyclic,'f-portal').map(n=>n.id),['r-portal']);
+assert.throws(()=>validateWorld({...world,edges:[...world.edges,{from:'r-portal',to:'f-portal',relation:'contributes-to',evidenceUrl:'https://example.com'}]}),/Invalid world edge/);
+assert.deepEqual(contributingRoots({...world,edges:world.edges.filter(e=>e.relation!=='contributes-to')},'f-portal'),[]);
+assert.deepEqual(contributingRoots({...world,edges:world.edges.map(e=>e.relation==='contributes-to'?{...e,status:'curated'}:e)},'f-portal'),[]);
+const cyclic={...world,edges:[...world.edges,{from:'f-portal',to:'b-public',relation:'contributes-to',status:'source-backed',evidenceUrl:'https://example.com'}]};assert.deepEqual(contributingRoots(cyclic,'f-portal').map(n=>n.id),['r-portal']);
 const page=readFileSync(new URL('../living-universe.html',import.meta.url),'utf8');assert.ok(page.includes('id="evidence-odyssey"')&&page.includes('evidence-odyssey.mjs'));
 const ui=readFileSync(new URL('../evidence-odyssey.mjs',import.meta.url),'utf8');for(const token of ['prefers-reduced-motion','aria-pressed','Contributing roots','evidenceState','visited'])assert.ok(ui.includes(token));
 for(const token of ['id="odyssey-search"','Search documented nodes','Evidence trail','Source evidence','focus-visible','search.addEventListener'])assert.ok(ui.includes(token),'missing searchable provenance UX: '+token);

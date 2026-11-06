@@ -1,0 +1,27 @@
+name: Living Universe portable projection
+on:
+  pull_request:
+    paths:
+      - 'world-projection.mjs'
+      - 'tests/world-projection.test.mjs'
+      - 'data/living-universe.json'
+      - '.github/workflows/world-projection.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'world-projection.mjs'
+      - 'tests/world-projection.test.mjs'
+      - 'data/living-universe.json'
+permissions:
+  contents: read
+jobs:
+  projection:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check world-projection.mjs
+      - run: node tests/world-projection.test.mjs
