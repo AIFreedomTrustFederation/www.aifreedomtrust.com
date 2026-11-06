@@ -110,6 +110,38 @@ if(host){
    if(!plan.outcomes.length)grid.append(el('p','wea-gap','No documented outcomes yet; no fruits are invented.'));
    missionPanel.append(grid);
   }
+  // Evidence comparison workbench: compare two real outcomes without inferring release readiness.
+  const comparison=el('section','wea-comparison');
+  comparison.setAttribute('aria-label','Compare documented outcomes and provenance');
+  shell.append(comparison);
+  function renderComparison(){
+   comparison.replaceChildren();
+   comparison.append(el('h3','','Source-to-outcome comparison'),el('p','','Compare two documented deliverables and their attested roots. Missing lineage is shown explicitly; no CI, deployment or security readiness is inferred.'));
+   const outcomes=readinessBoard(model);
+   if(outcomes.length<2){comparison.append(el('p','wea-gap','At least two documented outcomes are needed for comparison.'));return}
+   const controls=el('div','wea-comparison-controls'),first=el('select'),second=el('select');
+   first.setAttribute('aria-label','First documented outcome');second.setAttribute('aria-label','Second documented outcome');
+   for(const entry of outcomes){for(const select of [first,second]){const option=el('option','',entry.label);option.value=entry.id;select.append(option)}}
+   second.selectedIndex=1;controls.append(first,second);comparison.append(controls);
+   const grid=el('div','wea-comparison-grid'),summary=el('p','wea-comparison-summary');comparison.append(summary,grid);
+   function update(){
+    grid.replaceChildren();const entries=[first,second].map(select=>outcomes.find(entry=>entry.id===select.value));
+    const distinct=entries[0].id!==entries[1].id;
+    const shared=distinct?entries[0].roots.filter(root=>entries[1].roots.some(other=>other.id===root.id)):[];
+    summary.textContent=distinct?(shared.length+' shared attested repository roots; comparison is provenance-only.'):'Choose two different outcomes to compare their lineage.';
+    for(const entry of entries){
+     const card=el('article','wea-comparison-card');
+     card.append(el('h4','',entry.label),el('p','',entry.readiness==='source-lineage-attested'?'Attested source lineage recorded':'Evidence gap: contributing source lineage not attested'));
+     if(entry.url)card.append(link('Open actual deliverable',entry.url));
+     const go=el('button','','Inspect full journey');go.type='button';go.onclick=()=>{layer.value='fruit';render();navigate(entry.id);inspector.scrollIntoView({behavior:'auto',block:'nearest'})};card.append(go);
+     if(entry.roots.length){const list=el('ul');for(const root of entry.roots){const li=el('li');li.append(link(root.label,root.url));if(distinct&&shared.some(item=>item.id===root.id))li.append(el('strong','',' · shared root'));list.append(li)}card.append(list)}
+     else card.append(el('p','wea-gap',entry.missing.join('; ')));
+     grid.append(card);
+    }
+   }
+   first.addEventListener('change',update);second.addEventListener('change',update);update();
+  }
+  renderComparison();
   const history=[];let cursor=-1;
   function navigate(id){if(history[cursor]!==id){history.splice(cursor+1);history.push(id);cursor=history.length-1}inspect(id)}
   function renderTrail(id){trailPanel.replaceChildren();const trail=evidenceTrail(model,id);trailPanel.append(el('h3','','Source-to-outcome journey'));
