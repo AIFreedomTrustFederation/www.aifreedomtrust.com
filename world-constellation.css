@@ -19,3 +19,12 @@
 
 /* Reversible evidence trail from outcomes to contributing repository roots. */
 .cos-lineage-nav{display:flex;flex-wrap:wrap;gap:.5rem;width:100%;padding:.45rem 0;border-top:1px solid #ffffff33}.cos-lineage-nav .cos-root-jump{border-color:#59ecad;color:#c5ffea;background:#10352f}.cos-lineage-nav .cos-root-jump:hover{background:#20594c}.cos-lineage-nav .cos-gap{margin:0;width:100%;font-size:.9rem}.cos-lineage-nav :focus-visible{outline:3px solid #fff;outline-offset:3px}
+
+/* Spatial navigation remains operable without gestures on mobile and keyboard. */
+.cos-viewport{position:relative}
+.cos-spatial-nav{position:absolute;bottom:0.75rem;left:0.75rem;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.35rem;max-width:14rem;z-index:2}
+.cos-spatial-nav button{background:#10263d;color:#f6e8bf;border:1px solid #9bbaae;border-radius:.55rem;padding:.45rem .65rem;min-height:2.75rem;font:inherit;cursor:pointer}
+.cos-spatial-nav button:hover{background:#214665}
+.cos-spatial-nav button:focus-visible{outline:3px solid #ffda82;outline-offset:2px}
+@media(max-width:640px){.cos-spatial-nav{left:.4rem;bottom:.4rem;max-width:11rem}.cos-spatial-nav button{font-size:.8rem}}
+@media(prefers-reduced-motion:reduce){.cos-spatial-nav button{transition:none}}
