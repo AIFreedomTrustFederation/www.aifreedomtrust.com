@@ -1,4 +1,4 @@
-import {validateWorld,contributionRoots,CONTRIBUTION_RELATIONS,MEMBERSHIP_RELATIONS,KINDS} from './world-constellation-contract.mjs';
+import {validateWorld,contributionRoots,CONTRIBUTION_RELATIONS,MEMBERSHIP_RELATIONS,KINDS,contributionTrails} from './world-constellation-contract.mjs';
 const host=document.getElementById('world-constellation');
 if(host){
  const NS='http://www.w3.org/2000/svg',colors={root:'#59ecad',trunk:'#ffdc92',branch:'#65d5ff',leaf:'#c39bff',flower:'#ff8b81',fruit:'#ffa667'};
@@ -28,18 +28,21 @@ if(host){
   svg.replaceChildren();const group=svgEl('g',{transform:'translate('+(500+cameraX)+' '+(350+cameraY)+') scale('+scale+') translate(-500 -350)'},svg);
   for(const edge of edges){const a=position.get(edge.from),b=position.get(edge.to);if(!a||!b)continue;const attested=CONTRIBUTION_RELATIONS.includes(edge.relation)&&/^https:\/\//i.test(edge.evidenceUrl||''),highlight=selected&&(edge.to===selected||edge.from===selected||(sourceIds.has(edge.from)&&sourceIds.has(edge.to)&&attested));svgEl('path',{d:'M'+a.x+' '+a.y+' Q'+((a.x+b.x)/2+30)+' '+((a.y+b.y)/2)+' '+b.x+' '+b.y,fill:'none',stroke:highlight?'#fff0ad':!attested?'#83a6bb':'#5ff0ce','stroke-width':highlight?3.6:1.6,'stroke-dasharray':attested?'none':'5 7',opacity:highlight?1:attested?.75:.35},group)}
   for(const n of nodes){const p=position.get(n.id),g=svgEl('g',{role:'button',tabindex:'0','aria-label':n.kind+' '+n.label,class:'cos-node'+(matching.has(n.id)?'':' cos-dim')+(n.id===selected?' cos-selected':'')},group);svgEl('circle',{cx:p.x,cy:p.y,r:n.kind==='trunk'?35:25,stroke:colors[n.kind],fill:'#0b1a2d','stroke-width':n.id===selected?5:2.5},g);const t=svgEl('text',{x:p.x,y:p.y+45,'text-anchor':'middle'},g);t.textContent=n.label;g.addEventListener('click',()=>setSelected(n.id));g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();setSelected(n.id)}})}
-  detail.replaceChildren();if(selectedNode){detail.append(make('p','cos-kicker',selectedNode.kind.toUpperCase()),make('h3','',selectedNode.label));const a=make('a','cos-source',selectedNode.kind==='fruit'?'Open real outcome ↗':'Inspect source ↗');a.href=selectedNode.url;a.target='_blank';a.rel='noopener noreferrer';detail.append(a);const summary=make('p','',selectedNode.kind==='root'?'This is a repository root, not a product.':lineage.roots.length?'Explicit contributing roots: '+lineage.roots.map(n=>n.label).join(', '):'No explicit contributing-root path is recorded. Organizational membership does not prove product lineage.');detail.append(summary);if(selectedNode.kind==='fruit'&&!lineage.roots.length)detail.append(make('p','cos-gap','Evidence gap: the public outcome is documented, but its contributing repository lineage is not attested. No completion badge is awarded.'));for(const path of lineage.paths){
+  detail.replaceChildren();if(selectedNode){detail.append(make('p','cos-kicker',selectedNode.kind.toUpperCase()),make('h3','',selectedNode.label));const a=make('a','cos-source',selectedNode.kind==='fruit'?'Open real outcome ↗':'Inspect source ↗');a.href=selectedNode.url;a.target='_blank';a.rel='noopener noreferrer';detail.append(a);const summary=make('p','',selectedNode.kind==='root'?'This is a repository root, not a product.':lineage.roots.length?'Explicit contributing roots: '+lineage.roots.map(n=>n.label).join(', '):'No explicit contributing-root path is recorded. Organizational membership does not prove product lineage.');detail.append(summary);if(selectedNode.kind==='fruit'&&!lineage.roots.length)detail.append(make('p','cos-gap','Evidence gap: the public outcome is documented, but its contributing repository lineage is not attested. No completion badge is awarded.'));for(const trailData of contributionTrails(model,selected)){
    const trail=make('nav','cos-evidence-trail');trail.setAttribute('aria-label','Verified contribution trail');
-   const trailHeading=make('h4','','Attested source journey');trail.append(trailHeading);
-   for(let i=0;i<path.length;i++){
-    const step=nodes.find(n=>n.label===path[i]);if(!step)continue;
+   trail.append(make('h4','','Attested source journey'));
+   for(let i=0;i<trailData.ids.length;i++){
+    const step=nodes.find(n=>n.id===trailData.ids[i]);if(!step)continue;
     const button=make('button','cos-trail-step',String(i+1)+' · '+step.label);button.type='button';
     button.setAttribute('aria-label','Inspect '+step.kind+' '+step.label);
     button.onclick=()=>setSelected(step.id);trail.append(button);
-    if(i<path.length-1)trail.append(make('span','cos-trail-arrow','→'));
+    if(i<trailData.ids.length-1)trail.append(make('span','cos-trail-arrow','→'));
    }
-   const attestation=edges.filter(e=>CONTRIBUTION_RELATIONS.includes(e.relation)&&typeof e.evidenceUrl==='string'&&e.evidenceUrl.startsWith('https://')&&path.includes(nodes.find(n=>n.id===e.from)?.label)&&path.includes(nodes.find(n=>n.id===e.to)?.label));
-   for(const edge of attestation){const proof=make('a','cos-trail-proof','Review attestation · '+edge.relation);proof.href=edge.evidenceUrl;proof.target='_blank';proof.rel='noopener noreferrer';trail.append(proof)}
+   for(const edge of trailData.edges){
+    const from=nodes.find(n=>n.id===edge.from),to=nodes.find(n=>n.id===edge.to);
+    const proof=make('a','cos-trail-proof','Review attestation · '+(from?.label||edge.from)+' → '+(to?.label||edge.to));
+    proof.href=edge.evidenceUrl;proof.target='_blank';proof.rel='noopener noreferrer';trail.append(proof);
+   }
    detail.append(trail);
   }
   const relatives=make('div','cos-relatives');for(const edge of edges.filter(e=>e.from===selected||e.to===selected)){const id=edge.from===selected?edge.to:edge.from,other=nodes.find(n=>n.id===id);if(!other)continue;const b=make('button','',other.label+' · '+edge.relation);b.type='button';b.onclick=()=>setSelected(id);relatives.append(b)}detail.append(make('h4','','Related nodes'),relatives)}else detail.append(make('p','','Choose a constellation node to inspect its evidence and lineage.'));
