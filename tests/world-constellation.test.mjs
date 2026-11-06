@@ -9,6 +9,9 @@ assert.ok(model.edges.some(e=>MEMBERSHIP_RELATIONS.includes(e.relation)),'member
 const html=read('../living-universe.html'),ui=read('../world-constellation.mjs'),css=read('../world-constellation.css');
 for(const token of ['id="world-constellation"','world-constellation.mjs','world-constellation.css','world-evolution.mjs','id="universe-index"'])assert.ok(html.includes(token),'missing additive page integration '+token);
 for(const token of ['validateWorld','contributionRoots','MEMBERSHIP_RELATIONS','KINDS','aria-label','cos-mini','cos-index','historyIndex','zoomIn','zoomOut','textContent','role'])assert.ok(ui.includes(token),'missing constellation behavior '+token);
+assert.ok(ui.includes("'stroke-dasharray':attested?'none':'5 7'"),'only evidence-backed contribution links may be drawn solid');
+assert.ok(ui.includes('CONTRIBUTION_RELATIONS.includes(edge.relation)'),'constellation must use canonical contribution contract');
+assert.ok(!ui.includes("membership?'5 7':'none'"),'structural links must not be drawn as contribution');
 assert.ok(css.includes('prefers-reduced-motion')&&css.includes('focus-visible'),'accessibility CSS absent');
 assert.ok(KINDS.includes('flower')&&KINDS.includes('fruit'),'growth taxonomy incomplete');
 console.log('Constellation integration contract passed: '+model.nodes.length+' nodes, '+model.edges.length+' typed relationships');
