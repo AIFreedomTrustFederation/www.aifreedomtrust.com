@@ -57,3 +57,16 @@
 .wea-quest-atlas :focus-visible{outline:3px solid #ffe6aa;outline-offset:3px}
 @media(max-width:540px){.wea-quest-atlas-grid{grid-template-columns:1fr}.wea-quest-actions>*{flex:1 1 150px;justify-content:center}}
 @media(prefers-reduced-motion:reduce){.wea-quest-atlas *, .wea-quest-atlas *::before{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* Mission map: responsive multi-surface spectral navigation, no motion dependency. */
+.wea-mission-map{margin-block:2rem;padding:clamp(1rem,3vw,2rem);border:1px solid #b8a06c80;border-radius:24px;background:linear-gradient(130deg,#251328,#102a36 52%,#14241c);color:#f8f4ed}
+.wea-mission-stages{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:.75rem;margin-block:1.25rem}
+.wea-mission-stage{min-height:44px;border:1px solid #b7a36c;border-radius:12px;background:#18283d;color:#fff;padding:.75rem;cursor:pointer}
+.wea-mission-stage:nth-child(3n+1){border-color:#ed6d78}.wea-mission-stage:nth-child(3n+2){border-color:#65d9a4}.wea-mission-stage:nth-child(3n){border-color:#6dbdff}
+.wea-mission-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:1rem}
+.wea-mission-card{padding:1rem;border:1px solid #b7a36c80;border-radius:16px;background:#071526a8;overflow-wrap:anywhere}
+.wea-mission-card button{min-height:44px;margin:.5rem .5rem .5rem 0}
+.wea-mission-card a{display:inline-block;margin:.4rem .6rem .4rem 0;color:#9ee9ff}
+.wea-mission-map :is(button,a,summary):focus-visible{outline:3px solid #ffd37b;outline-offset:3px}
+@media(max-width:480px){.wea-mission-map{padding:1rem}.wea-mission-stages{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(prefers-reduced-motion:reduce){.wea-mission-map *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
