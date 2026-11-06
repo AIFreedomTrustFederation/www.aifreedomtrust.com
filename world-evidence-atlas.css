@@ -15,3 +15,22 @@
 .wea-journey-step{border-left:4px solid #65dfad}
 .wea-expedition button:focus-visible,.wea-trail-panel button:focus-visible,.wea-trail-panel a:focus-visible{outline:3px solid #ffe2a6;outline-offset:3px}
 @media(max-width:600px){.wea-journey{flex-direction:column;align-items:stretch}.wea-journey-step{width:100%}}
+
+
+/* Evidence constellation: semantic topology with source/structure distinction. */
+.wea-topology-panel{margin-top:1.5rem;padding:clamp(1rem,2.5vw,2rem);border:1px solid #bfa77488;border-radius:22px;background:radial-gradient(ellipse at 50% 10%,#25476566,transparent 65%),#07162b}
+.wea-topology-panel h3{font:clamp(1.5rem,3vw,2.3rem) Georgia,serif;color:#ffe2a6;margin:.2rem 0}
+.wea-topology-panel p{color:#d6e4ef;line-height:1.6}
+.wea-topology-viewport{overflow-x:auto;max-width:100%;border:1px solid #5a8297;border-radius:16px;background:radial-gradient(circle at 50% 50%,#15344a,#061123);scrollbar-color:#88c5b8 #10253c}
+.wea-topology-viewport svg{display:block;width:100%;min-width:740px;height:auto;aspect-ratio:1040/540}
+.wea-edge-attested{stroke:#ffdf8b;stroke-width:3;opacity:.95}
+.wea-edge-structural{stroke:#78b9c8;stroke-width:1.6;stroke-dasharray:7 6;opacity:.65}
+.wea-graph-node circle{fill:#13384a;stroke:#8ce5c9;stroke-width:2.5}
+.wea-graph-node.is-selected circle{fill:#614638;stroke:#ffe2a6;stroke-width:4}
+.wea-graph-node text{fill:#f4faff;font:12px system-ui,sans-serif;text-anchor:middle;paint-order:stroke;stroke:#07162b;stroke-width:3}
+.wea-topology-index{display:flex;flex-wrap:wrap;gap:.55rem;margin:1rem 0}
+.wea-topology-index button{font:inherit;font-size:.85rem;min-height:44px;background:#15354a;border:1px solid #82a7b8;color:#f7fcff;border-radius:12px;padding:.6rem .85rem;cursor:pointer}
+.wea-topology-index button[aria-current=true]{border-color:#ffe2a6;background:#493c36}
+.wea-topology-index button:focus-visible{outline:3px solid #ffe2a6;outline-offset:3px}
+@media(max-width:600px){.wea-topology-viewport svg{min-width:680px}.wea-topology-index button{flex:1 1 180px}}
+@media(prefers-reduced-motion:reduce){.wea-topology-panel *{animation:none!important;transition:none!important}}
