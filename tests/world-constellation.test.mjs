@@ -13,5 +13,7 @@ assert.ok(ui.includes("'stroke-dasharray':attested?'none':'5 7'"),'only evidence
 assert.ok(ui.includes('CONTRIBUTION_RELATIONS.includes(edge.relation)'),'constellation must use canonical contribution contract');
 assert.ok(!ui.includes("membership?'5 7':'none'"),'structural links must not be drawn as contribution');
 assert.ok(css.includes('prefers-reduced-motion')&&css.includes('focus-visible'),'accessibility CSS absent');
+for(const token of ['cos-journey','cos-crumb','aria-pressed','aria-current','cos-gap','Evidence gap','setSelected'])assert.ok(ui.includes(token),'missing semantic navigation or provenance state '+token);
+for(const token of ['.cos-journey','.cos-step[aria-pressed=true]','.cos-crumb','max-width:480px'])assert.ok(css.includes(token),'missing responsive spectral journey '+token);
 assert.ok(KINDS.includes('flower')&&KINDS.includes('fruit'),'growth taxonomy incomplete');
 console.log('Constellation integration contract passed: '+model.nodes.length+' nodes, '+model.edges.length+' typed relationships');
