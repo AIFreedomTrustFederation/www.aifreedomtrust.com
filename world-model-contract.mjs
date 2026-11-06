@@ -1,7 +1,7 @@
 // Shared, dependency-free world-model contract. Browser and Node ESM compatible.
 // Membership is not contribution. No live health, CI or deployment claims.
 export const KINDS=Object.freeze(['root','trunk','branch','leaf','flower','fruit']);
-export const CONTRIBUTION_RELATIONS=Object.freeze(['implements-system','implements-capability','contributes-to-outcome','delivers-outcome','documented-capability']);
+export const CONTRIBUTION_RELATIONS=Object.freeze(['implements-system','implements-capability','contributes-to-outcome','delivers-outcome','documented-capability','contributes-to']);
 export const MEMBERSHIP_RELATIONS=Object.freeze(['federation-membership','organizational-branch']);
 const ALLOWED=new Set([...CONTRIBUTION_RELATIONS,...MEMBERSHIP_RELATIONS]);
 const SAFE_URL=/^https:\/\/[a-z0-9.-]+(?:[/:?#]|$)/i;
