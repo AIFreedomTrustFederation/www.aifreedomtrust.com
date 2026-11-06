@@ -7,6 +7,8 @@ on:
       - 'world-evidence-journeys.mjs'
       - 'world-evidence-readiness.mjs'
       - 'world-evidence-quests.mjs'
+      - 'world-evidence-missions.mjs'
+      - 'tests/world-evidence-missions.test.mjs'
       - 'tests/world-evidence-quests.test.mjs'
       - 'tests/world-evidence-readiness.test.mjs'
       - 'world-projection.mjs'
@@ -34,6 +36,8 @@ jobs:
           node --check world-evidence-journeys.mjs
           node --check world-evidence-readiness.mjs
           node --check world-evidence-quests.mjs
+          node --check world-evidence-missions.mjs
+          node --check tests/world-evidence-missions.test.mjs
           node --check tests/world-evidence-quests.test.mjs
           node --check tests/world-evidence-journeys.test.mjs
           node --check tests/world-evidence-atlas.test.mjs
@@ -42,6 +46,7 @@ jobs:
           node tests/world-evidence-atlas.test.mjs
           node tests/world-evidence-readiness.test.mjs
           node tests/world-evidence-quests.test.mjs
+          node tests/world-evidence-missions.test.mjs
           node tests/world-evidence-journeys.test.mjs
           node tests/world-projection.test.mjs
           node tests/world-constellation.test.mjs
