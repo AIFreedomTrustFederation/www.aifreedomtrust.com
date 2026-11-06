@@ -2,6 +2,7 @@ import {projectWorld,LAYERS} from './world-projection.mjs';
 import {evidenceItinerary,evidenceTrail} from './world-evidence-journeys.mjs';
 import {evidenceTopology,topologyPositions} from './world-evidence-topology.mjs';
 import {readinessBoard} from './world-evidence-readiness.mjs';
+import {evidenceQuests} from './world-evidence-quests.mjs';
 const host=document.getElementById('world-evidence-atlas');
 if(host){
  const el=(tag,cls='',value)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(value!==undefined)n.textContent=value;return n};
@@ -39,6 +40,40 @@ if(host){
    }
    if(!entries.length)readiness.append(el('p','wea-gap','No documented outcomes. No fruits have been invented.'));
    readiness.append(grid);
+  }
+  // Evidence quests are explorations of documented milestones, never artificial XP.
+  const questPanel=el('section','wea-quest-atlas');
+  questPanel.setAttribute('aria-label','Evidence-gated outcome quests');
+  shell.append(questPanel);
+  function renderQuestAtlas(){
+   questPanel.replaceChildren();
+   questPanel.append(el('h3','','The Evidence Quest Atlas'),el('p','','Trace real products to their contributing repository roots. A documented path unlocks evidence inspection, not an achievement or deployment claim.'));
+   const questControls=el('div','wea-quest-controls');
+   const filter=el('select');filter.setAttribute('aria-label','Filter evidence quests');
+   for(const [value,label] of [['all','All documented outcomes'],['evidence-attested','Source lineage attested'],['evidence-needed','Evidence gaps']]){const option=el('option','',label);option.value=value;filter.append(option)}
+   questControls.append(filter);questPanel.append(questControls);
+   const count=el('p','wea-quest-count'),grid=el('div','wea-quest-atlas-grid');questPanel.append(count,grid);
+   const quests=evidenceQuests(model);
+   function show(){
+    grid.replaceChildren();const visible=quests.filter(q=>filter.value==='all'||q.state===filter.value);
+    count.textContent=visible.length+' of '+quests.length+' documented outcome quests · no XP or live status';
+    if(!visible.length)grid.append(el('p','wea-gap','No documented outcomes match this evidence filter.'));
+    for(const q of visible){
+     const card=el('article','wea-quest-atlas-card');card.dataset.evidence=q.state;
+     card.append(el('small','',q.state==='evidence-attested'?'Source lineage attested':'Evidence required'),el('h4','',q.label),el('p','',q.summary));
+     const actions=el('div','wea-quest-actions');
+     const inspectButton=el('button','','Explore lineage');inspectButton.type='button';inspectButton.onclick=()=>{layer.value='fruit';render();navigate(q.id);inspector.scrollIntoView({behavior:'auto',block:'nearest'})};actions.append(inspectButton);
+     if(q.url)actions.append(link('Open actual outcome',q.url));
+     card.append(actions);
+     if(q.evidence.length){
+      const details=el('details','wea-quest-evidence'),summary=el('summary','','Inspect '+q.evidence.length+' attestation sources');details.append(summary);
+      const evidenceList=el('ul');for(const url of q.evidence){const li=el('li');li.append(link('Source evidence',url));evidenceList.append(li)}details.append(evidenceList);card.append(details);
+      card.append(el('p','wea-quest-roots',q.roots.length+' contributing repository roots'));
+     }else card.append(el('p','wea-gap',q.requirement));
+     card.append(el('small','wea-quest-caveat',q.caveat));grid.append(card);
+    }
+   }
+   filter.addEventListener('change',show);show();
   }
   const history=[];let cursor=-1;
   function navigate(id){if(history[cursor]!==id){history.splice(cursor+1);history.push(id);cursor=history.length-1}inspect(id)}
@@ -121,6 +156,6 @@ if(host){
   search.addEventListener('input',render);layer.addEventListener('change',render);
   previous.onclick=()=>{layer.value=LAYERS[Math.max(0,LAYERS.indexOf(layer.value)-1)];render()};
   next.onclick=()=>{layer.value=LAYERS[Math.min(LAYERS.length-1,LAYERS.indexOf(layer.value)+1)];render()};
-  render();renderExpedition();renderReadiness();status.textContent='Curated source projection loaded · '+model.nodes.length+' entities · '+model.edges.length+' documented relationships';
+  render();renderExpedition();renderReadiness();renderQuestAtlas();status.textContent='Curated source projection loaded · '+model.nodes.length+' entities · '+model.edges.length+' documented relationships';
  }catch(error){status.textContent='Evidence Atlas unavailable: '+error.message+'. Existing portal exploration remains accessible.'}
 }
