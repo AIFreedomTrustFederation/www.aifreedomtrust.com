@@ -141,7 +141,6 @@ if(host){
    }
    first.addEventListener('change',update);second.addEventListener('change',update);update();
   }
-  renderComparison();
   const history=[];let cursor=-1;
   function navigate(id){if(history[cursor]!==id){history.splice(cursor+1);history.push(id);cursor=history.length-1}inspect(id)}
   function renderTrail(id){trailPanel.replaceChildren();const trail=evidenceTrail(model,id);trailPanel.append(el('h3','','Source-to-outcome journey'));
@@ -223,6 +222,6 @@ if(host){
   search.addEventListener('input',render);layer.addEventListener('change',render);
   previous.onclick=()=>{layer.value=LAYERS[Math.max(0,LAYERS.indexOf(layer.value)-1)];render()};
   next.onclick=()=>{layer.value=LAYERS[Math.min(LAYERS.length-1,LAYERS.indexOf(layer.value)+1)];render()};
-  render();renderExpedition();renderReadiness();renderQuestAtlas();renderMissionMap();status.textContent='Curated source projection loaded · '+model.nodes.length+' entities · '+model.edges.length+' documented relationships';
+  render();renderExpedition();renderReadiness();renderQuestAtlas();renderMissionMap();renderComparison();status.textContent='Curated source projection loaded · '+model.nodes.length+' entities · '+model.edges.length+' documented relationships';
  }catch(error){status.textContent='Evidence Atlas unavailable: '+error.message+'. Existing portal exploration remains accessible.'}
 }
