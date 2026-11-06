@@ -28,3 +28,13 @@
 .cos-spatial-nav button:focus-visible{outline:3px solid #ffda82;outline-offset:2px}
 @media(max-width:640px){.cos-spatial-nav{left:.4rem;bottom:.4rem;max-width:11rem}.cos-spatial-nav button{font-size:.8rem}}
 @media(prefers-reduced-motion:reduce){.cos-spatial-nav button{transition:none}}
+
+/* Attested source journey: interactive provenance rather than a decorative path. */
+.cos-evidence-trail{display:flex;flex-wrap:wrap;align-items:center;gap:.45rem;margin:.85rem 0;padding:1rem;border:1px solid #72dfc488;border-radius:14px;background:linear-gradient(125deg,#112f34,#14243c 55%,#30233d)}
+.cos-evidence-trail h4{flex-basis:100%;margin:0 0 .35rem;color:#ffe3a3;font:600 1rem/1.4 system-ui}
+.cos-trail-step,.cos-trail-proof{display:inline-flex;align-items:center;min-height:44px;border:1px solid #8bdacb;border-radius:10px;padding:.55rem .7rem;background:#0d2938;color:#e7fff9;font:600 .84rem/1.35 system-ui;text-decoration:none;cursor:pointer;overflow-wrap:anywhere}
+.cos-trail-proof{border-color:#e5c477;color:#ffebae}
+.cos-trail-arrow{color:#f7d88f;font-size:1.15rem}
+.cos-evidence-trail :focus-visible{outline:3px solid white;outline-offset:3px}
+@media(max-width:600px){.cos-evidence-trail{flex-direction:column;align-items:stretch}.cos-trail-step,.cos-trail-proof{width:100%;justify-content:center}.cos-trail-arrow{text-align:center;transform:rotate(90deg)}}
+@media(prefers-reduced-motion:reduce){.cos-evidence-trail *{transition:none!important}}
