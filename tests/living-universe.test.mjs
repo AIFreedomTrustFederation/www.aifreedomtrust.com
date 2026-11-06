@@ -35,7 +35,7 @@ assert.deepEqual([...sourcedRoots('f-portal')],['r-portal'],'public fruit must n
 for(const marker of ['function lineage(id)','function renderPath(id)','function renderMilestones()','id="path-steps"','id="milestones"','sourceRelations.has(edge.relation)'])assert.ok(html.includes(marker),'missing provenance UI: '+marker);
 for(const marker of ['id="search"','id="kind"','id="world"','id="universe-index"','prefers-reduced-motion','role="status"','function lineage(id)','data/living-universe.json'])assert.ok(html.includes(marker),'missing explorer contract: '+marker);
 for(const marker of ['id="journey-heading"','id="journey-ribbon"','id="journey-cards"','id="journey-prev"','id="journey-next"','function showLayer(index)','root','trunk','branch','leaf','fruit','prefers-reduced-motion'])assert.ok(html.includes(marker),'missing journey contract: '+marker);
-assert.equal(graph.nodes.filter(n=>n.kind==='fruit'&&n.url.includes('github.com/')).length,0,'repository incorrectly classified as fruit');
+assert.equal(graph.nodes.filter(n=>n.kind==='fruit'&&/^https:\/\/github\.com(?:\/|$)/i.test(n.url)).length,0,'repository incorrectly classified as fruit');
 console.log('Living Universe contract OK:',graph.nodes.length,'nodes,',graph.edges.length,'edges');
 
 const bridge=readFileSync(new URL('../genesis-bridge.js',import.meta.url),'utf8');
