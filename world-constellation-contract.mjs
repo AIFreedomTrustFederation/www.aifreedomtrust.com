@@ -18,3 +18,12 @@ export function contributionRoots(model,id){
   return ids.map(nodeId=>names.get(nodeId)||nodeId);
  })};
 }
+
+/** Exact-ID provenance trails; never infer relationships from display labels. */
+export function contributionTrails(model,id){
+ const projection=projectWorld(model);
+ return projection.lineage(id).paths.map(path=>({
+  ids:[path.root.id,...path.edges.map(edge=>edge.to)],
+  edges:path.edges.map(edge=>({from:edge.from,to:edge.to,relation:edge.relation,evidenceUrl:edge.evidenceUrl}))
+ }));
+}
