@@ -1,9 +1,10 @@
 // Shared, dependency-free world-model contract. Browser and Node ESM compatible.
 // Membership is not contribution. No live health, CI or deployment claims.
 export const KINDS=Object.freeze(['root','trunk','branch','leaf','flower','fruit']);
-export const CONTRIBUTION_RELATIONS=Object.freeze(['implements-system','implements-capability','contributes-to-outcome','delivers-outcome','documented-capability','contributes-to']);
+export const CONTRIBUTION_RELATIONS=Object.freeze(['contributes-to-outcome']);
 export const MEMBERSHIP_RELATIONS=Object.freeze(['federation-membership','organizational-branch']);
-const ALLOWED=new Set([...CONTRIBUTION_RELATIONS,...MEMBERSHIP_RELATIONS]);
+const STRUCTURAL_RELATIONS=Object.freeze(['implements-system','implements-capability','delivers-outcome','documented-capability']);
+const ALLOWED=new Set([...CONTRIBUTION_RELATIONS,...STRUCTURAL_RELATIONS,...MEMBERSHIP_RELATIONS]);
 const SAFE_URL=/^https:\/\/[a-z0-9.-]+(?:[/:?#]|$)/i;
 export function validateWorld(input){
  const errors=[];
@@ -22,13 +23,14 @@ export function validateWorld(input){
   if(!edge||!ids.has(edge.from)||!ids.has(edge.to)||edge.from===edge.to)errors.push('Invalid edge endpoints');
   if(!ALLOWED.has(edge?.relation))errors.push('Unknown relation: '+edge?.relation);
   if(edge?.evidenceUrl&&!SAFE_URL.test(edge.evidenceUrl))errors.push('Invalid evidence URL');
+  if(CONTRIBUTION_RELATIONS.includes(edge?.relation)&&!SAFE_URL.test(edge?.evidenceUrl||''))errors.push('Contribution requires HTTPS evidence: '+edge?.from+' -> '+edge?.to);
  }
  return {valid:errors.length===0,errors};
 }
 export function contributionRoots(model,target){
  const byId=new Map(model.nodes.map(n=>[n.id,n]));
  const incoming=new Map(model.nodes.map(n=>[n.id,[]]));
- for(const edge of model.edges)if(CONTRIBUTION_RELATIONS.includes(edge.relation)&&incoming.has(edge.to))incoming.get(edge.to).push(edge);
+ for(const edge of model.edges)if(CONTRIBUTION_RELATIONS.includes(edge.relation)&&SAFE_URL.test(edge.evidenceUrl||'')&&incoming.has(edge.to))incoming.get(edge.to).push(edge);
  const roots=new Map(),paths=[];const stack=[{id:target,path:[target]}];
  while(stack.length){
   const item=stack.pop(),node=byId.get(item.id);
