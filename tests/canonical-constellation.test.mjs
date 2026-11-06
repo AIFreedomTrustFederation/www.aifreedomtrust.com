@@ -26,4 +26,7 @@ assert.ok(css.includes('.cos-spatial-nav button:focus-visible'),'camera controls
 assert.ok(css.includes('min-height:2.75rem'),'camera controls need touch targets');
 assert.ok(css.includes('prefers-reduced-motion')&&css.includes('focus-visible'));
 assert.ok(!ui.includes('localStorage'),'no fabricated persistent achievements');
+for(const token of ['cos-evidence-trail','Attested source journey','Review attestation','setSelected(step.id)','trail.append(button)','edge.evidenceUrl.startsWith(\'https://\')'])assert.ok(ui.includes(token),'missing interactive attestation trail '+token);
+for(const token of ['.cos-evidence-trail', '.cos-trail-step', '.cos-trail-proof', 'min-height:44px', '.cos-evidence-trail :focus-visible'])assert.ok(css.includes(token),'missing accessible provenance trail style '+token);
+assert.ok(contributionRoots(model,'f-portal').paths.length>0,'source journey requires real attested paths');
 console.log('Canonical constellation integration passed');
