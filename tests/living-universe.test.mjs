@@ -25,7 +25,7 @@ for(const fruit of graph.nodes.filter(n=>n.kind==='fruit')){
  assert.ok(rooted,fruit.id+' fruit lacks source-root lineage');
 }
 const contributions=new Set(['implements','produces','documents']);
-for(const e of graph.edges)assert.ok(['member-of','organizes',...contributions].includes(e.relation),'unknown edge relation');
+for(const e of graph.edges)assert.ok(['member-of','organizes','contributes-to',...contributions].includes(e.relation),'unknown edge relation');
 function sourcedRoots(id){
  const seen=new Set(),queue=[id],roots=new Set();
  while(queue.length){const current=queue.shift();if(seen.has(current))continue;seen.add(current);const node=graph.nodes.find(n=>n.id===current);if(node.kind==='root')roots.add(current);for(const edge of graph.edges)if(edge.to===current&&contributions.has(edge.relation))queue.push(edge.from)}

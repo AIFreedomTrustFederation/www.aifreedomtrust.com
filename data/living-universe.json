@@ -263,6 +263,27 @@
       "relation": "documents",
       "status": "curated",
       "source": "https://github.com/AIFreedomTrustFederation/AIFT-Genesis/blob/main/manifests/living-atlas.manifest.json"
+    },
+    {
+      "from": "r-portal",
+      "to": "b-public",
+      "relation": "contributes-to",
+      "status": "source-backed",
+      "evidenceUrl": "https://github.com/AIFreedomTrustFederation/www.aifreedomtrust.com"
+    },
+    {
+      "from": "b-public",
+      "to": "f-portal",
+      "relation": "contributes-to",
+      "status": "source-backed",
+      "evidenceUrl": "https://github.com/AIFreedomTrustFederation/www.aifreedomtrust.com"
+    },
+    {
+      "from": "b-public",
+      "to": "l-atlas",
+      "relation": "contributes-to",
+      "status": "source-backed",
+      "evidenceUrl": "https://github.com/AIFreedomTrustFederation/www.aifreedomtrust.com"
     }
   ]
 }

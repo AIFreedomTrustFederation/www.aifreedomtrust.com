@@ -8,9 +8,10 @@ assert.equal(ids.size,data.nodes.length);
 const allowed=new Set(['root','trunk','branch','leaf','flower','fruit']);
 for(const n of data.nodes){assert.ok(allowed.has(n.kind));assert.match(n.url,/^https:\/\//);if(n.kind==='root')assert.match(n.url,/^https:\/\/github\.com\/AIFreedomTrustFederation\/[^/]+\/?$/);if(n.kind==='fruit')assert.doesNotMatch(n.url,/^https:\/\/github\.com\/AIFreedomTrustFederation\/[^/]+\/?$/)}
 for(const e of data.edges){assert.ok(ids.has(e.from)&&ids.has(e.to));assert.ok(e.relation)}
-const contributes=new Set(['implements','produces','contributes','builds','documents']);
-function hasRoot(id,seen=new Set()){if(seen.has(id))return false;seen.add(id);if(data.nodes.find(n=>n.id===id).kind==='root')return true;return data.edges.filter(e=>e.to===id&&contributes.has(e.relation)).some(e=>hasRoot(e.from,new Set(seen)))}
-for(const n of data.nodes.filter(n=>n.kind==='fruit'))assert.ok(hasRoot(n.id),'fruit missing contributing root: '+n.id);
+function hasRoot(id,edges,seen=new Set()){if(seen.has(id))return false;seen.add(id);if(data.nodes.find(n=>n.id===id).kind==='root')return true;return edges.filter(e=>e.to===id&&e.relation==='contributes-to'&&e.status==='source-backed'&&/^https:\/\/[^\s/]+(?:\/[^\s]*)?$/.test(e.evidenceUrl||e.source||'')).some(e=>hasRoot(e.from,edges,new Set(seen)))}
+assert.ok(hasRoot('f-portal',data.edges),'source-backed portal path must be present');
+assert.equal(hasRoot('f-portal',data.edges.filter(e=>e.relation!=='contributes-to')),false,'structural edges must not establish contribution');
+assert.equal(hasRoot('f-portal',data.edges.map(e=>e.relation==='contributes-to'?{...e,status:'curated'}:e)),false,'unattested edges must not establish contribution');
 for(const marker of ['id="evidence-garden"','data-garden-list','data-garden-detail','data-garden-filter','data-garden-search','evidence-garden.js'])assert.ok(page.includes(marker),'missing '+marker);
 for(const marker of ['aria-pressed','noopener noreferrer','source lineage not established','No evidence claims','prefers-reduced-motion']){assert.ok((module+page).includes(marker),'missing '+marker)}
 console.log('Evidence Garden contract passed:',data.nodes.length,'nodes,',data.edges.length,'edges');

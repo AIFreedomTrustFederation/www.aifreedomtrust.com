@@ -14,7 +14,7 @@ export function projectWorld(manifest) {
   }
   const edges = manifest.edges.map(edge => {
     if (!nodes.has(edge.from) || !nodes.has(edge.to) || !(CONTRIBUTION.has(edge.relation) || STRUCTURE.has(edge.relation))) throw new TypeError('Invalid world relationship');
-    if (CONTRIBUTION.has(edge.relation) && !https(edge.source)) throw new TypeError('Contribution requires HTTPS evidence');
+    if (CONTRIBUTION.has(edge.relation) && (edge.status !== 'source-backed' || !https(edge.evidenceUrl || edge.source))) throw new TypeError('Contribution requires source-backed HTTPS evidence');
     return Object.freeze({...edge});
   });
   const contributions = edges.filter(edge => CONTRIBUTION.has(edge.relation));
