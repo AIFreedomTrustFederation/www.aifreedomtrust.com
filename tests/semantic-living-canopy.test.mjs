@@ -8,4 +8,12 @@ assert(stages.find(s=>s.kind==='fruit').entries.every(e=>!e.url.startsWith('http
 assert(stages.flatMap(s=>s.entries).every(e=>!e.attested||e.roots.length>0));
 const html=readFileSync(new URL('../semantic-scene.html',import.meta.url),'utf8');
 assert(html.includes('id="living-canopy"'));assert(html.includes('semantic-living-canopy.mjs'));
+const canopySource=readFileSync(new URL('../semantic-living-canopy.mjs',import.meta.url),'utf8');
+const canopyCss=readFileSync(new URL('../semantic-living-canopy.css',import.meta.url),'utf8');
+assert(canopySource.includes("entry.kind==='root'?[entry]:entry.roots"),'root journeys must originate from repository roots');
+assert(canopySource.includes('Intermediate connections are contextual'),'contextual edges must not be presented as attested');
+assert(canopySource.includes('Outcome verification is incomplete'),'unverified fruit must expose evidence gap');
+assert(canopySource.includes("routeBody.replaceChildren()"),'route must clear stale selected lineage');
+assert(canopyCss.includes('canopy-route-step'),'visual journey styling must be present');
+assert(canopyCss.includes('@media(max-width:650px)'),'journey must support narrow mobile screens');
 console.log('Living canopy biological, evidence and integration contracts passed');
