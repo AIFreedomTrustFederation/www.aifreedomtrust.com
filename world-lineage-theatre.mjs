@@ -7,7 +7,7 @@ export function buildLineageScene(world,id){
  const nodes=world.nodes.filter(n=>ids.has(n.id)).sort((a,b)=>LAYERS.indexOf(a.kind)-LAYERS.indexOf(b.kind)||a.id.localeCompare(b.id));
  return {focus:inspected.node,nodes,edges,gap:inspected.lineage.evidenceGap,sourceCount:inspected.lineage.roots.length};
 }
-const host=document.getElementById('world-lineage-theatre');
+const host=typeof document==='undefined'?null:document.getElementById('world-lineage-theatre');
 if(host){
  const make=(tag,text)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;return e};
  const section=make('section'),h=make('h2','The Living Lineage Theatre'),intro=make('p','Zoom through attested roots and their documented outcomes. Select an entity to inspect its evidence. Missing paths are never invented.');
