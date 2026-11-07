@@ -12,7 +12,7 @@ const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
 function panBy(dx,dy){const width=1000/zoom,height=620/zoom;center.x=clamp(center.x+dx,width/2,1000-width/2);center.y=clamp(center.y+dy,height/2,620-height/2);applyViewport()}
 function zoomAt(next,x,y){const previous=zoom;zoom=clamp(Math.round(next*10)/10,1,4);const ratio=1/previous-1/zoom;center.x=clamp(center.x+x*ratio,500/zoom,1000-500/zoom);center.y=clamp(center.y+y*ratio,310/zoom,620-310/zoom);applyViewport()}
 
-function updateMinimap(){const frame=document.querySelector('.minimap-viewport');if(!frame)return;frame.style.width=(100/zoom)+'%';frame.style.height='100%';frame.style.transform='translateX('+((center.x-500/zoom)/1000*100)+'%)'}
+function updateMinimap(){const frame=document.querySelector('.minimap-viewport');if(!frame)return;frame.style.width=(100/zoom)+'%';frame.style.height='100%';frame.style.left=((center.x-500/zoom)/1000*100)+'%'}
 function applyViewport(){const w=1000/zoom,h=620/zoom;center.x=Math.max(w/2,Math.min(1000-w/2,center.x));center.y=Math.max(h/2,Math.min(620-h/2,center.y));$('map').setAttribute('viewBox',[center.x-w/2,center.y-h/2,w,h].join(' '));$('viewport-status').textContent='Spatial zoom '+Math.round(zoom*100)+'% · illustrative positions, not live data';$('zoom-out').disabled=zoom<=1;$('zoom-in').disabled=zoom>=4;updateMinimap()}
 function changeZoom(next){zoomAt(next,0,0)}
 function focusEntity(id){if(!world)return;const scene=buildSemanticScene(world);const node=scene.nodes.find(n=>n.id===id);if(!node)return;center={x:60+node.position.x*880,y:50+node.position.y*520};if(zoom<1.8)zoom=1.8;applyViewport()}
