@@ -16,3 +16,6 @@
 .lineage-route-proofs a,#lineage-paths>a{display:inline-block;padding:.55rem .8rem;border:1px solid #6ce5b1;border-radius:10px;color:#a9f3e4}
 @media(max-width:520px){.lineage-route-steps{display:grid;grid-template-columns:1fr}.lineage-route-steps li{min-width:0}}
 @media(prefers-reduced-motion:reduce){.lineage-route-steps *{transition:none!important}}
+
+/* Read-only viewport overview and touch-friendly spatial navigation. */
+#map{touch-action:pan-y;outline-offset:-4px}#minimap{height:28px;align-items:center;isolation:isolate}#minimap .minimap-viewport{position:absolute;top:0;bottom:0;flex:none;height:100%;border:2px solid #ffe0a0;border-radius:5px;background:#ffe0a01c;pointer-events:none;z-index:2}#minimap span:not(.minimap-viewport){min-width:0}@media(max-width:700px){#map{min-width:0;min-height:320px}.map-help{line-height:1.6}}
