@@ -2,6 +2,9 @@ name: Federation Evidence Atlas contracts
 on:
   pull_request:
     paths:
+      - 'semantic-journey-studio.mjs'
+      - 'semantic-journey-studio.css'
+      - 'tests/semantic-journey-studio.test.mjs'
       - 'semantic-scene.html'
       - 'semantic-scene.css'
       - 'semantic-scene-ui.mjs'
@@ -46,6 +49,8 @@ jobs:
           node-version: '22'
       - name: Validate syntax
         run: |
+          node --check semantic-journey-studio.mjs
+          node --check tests/semantic-journey-studio.test.mjs
           node --check semantic-scene-ui.mjs
           node --check tests/semantic-scene-ui.test.mjs
           node --check tests/semantic-scene-viewport.test.mjs
@@ -68,6 +73,7 @@ jobs:
           node --check tests/world-evidence-atlas.test.mjs
       - name: Run evidence and projection contracts
         run: |
+          node tests/semantic-journey-studio.test.mjs
           node tests/semantic-scene-ui.test.mjs
           node tests/semantic-scene-viewport.test.mjs
           node tests/world-semantic-scene.test.mjs
