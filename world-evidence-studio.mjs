@@ -1,5 +1,6 @@
 /** Read-only evidence gap studio. All statements derive from the curated world projection. */
 import {projectWorld,LAYERS} from './world-projection.mjs';
+import {buildEvidenceMissions,exportEvidenceMissions} from './world-evidence-mission-planner.mjs';
 export function buildEvidenceBacklog(world){
  const nodes=world.nodes, byId=new Map(nodes.map(n=>[n.id,n]));
  return nodes.filter(n=>n.kind!=='root'&&n.kind!=='trunk').map(node=>{
@@ -35,7 +36,40 @@ if(host){
  const layout=el('div');layout.className='wes-layout';const list=el('div'),inspector=el('aside');list.className='wes-list';inspector.className='wes-inspector';inspector.setAttribute('aria-label','Evidence repair inspector');layout.append(list,inspector);section.append(layout);
  const status=el('p','Loading curated evidence…');status.setAttribute('role','status');section.append(status);
  const link=(label,url)=>{const a=el('a',label);a.href=url;a.target='_blank';a.rel='noopener noreferrer';return a};
- let entries=[],selected=null;
+ let entries=[],missions=[],selected=null;
+ const missionPanel=el('section');missionPanel.className='wes-missions';missionPanel.setAttribute('aria-label','Evidence missions');
+ const missionHeading=el('h3','Evidence missions · source to outcome');
+ const missionIntro=el('p','Follow documented source lineage, inspect attestations, and identify the next evidence milestone. These are research tasks, not earned achievements or live readiness.');
+ const missionSummary=el('p');missionSummary.setAttribute('role','status');
+ const missionList=el('div');missionList.className='wes-mission-list';
+ const copyMissions=el('button','Copy visible mission plan');copyMissions.type='button';
+ missionPanel.append(missionHeading,missionIntro,missionSummary,missionList,copyMissions);section.append(missionPanel);
+ function renderMissions(visible){
+  const ids=new Set(visible.map(item=>item.id));
+  const filtered=missions.filter(mission=>ids.has(mission.id));
+  missionSummary.textContent=filtered.length+' documented missions · '+filtered.filter(m=>m.openSteps>0).length+' with missing provenance steps';
+  missionList.replaceChildren();
+  for(const mission of filtered){
+   const article=el('article');article.className='wes-mission';
+   article.append(el('h4',mission.label),el('p',mission.kind+' · '+mission.openSteps+' evidence steps outstanding'));
+   const steps=el('ol');
+   for(const step of mission.steps){
+    const li=el('li',step.label+' · '+(step.state==='evidence-needed'?'Evidence needed':'Documented in curated projection'));
+    steps.append(li);
+   }
+   article.append(steps);
+   const inspectButton=el('button','Inspect source lineage');inspectButton.type='button';
+   inspectButton.onclick=()=>{const item=entries.find(entry=>entry.id===mission.id);if(item){inspect(item);inspector.scrollIntoView({behavior:'auto',block:'nearest'})}};
+   article.append(inspectButton);missionList.append(article);
+  }
+  if(!filtered.length)missionList.append(el('p','No documented missions match the current filters.'));
+  copyMissions.onclick=()=>{
+   const payload=exportEvidenceMissions(filtered);
+   if(navigator.clipboard?.writeText)navigator.clipboard.writeText(payload).then(()=>status.textContent='Visible curated mission plan copied').catch(()=>status.textContent='Clipboard unavailable');
+   else status.textContent='Clipboard unavailable';
+  };
+ }
+
  function inspect(item){
   selected=item.id;inspector.replaceChildren();
   inspector.append(el('small',item.kind.toUpperCase()),el('h3',item.label),el('p',item.state==='attested-lineage'?'A repository-root contribution path is recorded. This does not attest release readiness.':'Contribution evidence is incomplete; do not infer an outcome is verified.'));
@@ -56,9 +90,10 @@ if(host){
   list.replaceChildren();
   for(const item of visible){const b=el('button');b.type='button';b.dataset.id=item.id;b.className='wes-item';b.setAttribute('aria-pressed',String(item.id===selected));const label=el('strong',item.label),meta=el('small',item.kind+' · '+(item.roots.length?item.roots.length+' attested roots':'evidence needed'));b.append(label,meta);b.onclick=()=>inspect(item);list.append(b)}
   if(!visible.length)list.append(el('p','No documented entities match these filters.'));
+  renderMissions(visible);
   const active=visible.find(e=>e.id===selected)||visible[0];if(active)inspect(active);else inspector.replaceChildren(el('p','No matching evidence to inspect.'));
  }
  for(const input of [search,kind,state])input.addEventListener('input',render);
  exportButton.onclick=()=>{const data=exportEvidenceBacklog(entries);if(navigator.clipboard?.writeText){navigator.clipboard.writeText(data).then(()=>status.textContent='Curated backlog copied; no live statuses included').catch(()=>status.textContent='Clipboard unavailable; use the on-screen evidence inspector')}else status.textContent='Clipboard unavailable; use the on-screen evidence inspector'};
- fetch('data/living-universe.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.json()}).then(data=>{entries=buildEvidenceBacklog(projectWorld(data));status.textContent='Curated source manifest loaded; no live health claims';render()}).catch(err=>{status.textContent='Evidence unavailable: '+err.message;inspector.textContent='No inferred status is shown when the source manifest is unavailable'});
+ fetch('data/living-universe.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.json()}).then(data=>{const world=projectWorld(data);entries=buildEvidenceBacklog(world);missions=buildEvidenceMissions(world);status.textContent='Curated source manifest loaded; no live health claims';render()}).catch(err=>{status.textContent='Evidence unavailable: '+err.message;inspector.textContent='No inferred status is shown when the source manifest is unavailable'});
 }
