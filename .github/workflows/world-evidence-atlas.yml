@@ -64,6 +64,8 @@ jobs:
           node --check tests/semantic-lineage-paths.test.mjs
           node --check semantic-lineage-comparison.mjs
           node --check tests/semantic-lineage-comparison.test.mjs
+          node --check semantic-evidence-cockpit.mjs
+          node --check tests/semantic-evidence-cockpit.test.mjs
           node --check semantic-journey-studio.mjs
           node --check tests/semantic-journey-studio.test.mjs
           node --check semantic-scene-ui.mjs
@@ -88,6 +90,7 @@ jobs:
           node --check tests/world-evidence-atlas.test.mjs
       - name: Run evidence and projection contracts
         run: |
+          node tests/semantic-evidence-cockpit.test.mjs
           node tests/semantic-expedition-atlas.test.mjs
           node tests/semantic-lineage-paths.test.mjs
           node tests/semantic-lineage-comparison.test.mjs
