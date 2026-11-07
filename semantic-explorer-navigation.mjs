@@ -1,3 +1,4 @@
+import {mountPublishedEvidenceInspector} from './semantic-published-link-inspector.mjs';
 /** Shared, read-only exploration shell. Existing workspaces remain mounted and unchanged. */
 export const EXPLORERS=Object.freeze([
  ['scene-heading','Constellation','Spatial exploration and accessible entity index'],
@@ -147,7 +148,9 @@ export function mountExplorerNavigation(doc){
   }
  }
  search.addEventListener('input',renderResults);
- nav.append(intro,tabs,discovery,trail,summary);sections[0].before(nav);
+ nav.append(intro,tabs,discovery,trail,summary);
+ mountPublishedEvidenceInspector(doc,nav,sections,activate);
+ sections[0].before(nav);
  win?.addEventListener('hashchange',followLocation);
  win?.addEventListener('popstate',followLocation);
  win?.addEventListener('aift:lineage-select',()=>activate(0));
