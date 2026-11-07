@@ -1,0 +1,12 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {projectWorld} from '../world-projection.mjs';
+import {buildLineageScene} from '../world-lineage-theatre.mjs';
+const root={id:'repo',kind:'root',label:'Source repository',url:'https://github.com/AIFreedomTrustFederation/example'};
+const fruit={id:'outcome',kind:'fruit',label:'Public experience',url:'https://example.org/app'};
+const edge={from:'repo',to:'outcome',relation:'contributes-to',status:'source-backed',evidenceUrl:'https://example.org/evidence'};
+test('attested root to actual outcome has exact edge',()=>{const scene=buildLineageScene(projectWorld({nodes:[root,fruit],edges:[edge]}),'outcome');assert.equal(scene.sourceCount,1);assert.deepEqual(scene.edges,[edge]);assert.deepEqual(scene.nodes.map(n=>n.id),['repo','outcome'])});
+test('structural membership does not become contribution',()=>{const world=projectWorld({nodes:[root,fruit],edges:[{from:'repo',to:'outcome',relation:'member-of'}]});const scene=buildLineageScene(world,'outcome');assert.equal(scene.sourceCount,0);assert.equal(scene.edges.length,0);assert.match(scene.gap,/No documented/)});
+test('no invented fruit for root-only manifest',()=>{const scene=buildLineageScene(projectWorld({nodes:[root],edges:[]}),'repo');assert.equal(scene.nodes.length,1);assert.equal(scene.nodes[0].kind,'root')});
+test('portal mounts additive accessible theatre',()=>{const html=readFileSync(new URL('../living-universe.html',import.meta.url),'utf8');assert.match(html,/id="world-lineage-theatre"/);assert.match(html,/world-lineage-theatre\.mjs/);assert.match(html,/world-lineage-theatre\.css/);assert.match(html,/id="universe-index"/)});
