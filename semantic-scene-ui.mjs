@@ -12,7 +12,7 @@ function changeZoom(next){zoom=Math.max(1,Math.min(4,Math.round(next*10)/10));ap
 function focusEntity(id){if(!world)return;const scene=buildSemanticScene(world);const node=scene.nodes.find(n=>n.id===id);if(!node)return;center={x:60+node.position.x*880,y:50+node.position.y*520};if(zoom<1.8)zoom=1.8;applyViewport()}
 
 const safeLink=(url,label,parent)=>{if(typeof url!=='string'||!/^https:\/\/[^\s/]+/.test(url))return;const a=el('a',label);a.href=url;a.target='_blank';a.rel='noopener noreferrer';parent.append(a)};
-function select(id,record=true){if(!world?.nodes.some(n=>n.id===id))return;selected=id;focusEntity(id);if(record){history=history.slice(0,cursor+1);if(history.at(-1)!==id)history.push(id);cursor=history.length-1}render()}
+function select(id,record=true){if(!world?.nodes.some(n=>n.id===id))return;selected=id;focusEntity(id);window.dispatchEvent(new CustomEvent("aift:lineage-selected",{detail:{id}}));if(record){history=history.slice(0,cursor+1);if(history.at(-1)!==id)history.push(id);cursor=history.length-1}render()}
 function render(){
  const layer=$('layer').value||null,search=$('search').value,scene=buildSemanticScene(world,{layer,search,selectedId:selected});
  $('back').disabled=cursor<=0;$('forward').disabled=cursor>=history.length-1;
@@ -33,8 +33,9 @@ function render(){
  for(const root of inspection.lineage.roots){const p=el('p');p.append(el('strong',root.label));detail.append(p);safeLink(root.url,'Inspect repository root',detail)}
  detail.append(el('h4','Source attestations'));const proofs=[...new Set(inspection.lineage.paths.flatMap(p=>p.edges.map(e=>e.evidenceUrl||e.source).filter(u=>typeof u==='string'&&u.startsWith('https://'))))];if(!proofs.length)detail.append(el('p','No attestation URLs recorded.'));for(const [i,url] of proofs.entries())safeLink(url,'Review attestation '+(i+1),detail);
 }
+window.addEventListener('aift:lineage-select',event=>{if(typeof event.detail?.id==='string')select(event.detail.id)});
 $('search').addEventListener('input',render);$('layer').addEventListener('change',render);
-$('reset').onclick=()=>{$('search').value='';$('layer').value='';selected=null;history=[];cursor=-1;zoom=1;center={x:500,y:310};applyViewport();render()};
+$('reset').onclick=()=>{$('search').value='';$('layer').value='';selected=null;window.dispatchEvent(new CustomEvent('aift:lineage-selected',{detail:{id:null}}));history=[];cursor=-1;zoom=1;center={x:500,y:310};applyViewport();render()};
 $('zoom-in').onclick=()=>changeZoom(zoom+.4);$('zoom-out').onclick=()=>changeZoom(zoom-.4);$('zoom-fit').onclick=()=>{zoom=1;center={x:500,y:310};applyViewport()};
 
 $('back').onclick=()=>{if(cursor>0){cursor--;select(history[cursor],false)}};
