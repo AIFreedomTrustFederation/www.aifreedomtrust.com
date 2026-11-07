@@ -20,4 +20,15 @@ for(let i=0;i<EXPLORERS.length;i++){
 assert.equal(resolveExplorerIndex(doc,'#missing',sections),0);
 assert.equal(resolveExplorerIndex(doc,'#%invalid',sections),0);
 assert.equal(resolveExplorerIndex(doc,'',sections),0);
-console.log('Unified explorer navigation and deep-link contract passed');
+// Discovery is a read-only index of existing published headings, not a fabricated world graph.
+const {readFileSync}=await import('node:fs');
+const source=readFileSync(new URL('../semantic-explorer-navigation.mjs',import.meta.url),'utf8');
+const styles=readFileSync(new URL('../semantic-explorer-navigation.css',import.meta.url),'utf8');
+assert.match(source,/section\.querySelectorAll\('h3,h4'\)/);
+assert.match(source,/needle\.length<2/);
+assert.match(source,/matches\.slice\(0,24\)/);
+assert.match(source,/encodeURIComponent\(match\.node\.id\)/);
+assert.match(source,/match\.node\.focus\(\{preventScroll:true\}\)/);
+assert.match(styles,/explorer-discovery-hit:focus-visible/);
+assert.match(styles,/@media\(max-width:600px\)/);
+console.log('Unified explorer navigation, discovery and deep-link contract passed');
