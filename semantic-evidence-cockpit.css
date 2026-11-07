@@ -1,0 +1,13 @@
+/* Evidence cockpit: additive, responsive, no external assets or tracking. */
+#evidence-cockpit{--root:#f47685;--trunk:#f5d18c;--branch:#6ce5b1;--leaf:#67c8f3;--flower:#b997ff;--fruit:#f6a86c;display:grid;gap:1rem}
+.cockpit-controls,.cockpit-ribbon{display:flex;flex-wrap:wrap;gap:.65rem}
+.cockpit-controls>*{min-width:10rem;flex:1 1 12rem;padding:.75rem;border-radius:.7rem}
+.cockpit-ribbon button{flex:1 1 8rem;border:1px solid currentColor;border-radius:.8rem;padding:.8rem;background:linear-gradient(135deg,rgba(247,118,133,.15),rgba(103,200,243,.1));color:inherit}
+.cockpit-ribbon button[data-stage=root]{border-color:var(--root)}.cockpit-ribbon button[data-stage=trunk]{border-color:var(--trunk)}.cockpit-ribbon button[data-stage=branch]{border-color:var(--branch)}.cockpit-ribbon button[data-stage=leaf]{border-color:var(--leaf)}.cockpit-ribbon button[data-stage=flower]{border-color:var(--flower)}.cockpit-ribbon button[data-stage=fruit]{border-color:var(--fruit)}
+.cockpit-entities{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,16rem),1fr));gap:.65rem;max-height:24rem;overflow:auto}
+.cockpit-node{text-align:left;padding:1rem;border:1px solid #7f8b9b;border-radius:.8rem;background:rgba(77,105,147,.12);color:inherit;min-height:3rem}
+.cockpit-node[aria-pressed=true],.cockpit-ribbon button[aria-pressed=true]{outline:2px solid #e9c77c;outline-offset:2px}
+.cockpit-detail{padding:1rem;border:1px solid #a88a52;border-radius:1rem;background:linear-gradient(120deg,rgba(244,118,133,.08),rgba(103,200,243,.08))}
+.cockpit-detail a{display:inline-block;margin:.35rem .7rem .35rem 0;overflow-wrap:anywhere}
+#evidence-cockpit button:focus-visible,#evidence-cockpit select:focus-visible,#evidence-cockpit input:focus-visible{outline:3px solid #f5d18c;outline-offset:3px}
+@media(prefers-reduced-motion:reduce){#evidence-cockpit *{animation:none!important;transition:none!important}}
