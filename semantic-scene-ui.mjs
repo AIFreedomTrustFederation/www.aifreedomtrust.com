@@ -39,4 +39,4 @@ $('zoom-in').onclick=()=>changeZoom(zoom+.4);$('zoom-out').onclick=()=>changeZoo
 
 $('back').onclick=()=>{if(cursor>0){cursor--;select(history[cursor],false)}};
 $('forward').onclick=()=>{if(cursor<history.length-1){cursor++;select(history[cursor],false)}};
-fetch('data/living-universe.json').then(r=>{if(!r.ok)throw Error('Manifest HTTP '+r.status);return r.json()}).then(data=>{world=projectWorld(data);applyViewport();render()}).catch(e=>{$('status').textContent='Curated scene unavailable: '+e.message;$('detail').replaceChildren(el('p','No evidence could be loaded. No status or achievements inferred.'))});
+fetch('data/living-universe.json').then(r=>{if(!r.ok)throw Error('Manifest HTTP '+r.status);return r.json()}).then(data=>{world=projectWorld(data);applyViewport();render();const deepLink=new URLSearchParams(location.search).get('entity');if(deepLink&&world.nodes.some(n=>n.id===deepLink))select(deepLink)}).catch(e=>{$('status').textContent='Curated scene unavailable: '+e.message;$('detail').replaceChildren(el('p','No evidence could be loaded. No status or achievements inferred.'))});
