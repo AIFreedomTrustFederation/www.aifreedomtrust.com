@@ -33,3 +33,19 @@ main>section[hidden]{display:none!important}
 .explorer-trail button:focus-visible{outline:3px solid #f5d18c;outline-offset:2px}
 .explorer-trail button:disabled{opacity:.5;cursor:not-allowed}.explorer-trail-actions{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.8rem}
 @media(max-width:600px){.explorer-trail{padding:.75rem}.explorer-trail-steps{gap:.3rem}}
+
+/* Published-link provenance inspector: grounded DOM index, not a product catalog. */
+.explorer-link-inspector{margin-top:1.25rem;padding:clamp(.8rem,2vw,1.4rem);border:1px solid #d7b76a88;border-radius:18px;background:linear-gradient(125deg,#1d2036,#112e3a);color:#f6f4ec}
+.explorer-link-inspector h3{margin:.2rem 0 .6rem;font-size:clamp(1.1rem,2vw,1.45rem)}
+.explorer-link-inspector p{line-height:1.55;color:#d6e5ed}
+.explorer-link-controls{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:.75rem;align-items:end}
+.explorer-link-controls label{font-weight:650}
+.explorer-link-controls input,.explorer-link-controls select{display:block;width:100%;min-height:48px;box-sizing:border-box;padding:.65rem;border:1px solid #8eafc7;border-radius:10px;background:#101d30;color:#fff;font:inherit}
+.explorer-link-results{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:.7rem;list-style:none;padding:0;margin:1rem 0}
+.explorer-link-results li{display:flex;flex-direction:column;align-items:flex-start;gap:.5rem;padding:1rem;background:#15283c;border:1px solid #69869b;border-radius:12px;overflow-wrap:anywhere}
+.explorer-link-results a{color:#b8e6ff;text-decoration:underline;text-underline-offset:3px}
+.explorer-link-results span{font-size:.85rem;color:#d5c48c}
+.explorer-link-results button{min-height:44px;padding:.55rem .8rem;background:#294b5a;border:1px solid #8bc2b6;border-radius:10px;color:white;font:inherit;cursor:pointer}
+.explorer-link-inspector :is(button,input,select,a):focus-visible{outline:3px solid #f5d18c;outline-offset:3px}
+@media(max-width:600px){.explorer-link-controls{grid-template-columns:1fr}.explorer-link-results{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.explorer-link-inspector *{scroll-behavior:auto}}
