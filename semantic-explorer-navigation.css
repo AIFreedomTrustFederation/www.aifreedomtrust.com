@@ -1,0 +1,13 @@
+/* Unified evidence workspaces: progressive disclosure without deleting any source content. */
+.explorer-navigation{margin:2rem auto 1rem;max-width:1300px;padding:clamp(1rem,2vw,1.5rem);border:1px solid #bfa46c77;border-radius:24px;background:radial-gradient(ellipse at 15% 0%,#74283b55,transparent 45%),radial-gradient(ellipse at 85% 5%,#194c8055,transparent 48%),linear-gradient(145deg,#111a2e,#0b1321);box-shadow:0 22px 65px #0007;color:#f5f3ed}
+.explorer-navigation-intro{font-size:clamp(1rem,1.6vw,1.25rem);line-height:1.5}
+.explorer-navigation-tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,145px),1fr));gap:.65rem;margin:1rem 0}
+.explorer-navigation-tabs button{min-height:52px;padding:.8rem 1rem;border:1px solid #7089a477;border-radius:14px;background:#17263d;color:#f8f6ef;font:inherit;font-weight:650;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.explorer-navigation-tabs button:nth-child(7n+1){border-top:4px solid #f47685}.explorer-navigation-tabs button:nth-child(7n+2){border-top:4px solid #f5d18c}.explorer-navigation-tabs button:nth-child(7n+3){border-top:4px solid #6ce5b1}.explorer-navigation-tabs button:nth-child(7n+4){border-top:4px solid #67c8f3}.explorer-navigation-tabs button:nth-child(7n+5){border-top:4px solid #b997ff}.explorer-navigation-tabs button:nth-child(7n+6){border-top:4px solid #f6a86c}.explorer-navigation-tabs button:nth-child(7n+7){border-top:4px solid #dfc279}
+.explorer-navigation-tabs button[aria-current="true"]{background:#304c6b;border-color:#f5d18c;box-shadow:0 0 0 2px #f5d18c66,0 8px 30px #0005}
+.explorer-navigation-tabs button:hover{transform:translateY(-2px)}
+.explorer-navigation-tabs button:focus-visible{outline:3px solid #f5d18c;outline-offset:3px}
+#explorer-navigation-status{color:#d4e3ed;line-height:1.5}
+main>section[hidden]{display:none!important}
+@media(max-width:600px){.explorer-navigation{margin:1rem .5rem}.explorer-navigation-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.explorer-navigation-tabs button{min-height:54px}}
+@media(prefers-reduced-motion:reduce){.explorer-navigation-tabs button{transition:none}.explorer-navigation-tabs button:hover{transform:none}}
