@@ -11,3 +11,15 @@
 main>section[hidden]{display:none!important}
 @media(max-width:600px){.explorer-navigation{margin:1rem .5rem}.explorer-navigation-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.explorer-navigation-tabs button{min-height:54px}}
 @media(prefers-reduced-motion:reduce){.explorer-navigation-tabs button{transition:none}.explorer-navigation-tabs button:hover{transform:none}}
+
+/* One search surface indexes existing published headings without remote calls or invented entities. */
+.explorer-discovery{margin:1.2rem 0;padding:1rem;border:1px solid #dfc27966;border-radius:18px;background:linear-gradient(120deg,#271e32,#142c3d)}
+.explorer-discovery label{display:block;font-weight:650;line-height:1.5}
+.explorer-discovery input{display:block;width:100%;box-sizing:border-box;min-height:48px;margin-top:.5rem;padding:.75rem 1rem;border:1px solid #93aeca;border-radius:12px;background:#0b1626;color:#fff;font:inherit}
+.explorer-discovery input::placeholder{color:#b3c2d2}
+.explorer-discovery-results{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:.6rem;margin-top:.75rem}
+.explorer-discovery-results:empty{display:none}
+.explorer-discovery-hit{padding:.8rem;text-align:left;min-height:48px;border:1px solid #718ea7;border-left:4px solid #6ce5b1;border-radius:10px;background:#152a40;color:#f7f8fa;font:inherit;cursor:pointer}
+.explorer-discovery-hit:hover{background:#284866}
+.explorer-discovery-hit:focus-visible,.explorer-discovery input:focus-visible{outline:3px solid #f5d18c;outline-offset:3px}
+@media(max-width:600px){.explorer-discovery{padding:.75rem}.explorer-discovery-results{grid-template-columns:1fr}}
