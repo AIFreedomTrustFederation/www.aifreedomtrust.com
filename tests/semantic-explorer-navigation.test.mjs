@@ -32,3 +32,11 @@ assert.match(source,/match\.node\.focus\(\{preventScroll:true\}\)/);
 assert.match(styles,/explorer-discovery-hit:focus-visible/);
 assert.match(styles,/@media\(max-width:600px\)/);
 console.log('Unified explorer navigation, discovery and deep-link contract passed');
+
+// Trail is bounded, reversible, keyboard operable, and never persisted.
+assert.match(source,/const visited=\[\]/);
+assert.match(source,/visited\.length>30/);
+assert.match(source,/visited\.splice\(position\+1\)/);
+assert.match(source,/trailSteps\.replaceChildren\(\)/);
+assert.doesNotMatch(source,/localStorage|sessionStorage|sendBeacon/);
+assert.match(styles,/\.explorer-trail button:focus-visible/);
