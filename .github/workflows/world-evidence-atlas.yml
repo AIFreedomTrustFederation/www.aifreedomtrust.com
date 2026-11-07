@@ -16,6 +16,8 @@ on:
       - 'semantic-journey-studio.mjs'
       - 'semantic-journey-studio.css'
       - 'tests/semantic-journey-studio.test.mjs'
+      - 'semantic-published-link-inspector.mjs'
+      - 'tests/semantic-published-link-inspector.test.mjs'
       - 'semantic-explorer-navigation.mjs'
       - 'semantic-explorer-navigation.css'
       - 'tests/semantic-explorer-navigation.test.mjs'
@@ -64,6 +66,8 @@ jobs:
           node-version: '22'
       - name: Validate syntax
         run: |
+          node --check semantic-published-link-inspector.mjs
+          node --check tests/semantic-published-link-inspector.test.mjs
           node --check semantic-explorer-navigation.mjs
           node --check tests/semantic-explorer-navigation.test.mjs
           node --check semantic-growth-voyage.mjs
@@ -102,6 +106,7 @@ jobs:
           node --check tests/world-evidence-atlas.test.mjs
       - name: Run evidence and projection contracts
         run: |
+          node tests/semantic-published-link-inspector.test.mjs
           node tests/semantic-explorer-navigation.test.mjs
           node tests/semantic-evidence-cockpit.test.mjs
           node tests/semantic-growth-voyage.test.mjs
