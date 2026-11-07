@@ -42,6 +42,39 @@ export function mountExplorerNavigation(doc){
  discovery.append(searchLabel,results);
  const summary=doc.createElement('p');summary.id='explorer-navigation-status';summary.setAttribute('role','status');
  const win=doc.defaultView;
+ // Session-only navigation trail; never persisted or sent to a server.
+ const trail=doc.createElement('div');trail.className='explorer-trail';trail.setAttribute('aria-label','Exploration trail');
+ const trailTitle=doc.createElement('p');trailTitle.textContent='Your exploration trail · this page only';
+ const trailSteps=doc.createElement('ol');trailSteps.className='explorer-trail-steps';
+ const actions=doc.createElement('div');actions.className='explorer-trail-actions';
+ const back=doc.createElement('button');back.type='button';back.textContent='Back along trail';
+ const clear=doc.createElement('button');clear.type='button';clear.textContent='Clear trail';
+ actions.append(back,clear);trail.append(trailTitle,trailSteps,actions);
+ const visited=[];let replaying=false;
+ function renderTrail(){
+  trailSteps.replaceChildren();
+  visited.forEach((index,position)=>{
+   const li=doc.createElement('li'),button=doc.createElement('button');
+   button.type='button';button.textContent=EXPLORERS[index][1];
+   if(position===visited.length-1)button.setAttribute('aria-current','step');
+   button.addEventListener('click',()=>{
+    visited.splice(position+1);replaying=true;
+    activate(index,{navigate:true,focus:true});replaying=false;renderTrail();
+   });
+   li.append(button);trailSteps.append(li);
+  });
+  back.disabled=visited.length<2;clear.disabled=visited.length<2;
+ }
+ function recordVisit(index){
+  if(replaying||visited.at(-1)===index)return;
+  visited.push(index);if(visited.length>30)visited.shift();renderTrail();
+ }
+ back.addEventListener('click',()=>{
+  if(visited.length<2)return;
+  visited.pop();replaying=true;activate(visited.at(-1),{navigate:true,focus:true});
+  replaying=false;renderTrail();
+ });
+ clear.addEventListener('click',()=>{visited.splice(0,visited.length-1);renderTrail();});
  let active=-1;
  const buttons=EXPLORERS.map(([id,label,description],i)=>{
   const button=doc.createElement('button');button.type='button';button.textContent=label;
@@ -60,6 +93,7 @@ export function mountExplorerNavigation(doc){
  function activate(index,{navigate=false,focus=false}={}){
   if(index<0||index>=sections.length)return;
   active=index;
+  recordVisit(index);
   sections.forEach((section,i)=>{
    section.hidden=i!==index;
    buttons[i].setAttribute('aria-current',i===index?'page':'false');
@@ -113,7 +147,7 @@ export function mountExplorerNavigation(doc){
   }
  }
  search.addEventListener('input',renderResults);
- nav.append(intro,tabs,discovery,summary);sections[0].before(nav);
+ nav.append(intro,tabs,discovery,trail,summary);sections[0].before(nav);
  win?.addEventListener('hashchange',followLocation);
  win?.addEventListener('popstate',followLocation);
  win?.addEventListener('aift:lineage-select',()=>activate(0));
