@@ -3,3 +3,16 @@
 
 /* Integrated dual-lineage workbench; preserves existing theatre */
 .comparison-shell{margin-top:1.5rem;padding:clamp(1rem,3vw,2rem);border:1px solid #7991ae88;border-radius:26px;background:linear-gradient(125deg,#251b3970,#0b2635 55%,#0a1427);box-shadow:0 20px 70px #0008}.comparison-controls,.comparison-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}.comparison-controls label{display:grid;gap:.4rem}.comparison-controls select{width:100%;min-width:0;padding:.8rem;background:#162842;color:white;border:1px solid #809bb3;border-radius:12px}.comparison-card,.comparison-shared{padding:1rem;border:1px solid #789bb380;border-radius:18px;background:#0b1c30;overflow-wrap:anywhere}.comparison-card:first-child{border-top:5px solid #f47685}.comparison-card:last-child{border-top:5px solid #67c8f3}.comparison-card a,.comparison-shared a{display:block;margin:.5rem 0}.comparison-shared{margin-top:1rem;border-top:5px solid #6ce5b1}@media(max-width:680px){.comparison-controls,.comparison-grid{grid-template-columns:1fr}}
+
+/* Evidence-backed route theatre, shared spectral progression */
+.lineage-paths-shell{margin-top:1.5rem;padding:clamp(1rem,3vw,2rem);border:1px solid #7991ae88;border-radius:26px;background:radial-gradient(ellipse at 90% 0%,#1b475477,transparent 65%),#0a1427}
+#lineage-paths{display:grid;gap:1rem}
+.lineage-route{padding:1rem;border:1px solid #7991ae88;border-radius:18px;background:#0b1c30}
+.lineage-route-steps{display:flex;flex-wrap:wrap;gap:.75rem;list-style:none;padding:0;margin:1rem 0}
+.lineage-route-steps li{flex:1 1 160px;min-width:0;border-top:5px solid var(--route-stage);background:#132840;border-radius:12px}
+.lineage-route-steps button{width:100%;height:100%;padding:.85rem;color:#f5f7ff;background:transparent;border:0;border-radius:12px;text-align:left;cursor:pointer;font:inherit}
+.lineage-route-steps button:hover,.lineage-route-steps button:focus-visible{background:#28455f;outline:2px solid var(--gold);outline-offset:2px}
+.lineage-route-proofs{display:flex;flex-wrap:wrap;gap:.75rem}
+.lineage-route-proofs a,#lineage-paths>a{display:inline-block;padding:.55rem .8rem;border:1px solid #6ce5b1;border-radius:10px;color:#a9f3e4}
+@media(max-width:520px){.lineage-route-steps{display:grid;grid-template-columns:1fr}.lineage-route-steps li{min-width:0}}
+@media(prefers-reduced-motion:reduce){.lineage-route-steps *{transition:none!important}}
