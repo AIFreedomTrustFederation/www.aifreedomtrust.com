@@ -9,6 +9,7 @@ on:
       - 'fruit-atlas.js'
       - 'fruit-atlas.css'
       - 'scripts/check-atlas-integrity.cjs'
+      - 'tests/test_atlas_ci_commit_binding.py'
       - '.github/workflows/atlas-integrity.yml'
   pull_request:
     paths:
@@ -19,6 +20,7 @@ on:
       - 'fruit-atlas.js'
       - 'fruit-atlas.css'
       - 'scripts/check-atlas-integrity.cjs'
+      - 'tests/test_atlas_ci_commit_binding.py'
       - '.github/workflows/atlas-integrity.yml'
   workflow_dispatch:
 permissions:
@@ -33,3 +35,17 @@ jobs:
           node-version: '22'
       - name: Verify fruit anchors, source text, and return navigation
         run: node scripts/check-atlas-integrity.cjs
+      - name: Test Atlas CI commit-binding gate
+        run: python3 -B -m unittest discover -s tests -p 'test_atlas_ci_commit_binding.py' -v
+      - name: Verify clean checkout and workflow commit
+        run: |
+          set -eu
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "checkout is dirty" >&2
+            exit 1
+          fi
+          actual_sha="$(git rev-parse --verify HEAD)"
+          if [ -z "${GITHUB_SHA:-}" ] || [ "$actual_sha" != "$GITHUB_SHA" ]; then
+            echo "checkout HEAD differs from GITHUB_SHA" >&2
+            exit 1
+          fi
