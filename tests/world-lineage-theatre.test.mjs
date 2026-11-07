@@ -10,3 +10,15 @@ test('attested root to actual outcome has exact edge',()=>{const scene=buildLine
 test('structural membership does not become contribution',()=>{const world=projectWorld({nodes:[root,fruit],edges:[{from:'repo',to:'outcome',relation:'member-of'}]});const scene=buildLineageScene(world,'outcome');assert.equal(scene.sourceCount,0);assert.equal(scene.edges.length,0);assert.match(scene.gap,/No documented/)});
 test('no invented fruit for root-only manifest',()=>{const scene=buildLineageScene(projectWorld({nodes:[root],edges:[]}),'repo');assert.equal(scene.nodes.length,1);assert.equal(scene.nodes[0].kind,'root')});
 test('portal mounts additive accessible theatre',()=>{const html=readFileSync(new URL('../living-universe.html',import.meta.url),'utf8');assert.match(html,/id="world-lineage-theatre"/);assert.match(html,/world-lineage-theatre\.mjs/);assert.match(html,/world-lineage-theatre\.css/);assert.match(html,/id="universe-index"/)});
+
+test('spatial explorer exposes all six biological stages without classifying repositories as outcomes',()=>{
+ const code=readFileSync(new URL('../world-lineage-theatre.mjs',import.meta.url),'utf8');
+ const css=readFileSync(new URL('../world-lineage-theatre.css',import.meta.url),'utf8');
+ assert.match(code,/visibleKinds=new Set\(LAYERS\)/);
+ assert.match(code,/renderStages\(\)/);
+ assert.match(code,/aria-pressed/);
+ assert.match(code,/No validated public destination is recorded/);
+ assert.match(code,/Evidence link unavailable/);
+ assert.match(css,/wlt-stages/);
+ assert.match(css,/max-width:700px/);
+});
