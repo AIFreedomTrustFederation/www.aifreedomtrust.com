@@ -23,3 +23,13 @@ main>section[hidden]{display:none!important}
 .explorer-discovery-hit:hover{background:#284866}
 .explorer-discovery-hit:focus-visible,.explorer-discovery input:focus-visible{outline:3px solid #f5d18c;outline-offset:3px}
 @media(max-width:600px){.explorer-discovery{padding:.75rem}.explorer-discovery-results{grid-template-columns:1fr}}
+
+/* Reversible navigation trail derived only from real published workspaces. */
+.explorer-trail{margin:1rem 0;padding:1rem;border:1px solid #bfa46c88;border-radius:18px;background:linear-gradient(115deg,#182a35,#241e38)}
+.explorer-trail>p{margin:0 0 .75rem;font-weight:650}.explorer-trail-steps{display:flex;flex-wrap:wrap;gap:.5rem;list-style:none;margin:0;padding:0}
+.explorer-trail-steps li:not(:last-child)::after{content:'›';padding-left:.5rem;color:#dfc279}
+.explorer-trail button{min-height:44px;border:1px solid #8ba6bb;border-radius:10px;background:#18334a;color:#f7f8fa;padding:.55rem .8rem;font:inherit;cursor:pointer}
+.explorer-trail button[aria-current="step"]{border-color:#dfc279;background:#38435a}
+.explorer-trail button:focus-visible{outline:3px solid #f5d18c;outline-offset:2px}
+.explorer-trail button:disabled{opacity:.5;cursor:not-allowed}.explorer-trail-actions{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.8rem}
+@media(max-width:600px){.explorer-trail{padding:.75rem}.explorer-trail-steps{gap:.3rem}}
