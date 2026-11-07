@@ -2,6 +2,9 @@ name: Federation Evidence Atlas contracts
 on:
   pull_request:
     paths:
+      - 'semantic-lineage-paths.mjs'
+      - 'semantic-lineage-paths-ui.mjs'
+      - 'tests/semantic-lineage-paths.test.mjs'
       - 'semantic-lineage-comparison.mjs'
       - 'tests/semantic-lineage-comparison.test.mjs'
       - 'semantic-journey-studio.mjs'
@@ -51,6 +54,9 @@ jobs:
           node-version: '22'
       - name: Validate syntax
         run: |
+          node --check semantic-lineage-paths.mjs
+          node --check semantic-lineage-paths-ui.mjs
+          node --check tests/semantic-lineage-paths.test.mjs
           node --check semantic-lineage-comparison.mjs
           node --check tests/semantic-lineage-comparison.test.mjs
           node --check semantic-journey-studio.mjs
@@ -77,6 +83,7 @@ jobs:
           node --check tests/world-evidence-atlas.test.mjs
       - name: Run evidence and projection contracts
         run: |
+          node tests/semantic-lineage-paths.test.mjs
           node tests/semantic-lineage-comparison.test.mjs
           node tests/semantic-journey-studio.test.mjs
           node tests/semantic-scene-ui.test.mjs
