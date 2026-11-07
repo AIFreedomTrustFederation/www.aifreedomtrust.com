@@ -6,6 +6,7 @@ on:
       - 'semantic-scene.css'
       - 'semantic-scene-ui.mjs'
       - 'tests/semantic-scene-ui.test.mjs'
+      - 'tests/semantic-scene-viewport.test.mjs'
       - 'world-semantic-scene.mjs'
       - 'tests/world-semantic-scene.test.mjs'
       - 'world-evidence-mission-planner.mjs'
@@ -47,6 +48,7 @@ jobs:
         run: |
           node --check semantic-scene-ui.mjs
           node --check tests/semantic-scene-ui.test.mjs
+          node --check tests/semantic-scene-viewport.test.mjs
           node --check world-semantic-scene.mjs
           node --check tests/world-semantic-scene.test.mjs
           node --check world-evidence-mission-planner.mjs
@@ -67,6 +69,7 @@ jobs:
       - name: Run evidence and projection contracts
         run: |
           node tests/semantic-scene-ui.test.mjs
+          node tests/semantic-scene-viewport.test.mjs
           node tests/world-semantic-scene.test.mjs
           node tests/world-evidence-mission-planner.test.mjs
           node tests/world-evidence-studio.test.mjs
