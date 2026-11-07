@@ -2,6 +2,8 @@ name: Federation Evidence Atlas contracts
 on:
   pull_request:
     paths:
+      - 'world-semantic-scene.mjs'
+      - 'tests/world-semantic-scene.test.mjs'
       - 'world-evidence-mission-planner.mjs'
       - 'tests/world-evidence-mission-planner.test.mjs'
       - 'world-evidence-studio.mjs'
@@ -39,6 +41,8 @@ jobs:
           node-version: '22'
       - name: Validate syntax
         run: |
+          node --check world-semantic-scene.mjs
+          node --check tests/world-semantic-scene.test.mjs
           node --check world-evidence-mission-planner.mjs
           node --check tests/world-evidence-mission-planner.test.mjs
           node --check world-evidence-studio.mjs
@@ -56,6 +60,7 @@ jobs:
           node --check tests/world-evidence-atlas.test.mjs
       - name: Run evidence and projection contracts
         run: |
+          node tests/world-semantic-scene.test.mjs
           node tests/world-evidence-mission-planner.test.mjs
           node tests/world-evidence-studio.test.mjs
           node tests/world-evidence-comparison.test.mjs
