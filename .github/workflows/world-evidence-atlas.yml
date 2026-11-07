@@ -18,6 +18,7 @@ on:
       - 'semantic-scene-ui.mjs'
       - 'tests/semantic-scene-ui.test.mjs'
       - 'tests/semantic-scene-viewport.test.mjs'
+      - 'tests/semantic-scene-navigation.test.mjs'
       - 'world-semantic-scene.mjs'
       - 'tests/world-semantic-scene.test.mjs'
       - 'world-evidence-mission-planner.mjs'
@@ -71,6 +72,7 @@ jobs:
           node --check semantic-scene-ui.mjs
           node --check tests/semantic-scene-ui.test.mjs
           node --check tests/semantic-scene-viewport.test.mjs
+          node --check tests/semantic-scene-navigation.test.mjs
           node --check world-semantic-scene.mjs
           node --check tests/world-semantic-scene.test.mjs
           node --check world-evidence-mission-planner.mjs
@@ -97,6 +99,7 @@ jobs:
           node tests/semantic-journey-studio.test.mjs
           node tests/semantic-scene-ui.test.mjs
           node tests/semantic-scene-viewport.test.mjs
+          node tests/semantic-scene-navigation.test.mjs
           node tests/world-semantic-scene.test.mjs
           node tests/world-evidence-mission-planner.test.mjs
           node tests/world-evidence-studio.test.mjs
