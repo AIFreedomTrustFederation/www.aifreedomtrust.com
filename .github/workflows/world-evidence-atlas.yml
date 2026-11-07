@@ -8,6 +8,7 @@ on:
       - 'world-evidence-readiness.mjs'
       - 'world-evidence-quests.mjs'
       - 'world-evidence-missions.mjs'
+      - 'world-evidence-comparison.mjs'
       - 'tests/world-evidence-comparison.test.mjs'
       - 'tests/world-evidence-missions.test.mjs'
       - 'tests/world-evidence-quests.test.mjs'
@@ -38,6 +39,7 @@ jobs:
           node --check world-evidence-readiness.mjs
           node --check world-evidence-quests.mjs
           node --check world-evidence-missions.mjs
+          node --check world-evidence-comparison.mjs
           node --check tests/world-evidence-comparison.test.mjs
           node --check tests/world-evidence-missions.test.mjs
           node --check tests/world-evidence-quests.test.mjs
