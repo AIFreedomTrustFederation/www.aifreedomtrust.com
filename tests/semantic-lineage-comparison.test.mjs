@@ -12,7 +12,7 @@ test('comparison uses only attested contributing roots',()=>{
  assert.equal(c.scope,'curated-read-only');assert.equal(c.left.kind,'fruit');
 });
 test('structural edges never count as shared contributions',()=>{
- const scene=buildSemanticScene(projectWorld({nodes,edges:[{from:'r1',to:'a',relation:'contains'},{from:'r1',to:'b',relation:'contains'}]}));
+ const scene=buildSemanticScene(projectWorld({nodes,edges:[{from:'r1',to:'a',relation:'member-of'},{from:'r1',to:'b',relation:'member-of'}]}));
  const c=compareLineage(scene,'a','b');assert.deepEqual(c.shared,[]);assert.deepEqual(c.evidenceNeeded,['a','b']);
 });
 test('missing entities fail closed and input remains unmodified',()=>{
