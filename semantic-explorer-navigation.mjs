@@ -31,6 +31,15 @@ export function mountExplorerNavigation(doc){
  intro.textContent='One connected universe · Choose a workspace. All original evidence, navigation and source links remain available.';
  const tabs=doc.createElement('div');tabs.className='explorer-navigation-tabs';
  tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Exploration workspaces');
+ const discovery=doc.createElement('div');discovery.className='explorer-discovery';
+ const searchLabel=doc.createElement('label');searchLabel.textContent='Find a workspace or published section ';
+ const search=doc.createElement('input');search.type='search';search.id='explorer-global-search';
+ search.placeholder='Search titles, sections and workspace descriptions';
+ search.setAttribute('aria-controls','explorer-discovery-results');
+ searchLabel.append(search);
+ const results=doc.createElement('div');results.id='explorer-discovery-results';results.className='explorer-discovery-results';
+ results.setAttribute('role','region');results.setAttribute('aria-label','Matching published sections');
+ discovery.append(searchLabel,results);
  const summary=doc.createElement('p');summary.id='explorer-navigation-status';summary.setAttribute('role','status');
  const win=doc.defaultView;
  let active=-1;
@@ -69,7 +78,42 @@ export function mountExplorerNavigation(doc){
   if(target&&target!==sections[index]&&target!==doc.getElementById(EXPLORERS[index][0]))
    target.scrollIntoView?.({block:'nearest'});
  }
- nav.append(intro,tabs,summary);sections[0].before(nav);
+ function searchTargets(query){
+  const needle=String(query||'').trim().toLocaleLowerCase();
+  if(needle.length<2)return [];
+  const matches=[];
+  sections.forEach((section,index)=>{
+   const candidates=[{node:section.querySelector('h2'),label:EXPLORERS[index][1]+' · '+EXPLORERS[index][2]},
+    ...Array.from(section.querySelectorAll('h3,h4')).map(node=>({node,label:node.textContent?.trim()||''}))];
+   for(const candidate of candidates){
+    if(candidate.node&&(candidate.label.toLocaleLowerCase().includes(needle)||
+       (candidate.node.textContent||'').toLocaleLowerCase().includes(needle)))
+     matches.push({index,node:candidate.node,label:candidate.label});
+   }
+  });
+  return matches.slice(0,24);
+ }
+ function renderResults(){
+  results.replaceChildren();
+  const query=search.value.trim();
+  if(query.length<2)return;
+  const matches=searchTargets(query);
+  if(!matches.length){const p=doc.createElement('p');p.textContent='No matching published headings. Try another term.';results.append(p);return;}
+  for(const match of matches){
+   const button=doc.createElement('button');button.type='button';button.className='explorer-discovery-hit';
+   button.textContent=EXPLORERS[match.index][1]+' / '+match.label;
+   button.addEventListener('click',()=>{
+    activate(match.index,{navigate:false});
+    if(!match.node.id)match.node.id='explorer-heading-'+match.index+'-'+Array.from(sections[match.index].querySelectorAll('h2,h3,h4')).indexOf(match.node);
+    win?.history?.pushState(null,'','#'+encodeURIComponent(match.node.id));
+    match.node.setAttribute('tabindex','-1');match.node.focus({preventScroll:true});
+    match.node.scrollIntoView?.({block:'start'});
+   });
+   results.append(button);
+  }
+ }
+ search.addEventListener('input',renderResults);
+ nav.append(intro,tabs,discovery,summary);sections[0].before(nav);
  win?.addEventListener('hashchange',followLocation);
  win?.addEventListener('popstate',followLocation);
  win?.addEventListener('aift:lineage-select',()=>activate(0));
