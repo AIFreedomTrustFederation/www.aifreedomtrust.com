@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';import {readFileSync} from 'node:fs';import {canopyModel} from '../semantic-living-canopy.mjs';
+const manifest=JSON.parse(readFileSync(new URL('../data/living-universe.json',import.meta.url),'utf8'));
+const stages=canopyModel(manifest);
+assert.deepEqual(stages.map(s=>s.kind),['root','trunk','branch','leaf','flower','fruit']);
+assert(stages.every(s=>s.entries.every(e=>e.kind===s.kind)));
+assert(stages.find(s=>s.kind==='root').entries.every(e=>e.url.startsWith('https://github.com/')));
+assert(stages.find(s=>s.kind==='fruit').entries.every(e=>!e.url.startsWith('https://github.com/')));
+assert(stages.flatMap(s=>s.entries).every(e=>!e.attested||e.roots.length>0));
+const html=readFileSync(new URL('../semantic-scene.html',import.meta.url),'utf8');
+assert(html.includes('id="living-canopy"'));assert(html.includes('semantic-living-canopy.mjs'));
+console.log('Living canopy biological, evidence and integration contracts passed');
