@@ -2,6 +2,7 @@ import {projectWorld,LAYERS} from './world-projection.mjs';
 import {evidenceItinerary,evidenceTrail} from './world-evidence-journeys.mjs';
 import {evidenceTopology,topologyPositions} from './world-evidence-topology.mjs';
 import {readinessBoard} from './world-evidence-readiness.mjs';
+import {compareOutcomeEvidence} from './world-evidence-comparison.mjs';
 import {evidenceQuests} from './world-evidence-quests.mjs';
 import {buildEvidenceMissions} from './world-evidence-missions.mjs';
 const host=document.getElementById('world-evidence-atlas');
@@ -126,9 +127,10 @@ if(host){
    const grid=el('div','wea-comparison-grid'),summary=el('p','wea-comparison-summary');comparison.append(summary,grid);
    function update(){
     grid.replaceChildren();const entries=[first,second].map(select=>outcomes.find(entry=>entry.id===select.value));
-    const distinct=entries[0].id!==entries[1].id;
-    const shared=distinct?entries[0].roots.filter(root=>entries[1].roots.some(other=>other.id===root.id)):[];
-    summary.textContent=distinct?(shared.length+' shared attested repository roots; comparison is provenance-only.'):'Choose two different outcomes to compare their lineage.';
+    const comparisonEvidence=compareOutcomeEvidence(model,entries[0].id,entries[1].id);
+    const distinct=comparisonEvidence.valid;
+    const shared=distinct?comparisonEvidence.shared:[];
+    summary.textContent=distinct?(shared.length+' shared attested repository roots; '+comparisonEvidence.uniqueFirst.length+' unique to first; '+comparisonEvidence.uniqueSecond.length+' unique to second. Curated provenance only.'):'Choose two different outcomes to compare their lineage.';
     for(const entry of entries){
      const card=el('article','wea-comparison-card');
      card.append(el('h4','',entry.label),el('p','',entry.readiness==='source-lineage-attested'?'Attested source lineage recorded':'Evidence gap: contributing source lineage not attested'));
@@ -136,6 +138,10 @@ if(host){
      const go=el('button','','Inspect full journey');go.type='button';go.onclick=()=>{layer.value='fruit';render();navigate(entry.id);inspector.scrollIntoView({behavior:'auto',block:'nearest'})};card.append(go);
      if(entry.roots.length){const list=el('ul');for(const root of entry.roots){const li=el('li');li.append(link(root.label,root.url));if(distinct&&shared.some(item=>item.id===root.id))li.append(el('strong','',' · shared root'));list.append(li)}card.append(list)}
      else card.append(el('p','wea-gap',entry.missing.join('; ')));
+     if(entry.attestations.length){
+      const evidence=el('details','wea-comparison-evidence'),heading=el('summary','','Inspect '+entry.attestations.length+' source attestations');evidence.append(heading);
+      const evidenceList=el('ul');for(const source of entry.attestations){const li=el('li');li.append(link('Source attestation',source.url));evidenceList.append(li)}evidence.append(evidenceList);card.append(evidence);
+     }else card.append(el('p','wea-gap','No source attestations recorded for this outcome.'));
      grid.append(card);
     }
    }
