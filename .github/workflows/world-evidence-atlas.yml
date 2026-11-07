@@ -2,6 +2,9 @@ name: Federation Evidence Atlas contracts
 on:
   pull_request:
     paths:
+      - 'semantic-growth-voyage.mjs'
+      - 'semantic-growth-voyage.css'
+      - 'tests/semantic-growth-voyage.test.mjs'
       - 'semantic-expedition-atlas.mjs'
       - 'semantic-expedition-atlas.css'
       - 'tests/semantic-expedition-atlas.test.mjs'
@@ -58,6 +61,8 @@ jobs:
           node-version: '22'
       - name: Validate syntax
         run: |
+          node --check semantic-growth-voyage.mjs
+          node --check tests/semantic-growth-voyage.test.mjs
           node --check semantic-expedition-atlas.mjs
           node --check tests/semantic-expedition-atlas.test.mjs
           node --check semantic-lineage-paths.mjs
@@ -93,6 +98,7 @@ jobs:
       - name: Run evidence and projection contracts
         run: |
           node tests/semantic-evidence-cockpit.test.mjs
+          node tests/semantic-growth-voyage.test.mjs
           node tests/semantic-expedition-atlas.test.mjs
           node tests/semantic-lineage-paths.test.mjs
           node tests/semantic-lineage-comparison.test.mjs
