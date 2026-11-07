@@ -12,5 +12,6 @@ test('semantic viewport preserves provenance, keyboard navigation and accessibil
  for(const token of ['semanticBreadcrumbs','inspection.lineage.roots','safeLink','g.onkeydown','history[cursor]']) assert.ok(js.includes(token),token);
  assert.match(html,/Accessible entity index/);
  assert.match(css,/prefers-reduced-motion/);
- assert.match(js,/Math\.max\(1,Math\.min\(4/);
+ assert.match(js,/const clamp=\(value,min,max\)=>Math\.max\(min,Math\.min\(max,value\)\)/);
+ assert.match(js,/zoom=clamp\(Math\.round\(next\*10\)\/10,1,4\)/);
 });
