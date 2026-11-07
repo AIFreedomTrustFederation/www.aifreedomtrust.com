@@ -7,7 +7,7 @@ export function collectPublishedLinks(sections,baseUrl){
    if(!raw||/^(javascript:|data:|mailto:|tel:)/i.test(raw))continue;
    let url;try{url=new URL(raw,baseUrl);}catch{continue;}
    if(!['https:','http:'].includes(url.protocol))continue;
-   const label=(anchor.textContent||'').trim().replace(/\\s+/g,' ');
+   const label=(anchor.textContent||'').trim().replace(/\s+/g,' ');
    if(!label)continue;
    const key=workspace+'|'+url.href+'|'+label;
    if(seen.has(key))continue;
