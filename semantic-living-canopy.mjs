@@ -25,10 +25,35 @@ export function mountCanopy(doc,manifest){
  const scene=make('div');scene.className='canopy-scene';
  const detail=make('aside');detail.className='canopy-detail';detail.setAttribute('aria-live','polite');
  const status=make('p');status.setAttribute('role','status');
- host.replaceChildren(intro,controls,stageNav,scene,detail,status);
+ const route=make('section');route.className='canopy-route';route.setAttribute('aria-label','Selected entity provenance journey');
+ const routeTitle=make('h3','Evidence journey');const routeBody=make('div');routeBody.className='canopy-route-body';
+ const routeHelp=make('p','Choose an entity to reveal its documented root-to-outcome journey. Unverified connections are never drawn.');
+ route.append(routeTitle,routeHelp,routeBody);
+ host.replaceChildren(intro,controls,stageNav,scene,route,detail,status);
  const safeLink=(parent,url,label)=>{if(typeof url!=='string'||!/^https:\/\/[^\s/]+(?:\/[^\s]*)?$/.test(url))return;
   const a=make('a',label);a.href=url;a.rel='noopener noreferrer';a.target='_blank';parent.append(a)};
+ function showRoute(entry){
+  routeBody.replaceChildren();
+  const roots=entry.kind==='root'?[entry]:entry.roots;
+  const stageNames={root:'Repository roots',trunk:'Federation trunk',branch:'Systems and branches',leaf:'Capabilities and leaves',flower:'Emerging work',fruit:'Published outcomes'};
+  const addStep=(kind,label,note,href)=>{
+   const step=make('div');step.className='canopy-route-step canopy-'+kind;
+   const title=make('strong',label);const sub=make('p',note);
+   step.append(title,sub);if(href)safeLink(step,href,'Open evidence source');
+   routeBody.append(step);
+  };
+  if(roots.length){
+   for(const root of roots)addStep('root',root.label||root.id,'Repository root · source provenance',root.url);
+  }else addStep('root','Source evidence unavailable','No attested repository contribution path. The journey cannot be certified.');
+  if(entry.kind!=='root'){
+   addStep('trunk','AIFT federation','Shared federation context; this step does not independently attest an edge.');
+   addStep(entry.kind,entry.label||entry.id,stageNames[entry.kind]+' · '+(entry.description||'No published description'),entry.url);
+  }
+  if(entry.kind==='fruit'&&!entry.verifiedOutcome)addStep('flower','Evidence boundary','Outcome verification is incomplete. No completion or operational status is claimed.');
+  routeHelp.textContent=roots.length?'Documented contributing roots shown. Intermediate connections are contextual unless separately attested.':'Missing source evidence is visible; no lineage or achievement is inferred.';
+ }
  function inspect(entry){
+  showRoute(entry);
   detail.replaceChildren(make('h3',entry.label||entry.id),make('p',entry.description||'No description published.'));
   detail.append(make('p','Biological role: '+entry.kind+'. '+(entry.attested?'Repository contribution path documented.':'No source-backed repository contribution path documented.')));
   if(entry.kind==='fruit')detail.append(make('p',entry.verifiedOutcome?'Documented source lineage; operational availability not independently checked.':'Outcome lineage incomplete; not certified as a completed deliverable.'));
