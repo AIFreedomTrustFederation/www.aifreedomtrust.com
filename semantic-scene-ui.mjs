@@ -6,8 +6,13 @@ const names={root:'Roots',trunk:'Trunk',branch:'Branches',leaf:'Leaves',flower:'
 const el=(tag,text)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;return e};
 const svg=(tag,attributes,parent)=>{const e=document.createElementNS(NS,tag);for(const [k,v] of Object.entries(attributes))e.setAttribute(k,String(v));parent.append(e);return e};
 let world,selected=null,history=[],cursor=-1;
+let zoom=1,center={x:500,y:310};
+function applyViewport(){const w=1000/zoom,h=620/zoom;center.x=Math.max(w/2,Math.min(1000-w/2,center.x));center.y=Math.max(h/2,Math.min(620-h/2,center.y));$('map').setAttribute('viewBox',[center.x-w/2,center.y-h/2,w,h].join(' '));$('viewport-status').textContent='Spatial zoom '+Math.round(zoom*100)+'% · illustrative positions, not live data';$('zoom-out').disabled=zoom<=1;$('zoom-in').disabled=zoom>=4}
+function changeZoom(next){zoom=Math.max(1,Math.min(4,Math.round(next*10)/10));applyViewport()}
+function focusEntity(id){if(!world)return;const scene=buildSemanticScene(world);const node=scene.nodes.find(n=>n.id===id);if(!node)return;center={x:60+node.position.x*880,y:50+node.position.y*520};if(zoom<1.8)zoom=1.8;applyViewport()}
+
 const safeLink=(url,label,parent)=>{if(typeof url!=='string'||!/^https:\/\/[^\s/]+/.test(url))return;const a=el('a',label);a.href=url;a.target='_blank';a.rel='noopener noreferrer';parent.append(a)};
-function select(id,record=true){if(!world?.nodes.some(n=>n.id===id))return;selected=id;if(record){history=history.slice(0,cursor+1);if(history.at(-1)!==id)history.push(id);cursor=history.length-1}render()}
+function select(id,record=true){if(!world?.nodes.some(n=>n.id===id))return;selected=id;focusEntity(id);if(record){history=history.slice(0,cursor+1);if(history.at(-1)!==id)history.push(id);cursor=history.length-1}render()}
 function render(){
  const layer=$('layer').value||null,search=$('search').value,scene=buildSemanticScene(world,{layer,search,selectedId:selected});
  $('back').disabled=cursor<=0;$('forward').disabled=cursor>=history.length-1;
@@ -29,7 +34,9 @@ function render(){
  detail.append(el('h4','Source attestations'));const proofs=[...new Set(inspection.lineage.paths.flatMap(p=>p.edges.map(e=>e.evidenceUrl||e.source).filter(u=>typeof u==='string'&&u.startsWith('https://'))))];if(!proofs.length)detail.append(el('p','No attestation URLs recorded.'));for(const [i,url] of proofs.entries())safeLink(url,'Review attestation '+(i+1),detail);
 }
 $('search').addEventListener('input',render);$('layer').addEventListener('change',render);
-$('reset').onclick=()=>{$('search').value='';$('layer').value='';selected=null;history=[];cursor=-1;render()};
+$('reset').onclick=()=>{$('search').value='';$('layer').value='';selected=null;history=[];cursor=-1;zoom=1;center={x:500,y:310};applyViewport();render()};
+$('zoom-in').onclick=()=>changeZoom(zoom+.4);$('zoom-out').onclick=()=>changeZoom(zoom-.4);$('zoom-fit').onclick=()=>{zoom=1;center={x:500,y:310};applyViewport()};
+
 $('back').onclick=()=>{if(cursor>0){cursor--;select(history[cursor],false)}};
 $('forward').onclick=()=>{if(cursor<history.length-1){cursor++;select(history[cursor],false)}};
-fetch('data/living-universe.json').then(r=>{if(!r.ok)throw Error('Manifest HTTP '+r.status);return r.json()}).then(data=>{world=projectWorld(data);render()}).catch(e=>{$('status').textContent='Curated scene unavailable: '+e.message;$('detail').replaceChildren(el('p','No evidence could be loaded. No status or achievements inferred.'))});
+fetch('data/living-universe.json').then(r=>{if(!r.ok)throw Error('Manifest HTTP '+r.status);return r.json()}).then(data=>{world=projectWorld(data);applyViewport();render()}).catch(e=>{$('status').textContent='Curated scene unavailable: '+e.message;$('detail').replaceChildren(el('p','No evidence could be loaded. No status or achievements inferred.'))});
