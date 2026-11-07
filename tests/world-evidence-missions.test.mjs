@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {projectWorld} from '../world-projection.mjs';
+import {buildEvidenceMissions} from '../world-evidence-missions.mjs';
+const manifest=JSON.parse(readFileSync(new URL('../data/living-universe.json',import.meta.url),'utf8'));
+const model=projectWorld(manifest),missions=buildEvidenceMissions(model);
+assert.equal(missions.outcomes.length,model.outcomes().length);
+assert.equal(missions.attested+missions.gaps.length,missions.outcomes.length);
+assert.ok(missions.outcomes.every(o=>o.attested?o.roots.length>0&&o.sources.length>0:o.roots.length===0&&o.sources.length===0));
+assert.ok(missions.outcomes.every(o=>!/^https:\/\/github\.com\//.test(o.url)),'repositories must not become fruits');
+const atlas=readFileSync(new URL('../world-evidence-atlas.mjs',import.meta.url),'utf8');
+assert.ok(atlas.includes('buildEvidenceMissions(model)'));
+assert.ok(atlas.includes('wea-mission-map'));
+console.log('Evidence mission map contract OK:',missions.outcomes.length,'outcomes');
