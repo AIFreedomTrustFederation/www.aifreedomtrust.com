@@ -22,3 +22,10 @@ assert(canopySource.includes("Only documented entities are selectable"),'stage n
 assert(canopySource.includes("No lineage inferred"),'empty stages must not fabricate outcomes');
 assert(canopySource.includes("previous.disabled=index<=0"),'root boundary must disable backward navigation');
 assert(canopySource.includes("next.disabled=index>=LAYERS.length-1"),'fruit boundary must disable forward navigation');
+
+assert(canopySource.includes('function renderOverview()'),'curated stage atlas must be rendered');
+assert(canopySource.includes('stage.entries.filter(e=>e.verifiedOutcome)'),'fruit counts must use verified outcomes only');
+assert(canopySource.includes("select.value=stage.kind;search.value='';render()"),'stage overview must navigate to the existing canopy');
+assert(canopySource.includes('Counts describe the curated manifest, not live health'),'overview must disclaim live status');
+assert(canopyCss.includes('.canopy-evidence-track'),'spectral atlas must be styled');
+assert(canopyCss.includes('@media(max-width:480px)'),'atlas must adapt to narrow mobile');
