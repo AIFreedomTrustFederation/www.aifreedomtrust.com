@@ -19,13 +19,23 @@ const array=value=>Array.isArray(value)?value:[];
 /** Explicitly observed local data only; unknown shapes fail closed. */
 export function projectLocalFederationTree(snapshot){
  if(!snapshot||typeof snapshot!=='object'||Array.isArray(snapshot))throw new TypeError('Local federation snapshot required');
- const records=array(snapshot.repositories);
+ // MoBox /v1/federation/tree uses nodes[kind=repository], not repositories.
+ // Keep the older repository-list projection for explicit /v1/repositories callers.
+ const hasTreeNodes=Array.isArray(snapshot.nodes);
+ const records=hasTreeNodes
+  ? snapshot.nodes.filter(node=>node&&node.kind==='repository')
+  : array(snapshot.repositories);
+ const omitted=hasTreeNodes&&snapshot.nodes.some(node=>node&&node.kind!=='repository');
  const nodes=[{id:'federation:local',kind:'trunk',label:'AIFT federation',description:'Local observed federation context; not a verified contribution edge'}];
  const seen=new Set(nodes.map(n=>n.id));
  const diagnostics=[];
+ if(omitted)diagnostics.push('Non-repository tree nodes are contextual only; not product attestations');
  for(const item of records){
-  const raw=typeof item==='string'?item:clean(item?.full_name||item?.name||item?.repository);
-  const repo=normalizeRepo(raw);
+  const raw=typeof item==='string'?item:clean(item?.full_name||item?.repository||item?.name||item?.label);
+  // The local tree may identify repositories by short name; resolve only
+  // when an explicit GitHub URL or full owner/repository identifier exists.
+  const url=clean(item?.url||item?.remote_url||item?.html_url);
+  const repo=normalizeRepo(raw)||normalizeRepo(url);
   if(!repo){diagnostics.push('Unrecognized repository identifier omitted');continue}
   if(seen.has(repo.id))continue;
   seen.add(repo.id);
