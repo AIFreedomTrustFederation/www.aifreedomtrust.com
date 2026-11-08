@@ -8,3 +8,12 @@
 .canopy-route-step strong{display:block;color:#fff;overflow-wrap:anywhere}.canopy-route-step p{color:#d4e2ee;font-size:.9rem;line-height:1.5}
 .canopy-route-step a{color:#a9ddff;overflow-wrap:anywhere}
 @media(max-width:650px){.canopy-route-body{grid-template-columns:1fr}.canopy-route-step:not(:last-child)::after{content:"⌄";right:50%;top:auto;bottom:-1.1rem}}
+
+/* Accessible journey controls; no animation required for reduced-motion users. */
+.canopy-journey-nav{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;padding:.75rem;border:1px solid rgba(220,184,104,.5);border-radius:1rem;background:linear-gradient(110deg,rgba(200,55,77,.13),rgba(42,170,112,.12),rgba(58,114,230,.13))}
+.canopy-journey-nav button{min-height:44px;padding:.6rem .9rem;border:1px solid currentColor;border-radius:.6rem;cursor:pointer}
+.canopy-journey-nav button:disabled{opacity:.45;cursor:not-allowed}
+.canopy-journey-nav button:focus-visible{outline:3px solid #e9bb62;outline-offset:3px}
+.canopy-journey-nav p{flex:1 1 12rem;margin:0;text-align:center}
+@media(max-width:650px){.canopy-journey-nav{display:grid;grid-template-columns:1fr 1fr}.canopy-journey-nav p{grid-column:1/-1;grid-row:1;text-align:left}}
+@media(prefers-reduced-motion:reduce){.canopy-journey-nav *{animation:none!important;transition:none!important}}
