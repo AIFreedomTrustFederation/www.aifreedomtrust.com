@@ -26,12 +26,32 @@ export function mountCanopy(doc,manifest){
  const detail=make('aside');detail.className='canopy-detail';detail.setAttribute('aria-live','polite');
  const status=make('p');status.setAttribute('role','status');
  const route=make('section');route.className='canopy-route';route.setAttribute('aria-label','Selected entity provenance journey');
+ const navigator=make('div');navigator.className='canopy-journey-nav';navigator.setAttribute('role','group');navigator.setAttribute('aria-label','Reversible lineage navigation');
+ const previous=make('button','← Previous stage');const next=make('button','Next stage →');const trail=make('p');trail.setAttribute('aria-live','polite');
+ previous.type=next.type='button';navigator.append(previous,trail,next);
  const routeTitle=make('h3','Evidence journey');const routeBody=make('div');routeBody.className='canopy-route-body';
  const routeHelp=make('p','Choose an entity to reveal its documented root-to-outcome journey. Unverified connections are never drawn.');
- route.append(routeTitle,routeHelp,routeBody);
+ route.append(routeTitle,routeHelp,navigator,routeBody);
  host.replaceChildren(intro,controls,stageNav,scene,route,detail,status);
  const safeLink=(parent,url,label)=>{if(typeof url!=='string'||!/^https:\/\/[^\s/]+(?:\/[^\s]*)?$/.test(url))return;
   const a=make('a',label);a.href=url;a.rel='noopener noreferrer';a.target='_blank';parent.append(a)};
+ let selectedEntry=null;
+ function updateJourneyNav(){
+  if(!selectedEntry){previous.disabled=next.disabled=true;trail.textContent='Select a documented entity to navigate its growth stage.';return;}
+  const index=LAYERS.indexOf(selectedEntry.kind);
+  previous.disabled=index<=0;next.disabled=index>=LAYERS.length-1;
+  trail.textContent='Growth stage '+(index+1)+' of '+LAYERS.length+': '+selectedEntry.kind+'. Only documented entities are selectable.';
+ }
+ function navigateStage(direction){
+  if(!selectedEntry)return;
+  const target=LAYERS[LAYERS.indexOf(selectedEntry.kind)+direction];if(!target)return;
+  const candidates=stages.find(s=>s.kind===target)?.entries||[];
+  // Never invent edges: stage traversal selects only a documented entity, not an implied relationship.
+  select.value=target;search.value='';render();
+  if(candidates.length)inspect(candidates[0]);
+  else{selectedEntry=null;detail.replaceChildren(make('p','No documented entities at this stage. No lineage inferred.'));routeBody.replaceChildren();updateJourneyNav()}
+ }
+ previous.addEventListener('click',()=>navigateStage(-1));next.addEventListener('click',()=>navigateStage(1));
  function showRoute(entry){
   routeBody.replaceChildren();
   const roots=entry.kind==='root'?[entry]:entry.roots;
@@ -53,7 +73,7 @@ export function mountCanopy(doc,manifest){
   routeHelp.textContent=roots.length?'Documented contributing roots shown. Intermediate connections are contextual unless separately attested.':'Missing source evidence is visible; no lineage or achievement is inferred.';
  }
  function inspect(entry){
-  showRoute(entry);
+  selectedEntry=entry;updateJourneyNav();showRoute(entry);
   detail.replaceChildren(make('h3',entry.label||entry.id),make('p',entry.description||'No description published.'));
   detail.append(make('p','Biological role: '+entry.kind+'. '+(entry.attested?'Repository contribution path documented.':'No source-backed repository contribution path documented.')));
   if(entry.kind==='fruit')detail.append(make('p',entry.verifiedOutcome?'Documented source lineage; operational availability not independently checked.':'Outcome lineage incomplete; not certified as a completed deliverable.'));
@@ -86,7 +106,7 @@ export function mountCanopy(doc,manifest){
   status.textContent=count+' documented entities shown. Curated evidence, not live system status.';
   if(!count)scene.append(make('p','No documented entities match. No outcomes have been inferred.'));
  }
- search.addEventListener('input',render);select.addEventListener('change',render);render();return true;
+ search.addEventListener('input',render);select.addEventListener('change',render);updateJourneyNav();render();return true;
 }
 if(typeof document!=='undefined'){
  const host=document.getElementById('living-canopy');
