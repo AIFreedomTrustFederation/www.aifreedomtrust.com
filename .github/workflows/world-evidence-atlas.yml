@@ -3,6 +3,8 @@ on:
   pull_request:
     paths:
       - 'semantic-federation-exploration-contract.mjs'
+      - 'semantic-mobox-local-adapter.mjs'
+      - 'tests/semantic-mobox-local-adapter.test.mjs'
       - 'tests/semantic-federation-exploration-contract.test.mjs'
       - 'semantic-unified-theatre.mjs'
       - 'semantic-unified-theatre.css'
@@ -83,6 +85,8 @@ jobs:
           node --check tests/semantic-evidence-quest-board.test.mjs
           node --check semantic-explorer-navigation.mjs
           node --check tests/semantic-explorer-navigation.test.mjs
+          node --check semantic-mobox-local-adapter.mjs
+          node --check tests/semantic-mobox-local-adapter.test.mjs
           node --check semantic-federation-exploration-contract.mjs
           node --check tests/semantic-federation-exploration-contract.test.mjs
           node --check semantic-spectral-journey.mjs
@@ -131,6 +135,7 @@ jobs:
           node tests/semantic-evidence-quest-board.test.mjs
           node tests/semantic-explorer-navigation.test.mjs
           node tests/semantic-evidence-cockpit.test.mjs
+          node tests/semantic-mobox-local-adapter.test.mjs
           node tests/semantic-federation-exploration-contract.test.mjs
           node tests/semantic-spectral-journey.test.mjs
           node tests/semantic-unified-theatre.test.mjs
