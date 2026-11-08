@@ -1,4 +1,5 @@
 import {projectWorld,LAYERS} from './world-projection.mjs';
+import {buildExplorationIndex} from './semantic-federation-exploration-contract.mjs';
 /** Evidence-only, keyboard accessible biological canopy. No network beyond same-origin manifest. */
 export function canopyModel(manifest){
  const world=projectWorld(manifest);
@@ -14,6 +15,7 @@ export function canopyModel(manifest){
 export function mountCanopy(doc,manifest){
  const host=doc.getElementById('living-canopy');if(!host)return false;
  const stages=canopyModel(manifest);
+ const shared=buildExplorationIndex(manifest);
  const make=(tag,label)=>{const el=doc.createElement(tag);if(label!==undefined)el.textContent=label;return el};
  const intro=make('p','A six-stage source-to-outcome map. Repository roots are never products; a fruit requires an actual destination and traceable contribution evidence.');
  const controls=make('div');controls.className='canopy-controls';
@@ -32,7 +34,8 @@ export function mountCanopy(doc,manifest){
  previous.type=next.type='button';navigator.append(previous,trail,next);
  const routeTitle=make('h3','Evidence journey');const routeBody=make('div');routeBody.className='canopy-route-body';
  const routeHelp=make('p','Choose an entity to reveal its documented root-to-outcome journey. Unverified connections are never drawn.');
- route.append(routeTitle,routeHelp,navigator,routeBody);
+ const evidenceList=make('ol');evidenceList.className='canopy-attested-paths';evidenceList.setAttribute('aria-label','Attested source-to-outcome paths');
+ route.append(routeTitle,routeHelp,navigator,routeBody,evidenceList);
  host.replaceChildren(intro,overview,controls,stageNav,scene,route,detail,status);
  const safeLink=(parent,url,label)=>{if(typeof url!=='string'||!/^https:\/\/[^\s/]+(?:\/[^\s]*)?$/.test(url))return;
   const a=make('a',label);a.href=url;a.rel='noopener noreferrer';a.target='_blank';parent.append(a)};
@@ -71,11 +74,19 @@ export function mountCanopy(doc,manifest){
   // Never invent edges: stage traversal selects only a documented entity, not an implied relationship.
   select.value=target;search.value='';render();
   if(candidates.length)inspect(candidates[0],{announce:true});
-  else{selectedEntry=null;detail.replaceChildren(make('p','No documented entities at this stage. No lineage inferred.'));routeBody.replaceChildren();updateJourneyNav()}
+  else{selectedEntry=null;detail.replaceChildren(make('p','No documented entities at this stage. No lineage inferred.'));routeBody.replaceChildren();evidenceList.replaceChildren();updateJourneyNav()}
  }
  previous.addEventListener('click',()=>navigateStage(-1));next.addEventListener('click',()=>navigateStage(1));
  function showRoute(entry){
-  routeBody.replaceChildren();
+  routeBody.replaceChildren();evidenceList.replaceChildren();
+  const attested=shared.journey(entry.id);
+  if(!attested.length){evidenceList.append(make('li','No complete attested source-to-entity path is recorded.'));}
+  for(const path of attested){
+   const item=make('li');const names=path.nodes.map(n=>n.label||n.id).join(' → ');
+   item.append(make('strong',names),make('p','Every arrow in this path has an individually recorded source-backed contribution attestation.'));
+   for(const edge of path.evidence)safeLink(item,edge.evidenceUrl,'Evidence: '+edge.from+' → '+edge.to);
+   evidenceList.append(item);
+  }
   const roots=entry.kind==='root'?[entry]:entry.roots;
   const stageNames={root:'Repository roots',trunk:'Federation trunk',branch:'Systems and branches',leaf:'Capabilities and leaves',flower:'Emerging work',fruit:'Published outcomes'};
   const addStep=(kind,label,note,href)=>{
@@ -140,7 +151,7 @@ export function mountCanopy(doc,manifest){
  // Reverse selection sync: spatial map, accessible index and other evidence surfaces can drive canopy.
  doc.defaultView?.addEventListener('aift:lineage-selected',event=>{
   const id=event.detail?.id;
-  if(id===null){selectedEntry=null;selectionNote.textContent='No entity selected. Curated evidence remains available.';detail.replaceChildren(make('p','Choose an entity to inspect its provenance.'));routeBody.replaceChildren();updateJourneyNav();render();return;}
+  if(id===null){selectedEntry=null;selectionNote.textContent='No entity selected. Curated evidence remains available.';detail.replaceChildren(make('p','Choose an entity to inspect its provenance.'));routeBody.replaceChildren();evidenceList.replaceChildren();updateJourneyNav();render();return;}
   if(typeof id!=='string'||!byId.has(id))return;
   const entry=byId.get(id);
   if(select.value&&select.value!==entry.kind)select.value=entry.kind;
