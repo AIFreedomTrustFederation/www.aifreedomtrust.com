@@ -17,3 +17,8 @@ assert(canopySource.includes("routeBody.replaceChildren()"),'route must clear st
 assert(canopyCss.includes('canopy-route-step'),'visual journey styling must be present');
 assert(canopyCss.includes('@media(max-width:650px)'),'journey must support narrow mobile screens');
 console.log('Living canopy biological, evidence and integration contracts passed');
+assert(canopySource.includes("function navigateStage(direction)"),'stage navigation must be reversible');
+assert(canopySource.includes("Only documented entities are selectable"),'stage navigation must distinguish discovery from lineage');
+assert(canopySource.includes("No lineage inferred"),'empty stages must not fabricate outcomes');
+assert(canopySource.includes("previous.disabled=index<=0"),'root boundary must disable backward navigation');
+assert(canopySource.includes("next.disabled=index>=LAYERS.length-1"),'fruit boundary must disable forward navigation');
