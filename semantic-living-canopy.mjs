@@ -97,6 +97,7 @@ export function mountCanopy(doc,manifest){
  function inspect(entry,{announce=false}={}){
   if(!entry||!byId.has(entry.id))return;
   selectedEntry=entry;
+  for(const control of scene.querySelectorAll('button[data-entity-id]'))control.setAttribute('aria-pressed',String(control.dataset.entityId===entry.id));
   selectionNote.textContent='Selected across canopy and constellation: '+(entry.label||entry.id)+' · '+entry.kind+' · curated evidence only.';
   if(announce)doc.defaultView?.dispatchEvent(new CustomEvent('aift:lineage-select',{detail:{id:entry.id,origin:'canopy'}}));updateJourneyNav();showRoute(entry);
   detail.replaceChildren(make('h3',entry.label||entry.id),make('p',entry.description||'No description published.'));
