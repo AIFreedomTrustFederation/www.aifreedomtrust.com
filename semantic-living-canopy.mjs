@@ -21,6 +21,7 @@ export function mountCanopy(doc,manifest){
  const select=make('select');select.setAttribute('aria-label','Growth stage');
  for(const [value,label] of [['','All growth stages'],...LAYERS.map(s=>[s,s[0].toUpperCase()+s.slice(1)])]){const o=make('option',label);o.value=value;select.append(o)}
  controls.append(search,select);
+ const overview=make('section');overview.className='canopy-evidence-overview';overview.setAttribute('aria-label','Evidence and biological growth overview');
  const stageNav=make('nav');stageNav.className='canopy-stages';stageNav.setAttribute('aria-label','Six biological growth stages');
  const scene=make('div');scene.className='canopy-scene';
  const detail=make('aside');detail.className='canopy-detail';detail.setAttribute('aria-live','polite');
@@ -32,10 +33,26 @@ export function mountCanopy(doc,manifest){
  const routeTitle=make('h3','Evidence journey');const routeBody=make('div');routeBody.className='canopy-route-body';
  const routeHelp=make('p','Choose an entity to reveal its documented root-to-outcome journey. Unverified connections are never drawn.');
  route.append(routeTitle,routeHelp,navigator,routeBody);
- host.replaceChildren(intro,controls,stageNav,scene,route,detail,status);
+ host.replaceChildren(intro,overview,controls,stageNav,scene,route,detail,status);
  const safeLink=(parent,url,label)=>{if(typeof url!=='string'||!/^https:\/\/[^\s/]+(?:\/[^\s]*)?$/.test(url))return;
   const a=make('a',label);a.href=url;a.rel='noopener noreferrer';a.target='_blank';parent.append(a)};
  let selectedEntry=null;
+ function renderOverview(){
+  overview.replaceChildren();
+  const heading=make('h3','Federation growth atlas');overview.append(heading);
+  const summary=make('p','Counts describe the curated manifest, not live health or completed achievements. Select a stage to explore its documented entities.');overview.append(summary);
+  const track=make('div');track.className='canopy-evidence-track';
+  for(const stage of stages){
+   const card=make('button');card.type='button';card.className='canopy-evidence-stage canopy-'+stage.kind;
+   const count=stage.entries.length,attested=stage.entries.filter(e=>e.attested).length;
+   card.append(make('strong',stage.kind[0].toUpperCase()+stage.kind.slice(1)),make('span',String(count)+' documented'),make('small',String(attested)+' with recorded root lineage'));
+   if(stage.kind==='fruit')card.append(make('small',String(stage.entries.filter(e=>e.verifiedOutcome).length)+' source-verified outcomes · not live availability'));
+   card.setAttribute('aria-label','Explore '+stage.kind+': '+count+' documented entities');
+   card.addEventListener('click',()=>{select.value=stage.kind;search.value='';render();scene.scrollIntoView?.({block:'start',behavior:'auto'});});track.append(card);
+  }
+  overview.append(track);
+ }
+ renderOverview();
  function updateJourneyNav(){
   if(!selectedEntry){previous.disabled=next.disabled=true;trail.textContent='Select a documented entity to navigate its growth stage.';return;}
   const index=LAYERS.indexOf(selectedEntry.kind);
