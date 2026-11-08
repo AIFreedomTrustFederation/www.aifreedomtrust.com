@@ -37,6 +37,11 @@ export function mountCanopy(doc,manifest){
  const safeLink=(parent,url,label)=>{if(typeof url!=='string'||!/^https:\/\/[^\s/]+(?:\/[^\s]*)?$/.test(url))return;
   const a=make('a',label);a.href=url;a.rel='noopener noreferrer';a.target='_blank';parent.append(a)};
  let selectedEntry=null;
+ const byId=new Map(stages.flatMap(stage=>stage.entries.map(entry=>[entry.id,entry])));
+ // A single selected entity travels between canopy and constellation; no inferred lineage edges.
+ const selectionNote=make('p','Choose a documented entity to connect the canopy and constellation.');
+ selectionNote.className='canopy-shared-selection';selectionNote.setAttribute('role','status');
+ controls.append(selectionNote);
  function renderOverview(){
   overview.replaceChildren();
   const heading=make('h3','Federation growth atlas');overview.append(heading);
@@ -65,7 +70,7 @@ export function mountCanopy(doc,manifest){
   const candidates=stages.find(s=>s.kind===target)?.entries||[];
   // Never invent edges: stage traversal selects only a documented entity, not an implied relationship.
   select.value=target;search.value='';render();
-  if(candidates.length)inspect(candidates[0]);
+  if(candidates.length)inspect(candidates[0],{announce:true});
   else{selectedEntry=null;detail.replaceChildren(make('p','No documented entities at this stage. No lineage inferred.'));routeBody.replaceChildren();updateJourneyNav()}
  }
  previous.addEventListener('click',()=>navigateStage(-1));next.addEventListener('click',()=>navigateStage(1));
@@ -89,8 +94,11 @@ export function mountCanopy(doc,manifest){
   if(entry.kind==='fruit'&&!entry.verifiedOutcome)addStep('flower','Evidence boundary','Outcome verification is incomplete. No completion or operational status is claimed.');
   routeHelp.textContent=roots.length?'Documented contributing roots shown. Intermediate connections are contextual unless separately attested.':'Missing source evidence is visible; no lineage or achievement is inferred.';
  }
- function inspect(entry){
-  selectedEntry=entry;updateJourneyNav();showRoute(entry);
+ function inspect(entry,{announce=false}={}){
+  if(!entry||!byId.has(entry.id))return;
+  selectedEntry=entry;
+  selectionNote.textContent='Selected across canopy and constellation: '+(entry.label||entry.id)+' · '+entry.kind+' · curated evidence only.';
+  if(announce)doc.defaultView?.dispatchEvent(new CustomEvent('aift:lineage-select',{detail:{id:entry.id,origin:'canopy'}}));updateJourneyNav();showRoute(entry);
   detail.replaceChildren(make('h3',entry.label||entry.id),make('p',entry.description||'No description published.'));
   detail.append(make('p','Biological role: '+entry.kind+'. '+(entry.attested?'Repository contribution path documented.':'No source-backed repository contribution path documented.')));
   if(entry.kind==='fruit')detail.append(make('p',entry.verifiedOutcome?'Documented source lineage; operational availability not independently checked.':'Outcome lineage incomplete; not certified as a completed deliverable.'));
@@ -112,7 +120,9 @@ export function mountCanopy(doc,manifest){
    for(const entry of filtered){
     const item=make('li');const button=make('button',entry.label||entry.id);button.type='button';
     button.setAttribute('aria-label','Inspect '+(entry.label||entry.id)+' ('+stage.kind+')');
-    button.addEventListener('click',()=>inspect(entry));
+    button.addEventListener('click',()=>inspect(entry,{announce:true}));
+    button.dataset.entityId=entry.id;
+    button.setAttribute('aria-pressed',String(selectedEntry?.id===entry.id));
     item.append(button);
     if(entry.kind==='fruit'&&!entry.verifiedOutcome)item.append(make('small','Evidence gap'));
     list.append(item);
@@ -122,7 +132,20 @@ export function mountCanopy(doc,manifest){
   }
   status.textContent=count+' documented entities shown. Curated evidence, not live system status.';
   if(!count)scene.append(make('p','No documented entities match. No outcomes have been inferred.'));
+  for(const button of scene.querySelectorAll('button[aria-pressed]')){
+   const id=button.dataset.entityId;button.setAttribute('aria-pressed',String(id===selectedEntry?.id));
+  }
  }
+ // Reverse selection sync: spatial map, accessible index and other evidence surfaces can drive canopy.
+ doc.defaultView?.addEventListener('aift:lineage-selected',event=>{
+  const id=event.detail?.id;
+  if(id===null){selectedEntry=null;selectionNote.textContent='No entity selected. Curated evidence remains available.';detail.replaceChildren(make('p','Choose an entity to inspect its provenance.'));routeBody.replaceChildren();updateJourneyNav();render();return;}
+  if(typeof id!=='string'||!byId.has(id))return;
+  const entry=byId.get(id);
+  if(select.value&&select.value!==entry.kind)select.value=entry.kind;
+  if(search.value&&!((entry.label+' '+entry.id+' '+(entry.description||'')).toLocaleLowerCase().includes(search.value.trim().toLocaleLowerCase())))search.value='';
+  inspect(entry);render();
+ });
  search.addEventListener('input',render);select.addEventListener('change',render);updateJourneyNav();render();return true;
 }
 if(typeof document!=='undefined'){
