@@ -29,3 +29,15 @@ assert(canopySource.includes("select.value=stage.kind;search.value='';render()")
 assert(canopySource.includes('Counts describe the curated manifest, not live health'),'overview must disclaim live status');
 assert(canopyCss.includes('.canopy-evidence-track'),'spectral atlas must be styled');
 assert(canopyCss.includes('@media(max-width:480px)'),'atlas must adapt to narrow mobile');
+
+const sceneSource=readFileSync(new URL('../semantic-scene-ui.mjs',import.meta.url),'utf8');
+assert(canopySource.includes("new Map(stages.flatMap"),'selection must resolve only manifest-backed entities');
+assert(canopySource.includes("aift:lineage-selected"),'canopy must consume spatial selection events');
+assert(canopySource.includes("aift:lineage-select"),'canopy must publish a selection for the spatial scene');
+assert(sceneSource.includes("aift:lineage-selected"),'spatial scene must publish selected entities');
+assert(sceneSource.includes("aift:lineage-select"),'spatial scene must consume canopy selection');
+assert(canopySource.includes("if(typeof id!=='string'||!byId.has(id))return"),'unrecognized entity IDs must be ignored');
+assert(canopySource.includes("button.dataset.entityId=entry.id"),'rendered entity controls must retain stable identity');
+assert(canopySource.includes("aria-pressed"),'selected entity must have accessible state');
+assert(canopySource.includes("if(id===null)"),'spatial reset must clear stale canopy selection');
+console.log('Cross-surface canopy and constellation selection contracts passed');
