@@ -29,8 +29,27 @@ export function exportLineageInterchange(model) {
 export function inspectLineageInterchange(value) {
   if (!value || value.schema!==LINEAGE_SCHEMA || !Array.isArray(value.nodes) || !Array.isArray(value.edges)) return {valid:false,reason:'schema'};
   try {
-    const normalized=exportLineageInterchange(value);
-    // Imported interchange must never be upgraded to verified status by a consumer.
-    return {valid:true,roots:normalized.nodes.filter(n=>n.kind==='root').length,sourceEdges:normalized.edges.length,attestation:'not-independently-verified'};
-  } catch {return {valid:false,reason:'nodes'};}
+    // Exported packets intentionally omit source-map status on edges. Re-exporting
+    // them would silently erase every contribution, so validate the wire format
+    // directly without upgrading claims to independent attestations.
+    const ids = new Set();
+    for (const node of value.nodes) {
+      if (!node || !idOf(node.id) || ids.has(node.id) || !KINDS.includes(node.kind) || typeof node.label !== 'string') throw new TypeError('nodes');
+      ids.add(node.id);
+    }
+    for (const edge of value.edges) {
+      if (!edge || !ids.has(edge.from) || !ids.has(edge.to) || edge.relation !== 'contributes-to' || !safeURL(edge.evidenceUrl)) throw new TypeError('edges');
+    }
+    if (value.sourceStatus !== 'curated-source-map' || value.attestation !== 'not-independently-verified') return {valid:false,reason:'attestation'};
+    if (!Array.isArray(value.outcomes)) return {valid:false,reason:'outcomes'};
+    const adjacency = new Map();
+    for (const edge of value.edges) {if (!adjacency.has(edge.from)) adjacency.set(edge.from,[]); adjacency.get(edge.from).push(edge.to);}
+    const roots = value.nodes.filter(n=>n.kind==='root');
+    const reachable = new Set(roots.map(n=>n.id));
+    const queue = [...reachable];
+    for (let i=0;i<queue.length;i++) for (const to of adjacency.get(queue[i])||[]) if (!reachable.has(to)) {reachable.add(to);queue.push(to);}
+    const expected = value.nodes.filter(n=>n.kind==='fruit' && reachable.has(n.id) && safeURL(n.url) && !n.url.includes('/github.com/')).map(n=>n.id);
+    if (value.outcomes.length!==expected.length || value.outcomes.some(o=>!o || !expected.includes(o.id) || o.url!==value.nodes.find(n=>n.id===o.id)?.url || o.verification!=='source-lineage-only') || new Set(value.outcomes.map(o=>o.id)).size!==value.outcomes.length) return {valid:false,reason:'outcomes'};
+    return {valid:true,roots:roots.length,sourceEdges:value.edges.length,attestation:'not-independently-verified'};
+  } catch {return {valid:false,reason:'nodes-or-edges'};}
 }
