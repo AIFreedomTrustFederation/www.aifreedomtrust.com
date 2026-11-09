@@ -1,0 +1,161 @@
+name: Federation Evidence Atlas contracts
+on:
+  pull_request:
+    paths:
+      - 'semantic-federation-exploration-contract.mjs'
+      - 'semantic-mobox-local-adapter.mjs'
+      - 'tests/semantic-mobox-local-adapter.test.mjs'
+      - 'tests/semantic-federation-exploration-contract.test.mjs'
+      - 'semantic-unified-theatre.mjs'
+      - 'semantic-unified-theatre.css'
+      - 'tests/semantic-unified-theatre.test.mjs'
+      - 'semantic-living-canopy.mjs'
+      - 'semantic-living-canopy.css'
+      - 'tests/semantic-living-canopy.test.mjs'
+      - 'semantic-growth-voyage.mjs'
+      - 'semantic-growth-voyage.css'
+      - 'tests/semantic-growth-voyage.test.mjs'
+      - 'semantic-expedition-atlas.mjs'
+      - 'semantic-expedition-atlas.css'
+      - 'tests/semantic-expedition-atlas.test.mjs'
+      - 'semantic-lineage-paths.mjs'
+      - 'semantic-lineage-paths-ui.mjs'
+      - 'tests/semantic-lineage-paths.test.mjs'
+      - 'semantic-lineage-comparison.mjs'
+      - 'tests/semantic-lineage-comparison.test.mjs'
+      - 'semantic-journey-studio.mjs'
+      - 'semantic-journey-studio.css'
+      - 'tests/semantic-journey-studio.test.mjs'
+      - 'semantic-published-link-inspector.mjs'
+      - 'tests/semantic-published-link-inspector.test.mjs'
+      - 'semantic-explorer-navigation.mjs'
+      - 'semantic-explorer-navigation.css'
+      - 'tests/semantic-explorer-navigation.test.mjs'
+      - 'semantic-evidence-quest-board.mjs'
+      - 'semantic-evidence-quest-board.css'
+      - 'tests/semantic-evidence-quest-board.test.mjs'
+      - 'semantic-scene.html'
+      - 'semantic-scene.css'
+      - 'semantic-scene-ui.mjs'
+      - 'tests/semantic-scene-ui.test.mjs'
+      - 'tests/semantic-scene-viewport.test.mjs'
+      - 'tests/semantic-scene-navigation.test.mjs'
+      - 'world-semantic-scene.mjs'
+      - 'tests/world-semantic-scene.test.mjs'
+      - 'world-evidence-mission-planner.mjs'
+      - 'tests/world-evidence-mission-planner.test.mjs'
+      - 'world-evidence-studio.mjs'
+      - 'world-evidence-studio.css'
+      - 'tests/world-evidence-studio.test.mjs'
+      - 'world-evidence-atlas.mjs'
+      - 'world-evidence-atlas.css'
+      - 'world-evidence-journeys.mjs'
+      - 'world-evidence-readiness.mjs'
+      - 'world-evidence-quests.mjs'
+      - 'world-evidence-missions.mjs'
+      - 'world-evidence-comparison.mjs'
+      - 'tests/world-evidence-comparison.test.mjs'
+      - 'tests/world-evidence-missions.test.mjs'
+      - 'tests/world-evidence-quests.test.mjs'
+      - 'tests/world-evidence-readiness.test.mjs'
+      - 'world-projection.mjs'
+      - 'data/living-universe.json'
+      - 'living-universe.html'
+      - 'tests/world-evidence-atlas.test.mjs'
+      - 'tests/world-evidence-journeys.test.mjs'
+      - '.github/workflows/world-evidence-atlas.yml'
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  evidence-atlas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate syntax
+        run: |
+          node --check semantic-published-link-inspector.mjs
+          node --check tests/semantic-published-link-inspector.test.mjs
+          node --check semantic-evidence-quest-board.mjs
+          node --check tests/semantic-evidence-quest-board.test.mjs
+          node --check semantic-explorer-navigation.mjs
+          node --check tests/semantic-explorer-navigation.test.mjs
+          node --check semantic-mobox-local-adapter.mjs
+          node --check tests/semantic-mobox-local-adapter.test.mjs
+          node --check semantic-federation-exploration-contract.mjs
+          node --check tests/semantic-federation-exploration-contract.test.mjs
+          node --check semantic-spectral-journey.mjs
+          node --check tests/semantic-spectral-journey.test.mjs
+          node --check semantic-unified-theatre.mjs
+          node --check tests/semantic-unified-theatre.test.mjs
+          node --check semantic-living-canopy.mjs
+          node --check tests/semantic-living-canopy.test.mjs
+          node --check semantic-growth-voyage.mjs
+          node --check tests/semantic-growth-voyage.test.mjs
+          node --check semantic-expedition-atlas.mjs
+          node --check tests/semantic-expedition-atlas.test.mjs
+          node --check semantic-lineage-paths.mjs
+          node --check semantic-lineage-paths-ui.mjs
+          node --check tests/semantic-lineage-paths.test.mjs
+          node --check semantic-lineage-comparison.mjs
+          node --check tests/semantic-lineage-comparison.test.mjs
+          node --check semantic-evidence-cockpit.mjs
+          node --check tests/semantic-evidence-cockpit.test.mjs
+          node --check semantic-journey-studio.mjs
+          node --check tests/semantic-journey-studio.test.mjs
+          node --check semantic-scene-ui.mjs
+          node --check tests/semantic-scene-ui.test.mjs
+          node --check tests/semantic-scene-viewport.test.mjs
+          node --check tests/semantic-scene-navigation.test.mjs
+          node --check world-semantic-scene.mjs
+          node --check tests/world-semantic-scene.test.mjs
+          node --check world-evidence-mission-planner.mjs
+          node --check tests/world-evidence-mission-planner.test.mjs
+          node --check world-evidence-studio.mjs
+          node --check tests/world-evidence-studio.test.mjs
+          node --check world-evidence-atlas.mjs
+          node --check world-evidence-journeys.mjs
+          node --check world-evidence-readiness.mjs
+          node --check world-evidence-quests.mjs
+          node --check world-evidence-missions.mjs
+          node --check world-evidence-comparison.mjs
+          node --check tests/world-evidence-comparison.test.mjs
+          node --check tests/world-evidence-missions.test.mjs
+          node --check tests/world-evidence-quests.test.mjs
+          node --check tests/world-evidence-journeys.test.mjs
+          node --check tests/world-evidence-atlas.test.mjs
+      - name: Run evidence and projection contracts
+        run: |
+          node tests/semantic-published-link-inspector.test.mjs
+          node tests/semantic-evidence-quest-board.test.mjs
+          node tests/semantic-explorer-navigation.test.mjs
+          node tests/semantic-evidence-cockpit.test.mjs
+          node tests/semantic-mobox-local-adapter.test.mjs
+          node tests/semantic-federation-exploration-contract.test.mjs
+          node tests/semantic-spectral-journey.test.mjs
+          node tests/semantic-unified-theatre.test.mjs
+          node tests/semantic-living-canopy.test.mjs
+          node tests/semantic-growth-voyage.test.mjs
+          node tests/semantic-expedition-atlas.test.mjs
+          node tests/semantic-lineage-paths.test.mjs
+          node tests/semantic-lineage-comparison.test.mjs
+          node tests/semantic-journey-studio.test.mjs
+          node tests/semantic-scene-ui.test.mjs
+          node tests/semantic-scene-viewport.test.mjs
+          node tests/semantic-scene-navigation.test.mjs
+          node tests/world-semantic-scene.test.mjs
+          node tests/world-evidence-mission-planner.test.mjs
+          node tests/world-evidence-studio.test.mjs
+          node tests/world-evidence-comparison.test.mjs
+          node tests/world-evidence-atlas.test.mjs
+          node tests/world-evidence-readiness.test.mjs
+          node tests/world-evidence-quests.test.mjs
+          node tests/world-evidence-missions.test.mjs
+          node tests/world-evidence-journeys.test.mjs
+          node tests/world-projection.test.mjs
+          node tests/world-constellation.test.mjs

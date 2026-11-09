@@ -1,0 +1,51 @@
+/* Unified evidence workspaces: progressive disclosure without deleting any source content. */
+.explorer-navigation{margin:2rem auto 1rem;max-width:1300px;padding:clamp(1rem,2vw,1.5rem);border:1px solid #bfa46c77;border-radius:24px;background:radial-gradient(ellipse at 15% 0%,#74283b55,transparent 45%),radial-gradient(ellipse at 85% 5%,#194c8055,transparent 48%),linear-gradient(145deg,#111a2e,#0b1321);box-shadow:0 22px 65px #0007;color:#f5f3ed}
+.explorer-navigation-intro{font-size:clamp(1rem,1.6vw,1.25rem);line-height:1.5}
+.explorer-navigation-tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,145px),1fr));gap:.65rem;margin:1rem 0}
+.explorer-navigation-tabs button{min-height:52px;padding:.8rem 1rem;border:1px solid #7089a477;border-radius:14px;background:#17263d;color:#f8f6ef;font:inherit;font-weight:650;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.explorer-navigation-tabs button:nth-child(7n+1){border-top:4px solid #f47685}.explorer-navigation-tabs button:nth-child(7n+2){border-top:4px solid #f5d18c}.explorer-navigation-tabs button:nth-child(7n+3){border-top:4px solid #6ce5b1}.explorer-navigation-tabs button:nth-child(7n+4){border-top:4px solid #67c8f3}.explorer-navigation-tabs button:nth-child(7n+5){border-top:4px solid #b997ff}.explorer-navigation-tabs button:nth-child(7n+6){border-top:4px solid #f6a86c}.explorer-navigation-tabs button:nth-child(7n+7){border-top:4px solid #dfc279}
+.explorer-navigation-tabs button[aria-current="true"]{background:#304c6b;border-color:#f5d18c;box-shadow:0 0 0 2px #f5d18c66,0 8px 30px #0005}
+.explorer-navigation-tabs button:hover{transform:translateY(-2px)}
+.explorer-navigation-tabs button:focus-visible{outline:3px solid #f5d18c;outline-offset:3px}
+#explorer-navigation-status{color:#d4e3ed;line-height:1.5}
+main>section[hidden]{display:none!important}
+@media(max-width:600px){.explorer-navigation{margin:1rem .5rem}.explorer-navigation-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.explorer-navigation-tabs button{min-height:54px}}
+@media(prefers-reduced-motion:reduce){.explorer-navigation-tabs button{transition:none}.explorer-navigation-tabs button:hover{transform:none}}
+
+/* One search surface indexes existing published headings without remote calls or invented entities. */
+.explorer-discovery{margin:1.2rem 0;padding:1rem;border:1px solid #dfc27966;border-radius:18px;background:linear-gradient(120deg,#271e32,#142c3d)}
+.explorer-discovery label{display:block;font-weight:650;line-height:1.5}
+.explorer-discovery input{display:block;width:100%;box-sizing:border-box;min-height:48px;margin-top:.5rem;padding:.75rem 1rem;border:1px solid #93aeca;border-radius:12px;background:#0b1626;color:#fff;font:inherit}
+.explorer-discovery input::placeholder{color:#b3c2d2}
+.explorer-discovery-results{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:.6rem;margin-top:.75rem}
+.explorer-discovery-results:empty{display:none}
+.explorer-discovery-hit{padding:.8rem;text-align:left;min-height:48px;border:1px solid #718ea7;border-left:4px solid #6ce5b1;border-radius:10px;background:#152a40;color:#f7f8fa;font:inherit;cursor:pointer}
+.explorer-discovery-hit:hover{background:#284866}
+.explorer-discovery-hit:focus-visible,.explorer-discovery input:focus-visible{outline:3px solid #f5d18c;outline-offset:3px}
+@media(max-width:600px){.explorer-discovery{padding:.75rem}.explorer-discovery-results{grid-template-columns:1fr}}
+
+/* Reversible navigation trail derived only from real published workspaces. */
+.explorer-trail{margin:1rem 0;padding:1rem;border:1px solid #bfa46c88;border-radius:18px;background:linear-gradient(115deg,#182a35,#241e38)}
+.explorer-trail>p{margin:0 0 .75rem;font-weight:650}.explorer-trail-steps{display:flex;flex-wrap:wrap;gap:.5rem;list-style:none;margin:0;padding:0}
+.explorer-trail-steps li:not(:last-child)::after{content:'›';padding-left:.5rem;color:#dfc279}
+.explorer-trail button{min-height:44px;border:1px solid #8ba6bb;border-radius:10px;background:#18334a;color:#f7f8fa;padding:.55rem .8rem;font:inherit;cursor:pointer}
+.explorer-trail button[aria-current="step"]{border-color:#dfc279;background:#38435a}
+.explorer-trail button:focus-visible{outline:3px solid #f5d18c;outline-offset:2px}
+.explorer-trail button:disabled{opacity:.5;cursor:not-allowed}.explorer-trail-actions{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.8rem}
+@media(max-width:600px){.explorer-trail{padding:.75rem}.explorer-trail-steps{gap:.3rem}}
+
+/* Published-link provenance inspector: grounded DOM index, not a product catalog. */
+.explorer-link-inspector{margin-top:1.25rem;padding:clamp(.8rem,2vw,1.4rem);border:1px solid #d7b76a88;border-radius:18px;background:linear-gradient(125deg,#1d2036,#112e3a);color:#f6f4ec}
+.explorer-link-inspector h3{margin:.2rem 0 .6rem;font-size:clamp(1.1rem,2vw,1.45rem)}
+.explorer-link-inspector p{line-height:1.55;color:#d6e5ed}
+.explorer-link-controls{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:.75rem;align-items:end}
+.explorer-link-controls label{font-weight:650}
+.explorer-link-controls input,.explorer-link-controls select{display:block;width:100%;min-height:48px;box-sizing:border-box;padding:.65rem;border:1px solid #8eafc7;border-radius:10px;background:#101d30;color:#fff;font:inherit}
+.explorer-link-results{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:.7rem;list-style:none;padding:0;margin:1rem 0}
+.explorer-link-results li{display:flex;flex-direction:column;align-items:flex-start;gap:.5rem;padding:1rem;background:#15283c;border:1px solid #69869b;border-radius:12px;overflow-wrap:anywhere}
+.explorer-link-results a{color:#b8e6ff;text-decoration:underline;text-underline-offset:3px}
+.explorer-link-results span{font-size:.85rem;color:#d5c48c}
+.explorer-link-results button{min-height:44px;padding:.55rem .8rem;background:#294b5a;border:1px solid #8bc2b6;border-radius:10px;color:white;font:inherit;cursor:pointer}
+.explorer-link-inspector :is(button,input,select,a):focus-visible{outline:3px solid #f5d18c;outline-offset:3px}
+@media(max-width:600px){.explorer-link-controls{grid-template-columns:1fr}.explorer-link-results{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.explorer-link-inspector *{scroll-behavior:auto}}

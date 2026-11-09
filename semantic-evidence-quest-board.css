@@ -1,0 +1,16 @@
+/* Evidence-backed expedition board; no inferred progress, XP or live status. */
+.quest-board{margin:1.25rem 0;padding:clamp(1rem,2vw,1.5rem);border:1px solid #c8aa71;border-radius:22px;background:radial-gradient(circle at 5% 5%,#7e263d55,transparent 40%),radial-gradient(circle at 90% 10%,#1b669055,transparent 45%),linear-gradient(145deg,#101a2b,#172b30);color:#f7f6f0}
+.quest-board h3{margin-top:0;color:#f5d18c}.quest-board p{line-height:1.55}
+.quest-board-controls{display:grid;grid-template-columns:2fr 1fr;gap:1rem;margin:1rem 0}
+.quest-board-controls label{display:block;font-weight:650}
+.quest-board-controls :is(input,select){display:block;width:100%;min-height:48px;box-sizing:border-box;margin-top:.4rem;padding:.7rem;border:1px solid #a5c0ce;border-radius:12px;background:#0e1b2b;color:#fff;font:inherit}
+.quest-board-summary{color:#c9e6e7}
+.quest-board-results{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,310px),1fr));gap:1rem}
+.quest-board-card{padding:1.2rem;border:1px solid #7899a7;border-top:4px solid #6ce5b1;border-radius:16px;background:#16263c;box-shadow:0 10px 30px #0004}
+.quest-board-card h4{margin:0;font-size:1.15rem}.quest-board-state{color:#f5d18c;font-weight:700}
+.quest-board-links{display:flex;flex-direction:column;align-items:flex-start;gap:.5rem;overflow-wrap:anywhere}
+.quest-board-links a{color:#aee5ff;text-underline-offset:3px}
+.quest-board-card button{margin-top:1rem;min-height:48px;border:1px solid #d8c083;border-radius:12px;background:#31435a;color:white;padding:.6rem 1rem;font:inherit;cursor:pointer}
+.quest-board :is(a,button,input,select):focus-visible{outline:3px solid #f5d18c;outline-offset:3px}
+@media(max-width:600px){.quest-board-controls{grid-template-columns:1fr}.quest-board-results{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.quest-board *{scroll-behavior:auto;transition:none!important}}

@@ -1,0 +1,18 @@
+/* Guided six-chapter source-to-outcome voyage; additive to existing atlas. */
+.voyage-shell{margin:1.5rem 0;padding:clamp(1rem,3vw,2rem);border:1px solid #7991ae;border-radius:26px;background:radial-gradient(circle at 12% 8%,#51253a66,transparent 50%),radial-gradient(circle at 88% 15%,#174b5666,transparent 50%),#0a1427;box-shadow:0 22px 75px #0008}
+.voyage-chapters{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:.4rem}
+.voyage-chapters button{border:1px solid #91a9c2;border-top:5px solid #d7b979;border-radius:12px;padding:.75rem .3rem;color:#fff;background:#172b42;text-transform:capitalize;cursor:pointer}
+.voyage-chapters button:nth-child(1){border-top-color:#f47685}.voyage-chapters button:nth-child(3){border-top-color:#6ce5b1}.voyage-chapters button:nth-child(4){border-top-color:#67c8f3}.voyage-chapters button:nth-child(5){border-top-color:#b997ff}.voyage-chapters button:nth-child(6){border-top-color:#f6a86c}
+.voyage-chapters button[aria-current=true]{background:#34546a;outline:2px solid #f5d18c}
+.voyage-controls{display:flex;flex-wrap:wrap;gap:.6rem;margin:1rem 0}
+.voyage-controls input{flex:1;min-width:190px}
+.voyage-controls button,.voyage-controls input,.voyage-card button{border:1px solid #91a9c2;border-radius:10px;padding:.7rem;color:white;background:#182e48;font:inherit}
+.voyage-controls button,.voyage-card button{cursor:pointer}.voyage-controls button:disabled{opacity:.45;cursor:not-allowed}
+.voyage-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:1rem}
+.voyage-card{padding:1rem;border:1px solid #6c8da8;border-radius:16px;background:#101f36;overflow-wrap:anywhere}
+.voyage-card h4{color:#f5d18c;margin:.2rem 0}.voyage-card p{line-height:1.55}.voyage-card a{display:block;margin:.6rem 0;color:#a9f3e4}.voyage-evidence{font-weight:600;color:#c1e6db}
+.voyage-card button{width:100%;text-align:left}
+.voyage-shell button:focus-visible,.voyage-shell input:focus-visible,.voyage-shell a:focus-visible{outline:3px solid #ffe0a0;outline-offset:3px}
+@media(max-width:760px){.voyage-chapters{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:420px){.voyage-chapters{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(prefers-reduced-motion:reduce){.voyage-shell *{animation:none!important;transition:none!important}}

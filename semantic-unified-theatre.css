@@ -1,0 +1,15 @@
+/* Additive Living Universe theatre: existing workspaces stay mounted and visible. */
+.living-theatre{position:relative;isolation:isolate;margin:2rem 0;padding:clamp(1rem,3vw,2.5rem);border:1px solid rgba(233,192,109,.6);border-radius:1.5rem;background:radial-gradient(ellipse at 15% 15%,rgba(244,72,100,.22),transparent 45%),radial-gradient(ellipse at 85% 20%,rgba(53,176,255,.24),transparent 50%),radial-gradient(ellipse at 50% 100%,rgba(32,203,132,.20),transparent 60%),#10182b;color:#f5f5fc;box-shadow:0 1.5rem 4rem rgba(0,0,0,.3)}
+.living-theatre h2{margin:0 0 .5rem;color:#ffe3a3}.living-theatre p{max-width:72ch;line-height:1.6}
+.living-theatre input{display:block;width:100%;box-sizing:border-box;min-height:3rem;margin:1rem 0;padding:.7rem 1rem;border:1px solid #e6c477;border-radius:.75rem;background:#111b30;color:#fff;font:inherit}
+.living-theatre-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,13rem),1fr));gap:.85rem}
+.living-theatre-card{display:flex;flex-direction:column;align-items:flex-start;gap:.5rem;min-height:7rem;padding:1rem;border:1px solid #667a9c;border-radius:1rem;background:linear-gradient(140deg,rgba(221,74,101,.14),rgba(46,192,127,.11) 55%,rgba(63,153,255,.15));color:#fff;text-align:left;cursor:pointer;font:inherit;transition:transform .2s,border-color .2s,box-shadow .2s}
+.living-theatre-card strong{font-size:1.1rem;color:#ffe4a8}.living-theatre-card span{font-size:.88rem;line-height:1.45;color:#e0e9f9}
+.living-theatre-card:hover{transform:translateY(-3px);border-color:#ffe4a8;box-shadow:0 8px 24px rgba(0,0,0,.24)}
+.living-theatre :focus-visible{outline:3px solid #ffe4a8;outline-offset:4px}
+.living-theatre-card[aria-current=true]{border-color:#ffe4a8;box-shadow:inset 0 0 0 1px #ffe4a8}
+.living-theatre-status{font-size:.85rem;color:#e0e9f9}
+.theatre-visited{scroll-margin-top:1rem}
+@media(max-width:520px){.living-theatre{padding:1rem;border-radius:1rem}.living-theatre-grid{grid-template-columns:1fr 1fr}.living-theatre-card{min-height:6rem;padding:.75rem}}
+@media(max-width:360px){.living-theatre-grid{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.living-theatre-card{transition:none}.living-theatre-card:hover{transform:none}}
