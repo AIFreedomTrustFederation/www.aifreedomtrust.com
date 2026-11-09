@@ -8,11 +8,11 @@ test('lineage navigation remains local, reversible and accessible',()=>{
 test('evidence dossier explicitly preserves epistemic limits',()=>{
  assert.match(html,/NOT independently verified/);
  assert.match(html,/Contribution evidence:/);
- assert.match(html,/navigator.clipboard\\?\\.writeText/);
- assert.match(html,/activeRoute=\\[\\]/);
+ assert.match(html,/navigator.clipboard\?\.writeText/);
+ assert.match(html,/activeRoute=\[\]/);
 });
 test('responsive and reduced motion alternatives remain available',()=>{
- assert.match(html,/@media\\(max-width:600px\\)/);
- assert.match(html,/@media\\(prefers-reduced-motion:reduce\\)/);
+ assert.match(html,/@media\(max-width:600px\)/);
+ assert.match(html,/@media\(prefers-reduced-motion:reduce\)/);
  assert.match(html,/Accessible entity directory/);
 });
