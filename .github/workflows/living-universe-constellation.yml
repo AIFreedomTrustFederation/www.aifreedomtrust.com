@@ -34,8 +34,10 @@ jobs:
           node --check world-model-contract.mjs
           node --check world-evolution.mjs
           node --check world-constellation.mjs
+          node --check world-lineage-interchange.mjs
       - name: Run world contracts
         run: |
           node tests/living-universe.test.mjs
           node tests/world-evolution.test.mjs
           node tests/world-constellation.test.mjs
+          node tests/world-lineage-interchange.test.mjs
