@@ -43,6 +43,10 @@ jobs:
           go version
       - name: Execute real published-manifest interchange and MoBox Go contract tests
         run: node portal/tests/portal-mobox-acceptance.mjs "$GITHUB_WORKSPACE/AIFT-OS"
+      - name: Confirm both checkouts remain unchanged
+        run: |
+          test -z "$(git -C portal status --porcelain)"
+          test -z "$(git -C AIFT-OS status --porcelain)"
       - name: Record machine-readable source-contract evidence
         if: always()
         env:
@@ -78,10 +82,6 @@ jobs:
           name: portal-mobox-source-contract-evidence
           path: acceptance-evidence/portal-mobox.json
           if-no-files-found: error
-      - name: Confirm both checkouts remain unchanged
-        run: |
-          test -z "$(git -C portal status --porcelain)"
-          test -z "$(git -C AIFT-OS status --porcelain)"
 # Pinned MoBox PR #63 head for reproducible cross-repository acceptance.
 # Advance this SHA deliberately when consumer changes are reviewed; this
 # source-contract gate does not establish browser or Android accessibility.
