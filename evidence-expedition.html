@@ -71,6 +71,8 @@ $('published').addEventListener('click',async()=>{
   if(!response.ok)throw Error('Published map HTTP '+response.status);
   const {packet:source,report}=preparePublishedExpedition(await response.json());
   packet=source;selected=null;activeRoute=[];focusedRoute=0;depth=5;query='';
+  const requested=new URL(location.href).searchParams.get('node');
+  if(requested&&requested.length<=256){const match=packet.nodes.find(n=>n.id===requested);if(match){selected=match.id;const route=compareEvidenceRoutes(packet,selected).routes[0];activeRoute=route?[...route.ids]:[selected]}else{$('notice').textContent='Requested node is absent from this exported packet. No substitute selected.'}}
   $('search').value='';$('search').disabled=false;$('download-packet').disabled=false;
   $('notice').textContent='Published curated map: '+report.sourceNodes+' entities, '+report.sourceRelationships+' relationships, '+report.portableEvidenceEdges+' source-backed contribution edges, '+report.candidateOutcomes+' traceable outcome candidates. '+report.warning;
   render();
@@ -86,5 +88,7 @@ $('download-packet').addEventListener('click',()=>{
 });
 $('search').addEventListener('input',e=>{query=e.target.value.trim().toLowerCase();render()});
 $('clear').addEventListener('click',()=>{packet=null;selected=null;activeRoute=[];focusedRoute=0;query='';depth=5;$('file').value='';$('search').value='';$('search').disabled=true;$('download-packet').disabled=true;$('notice').textContent='Packet cleared. No data was stored or uploaded.';render()});
+const requestedNode=new URL(location.href).searchParams.get('node');
+if(requestedNode&&requestedNode.length<=256){$('published').click()}
 render();
 </script></body></html>
