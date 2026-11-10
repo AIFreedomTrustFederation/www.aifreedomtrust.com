@@ -21,6 +21,7 @@ jobs:
       - name: Check out portal exact PR head
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
           path: portal
       - name: Check out MoBox integration draft
@@ -33,6 +34,9 @@ jobs:
       - name: Record both exact checkout heads
         run: |
           echo "Portal head: $(git -C portal rev-parse HEAD)"
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            test "$(git -C portal rev-parse HEAD)" = "${{ github.event.pull_request.head.sha }}"
+          fi
           echo "MoBox head: $(git -C AIFT-OS rev-parse HEAD)"
           test "$(git -C AIFT-OS rev-parse HEAD)" = "3a6f4922ade690c7aa4aa2259de9b3c507888ae6"
           node --version
