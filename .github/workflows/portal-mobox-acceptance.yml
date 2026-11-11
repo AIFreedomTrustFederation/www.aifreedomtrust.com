@@ -6,6 +6,10 @@ on:
       - 'published-expedition-bridge.mjs'
       - 'world-lineage-interchange.mjs'
       - 'tests/portal-mobox-acceptance.mjs'
+      - 'tests/living-universe-*.test.mjs'
+      - 'living-universe-explorer.html'
+      - 'evidence-expedition.html'
+      - 'index.html'
       - '.github/workflows/portal-mobox-acceptance.yml'
   workflow_dispatch:
 permissions:
@@ -42,6 +46,9 @@ jobs:
           test "$(git -C AIFT-OS rev-parse HEAD)" = "3a6f4922ade690c7aa4aa2259de9b3c507888ae6"
           node --version
           go version
+      - name: Execute integrated Tree, Atlas, Expedition and Journal regression suite
+        id: portal_tests
+        run: node --test portal/tests/living-universe-*.test.mjs portal/tests/published-expedition-bridge.test.mjs portal/tests/lineage-cross-surface.test.mjs portal/tests/published-map-real-artifact.test.mjs
       - name: Execute real published-manifest interchange and MoBox Go contract tests
         id: contract_tests
         run: node portal/tests/portal-mobox-acceptance.mjs "$GITHUB_WORKSPACE/AIFT-OS"
@@ -56,6 +63,7 @@ jobs:
           JOB_STATUS: ${{ job.status }}
           CHECKOUT_IDENTITY_OUTCOME: ${{ steps.checkout_identity.outcome }}
           CONTRACT_TEST_OUTCOME: ${{ steps.contract_tests.outcome }}
+          PORTAL_TEST_OUTCOME: ${{ steps.portal_tests.outcome }}
           CHECKOUT_INTEGRITY_OUTCOME: ${{ steps.checkout_integrity.outcome }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
@@ -66,6 +74,7 @@ jobs:
           const gateOutcomes = {
             checkoutIdentity: process.env.CHECKOUT_IDENTITY_OUTCOME,
             contractTests: process.env.CONTRACT_TEST_OUTCOME,
+            portalTests: process.env.PORTAL_TEST_OUTCOME,
             checkoutIntegrity: process.env.CHECKOUT_INTEGRITY_OUTCOME
           };
           const verified = Object.values(gateOutcomes).every(outcome => outcome === 'success');
@@ -77,7 +86,7 @@ jobs:
               {repository:'AIFreedomTrustFederation/www.aifreedomtrust.com',revision:sha('portal'),role:'producer'},
               {repository:'AIFreedomTrustFederation/AIFT-OS',revision:sha('AIFT-OS'),role:'consumer'}
             ],
-            command:'node portal/tests/portal-mobox-acceptance.mjs "$GITHUB_WORKSPACE/AIFT-OS"',
+            command:'node --test portal/tests/living-universe-*.test.mjs portal/tests/published-expedition-bridge.test.mjs portal/tests/lineage-cross-surface.test.mjs portal/tests/published-map-real-artifact.test.mjs && node portal/tests/portal-mobox-acceptance.mjs "$GITHUB_WORKSPACE/AIFT-OS"',
             commandOutcome:gateOutcomes.contractTests==='success'?'passed':gateOutcomes.contractTests==='failure'?'failed':'not-run',
             gateOutcomes,
             securityGates:{readOnlyCheckout:true,consumerPinned:true,credentialPersistence:false},
