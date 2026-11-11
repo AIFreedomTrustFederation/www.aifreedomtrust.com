@@ -12,7 +12,10 @@ test('no invented live status, remote fetch, or telemetry in expedition',()=>{
  assert.match(html,/No external verification was performed/);
 });
 test('accessible semantic navigation and reduced motion remain present',()=>{
- for(const marker of ['prefers-reduced-motion:reduce','aria-pressed','aria-live="polite"','role="button"','aria-label','Skip constellation','id="directory"','keydown'])assert.ok(html.includes(marker),marker);
+ for(const marker of ['prefers-reduced-motion:reduce','aria-pressed','aria-live="polite"','aria-label','Skip constellation','id="directory"','keydown'])assert.ok(html.includes(marker),marker);
+ // Native HTML buttons already expose the button role; requiring role="button" is incorrect.
+ assert.match(html,/<button\b/);
+ assert.match(html,/elt\('button'/);
 });
 test('source repository is never converted into a certified fruit by this UI',()=>{
  assert.match(html,/n.kind==='fruit'/);

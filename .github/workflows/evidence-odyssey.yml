@@ -23,3 +23,5 @@ jobs:
       - run: node --check world-contract.mjs && node --check evidence-odyssey.mjs
       - run: node tests/evidence-odyssey.test.mjs
       - run: node tests/living-universe.test.mjs
+      - name: Verify expedition lineage and navigation regressions
+        run: node --test tests/lineage-cross-surface.test.mjs tests/evidence-expedition.test.mjs tests/expedition-lineage-navigation.test.mjs
