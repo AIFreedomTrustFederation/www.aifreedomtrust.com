@@ -64,3 +64,36 @@ test('source map refuses repository-as-fruit outcomes',()=>{
  assert.equal(packet.outcomes.length,0);
  assert.equal(inspectLineageInterchange(packet).valid,true);
 });
+
+test('repository host variants never qualify as fruits while Pages deliverables remain candidates',()=>{
+ for(const url of [
+  'https://github.com/AIFreedomTrustFederation/AIFT-OS',
+  'https://www.github.com/AIFreedomTrustFederation/AIFT-OS',
+  'https://github.com/AIFreedomTrustFederation/AIFT-OS/tree/main',
+  'https://github.com.evil.example/AIFreedomTrustFederation/AIFT-OS'
+ ]) {
+  const graph=model();graph.nodes.find(n=>n.id==='product:demo').url=url;
+  const packet=exportLineageInterchange(graph);
+  assert.equal(packet.outcomes.length,url.includes('evil.example')?1:0,url);
+  assert.equal(inspectLineageInterchange(packet).valid,true);
+ }
+ const graph=model();graph.nodes.find(n=>n.id==='product:demo').url='https://aifreedomtrustfederation.github.io/www.aifreedomtrust.com/';
+ const packet=exportLineageInterchange(graph);
+ assert.equal(packet.outcomes.length,1);
+ assert.equal(inspectLineageInterchange(packet).valid,true);
+});
+test('credentialed and malformed HTTPS evidence cannot count toward source-backed progress',()=>{
+ for(const url of [
+  'https://operator:secret@github.com/AIFreedomTrustFederation/AIFT-OS',
+  'https://github.com./AIFreedomTrustFederation/AIFT-OS',
+  'https://github.com:bad/AIFreedomTrustFederation/AIFT-OS',
+  'javascript:alert(1)'
+ ]) {
+  const graph=model();graph.edges[0].evidenceUrl=url;
+  const packet=exportLineageInterchange(graph);
+  assert.equal(packet.edges.length,2,url);
+  const forged=exportLineageInterchange(model());
+  forged.edges[0].evidenceUrl=url;
+  assert.equal(inspectLineageInterchange(forged).valid,false,url);
+ }
+});

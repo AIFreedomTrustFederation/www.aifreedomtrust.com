@@ -3,7 +3,22 @@
 const KINDS = ['root','trunk','branch','leaf','flower','fruit'];
 const URL_OK = /^https:\/\/[^\s/?#]+(?:[^\s]*)$/;
 const own = (obj,key) => Object.prototype.hasOwnProperty.call(obj,key);
-const safeURL = value => typeof value === 'string' && URL_OK.test(value);
+const parsedURL = value => {
+  if (typeof value !== 'string' || !URL_OK.test(value)) return null;
+  try {
+    const url = new URL(value);
+    if (url.protocol !== 'https:' || url.username || url.password || !url.hostname || url.hostname.endsWith('.')) return null;
+    return url;
+  } catch { return null; }
+};
+const safeURL = value => parsedURL(value) !== null;
+// GitHub repository pages are provenance roots, not user-facing fruits.
+// GitHub Pages deployments on github.io remain eligible outcome candidates.
+const isRepositoryURL = value => {
+  const url = parsedURL(value);
+  return !!url && ['github.com','www.github.com'].includes(url.hostname.toLowerCase());
+};
+const eligibleFruit = node => node.kind === 'fruit' && safeURL(node.url) && !isRepositoryURL(node.url);
 const idOf = value => typeof value === 'string' && /^[a-zA-Z0-9][a-zA-Z0-9._:-]*$/.test(value);
 export const LINEAGE_SCHEMA = 'aift.lineage.interchange/1';
 export function exportLineageInterchange(model) {
@@ -23,7 +38,7 @@ export function exportLineageInterchange(model) {
   while(queue.length) {const from=queue.shift();for(const to of adjacency.get(from)||[])if(!reachable.has(to)){reachable.add(to);queue.push(to);}}
   // A fruit is a destination, never a repository. Product links are candidates,
   // not independently verified live deployment or successful CI attestations.
-  const outcomes = nodes.filter(node=>node.kind==='fruit' && reachable.has(node.id) && safeURL(node.url) && !node.url.includes('/github.com/')).map(node=>({id:node.id,url:node.url,verification:'source-lineage-only'}));
+  const outcomes = nodes.filter(node=>eligibleFruit(node) && reachable.has(node.id)).map(node=>({id:node.id,url:node.url,verification:'source-lineage-only'}));
   return {schema:LINEAGE_SCHEMA,sourceStatus:'curated-source-map',attestation:'not-independently-verified',nodes,edges,outcomes};
 }
 export function inspectLineageInterchange(value) {
@@ -48,7 +63,7 @@ export function inspectLineageInterchange(value) {
     const reachable = new Set(roots.map(n=>n.id));
     const queue = [...reachable];
     for (let i=0;i<queue.length;i++) for (const to of adjacency.get(queue[i])||[]) if (!reachable.has(to)) {reachable.add(to);queue.push(to);}
-    const expected = value.nodes.filter(n=>n.kind==='fruit' && reachable.has(n.id) && safeURL(n.url) && !n.url.includes('/github.com/')).map(n=>n.id);
+    const expected = value.nodes.filter(n=>eligibleFruit(n) && reachable.has(n.id)).map(n=>n.id);
     if (value.outcomes.length!==expected.length || value.outcomes.some(o=>!o || !expected.includes(o.id) || o.url!==value.nodes.find(n=>n.id===o.id)?.url || o.verification!=='source-lineage-only') || new Set(value.outcomes.map(o=>o.id)).size!==value.outcomes.length) return {valid:false,reason:'outcomes'};
     return {valid:true,roots:roots.length,sourceEdges:value.edges.length,attestation:'not-independently-verified'};
   } catch {return {valid:false,reason:'nodes-or-edges'};}
