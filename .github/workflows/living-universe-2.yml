@@ -17,6 +17,8 @@ on:
       - 'living-universe-lineage-audit.test.mjs'
       - 'living-universe-navigation.mjs'
       - 'living-universe-navigation.test.mjs'
+      - 'living-universe-readiness.mjs'
+      - 'living-universe-readiness.test.mjs'
       - '.github/workflows/living-universe-2.yml'
   workflow_dispatch:
 jobs:
@@ -37,4 +39,5 @@ jobs:
           else
             node --test docs/uxi/living-universe-2.test.mjs docs/uxi/genesis-adapter.test.mjs
           fi
+          node --test living-universe-readiness.test.mjs
           node --test journey-planner.test.mjs living-universe-dossier.test.mjs living-universe-lineage-audit.test.mjs living-universe-navigation.test.mjs
