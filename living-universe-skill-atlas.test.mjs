@@ -10,6 +10,7 @@ test('unsafe URL is not a product destination',()=>{const a=analyzeAtlas([{id:'x
 
 import {evidenceQuestPlan} from './living-universe-skill-atlas.mjs';
 test('quests prioritize outcomes without fabricated achievements',()=>{const p=evidenceQuestPlan(analyzeAtlas(nodes,edges));assert.equal(p.quests[0].id,'fruit');assert.equal(p.verified,0);assert.equal(p.quests[0].receipt,'not-verified')});
+test('quests retain imported receipts without verifying them',()=>{const receipts=[{workflow:'CI'}];const atlas=analyzeAtlas([{...nodes[3],receipts}],[]);const quest=evidenceQuestPlan(atlas).quests[0];assert.deepEqual(quest.receipts,receipts);assert.equal(quest.receipt,'not-verified');assert.equal(quest.readiness.verified,false);assert.deepEqual(evidenceQuestPlan(analyzeAtlas([nodes[3]],[])).quests[0].receipts,[])});
 test('quests reveal missing provenance',()=>{const p=evidenceQuestPlan(analyzeAtlas(nodes,[]));assert.ok(p.quests.find(x=>x.id==='fruit').checks.some(x=>/root/.test(x)))});
 test('quest limit bounded',()=>{assert.equal(evidenceQuestPlan(analyzeAtlas(nodes,edges),{limit:2}).quests.length,2);assert.throws(()=>evidenceQuestPlan(analyzeAtlas(nodes,edges),{limit:0}),/Invalid quest/)});
 
