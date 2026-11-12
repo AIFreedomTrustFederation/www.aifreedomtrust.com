@@ -10,6 +10,7 @@ on:
       - 'living-universe-journey-cockpit*'
       - 'living-universe-expedition*'
       - 'living-universe-navigation*'
+      - 'living-universe-navigation*'
       - 'docs/uxi/living-universe-2.html'
       - 'docs/uxi/living-universe-skill-atlas*'
       - 'docs/uxi/living-universe-canopy*'
