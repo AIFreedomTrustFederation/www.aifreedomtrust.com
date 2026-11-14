@@ -59,3 +59,32 @@ export function resolveHandoff(report,sourceId){
  const record=report.nodes.find(n=>n.id===sourceId)||null;
  return {status:record?'matched':'missing',record};
 }
+
+/**
+ * Adapt the actual AIFT-OS portableDossier v1 export. Routes are explicit
+ * declared record sequences; never infer missing connections or verification.
+ */
+export function normalizeOperatorDossier(packet){
+ if(!packet||packet.schema!=='aift.living-universe.lineage-dossier.v1')return packet;
+ if(!Array.isArray(packet.records)||!Array.isArray(packet.routes)||packet.records.length>350||packet.routes.length>1200)throw Error('Unsupported operator dossier limits');
+ const nodes=packet.records.map(r=>{
+  if(!r||typeof r.id!=='string'||typeof r.label!=='string'||!allowed.has(r.stage))throw Error('Invalid operator dossier record');
+  return {id:r.id,label:r.label,stage:r.stage,url:r.destination||null,status:r.status||null};
+ });
+ const ids=new Set(nodes.map(n=>n.id)),edges=[],seen=new Set();
+ for(const route of packet.routes){
+  if(!route||!Array.isArray(route.ids)||route.ids.length>350)throw Error('Invalid operator route');
+  for(let i=1;i<route.ids.length;i++){
+   const from=route.ids[i-1],to=route.ids[i];
+   if(!ids.has(from)||!ids.has(to))throw Error('Operator route references absent record');
+   const key=JSON.stringify([from,to]);
+   if(!seen.has(key)){seen.add(key);edges.push({from,to})}
+   if(edges.length>1200)throw Error('Operator route exceeds relationship limit');
+  }
+ }
+ if(!ids.has(packet.subject))throw Error('Operator subject is absent');
+ return {kind:KIND,schemaVersion:'1.0.0',focusId:packet.subject,nodes,edges,
+  provenance:{verification:'imported-declarations-unverified'},
+  evidenceGaps:Array.isArray(packet.evidenceGaps)?packet.evidenceGaps:[],
+  routeDisplayTruncated:packet.routeDisplayTruncated===true};
+}
