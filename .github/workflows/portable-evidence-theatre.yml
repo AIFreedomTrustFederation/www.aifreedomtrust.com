@@ -23,4 +23,4 @@ jobs:
         with:
           node-version: '24'
       - name: Verify public dossier and operator export contract
-        run: node --test portable-dossier-theatre.test.mjs portable-dossier-operator-contract.test.mjs living-universe-spectrum.test.mjs evidence-quest-model.test.mjs
+        run: node --test portable-dossier-theatre.test.mjs portable-dossier-operator-contract.test.mjs living-universe-spectrum.test.mjs evidence-quest-model.test.mjs evidence-quest-lineage.test.mjs
