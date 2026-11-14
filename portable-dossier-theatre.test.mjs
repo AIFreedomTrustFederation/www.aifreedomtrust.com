@@ -6,3 +6,19 @@ test('missing product destination remains a gap',()=>{const x=inspectDossier({..
 test('rejects invalid edges and duplicate identities',()=>{assert.throws(()=>inspectDossier({...base,edges:[{from:'missing',to:'out'}]}));assert.throws(()=>inspectDossier({...base,nodes:[base.nodes[0],base.nodes[0]]}))});
 test('detects backwards stage links and missing roots',()=>{const x=inspectDossier({...base,edges:[{from:'out',to:'repo'}]});assert.ok(x.gaps.some(g=>g.includes('Nonprogressive')));assert.ok(x.gaps.some(g=>g.includes('No contributing')))});
 test('rejects unsafe destinations',()=>{assert.equal(safeDestination('javascript:alert(1)'),null);assert.equal(safeDestination('http://example.com'),null);assert.equal(safeDestination('https://example.com/a'),'https://example.com/a')});
+
+import {lineageRoutes,stageCounts} from './portable-dossier-theatre.mjs';
+test('deterministic routes trace only declared contributing roots',()=>{
+ const r=inspectDossier(base);
+ assert.deepEqual(lineageRoutes(r),[['repo','out']]);
+ assert.equal(stageCounts(r).find(x=>x.stage==='root').count,1);
+});
+test('cycle-safe route explorer does not invent a root path',()=>{
+ const r=inspectDossier({...base,edges:[{from:'out',to:'repo'}]});
+ assert.deepEqual(lineageRoutes(r),[]);
+});
+test('multiple root routes are bounded and ordered',()=>{
+ const input={...base,nodes:[...base.nodes,{id:'second',stage:'root',label:'Other'}],edges:[...base.edges,{from:'second',to:'out'}]};
+ const r=inspectDossier(input);
+ assert.deepEqual(lineageRoutes(r,1),[['repo','out']]);
+});
