@@ -7,7 +7,12 @@ test('expedition uses actual interchange validation and imported evidence',()=>{
  for(const marker of ["inspectLineageInterchange(value)","LINEAGE_SCHEMA","packet.edges","lineage(n.id)","BIOLOGICAL_STAGES","file.text()","No packet loaded"])assert.ok(html.includes(marker),marker);
 });
 test('no invented live status, remote fetch, or telemetry in expedition',()=>{
- assert.doesNotMatch(html,/\bfetch\s*\(|XMLHttpRequest|sendBeacon|localStorage|sessionStorage|WebSocket/);
+ assert.doesNotMatch(html,/XMLHttpRequest|sendBeacon|localStorage|sessionStorage|WebSocket/);
+ // Published federation map is fetched only after an explicit visitor click.
+ const calls=[...html.matchAll(/\bfetch\s*\(/g)];
+ assert.equal(calls.length,1,'only the user-requested published map may be fetched');
+ assert.match(html,/\$\('published'\)\.addEventListener\('click',async\(\)=>\{/);
+ assert.match(html,/fetch\('\.\/data\/living-universe\.json',\{cache:'no-store'\}\)/);
  assert.match(html,/Candidate outcome only/);
  assert.match(html,/No external verification was performed/);
 });
