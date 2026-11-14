@@ -9,6 +9,7 @@ on:
       - 'living-universe-explorer.html'
       - 'living-universe-spectrum.css'
       - 'living-universe-spectrum.test.mjs'
+      - 'evidence-quest-*'
       - '.github/workflows/portable-evidence-theatre.yml'
   workflow_dispatch:
 permissions:
@@ -22,4 +23,4 @@ jobs:
         with:
           node-version: '24'
       - name: Verify public dossier and operator export contract
-        run: node --test portable-dossier-theatre.test.mjs portable-dossier-operator-contract.test.mjs living-universe-spectrum.test.mjs
+        run: node --test portable-dossier-theatre.test.mjs portable-dossier-operator-contract.test.mjs living-universe-spectrum.test.mjs evidence-quest-model.test.mjs
