@@ -50,8 +50,8 @@
           "run": "python scripts/validate_static_site.py"
         },
         {
-          "name": "Verify clean checkout",
-          "run": "test -z \"$(git status --porcelain)\""
+          "name": "Verify clean checkout and workflow commit",
+          "run": "set -euo pipefail\nif [ -n \"$(git status --porcelain)\" ]; then\n  echo \"Refusing portal validation: checkout is dirty\" >&2\n  exit 1\nfi\nif [ \"$(git rev-parse HEAD)\" != \"${{ github.sha }}\" ]; then\n  echo \"Refusing portal validation: checkout HEAD differs from workflow commit\" >&2\n  exit 1\nfi"
         }
       ]
     }
