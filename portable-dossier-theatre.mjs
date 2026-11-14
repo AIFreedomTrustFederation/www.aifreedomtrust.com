@@ -12,6 +12,11 @@ export function inspectDossier(input){
  }
  if(!ids.has(input.focusId))throw Error('Selected record is absent');
  const parents=new Map(),gaps=[];
+ if(Array.isArray(input.evidenceGaps))for(const gap of input.evidenceGaps.slice(0,100)){
+  const message=typeof gap==='string'?gap:(gap&&typeof gap.message==='string'?gap.message:null);
+  if(message)gaps.push('Declared evidence gap: '+message.slice(0,500));
+ }
+ if(input.routeDisplayTruncated===true)gaps.push('Lineage route display was truncated at export');
  for(const e of input.edges){
   if(!e||!ids.has(e.from)||!ids.has(e.to))throw Error('Undeclared relationship');
   if(!parents.has(e.to))parents.set(e.to,[]);
@@ -73,7 +78,8 @@ export function normalizeOperatorDossier(packet){
  });
  const ids=new Set(nodes.map(n=>n.id)),edges=[],seen=new Set();
  for(const route of packet.routes){
-  if(!route||!Array.isArray(route.ids)||route.ids.length>350)throw Error('Invalid operator route');
+  if(!route||!Array.isArray(route.ids)||route.ids.length<1||route.ids.length>350)throw Error('Invalid operator route');
+  for(const id of route.ids)if(!ids.has(id))throw Error('Operator route references absent record');
   for(let i=1;i<route.ids.length;i++){
    const from=route.ids[i-1],to=route.ids[i];
    if(!ids.has(from)||!ids.has(to))throw Error('Operator route references absent record');
