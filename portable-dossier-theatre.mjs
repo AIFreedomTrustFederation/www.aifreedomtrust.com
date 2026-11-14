@@ -32,3 +32,22 @@ export function safeDestination(value){
  if(typeof value!=='string')return null;
  try{const u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password?u.href:null}catch{return null}
 }
+
+/** Deterministic, bounded, cycle-safe declared root-to-focus routes. No inferred links. */
+export function lineageRoutes(report,limit=12){
+ const byId=new Map(report.nodes.map(n=>[n.id,n]));
+ const parents=new Map();
+ for(const edge of report.edges){if(!parents.has(edge.to))parents.set(edge.to,[]);parents.get(edge.to).push(edge.from)}
+ const routes=[],queue=[[report.focus.id]],max=Math.min(12,Math.max(1,limit));
+ while(queue.length&&routes.length<max){
+  const path=queue.shift(),current=path[0],node=byId.get(current);
+  if(!node)continue;
+  if(node.stage==='root'){routes.push(path);continue}
+  for(const parent of (parents.get(current)||[]).sort()){
+   if(!path.includes(parent)&&path.length<30)queue.push([parent,...path]);
+  }
+  if(queue.length>2000)break;
+ }
+ return routes;
+}
+export function stageCounts(report){return STAGES.map(stage=>({stage,count:report.nodes.filter(n=>n.stage===stage).length}))}
