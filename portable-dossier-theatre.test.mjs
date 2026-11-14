@@ -44,3 +44,13 @@ test('missing source IDs do not become invented provenance',()=>{
  assert.equal(report.nodes.length,before);
  assert.equal(report.roots.length,1);
 });
+
+test('public constellation exposes reversible semantic zoom and accessible minimap',async()=>{
+ const {readFileSync}=await import('node:fs');
+ const html=readFileSync(new URL('./portable-evidence-theatre.html',import.meta.url),'utf8');
+ for(const token of ['id="zoom-in"','id="zoom-out"','id="zoom-fit"','id="minimap"','function setZoom(stage)','function drawMinimap(x,width)','setZoom(-1)','aria-pressed','prefers-reduced-motion','role="button"']){
+  assert.ok(html.includes(token),'Missing constellation contract: '+token);
+ }
+ assert.ok(html.includes("const traced=new Set(activeRoute.slice(1)"),'Declared path highlighting is required');
+ assert.ok(html.includes("report.edges"),'Render declared edges, not inferred relationships');
+});
