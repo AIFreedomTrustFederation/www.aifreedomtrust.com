@@ -1,0 +1,21 @@
+/* AIFT Living Universe 2.0 — shared public experience tokens.
+   Additive visual layer; preserves existing markup, routes, and evidence contracts. */
+:root {
+ --aift-spectrum-red:#ff5877; --aift-spectrum-gold:#f5cb79;
+ --aift-spectrum-green:#42e6ad; --aift-spectrum-blue:#69b9ff;
+ --aift-spectrum-violet:#b59bff; --aift-void:#080f21;
+ --aift-glass:#0e1d33e8; --aift-border:#6587a8;
+ --aift-focus:#f5cb79; --aift-radius:22px;
+ --gold:var(--aift-spectrum-gold);--red:var(--aift-spectrum-red);
+ --green:var(--aift-spectrum-green);--blue:var(--aift-spectrum-blue);
+}
+body{background:radial-gradient(ellipse at 50% 0%,#244265 0%,transparent 55%),radial-gradient(ellipse at 90% 65%,#112b37 0%,transparent 45%),var(--aift-void)}
+.ribbon{background:linear-gradient(90deg,var(--aift-spectrum-red),var(--aift-spectrum-gold),var(--aift-spectrum-green),var(--aift-spectrum-blue),var(--aift-spectrum-violet));box-shadow:0 0 34px #69b9ff55}
+.panel{background:var(--aift-glass);border-color:var(--aift-border);border-radius:var(--aift-radius);box-shadow:0 20px 48px #0008, inset 0 1px #c0dcff15;backdrop-filter:blur(12px)}
+button,a,input,select{transition:background-color .18s ease,border-color .18s ease,box-shadow .18s ease,transform .18s ease}
+button:not(:disabled):hover{border-color:var(--aift-spectrum-gold);box-shadow:0 0 0 1px #f5cb7950;transform:translateY(-1px)}
+:where(button,a,input,select,[tabindex]):focus-visible{outline:3px solid var(--aift-focus);outline-offset:3px}
+:where(.scene,.map,.constellation){isolation:isolate}
+@media(max-width:800px){.panel{border-radius:16px}button,input,select{min-height:44px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}button:hover{transform:none}}
+@media(forced-colors:active){.panel{border:2px solid CanvasText}.ribbon{border-bottom:4px solid Highlight}:focus-visible{outline:3px solid Highlight}}
