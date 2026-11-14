@@ -51,3 +51,11 @@ export function lineageRoutes(report,limit=12){
  return routes;
 }
 export function stageCounts(report){return STAGES.map(stage=>({stage,count:report.nodes.filter(n=>n.stage===stage).length}))}
+
+/** A URL source ID is navigation context only, never evidence or an attestation. */
+export function resolveHandoff(report,sourceId){
+ if(typeof sourceId!=='string'||!sourceId||sourceId.length>256)return {status:'none',record:null};
+ if(!report)return {status:'awaiting-file',record:null};
+ const record=report.nodes.find(n=>n.id===sourceId)||null;
+ return {status:record?'matched':'missing',record};
+}
