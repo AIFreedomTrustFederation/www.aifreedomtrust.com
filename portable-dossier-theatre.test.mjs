@@ -22,3 +22,25 @@ test('multiple root routes are bounded and ordered',()=>{
  const r=inspectDossier(input);
  assert.deepEqual(lineageRoutes(r,1),[['repo','out']]);
 });
+
+import {resolveHandoff} from './portable-dossier-theatre.mjs';
+test('source handoff waits for user-selected dossier rather than fetching evidence',()=>{
+ assert.equal(resolveHandoff(null,'repo').status,'awaiting-file');
+ assert.equal(resolveHandoff(null,null).status,'none');
+ assert.equal(resolveHandoff(null,'x'.repeat(257)).status,'none');
+});
+test('handoff matches only exact declared dossier record IDs',()=>{
+ const report=inspectDossier(base);
+ assert.equal(resolveHandoff(report,'repo').record.stage,'root');
+ assert.equal(resolveHandoff(report,'out').record.stage,'fruit');
+ assert.equal(resolveHandoff(report,'Repo').status,'missing');
+ assert.equal(resolveHandoff(report,'unknown').status,'missing');
+ assert.equal(resolveHandoff(report,'unknown').record,null);
+});
+test('missing source IDs do not become invented provenance',()=>{
+ const report=inspectDossier(base);
+ const before=report.nodes.length;
+ resolveHandoff(report,'not-in-dossier');
+ assert.equal(report.nodes.length,before);
+ assert.equal(report.roots.length,1);
+});
