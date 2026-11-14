@@ -1,0 +1,23 @@
+name: Portable Evidence Theatre
+on:
+  pull_request:
+    paths:
+      - 'portable-dossier-theatre.mjs'
+      - 'portable-dossier-theatre.test.mjs'
+      - 'portable-dossier-operator-contract.test.mjs'
+      - 'portable-evidence-theatre.html'
+      - 'living-universe-explorer.html'
+      - '.github/workflows/portable-evidence-theatre.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  dossier-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify public dossier and operator export contract
+        run: node --test portable-dossier-theatre.test.mjs portable-dossier-operator-contract.test.mjs
