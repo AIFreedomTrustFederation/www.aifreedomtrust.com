@@ -4,6 +4,8 @@ Last updated: June 20, 2026
 
 This inventory lists the public repositories that form the visible AI Freedom Trust Federation umbrella.
 
+**Snapshot scope (June 20, 2026):** This table is a historical public-repository inventory, not an exhaustive or continuously verified Federation registry. The [portal project map](../README.md) also names public repositories including `AIFT-Genesis`, `AIFT-OS`, `AIFT-Runtime`, `booksmith-ai`, and `BookSmith-Federation-OS`. Inclusion in either document does not establish tested integration, authenticated authority, operational deployment, or publication approval.
+
 | Repository | Layer | Status | Purpose |
 | --- | --- | --- | --- |
 | [`www.aifreedomtrust.com`](https://github.com/AIFreedomTrustFederation/www.aifreedomtrust.com) | Public Trust | Active | Public website, project map, and federation doorway |
