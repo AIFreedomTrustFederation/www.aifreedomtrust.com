@@ -75,6 +75,15 @@ def main():
             else:
                 destination.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(source, destination)
+        # Adapt the original test fixture path to the non-destructive portal layout.
+        # The public root index.html must remain untouched.
+        test_file = ROOT / "source/tests/test_build.py"
+        if test_file.is_file():
+            test_text = test_file.read_text(encoding="utf-8")
+            old = "ROOT.parent / 'index.html'"
+            if old not in test_text:
+                sys.exit("Unexpected original test layout; refusing silent rewrite")
+            test_file.write_text(test_text.replace(old, "ROOT.parent / 'living-universe-full.html'"), encoding="utf-8")
         for name in ("README.md", "CHANGELOG.md", "ENHANCEMENTS.md", "RELEASE_NOTES.md", "UPGRADE_PLAN.md"):
             source = project / name
             if source.exists():
