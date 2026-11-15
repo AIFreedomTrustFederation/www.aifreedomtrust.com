@@ -98,3 +98,13 @@ test('expedition startup contains real JavaScript newlines rather than escaped s
  assert.match(js,/\/\/ Spatial state must exist before renderIndex invokes renderSky\.\nrenderIndex\(\);/);
  assert.doesNotThrow(()=>new vm.Script(js),'expedition must parse before browser execution');
 });
+
+test('guided journey is mounted in the shared expedition and respects biological stages',()=>{
+ const js=fs.readFileSync(path.join(base,'evidence-expeditions.js'),'utf8');
+ assert.doesNotThrow(()=>new vm.Script(js));
+ for(const marker of ['function buildJourney(id)','function drawJourney()','q-journey-track','data-action="previous"','data-action="next"','data-path','aria-current','prefers-reduced-motion:reduce'])assert.ok(js.includes(marker),marker);
+ assert.match(js,/journeyPath=\[root,trunk,\.\.\.ancestors/);
+ assert.match(js,/journeyStep=Math\.max\(0/);
+ assert.match(js,/buildJourney\(id\);/);
+ assert.doesNotMatch(js,/fetch\s*\(|XMLHttpRequest|localStorage|Math\.random/);
+});
