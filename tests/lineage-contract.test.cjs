@@ -56,3 +56,12 @@ test('shared evidence expeditions are mounted on both public exploration surface
  assert.match(js,/No finished public product is verified/);
  assert.doesNotMatch(js,/localStorage|fetch\(|XMLHttpRequest|telemetry|Math\.random/);
 });
+
+test('shared expedition constellation offers searchable stage filters and reversible ancestry',()=>{
+ const js=fs.readFileSync(path.join(base,'evidence-expeditions.js'),'utf8');
+ assert.doesNotThrow(()=>new vm.Script(js));
+ for(const marker of ['q-constellation','q-stagebar','aiftQuestSearch','q-node-index','q-map','function showNode(id)','function renderIndex()','role=\"status\"','prefers-reduced-motion'])assert.ok(js.includes(marker),marker);
+ assert.match(js,/stage==='all'\|\|n.kind===stage/);
+ assert.match(js,/button.addEventListener\('click',\(\)=>showNode\(n.id\)\)/);
+ assert.doesNotMatch(js,/fetch\s*\(|XMLHttpRequest|localStorage|Math\.random/);
+});
