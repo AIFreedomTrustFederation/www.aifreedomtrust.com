@@ -20,7 +20,7 @@ jobs:
         run: |
           python3 scripts/check_living_universe_canonical.py
           python3 scripts/check_living_universe_preservation.py
-      - name: Validate editable source tests
+      - name: Verify original source integrity\n        run: python3 scripts/check_living_universe_source_integrity.py\n      - name: Validate editable source tests
         run: python3 -m unittest discover -s source/tests -v
       - name: Check JavaScript module syntax
         run: |
