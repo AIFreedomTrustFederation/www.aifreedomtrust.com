@@ -10,6 +10,10 @@ jobs:
   preview:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CF_PREVIEW_PROJECT: ${{ vars.LIVING_UNIVERSE_PREVIEW_PROJECT }}
     steps:
       - uses: actions/checkout@v4
       - name: Require complete integrated source
@@ -46,10 +50,6 @@ jobs:
           retention-days: 14
       - name: Publish to isolated Cloudflare Pages preview only when configured
         if: ${{ env.CF_API_TOKEN != '' && env.CF_ACCOUNT_ID != '' && env.CF_PREVIEW_PROJECT != '' }}
-        env:
-          CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          CF_PREVIEW_PROJECT: ${{ vars.LIVING_UNIVERSE_PREVIEW_PROJECT }}
         run: |
           set -euo pipefail
           case "$CF_PREVIEW_PROJECT" in
