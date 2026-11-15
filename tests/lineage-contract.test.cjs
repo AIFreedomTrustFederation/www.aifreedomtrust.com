@@ -6,3 +6,27 @@ test('every fruit opens a real visitor destination',()=>{const fruits=nodes.filt
 test('every node reaches shared trunk without cycles',()=>{const byId=new Map(nodes.map(n=>[n.id,n]));for(const n of nodes){let x=n;const visited=new Set();while(x.parent){assert.ok(!visited.has(x.id));visited.add(x.id);x=byId.get(x.parent);assert.ok(x)}assert.equal(x.kind,'trunk')}});
 test('all source classifications are curated, never presented as live',()=>{for(const n of nodes){assert.equal(n.evidence,'curated');assert.equal(n.verifiedLive,false)}});
 test('explorer loads shared contract and retains accessible index',()=>{const html=fs.readFileSync(path.join(base,'root-lineage.html'),'utf8');assert.match(html,/<script src="lineage-data\.js"><\/script>/);assert.match(html,/AIFT_LINEAGE_NODES/);assert.match(html,/aria-label="Accessible node index"/)});
+
+test('shared catalog executes in isolated browser-like VM without ambient variables',()=>{
+ const sandbox={window:{}};assert.doesNotThrow(()=>vm.runInNewContext(fs.readFileSync(path.join(base,'lineage-data.js'),'utf8'),sandbox));
+ assert.ok(sandbox.window.AIFT_LINEAGE_NODES.length>10);
+ assert.equal(sandbox.window.AIFT_LINEAGE_NODES.find(n=>n.id==='federation').url,'docs/organization-map.md');
+});
+test('all roots feed the trunk and all branches and leaves retain a source lineage',()=>{
+ const byId=new Map(nodes.map(n=>[n.id,n]));
+ for(const n of nodes){
+  if(n.kind==='root')assert.equal(n.parent,'federation',n.id);
+  if(n.kind==='branch'||n.kind==='leaf'||n.kind==='fruit'){
+   let cursor=n;const ancestry=[];
+   while(cursor.parent){cursor=byId.get(cursor.parent);ancestry.push(cursor.kind)}
+   assert.ok(ancestry.includes('root'),n.id+' lacks a source root');
+  }
+ }
+});
+test('no fabricated live verification or achievement counters appear in contract',()=>{
+ for(const n of nodes){assert.equal(n.verifiedLive,false);assert.equal(n.evidence,'curated');assert.equal(n.xp,undefined);assert.equal(n.achievement,undefined)}
+});
+test('lineage contract is immutable and all local outcome paths resolve',()=>{
+ assert.ok(Object.isFrozen(context.AIFT_LINEAGE_NODES));
+ for(const n of nodes){assert.ok(Object.isFrozen(n));if(n.kind==='fruit')assert.ok(fs.existsSync(path.join(base,n.url)))}
+});
