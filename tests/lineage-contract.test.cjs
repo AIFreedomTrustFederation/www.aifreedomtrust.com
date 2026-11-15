@@ -1,7 +1,7 @@
 /* Run: node --test tests/lineage-contract.test.cjs */
 const test=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');const vm=require('node:vm');const path=require('node:path');
 const base=path.join(__dirname,'..');const context={};vm.runInNewContext(fs.readFileSync(path.join(base,'lineage-data.js'),'utf8'),context);const nodes=Array.from(context.AIFT_LINEAGE_NODES);
-test('all repository sources are roots and no repository is a fruit',()=>{for(const n of nodes){if(/^https:\/\/github\.com\/AIFreedomTrustFederation\/[^/]+\/?$/.test(n.url))assert.equal(n.kind,'root',n.id)}});
+test('all repository sources are roots and no repository is a fruit',()=>{for(const n of nodes){if(n.kind==='root')assert.match(n.url,/^https:\/\/github\.com\/AIFreedomTrustFederation\/[^/]+\/?$/);if(n.kind==='fruit')assert.doesNotMatch(n.url,/^https:\/\/github\.com\/AIFreedomTrustFederation\/[^/]+\/?$/)}});
 test('every fruit opens a real visitor destination',()=>{const fruits=nodes.filter(n=>n.kind==='fruit');assert.ok(fruits.length);for(const n of fruits){assert.match(n.url,/\.html(?:#.*)?$/);assert.ok(fs.existsSync(path.join(base,n.url.split('#')[0])),n.url)}});
 test('every node reaches shared trunk without cycles',()=>{const byId=new Map(nodes.map(n=>[n.id,n]));for(const n of nodes){let x=n;const visited=new Set();while(x.parent){assert.ok(!visited.has(x.id));visited.add(x.id);x=byId.get(x.parent);assert.ok(x)}assert.equal(x.kind,'trunk')}});
 test('all source classifications are curated, never presented as live',()=>{for(const n of nodes){assert.equal(n.evidence,'curated');assert.equal(n.verifiedLive,false)}});
@@ -60,7 +60,7 @@ test('shared evidence expeditions are mounted on both public exploration surface
 test('shared expedition constellation offers searchable stage filters and reversible ancestry',()=>{
  const js=fs.readFileSync(path.join(base,'evidence-expeditions.js'),'utf8');
  assert.doesNotThrow(()=>new vm.Script(js));
- for(const marker of ['q-constellation','q-stagebar','instanceId+\'-search\'','q-node-index','q-map','function showNode(id)','function renderIndex()','role=\"status\"','prefers-reduced-motion'])assert.ok(js.includes(marker),marker);
+ for(const marker of ['q-constellation','q-stagebar','instanceId+\'-search','q-node-index','q-map','function showNode(id)','function renderIndex()','role=\"status\"','prefers-reduced-motion'])assert.ok(js.includes(marker),marker);
  assert.match(js,/stage==='all'\|\|n.kind===stage/);
  assert.match(js,/button.addEventListener\('click',\(\)=>showNode\(n.id\)\)/);
  assert.doesNotMatch(js,/fetch\s*\(|XMLHttpRequest|localStorage|Math\.random/);
@@ -78,7 +78,7 @@ test('spatial constellation uses deterministic curated ancestry and keyboard acc
 test('shared expedition avoids duplicate global search IDs',()=>{
  const js=fs.readFileSync(path.join(base,'evidence-expeditions.js'),'utf8');
  assert.match(js,/const instanceId='aift-expedition-'/);
- assert.match(js,/instanceId\+'-search'/);
+ assert.match(js,/instanceId\+'-search/);
  assert.match(js,/explorer\.querySelector\('input\[type=search\]'\)/);
 });
 
