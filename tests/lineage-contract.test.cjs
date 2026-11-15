@@ -48,11 +48,11 @@ test('shared evidence expeditions are mounted on both public exploration surface
  assert.doesNotThrow(()=>new vm.Script(js));
  for(const page of ['atlas.html','root-lineage.html']){
   const html=fs.readFileSync(path.join(base,page),'utf8');
-  assert.match(html,/<script defer src="evidence-expeditions\\.js"><\\/script>/);
+  assert.match(html,/<script defer src="evidence-expeditions\.js"><\/script>/);
   assert.ok(html.indexOf('lineage-data.js')<html.indexOf('evidence-expeditions.js'));
  }
  assert.match(js,/aria-live/);
  assert.match(js,/prefers-reduced-motion/);
  assert.match(js,/No finished public product is verified/);
- assert.doesNotMatch(js,/localStorage|fetch\\(|XMLHttpRequest|telemetry|Math\\.random/);
+ assert.doesNotMatch(js,/localStorage|fetch\(|XMLHttpRequest|telemetry|Math\.random/);
 });
