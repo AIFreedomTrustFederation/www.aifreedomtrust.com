@@ -13,7 +13,7 @@ test('search and reversible lineage work across both shared public surfaces',()=
   assert.match(source,/showNode\(ancestor\.id\)/);
   assert.match(source,/query='';selected=null/);
   assert.match(source,/visited\.get\(paths\[current\]\.id\)\.add\(id\)/);
-  assert.match(source,/if\(!\/\^https\?:\\\/\\\/\/.test\(n\.url\)\)continue/);
   assert.match(source,/prefers-reduced-motion:reduce/);
   assert.match(source,/forced-colors:active/);
+  assert.ok(source.includes('if(!/^https?:\\/\\//.test(n.url))continue'));
 });
