@@ -42,12 +42,13 @@ const stages=[['all','All'],['root','Roots'],['trunk','Trunk'],['branch','System
 let stage='all',focusedNode=null;
 function showNode(id){
  const node=byId.get(id);if(!node)return;focusedNode=node;
+ buildJourney(id);
  const path=lineage(node);minimap.replaceChildren();
  path.forEach((n,i)=>{if(i){const arrow=document.createElement('span');arrow.textContent='›';arrow.setAttribute('aria-hidden','true');minimap.append(arrow)}
  const button=document.createElement('button');button.type='button';button.className='q-map-step';button.dataset.kind=n.kind;button.textContent=n.label;button.setAttribute('aria-label','Inspect '+n.kind+' '+n.label);
  button.addEventListener('click',()=>showNode(n.id));minimap.append(button)});
  index.querySelectorAll('button').forEach(b=>b.setAttribute('aria-current',String(b.dataset.id===id)));
- spatialNodes.forEach((el,key)=>el.setAttribute('aria-current',String(key===id)));
+ spatialNodes.forEach((el,key)=>{el.setAttribute('aria-current',String(key===id));el.setAttribute('data-path',String(journeyPath.some(n=>n.id===key)))});
  if(candidates.some(n=>n.id===id))select(id);
  else {detail.replaceChildren();const title=document.createElement('h3');title.textContent=node.label;const desc=document.createElement('p');desc.textContent=node.desc;const status=document.createElement('p');status.className='q-empty';status.textContent='Curated source evidence only; no completed public outcome or live verification is implied.';const link=document.createElement('a');link.href=node.url;link.textContent='Inspect documented source';if(/^https?:/.test(node.url))link.rel='noopener noreferrer';detail.append(title,desc,status,link)}
 }
@@ -72,11 +73,50 @@ const children=new Map();nodes.forEach(n=>{if(n.parent){const a=children.get(n.p
 const positions=new Map();positions.set('federation',{x:480,y:270});
 const roots=nodes.filter(n=>n.kind==='root');roots.forEach((n,i)=>{const angle=-Math.PI/2+i*2*Math.PI/roots.length;positions.set(n.id,{x:480+Math.cos(angle)*205,y:270+Math.sin(angle)*175})});
 for(const root of roots){const descendants=nodes.filter(n=>{let x=n,steps=0;while(x.parent&&steps++<nodes.length){if(x.parent===root.id)return true;x=byId.get(x.parent)||{};}return false});const center=positions.get(root.id);descendants.forEach((n,i)=>{const angle=-Math.PI/2+i*2*Math.PI/Math.max(descendants.length,1);const depth=lineage(n).length-2;positions.set(n.id,{x:Math.max(45,Math.min(915,center.x+Math.cos(angle)*(65+depth*18))),y:Math.max(35,Math.min(525,center.y+Math.sin(angle)*(55+depth*12)))})})}
+/* Guided journey: one coherent route through verified source classifications. */
+styles.textContent += `
+.aift-quest-world .q-journey{border:1px solid #f7d48c77;border-radius:18px;padding:1rem;margin:1rem 0;background:linear-gradient(115deg,#53274088,#123d4688,#14244c);box-shadow:inset 0 0 35px #d5ac3720}
+.aift-quest-world .q-journey-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.aift-quest-world .q-journey-actions{display:flex;gap:.5rem;flex-wrap:wrap}
+.aift-quest-world .q-journey-actions button{width:auto;min-width:90px}
+.aift-quest-world .q-journey-track{display:flex;gap:.4rem;overflow-x:auto;padding:.8rem 0}
+.aift-quest-world .q-journey-track button{width:auto;min-width:112px;flex:1;text-align:center;font-size:.82rem}
+.aift-quest-world .q-journey-track button[aria-current=step]{border-color:var(--q-gold);background:#5c4835}
+.aift-quest-world .q-journey-note{font-size:.85rem;color:#dce7f2}
+.aift-quest-world .q-sky-node[data-path=true] circle{filter:drop-shadow(0 0 8px #f7d48c);stroke-width:4}
+.aift-quest-world .q-sky-line[data-path=true]{stroke:#f7d48c;stroke-width:3;opacity:1}
+@media(max-width:720px){.aift-quest-world .q-journey-track button{min-width:104px}.aift-quest-world .q-journey-actions button{min-height:44px}}
+@media(prefers-reduced-motion:reduce){.aift-quest-world .q-sky-node circle{filter:none}}
+`;
+const journey=document.createElement('section');journey.className='q-journey';journey.setAttribute('aria-label','Guided source to outcome journey');
+journey.innerHTML='<div class="q-journey-head"><div><div class="q-kicker">Guided exploration</div><h3>Follow the evidence</h3></div><div class="q-journey-actions"><button type="button" data-action="previous">Previous</button><button type="button" data-action="next">Next stage</button></div></div><p class="q-journey-note" role="status" aria-live="polite"></p><div class="q-journey-track" role="group" aria-label="Journey stages"></div>';
+explorer.insertBefore(journey,sky);
+const journeyTrack=journey.querySelector('.q-journey-track'),journeyNote=journey.querySelector('.q-journey-note');
+let journeyPath=[],journeyStep=0;
+function buildJourney(id){
+ const selected=byId.get(id);if(!selected)return;
+ const ancestors=lineage(selected);
+ const trunk=ancestors.find(n=>n.kind==='trunk');
+ const root=ancestors.find(n=>n.kind==='root');
+ journeyPath=[root,trunk,...ancestors.filter(n=>n.kind!=='root'&&n.kind!=='trunk')].filter(Boolean);
+ journeyStep=Math.max(0,journeyPath.findIndex(n=>n.id===id));
+ drawJourney();
+}
+function drawJourney(){
+ journeyTrack.replaceChildren();
+ journeyPath.forEach((n,i)=>{const button=document.createElement('button');button.type='button';button.textContent=n.kind+' · '+n.label;button.setAttribute('aria-current',i===journeyStep?'step':'false');button.addEventListener('click',()=>{journeyStep=i;showNode(n.id)});journeyTrack.append(button)});
+ const node=journeyPath[journeyStep];journeyNote.textContent=node?'Stage '+(journeyStep+1)+' of '+journeyPath.length+': '+node.label+' · '+node.kind+'. Curated provenance, not live verification.':'Select a source to begin.';
+ journey.querySelector('[data-action=previous]').disabled=journeyStep===0;
+ journey.querySelector('[data-action=next]').disabled=journeyStep>=journeyPath.length-1;
+}
+journey.querySelector('[data-action=previous]').addEventListener('click',()=>{if(journeyStep>0){journeyStep--;showNode(journeyPath[journeyStep].id)}});
+journey.querySelector('[data-action=next]').addEventListener('click',()=>{if(journeyStep<journeyPath.length-1){journeyStep++;showNode(journeyPath[journeyStep].id)}});
+
 const spatialNodes=new Map();
 function svgElement(tag,attrs){const el=document.createElementNS(svgNS,tag);for(const [k,v] of Object.entries(attrs))el.setAttribute(k,String(v));return el}
 function renderSky(){svg.replaceChildren();spatialNodes.clear();const visible=new Set(nodes.filter(n=>(stage==='all'||n.kind===stage)&&[n.label,n.desc,n.kind].join(' ').toLocaleLowerCase().includes(search.value.trim().toLocaleLowerCase())).map(n=>n.id));
-for(const n of nodes){const a=positions.get(n.id),b=positions.get(n.parent);if(!a||!b)continue;const line=svgElement('path',{d:'M'+a.x+','+a.y+' Q480,270 '+b.x+','+b.y,class:'q-sky-line',opacity:visible.has(n.id)?'.8':'.18'});svg.append(line)}
-for(const n of nodes){const p=positions.get(n.id);if(!p)continue;const group=svgElement('g',{class:'q-sky-node',transform:'translate('+p.x+' '+p.y+')',tabindex:'0',role:'button','aria-label':'Inspect '+n.kind+' '+n.label,'aria-current':String(focusedNode?.id===n.id),'data-kind':n.kind,opacity:visible.has(n.id)?'1':'.22'});group.append(svgElement('circle',{r:n.kind==='trunk'?19:n.kind==='root'?14:10}));const label=svgElement('text',{y:n.kind==='trunk'?32:25,'text-anchor':'middle'});label.textContent=n.label;group.append(label);group.addEventListener('click',()=>showNode(n.id));group.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showNode(n.id)}});svg.append(group);spatialNodes.set(n.id,group)}
+for(const n of nodes){const a=positions.get(n.id),b=positions.get(n.parent);if(!a||!b)continue;const line=svgElement('path',{d:'M'+a.x+','+a.y+' Q480,270 '+b.x+','+b.y,class:'q-sky-line',opacity:visible.has(n.id)?'.8':'.18','data-path':String(journeyPath.some(p=>p.id===n.id)&&journeyPath.some(p=>p.id===n.parent))});svg.append(line)}
+for(const n of nodes){const p=positions.get(n.id);if(!p)continue;const group=svgElement('g',{class:'q-sky-node',transform:'translate('+p.x+' '+p.y+')',tabindex:'0',role:'button','aria-label':'Inspect '+n.kind+' '+n.label,'aria-current':String(focusedNode?.id===n.id),'data-kind':n.kind,'data-path':String(journeyPath.some(p=>p.id===n.id)),opacity:visible.has(n.id)?'1':'.22'});group.append(svgElement('circle',{r:n.kind==='trunk'?19:n.kind==='root'?14:10}));const label=svgElement('text',{y:n.kind==='trunk'?32:25,'text-anchor':'middle'});label.textContent=n.label;group.append(label);group.addEventListener('click',()=>showNode(n.id));group.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showNode(n.id)}});svg.append(group);spatialNodes.set(n.id,group)}
 }
 
 // Spatial state must exist before renderIndex invokes renderSky.
