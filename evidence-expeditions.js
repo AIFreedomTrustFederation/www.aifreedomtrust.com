@@ -59,7 +59,7 @@ function renderIndex(){
  if(!matching.length){const empty=document.createElement('p');empty.className='q-empty';empty.textContent='No documented nodes match. Try another stage or search term.';index.append(empty)}
 }
 for(const [kind,label] of stages){const button=document.createElement('button');button.type='button';button.textContent=label;button.setAttribute('aria-pressed',String(kind===stage));button.addEventListener('click',()=>{stage=kind;stagebar.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));renderIndex()});stagebar.append(button)}
-search.addEventListener('input',renderIndex);renderIndex();
+search.addEventListener('input',renderIndex); // Initial render follows spatial initialization.
 
 
 /* Spatial view: deterministic coordinates from catalog ancestry, never simulated live status. */
@@ -79,6 +79,6 @@ for(const n of nodes){const a=positions.get(n.id),b=positions.get(n.parent);if(!
 for(const n of nodes){const p=positions.get(n.id);if(!p)continue;const group=svgElement('g',{class:'q-sky-node',transform:'translate('+p.x+' '+p.y+')',tabindex:'0',role:'button','aria-label':'Inspect '+n.kind+' '+n.label,'aria-current':String(focusedNode?.id===n.id),'data-kind':n.kind,opacity:visible.has(n.id)?'1':'.22'});group.append(svgElement('circle',{r:n.kind==='trunk'?19:n.kind==='root'?14:10}));const label=svgElement('text',{y:n.kind==='trunk'?32:25,'text-anchor':'middle'});label.textContent=n.label;group.append(label);group.addEventListener('click',()=>showNode(n.id));group.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showNode(n.id)}});svg.append(group);spatialNodes.set(n.id,group)}
 }
 
-candidates.forEach(n=>{const button=document.createElement('button');button.type='button';button.dataset.id=n.id;button.setAttribute('aria-pressed','false');button.textContent=n.label+(n.kind==='fruit'?' · public outcome':' · investigate evidence gap');button.addEventListener('click',()=>select(n.id));options.append(button)});
+// Spatial state must exist before renderIndex invokes renderSky.\nrenderIndex();\n\ncandidates.forEach(n=>{const button=document.createElement('button');button.type='button';button.dataset.id=n.id;button.setAttribute('aria-pressed','false');button.textContent=n.label+(n.kind==='fruit'?' · public outcome':' · investigate evidence gap');button.addEventListener('click',()=>select(n.id));options.append(button)});
 const mount=document.querySelector('main')||document.body;mount.append(host);if(candidates.length)showNode(candidates[0].id);
 })(window);
