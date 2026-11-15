@@ -42,3 +42,17 @@ test('Atlas distinguishes thematic spheres from product fruits',()=>{
  assert.match(html,/These spheres are thematic navigation, not repositories or verified product fruits/);
  assert.doesNotMatch(html,/<h2>Living Fruits<\/h2>/);
 });
+
+test('shared evidence expeditions are mounted on both public exploration surfaces',()=>{
+ const js=fs.readFileSync(path.join(base,'evidence-expeditions.js'),'utf8');
+ assert.doesNotThrow(()=>new vm.Script(js));
+ for(const page of ['atlas.html','root-lineage.html']){
+  const html=fs.readFileSync(path.join(base,page),'utf8');
+  assert.match(html,/<script defer src="evidence-expeditions\\.js"><\\/script>/);
+  assert.ok(html.indexOf('lineage-data.js')<html.indexOf('evidence-expeditions.js'));
+ }
+ assert.match(js,/aria-live/);
+ assert.match(js,/prefers-reduced-motion/);
+ assert.match(js,/No finished public product is verified/);
+ assert.doesNotMatch(js,/localStorage|fetch\\(|XMLHttpRequest|telemetry|Math\\.random/);
+});
