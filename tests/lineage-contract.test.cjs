@@ -91,3 +91,10 @@ test('initial catalog render occurs after spatial state and renderer are initial
  assert.ok(init>=0 && renderer>=0 && first>init && first>renderer,'premature initial render');
  assert.equal((js.match(/renderIndex\(\);/g)||[]).length,1,'initial render must run once');
 });
+
+test('expedition startup contains real JavaScript newlines rather than escaped source separators',()=>{
+ const js=fs.readFileSync(path.join(base,'evidence-expeditions.js'),'utf8');
+ assert.doesNotMatch(js,/\\\\nrenderIndex\(\)/,'literal backslash-n before startup invocation');
+ assert.match(js,/\/\/ Spatial state must exist before renderIndex invokes renderSky\.\nrenderIndex\(\);/);
+ assert.doesNotThrow(()=>new vm.Script(js),'expedition must parse before browser execution');
+});
