@@ -69,6 +69,32 @@ const sky=document.createElement('div');sky.className='q-sky';sky.setAttribute('
 const skyNote=document.createElement('p');skyNote.className='q-sky-note';skyNote.textContent='Spatial constellation · use Tab and Enter to inspect a node, or use the searchable text index below. Positions represent curated lineage, not geographic or operational coordinates.';
 explorer.insertBefore(sky,explorer.querySelector('.q-constellation-layout'));explorer.insertBefore(skyNote,explorer.querySelector('.q-constellation-layout'));
 const svgNS='http://www.w3.org/2000/svg';const svg=document.createElementNS(svgNS,'svg');svg.setAttribute('viewBox','0 0 960 560');svg.setAttribute('role','group');svg.setAttribute('aria-label','Curated source-to-outcome network');sky.append(svg);
+/* Reversible spatial camera: presentation-only, no data or provenance mutation. */
+styles.textContent += `
+.aift-quest-world .q-camera{display:flex;gap:.55rem;flex-wrap:wrap;align-items:center;margin:.8rem 0}
+.aift-quest-world .q-camera button{width:auto;min-width:44px;min-height:44px;border:1px solid #f7d48c77;background:#132c46;color:#fff;border-radius:12px;padding:.5rem .8rem}
+.aift-quest-world .q-camera button:focus-visible{outline:3px solid #fff4b2;outline-offset:3px}
+.aift-quest-world .q-camera-note{color:#dce7f2;font-size:.85rem}
+.aift-quest-world .q-sky svg{transition:view-box .35s ease}
+@media(prefers-reduced-motion:reduce){.aift-quest-world .q-sky svg{transition:none}}
+`;
+const camera=document.createElement('div');camera.className='q-camera';camera.setAttribute('role','group');camera.setAttribute('aria-label','Spatial constellation zoom and navigation');
+const cameraStatus=document.createElement('span');cameraStatus.className='q-camera-note';cameraStatus.setAttribute('role','status');cameraStatus.setAttribute('aria-live','polite');
+let cameraScale=1,cameraX=480,cameraY=280;
+function applyCamera(){
+ const width=960/cameraScale,height=560/cameraScale;
+ cameraX=Math.max(width/2,Math.min(960-width/2,cameraX));
+ cameraY=Math.max(height/2,Math.min(560-height/2,cameraY));
+ svg.setAttribute('viewBox',[cameraX-width/2,cameraY-height/2,width,height].join(' '));
+ cameraStatus.textContent=Math.round(cameraScale*100)+'% · '+(cameraScale===1?'Full constellation':'Focused constellation')+' · curated positions';
+}
+function moveCamera(scale,x,y){cameraScale=Math.max(1,Math.min(3,scale));cameraX=x;cameraY=y;applyCamera()}
+function cameraButton(label,handler){const b=document.createElement('button');b.type='button';b.textContent=label;b.setAttribute('aria-label',label+' constellation');b.addEventListener('click',handler);camera.append(b)}
+cameraButton('Zoom in',()=>moveCamera(cameraScale*1.4,cameraX,cameraY));
+cameraButton('Zoom out',()=>moveCamera(cameraScale/1.4,cameraX,cameraY));
+cameraButton('Focus selected',()=>{const p=positions.get(focusedNode?.id||'federation');if(p)moveCamera(2,p.x,p.y)});
+cameraButton('Reset view',()=>moveCamera(1,480,280));
+camera.append(cameraStatus);sky.before(camera);applyCamera();
 const children=new Map();nodes.forEach(n=>{if(n.parent){const a=children.get(n.parent)||[];a.push(n);children.set(n.parent,a)}});
 const positions=new Map();positions.set('federation',{x:480,y:270});
 const roots=nodes.filter(n=>n.kind==='root');roots.forEach((n,i)=>{const angle=-Math.PI/2+i*2*Math.PI/roots.length;positions.set(n.id,{x:480+Math.cos(angle)*205,y:270+Math.sin(angle)*175})});
