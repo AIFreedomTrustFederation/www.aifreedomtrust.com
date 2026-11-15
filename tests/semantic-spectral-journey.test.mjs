@@ -21,4 +21,16 @@ assert.equal(model.journey('product').length,1);
 assert.equal(model.journey('product')[0].evidence.length,1);
 assert.equal(buildExplorationIndex({...manifest,edges:[]}).outcomes[0].verified,false);
 assert.equal(buildExplorationIndex({...manifest,nodes:[manifest.nodes[0],{...manifest.nodes[1],url:'https://github.com/example/source'}]}).outcomes[0].verified,false);
+
+assert.match(js,/spectral-breadcrumbs/,'lineage breadcrumbs remain available');
+assert.match(js,/spectral-map-track/,'spatial growth map remains available');
+assert.match(js,/Show evidence gaps only/,'missing provenance is discoverable');
+assert.match(js,/state\.history\.slice/,'navigation history is reversible');
+assert.match(js,/state\.cursor--/,'back navigation is implemented');
+assert.match(js,/state\.cursor\+\+/,'forward navigation is implemented');
+assert.match(js,/index\.inspect\(entity\.id\)\?\.evidenceGap/,'gap filter uses real evidence model');
+assert.match(css,/spectral-map-cell\[aria-current=step\]/,'current stage is visually indicated');
+assert.match(css,/@media\(forced-colors:active\)/,'high contrast navigation is supported');
+assert.match(css,/@media\(max-width:450px\)/,'mobile map is responsive');
+
 console.log('Spectral journey integration and evidence contracts passed');
