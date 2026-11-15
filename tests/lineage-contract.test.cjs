@@ -60,7 +60,7 @@ test('shared evidence expeditions are mounted on both public exploration surface
 test('shared expedition constellation offers searchable stage filters and reversible ancestry',()=>{
  const js=fs.readFileSync(path.join(base,'evidence-expeditions.js'),'utf8');
  assert.doesNotThrow(()=>new vm.Script(js));
- for(const marker of ['q-constellation','q-stagebar','aiftQuestSearch','q-node-index','q-map','function showNode(id)','function renderIndex()','role=\"status\"','prefers-reduced-motion'])assert.ok(js.includes(marker),marker);
+ for(const marker of ['q-constellation','q-stagebar','instanceId+\'-search\'','q-node-index','q-map','function showNode(id)','function renderIndex()','role=\"status\"','prefers-reduced-motion'])assert.ok(js.includes(marker),marker);
  assert.match(js,/stage==='all'\|\|n.kind===stage/);
  assert.match(js,/button.addEventListener\('click',\(\)=>showNode\(n.id\)\)/);
  assert.doesNotMatch(js,/fetch\s*\(|XMLHttpRequest|localStorage|Math\.random/);
@@ -80,4 +80,14 @@ test('shared expedition avoids duplicate global search IDs',()=>{
  assert.match(js,/const instanceId='aift-expedition-'/);
  assert.match(js,/instanceId\+'-search'/);
  assert.match(js,/explorer\.querySelector\('input\[type=search\]'\)/);
+});
+
+// Prevent the TDZ regression that once stopped the entire spatial explorer at startup.
+test('initial catalog render occurs after spatial state and renderer are initialized',()=>{
+ const js=fs.readFileSync(path.join(base,'evidence-expeditions.js'),'utf8');
+ const init=js.indexOf('const spatialNodes=new Map()');
+ const renderer=js.indexOf('function renderSky()');
+ const first=js.indexOf('renderIndex();');
+ assert.ok(init>=0 && renderer>=0 && first>init && first>renderer,'premature initial render');
+ assert.equal((js.match(/renderIndex\(\);/g)||[]).length,1,'initial render must run once');
 });
