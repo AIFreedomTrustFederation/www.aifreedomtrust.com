@@ -1,5 +1,7 @@
 /* AIFT Living Universe shared read-only lineage contract. Curated edges are not runtime dependencies. */
 (function(global){'use strict';
+const org='https://github.com/AIFreedomTrustFederation/';
+const docs='docs/organization-map.md';
 const nodes=[
 {id:'federation',label:'Integrated Federation',kind:'trunk',desc:'The shared federation connecting independently maintained source systems.',url:docs},
 {id:'genesis',label:'AIFT-Genesis',kind:'root',parent:'federation',desc:'Canonical Tree of Emergence, schemas and constitution.',url:org+'AIFT-Genesis'},
@@ -28,6 +30,12 @@ for(const node of nodes){
 }
 if(nodes.filter(n=>n.kind==='trunk').length!==1)throw new Error('Expected one shared trunk');
 for(const node of nodes){if(node.parent&&!ids.has(node.parent))throw new Error('Missing parent: '+node.id);let current=node;const seen=new Set();while(current.parent){if(seen.has(current.id))throw new Error('Lineage cycle: '+node.id);seen.add(current.id);current=nodes.find(n=>n.id===current.parent);}}
+// The source contract must not imply that a repository is a delivered outcome.
+for(const node of nodes){
+ if(node.kind==='root' && node.parent!=='federation')throw new Error('Root must feed shared trunk: '+node.id);
+ if(node.kind==='trunk' && node.parent)throw new Error('Shared trunk cannot have a parent');
+ if(node.kind==='fruit' && !/^((?!javascript:|data:).)+$/i.test(node.url))throw new Error('Unsafe outcome URL: '+node.id);
+}
 const frozen=Object.freeze(nodes.map(n=>Object.freeze({...n,evidence:'curated',verifiedLive:false})));
 global.AIFT_LINEAGE_NODES=frozen;
 })(typeof window==='undefined'?globalThis:window);
