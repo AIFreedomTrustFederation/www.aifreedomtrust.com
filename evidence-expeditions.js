@@ -10,6 +10,7 @@ styles.textContent=`
 @media(max-width:720px){.aift-quest-world .q-layout{grid-template-columns:1fr}.aift-quest-world{border-radius:16px}.aift-quest-world button{min-height:44px}}
 @media(prefers-reduced-motion:no-preference){.aift-quest-world button{transition:background .18s,border-color .18s,transform .18s}.aift-quest-world button:hover{transform:translateY(-2px)}}
 `;
+styles.textContent += "\n.aift-quest-world .q-constellation{margin-top:1.3rem;border:1px solid #ffffff38;border-radius:20px;padding:clamp(1rem,2.5vw,2rem);background:radial-gradient(circle at 0 100%,#6d284255,transparent 45%),radial-gradient(circle at 100% 0,#165c6755,transparent 48%),#0b1930}\n.aift-quest-world .q-stagebar{display:flex;flex-wrap:wrap;gap:.45rem;margin:1rem 0}.aift-quest-world .q-stagebar button{width:auto;min-width:72px;font-size:.88rem}.aift-quest-world .q-search-label{display:block;font-weight:700;margin:.7rem 0 .4rem}.aift-quest-world input[type=search]{width:100%;max-width:650px;padding:.8rem;border:1px solid #b0cadc;border-radius:12px;background:#0c2036;color:white;font:inherit}.aift-quest-world input:focus-visible{outline:3px solid var(--q-gold);outline-offset:3px}\n.aift-quest-world .q-constellation-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(230px,.7fr);gap:1rem;margin-top:1rem}.aift-quest-world .q-node-index{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.5rem;max-height:420px;overflow:auto;align-content:start}.aift-quest-world .q-node-index button{height:100%;min-height:76px}.aift-quest-world .q-node-index button strong,.aift-quest-world .q-node-index button small{display:block}.aift-quest-world .q-node-index button small{color:#c2d5e6;font-size:.76rem;margin-top:.3rem}.aift-quest-world .q-node-index button[aria-current=true]{border-color:var(--q-gold);background:#3a3f65}\n.aift-quest-world .q-map-card{border:1px solid #ffffff40;border-radius:16px;background:#112541;padding:1rem;align-self:start}.aift-quest-world .q-map{display:flex;flex-wrap:wrap;align-items:center;gap:.3rem;margin:1rem 0}.aift-quest-world .q-map-step{width:auto;padding:.45rem .65rem;font-size:.82rem}.aift-quest-world .q-map-step[data-kind=root]{border-color:var(--q-red)}.aift-quest-world .q-map-step[data-kind=trunk]{border-color:var(--q-gold)}.aift-quest-world .q-map-step[data-kind=fruit]{border-color:var(--q-green)}\n@media(max-width:720px){.aift-quest-world .q-constellation-layout{grid-template-columns:1fr}.aift-quest-world .q-node-index{max-height:320px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}}\n";
 document.head.append(styles);
 const byId=new Map(nodes.map(n=>[n.id,n]));
 const candidates=nodes.filter(n=>n.kind==='fruit'||(n.kind==='branch'&&!nodes.some(c=>c.parent===n.id&&c.kind==='fruit')));
@@ -29,6 +30,33 @@ for(const n of [node,...lineage(node).filter(n=>n.kind==='root')]){const a=docum
 detail.append(kicker,heading,description,chain,meta,links);
 if(node.kind!=='fruit'){const gap=document.createElement('p');gap.className='q-empty';gap.textContent='No finished public product is verified for this capability. Its source and documented functions remain explorable.';detail.append(gap)}
 }
+
+/* Semantic constellation: derived only from the immutable curated catalog. */
+const explorer=document.createElement('section');explorer.className='q-constellation';explorer.setAttribute('aria-label','Explore source-to-outcome constellation');
+explorer.innerHTML='<div class="q-kicker">Source-to-outcome constellation</div><h3>Navigate the living federation</h3><p>Move through the documented hierarchy. Repository roots are sources, never finished products. A missing fruit means the outcome is not verified.</p><div class="q-stagebar" role="group" aria-label="Filter by emergence stage"></div><label class="q-search-label" for="aiftQuestSearch">Search source systems and capabilities</label><input id="aiftQuestSearch" type="search" autocomplete="off" placeholder="Search roots, branches, knowledge and outcomes"><div class="q-constellation-layout"><div><p class="q-meta" id="aiftQuestCount" role="status"></p><div class="q-node-index" role="list" aria-label="Accessible constellation index"></div></div><div class="q-map-card"><div class="q-kicker">Lineage minimap</div><div class="q-map" aria-label="Reversible source lineage"></div><p class="q-meta">Select any ancestor to retrace the journey. Links open documented sources, never simulated products.</p></div></div>';
+host.append(explorer);
+const stagebar=explorer.querySelector('.q-stagebar'),search=explorer.querySelector('#aiftQuestSearch'),index=explorer.querySelector('.q-node-index'),count=explorer.querySelector('#aiftQuestCount'),minimap=explorer.querySelector('.q-map');
+const stages=[['all','All'],['root','Roots'],['trunk','Trunk'],['branch','Systems'],['leaf','Knowledge'],['flower','Emerging'],['fruit','Outcomes']];
+let stage='all',focusedNode=null;
+function showNode(id){
+ const node=byId.get(id);if(!node)return;focusedNode=node;
+ const path=lineage(node);minimap.replaceChildren();
+ path.forEach((n,i)=>{if(i){const arrow=document.createElement('span');arrow.textContent='›';arrow.setAttribute('aria-hidden','true');minimap.append(arrow)}
+ const button=document.createElement('button');button.type='button';button.className='q-map-step';button.dataset.kind=n.kind;button.textContent=n.label;button.setAttribute('aria-label','Inspect '+n.kind+' '+n.label);
+ button.addEventListener('click',()=>showNode(n.id));minimap.append(button)});
+ index.querySelectorAll('button').forEach(b=>b.setAttribute('aria-current',String(b.dataset.id===id)));
+ if(candidates.some(n=>n.id===id))select(id);
+ else {detail.replaceChildren();const title=document.createElement('h3');title.textContent=node.label;const desc=document.createElement('p');desc.textContent=node.desc;const status=document.createElement('p');status.className='q-empty';status.textContent='Curated source evidence only; no completed public outcome or live verification is implied.';const link=document.createElement('a');link.href=node.url;link.textContent='Inspect documented source';if(/^https?:/.test(node.url))link.rel='noopener noreferrer';detail.append(title,desc,status,link)}
+}
+function renderIndex(){
+ const query=search.value.trim().toLocaleLowerCase();const matching=nodes.filter(n=>(stage==='all'||n.kind===stage)&&[n.label,n.desc,n.kind].join(' ').toLocaleLowerCase().includes(query));
+ index.replaceChildren();count.textContent=matching.length+' documented nodes · curated, not live';
+ for(const node of matching){const item=document.createElement('div');item.setAttribute('role','listitem');const button=document.createElement('button');button.type='button';button.dataset.id=node.id;button.dataset.kind=node.kind;button.setAttribute('aria-current',String(focusedNode?.id===node.id));const name=document.createElement('strong');name.textContent=node.label;const type=document.createElement('small');type.textContent=node.kind==='root'?'Repository source':node.kind==='fruit'?'Documented public outcome':node.kind+' · curated';button.append(name,type);button.addEventListener('click',()=>showNode(node.id));item.append(button);index.append(item)}
+ if(!matching.length){const empty=document.createElement('p');empty.className='q-empty';empty.textContent='No documented nodes match. Try another stage or search term.';index.append(empty)}
+}
+for(const [kind,label] of stages){const button=document.createElement('button');button.type='button';button.textContent=label;button.setAttribute('aria-pressed',String(kind===stage));button.addEventListener('click',()=>{stage=kind;stagebar.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));renderIndex()});stagebar.append(button)}
+search.addEventListener('input',renderIndex);renderIndex();
+
 candidates.forEach(n=>{const button=document.createElement('button');button.type='button';button.dataset.id=n.id;button.setAttribute('aria-pressed','false');button.textContent=n.label+(n.kind==='fruit'?' · public outcome':' · investigate evidence gap');button.addEventListener('click',()=>select(n.id));options.append(button)});
-const mount=document.querySelector('main')||document.body;mount.append(host);if(candidates.length)select(candidates[0].id);
+const mount=document.querySelector('main')||document.body;mount.append(host);if(candidates.length)showNode(candidates[0].id);
 })(window);
