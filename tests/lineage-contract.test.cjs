@@ -30,3 +30,15 @@ test('lineage contract is immutable and all local outcome paths resolve',()=>{
  assert.ok(Object.isFrozen(context.AIFT_LINEAGE_NODES));
  for(const n of nodes){assert.ok(Object.isFrozen(n));if(n.kind==='fruit')assert.ok(fs.existsSync(path.join(base,n.url)))}
 });
+
+test('Atlas consumes the shared catalog and offers searchable accessible provenance',()=>{
+ const html=fs.readFileSync(path.join(base,'atlas.html'),'utf8');
+ for(const marker of ['src="lineage-data.js"','id="atlas-provenance"','id="atlas-lineage-search"','id="atlas-lineage-results"','id="atlas-lineage-trail"','aria-live="polite"'])assert.ok(html.includes(marker),marker);
+ assert.match(html,/Repositories are roots, not fruits/);
+});
+test('Atlas distinguishes thematic spheres from product fruits',()=>{
+ const html=fs.readFileSync(path.join(base,'atlas.html'),'utf8');
+ assert.match(html,/<h2>Exploration Spheres<\/h2>/);
+ assert.match(html,/These spheres are thematic navigation, not repositories or verified product fruits/);
+ assert.doesNotMatch(html,/<h2>Living Fruits<\/h2>/);
+});
