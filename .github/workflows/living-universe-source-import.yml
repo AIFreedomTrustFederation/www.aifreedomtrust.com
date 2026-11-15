@@ -35,7 +35,8 @@ jobs:
           url = urllib.parse.urlsplit(os.environ['ARCHIVE_URL'])
           ok = (url.scheme == 'https' and url.hostname == 'github.com' and
                 (url.path.startswith('/AIFreedomTrustFederation/') or
-                 url.path.startswith('/user-attachments/assets/')) and
+                 url.path.startswith('/user-attachments/assets/') or
+                 url.path.startswith('/user-attachments/files/')) and
                 not url.username and not url.password and not url.query and not url.fragment)
           if not ok:
               raise SystemExit('Only trusted github.com organization release assets or issue attachments are accepted')
