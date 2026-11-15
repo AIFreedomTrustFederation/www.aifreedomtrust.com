@@ -14,3 +14,11 @@ test('source contract forbids repositories being declared as fruits',()=>{
 const source=read('lineage-data.js');assert.match(source,/Root must feed shared trunk/);
 assert.match(source,/Unsafe outcome URL/);
 });
+
+test('both public surfaces share evidence-filtered semantic layers and reversible lineage map',()=>{
+ const code=read('knowledge-observatory.js');
+ for(const marker of ['Knowledge growth layers','Reversible source lineage map','Source-to-outcome lineage','No documented ','activeLayer','ancestors(n)','mapTrail.replaceChildren','aria-pressed','prefers-reduced-motion','forced-colors'])assert.ok(code.includes(marker),marker);
+ assert.match(code,/activeLayer==='all'\|\|n\.kind===activeLayer/);
+ assert.match(code,/map\.replaceChildren\(mapTitle,mapTrail,mapNote\)/);
+ assert.doesNotMatch(code,/fetch\(|localStorage|sendBeacon|Math\.random/);
+});
