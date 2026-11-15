@@ -1,0 +1,31 @@
+name: Living Universe Canonical Preservation
+on:
+  pull_request:
+    paths:
+      - 'living-universe-full.html'
+      - 'source/**'
+      - 'scripts/check_living_universe_*.py'
+      - '.github/workflows/living-universe-preservation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preserve-original:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify canonical 14-element source and full experience
+        run: |
+          python3 scripts/check_living_universe_canonical.py
+          python3 scripts/check_living_universe_preservation.py
+      - name: Verify original source integrity\n        run: python3 scripts/check_living_universe_source_integrity.py\n      - name: Validate editable source tests
+        run: python3 -m unittest discover -s source/tests -v
+      - name: Check JavaScript module syntax
+        run: |
+          for file in source/src/*.js; do node --check "$file"; done
+      - name: Rebuild full standalone experience
+        run: |
+          python3 source/build.py
+          cmp source/dist/index.html living-universe-full.html
