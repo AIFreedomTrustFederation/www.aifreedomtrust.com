@@ -65,3 +65,19 @@ test('shared expedition constellation offers searchable stage filters and revers
  assert.match(js,/button.addEventListener\('click',\(\)=>showNode\(n.id\)\)/);
  assert.doesNotMatch(js,/fetch\s*\(|XMLHttpRequest|localStorage|Math\.random/);
 });
+
+
+test('spatial constellation uses deterministic curated ancestry and keyboard access',()=>{
+ const js=fs.readFileSync(path.join(base,'evidence-expeditions.js'),'utf8');
+ assert.doesNotThrow(()=>new vm.Script(js));
+ for(const marker of ['function renderSky()','const positions=new Map()','const spatialNodes=new Map()','aria-label','q-sky-node','q-sky-line','keydown','e.key===\'Enter\'','renderSky();'])assert.ok(js.includes(marker),marker);
+ assert.match(js,/positions\.set\('federation'/);
+ assert.match(js,/svg\.setAttribute\('viewBox'/);
+ assert.doesNotMatch(js,/Math\.random|fetch\s*\(|XMLHttpRequest|localStorage/);
+});
+test('shared expedition avoids duplicate global search IDs',()=>{
+ const js=fs.readFileSync(path.join(base,'evidence-expeditions.js'),'utf8');
+ assert.match(js,/const instanceId='aift-expedition-'/);
+ assert.match(js,/instanceId\+'-search'/);
+ assert.match(js,/explorer\.querySelector\('input\[type=search\]'\)/);
+});
