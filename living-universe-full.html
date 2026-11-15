@@ -1,0 +1,2841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Living Universe</title>
+<meta name="description" content="AI Freedom Trust Federation: a living federation for human freedom in the age of intelligence. Explore the Tree of Emergence, its seven movements and six living worlds.">
+<meta name="theme-color" content="#04050b">
+<meta property="og:type" content="website">
+<meta property="og:title" content="The Living Universe · AI Freedom Trust Federation">
+<meta property="og:description" content="Explore the complete Tree of Emergence, seven movements, six worlds, journeys and Celestial Atlas.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Layout: the universe fills the screen. Type sits on it in two quiet margins:
+     top left says where you are, a sheet at the bottom says what you found. One visual world, always night. */
+  color-scheme: dark;
+  --void: #04050b;
+  --sheet: rgba(9, 10, 22, .88);
+  --line: rgba(244, 223, 174, .2);
+  --ink: #f5eede;
+  --dim: #bcb7cb;
+  --pearl: #f4dfae;
+  --focus: #9fd4ff;
+  --accent: #f4dfae;
+  --display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --body: "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--void); color: var(--ink); font: 400 16px/1.5 var(--body); overflow: hidden; -webkit-font-smoothing: antialiased; }
+[hidden] { display: none !important; }
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+a { color: var(--ink); text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+[tabindex="-1"]:focus { outline: none; }
+h1, h2, h3, h4 { text-wrap: balance; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.skip { position: absolute; left: 12px; top: -80px; z-index: 60; background: var(--ink); color: #05060d; padding: 10px 14px; border-radius: 8px; }
+.skip:focus { top: 12px; }
+
+#app { position: fixed; inset: 0; overflow: hidden; }
+#stage { position: absolute; inset: 0; touch-action: none; outline: none; user-select: none; -webkit-user-select: none; }
+#stage::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 46%, transparent 52%, rgba(2, 3, 8, .6) 100%); }
+#sky { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+#nodes { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 1; }
+
+.node { position: absolute; left: 0; top: 0; width: 48px; height: 48px; margin: -24px 0 0 -24px; padding: 0; border: 0; border-radius: 50%; background: none; color: var(--ink); pointer-events: auto; touch-action: none; }
+.node.off { display: none; }
+.node .lab { position: absolute; left: 50%; top: 40px; transform: translateX(-50%); width: max-content; max-width: 150px; text-align: center; font: 500 13.5px/1.2 var(--body); text-shadow: 0 1px 3px #000, 0 0 10px #000, 0 0 18px #000; pointer-events: none; transition: opacity .25s; }
+.node.k-leaf .lab, .node.k-star .lab { font-size: 13px; }
+.node.hide-lab .lab { opacity: 0; }
+.node:focus-visible .lab, .node:hover .lab { opacity: 1; }
+.node .num { position: absolute; inset: 0; display: grid; place-items: center; font: 500 11px/1 var(--display); color: #2a1a05; pointer-events: none; }
+
+#bloom { position: absolute; inset: 0; z-index: 4; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle at var(--bx, 50%) var(--by, 50%), #fff 0, var(--bc, #f4dfae) 16%, color-mix(in srgb, var(--bc, #f4dfae) 45%, #05060d) 46%, #05060d 82%); }
+#bloom.grow.on { animation: bloom-in .76s cubic-bezier(.5, 0, .9, .4) forwards; }
+#bloom.grow.out { animation: bloom-out .95s ease-out forwards; }
+#bloom.fade { transition: opacity .25s; }
+#bloom.fade.on { opacity: 1; transition: opacity .14s; }
+@keyframes bloom-in { from { opacity: 0; clip-path: circle(0 at var(--bx) var(--by)); } 35% { opacity: 1; } to { opacity: 1; clip-path: circle(150% at var(--bx) var(--by)); } }
+@keyframes bloom-out { from { opacity: 1; } to { opacity: 0; } }
+
+#top { position: absolute; left: 0; right: 0; top: 0; z-index: 6; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 10px 12px 30px 16px; background: linear-gradient(rgba(4, 5, 11, .82), rgba(4, 5, 11, 0)); pointer-events: none; }
+#top > * { pointer-events: auto; }
+.brand { min-width: 0; }
+.wordmark { display: block; background: none; border: 0; padding: 6px 0 2px; font: 500 16px/1.2 var(--display); letter-spacing: .005em; color: var(--ink); text-align: left; }
+#crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 0 7px; font-size: 14px; color: var(--dim); }
+#crumbs button { background: none; border: 0; padding: 6px 0; min-height: 32px; color: var(--dim); text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 4px; }
+#crumbs [aria-current] { color: var(--accent); text-decoration: none; }
+#crumbs span[aria-current] { padding: 6px 0; }
+.tools { display: flex; gap: 6px; flex: none; }
+.icon { width: 44px; height: 44px; flex: none; border-radius: 50%; border: 1px solid var(--line); background: rgba(8, 9, 20, .6); display: grid; place-items: center; color: var(--ink); padding: 0; }
+.icon svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.icon[aria-pressed="true"] { background: var(--ink); color: #05060d; border-color: var(--ink); }
+
+#count { margin: 0; font-size: 13px; color: var(--dim); }
+#mnav { position: absolute; left: 50%; bottom: 74px; transform: translateX(-50%); z-index: 6; display: flex; align-items: center; gap: 8px; width: max-content; max-width: calc(100% - 24px); }
+#mnav .pill { white-space: nowrap; }
+#m-pos { color: var(--dim); font-size: 13.5px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+#app[data-kind="movement"] #zoom { bottom: 136px; }
+.node.nudge::before { content: ""; position: absolute; inset: 2px; border-radius: 50%; border: 2px solid var(--ink); animation: nudge 1.8s ease-out infinite; pointer-events: none; }
+@keyframes nudge { from { transform: scale(.6); opacity: .9; } to { transform: scale(2.1); opacity: 0; } }
+#zoom { position: absolute; right: 12px; bottom: 92px; z-index: 5; display: flex; flex-direction: column; gap: 6px; }
+#zoom .icon { width: 40px; height: 40px; font: 400 20px/1 var(--body); }
+#app.has-panel #mnav, #app.arriving #mnav, #app.arriving #count,
+#app.has-panel #zoom, #app[data-mode="journey"] #zoom, #app[data-mode="reflect"] #zoom { display: none; }
+
+#dock { position: absolute; left: 0; right: 0; bottom: 0; z-index: 8; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; padding: 26px 12px 12px; background: linear-gradient(rgba(4, 5, 11, 0), rgba(4, 5, 11, .9) 55%); pointer-events: none; }
+#dock > * { pointer-events: auto; }
+.modes { display: flex; border: 1px solid var(--line); border-radius: 999px; background: rgba(8, 9, 20, .78); padding: 3px; }
+.modes button { border: 0; background: none; padding: 8px 13px; min-height: 40px; border-radius: 999px; font-size: 14.5px; color: var(--dim); }
+.modes button[aria-pressed="true"] { background: var(--ink); color: #05060d; font-weight: 700; }
+.pill { border: 1px solid var(--line); background: rgba(8, 9, 20, .78); border-radius: 999px; padding: 8px 15px; min-height: 44px; font-size: 14.5px; }
+#btn-tree { justify-self: start; }
+#btn-atlas { justify-self: end; }
+
+#panel { position: absolute; left: 8px; right: 8px; bottom: 76px; z-index: 7; max-height: min(52%, 470px); display: flex; flex-direction: column; background: var(--sheet); border: 1px solid var(--line); border-radius: 20px; box-shadow: 0 18px 60px rgba(0, 0, 0, .6); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+#app[data-intensity="light"] #panel, #app[data-intensity="light"] #journey { backdrop-filter: none; -webkit-backdrop-filter: none; background: rgba(9, 10, 22, .96); }
+.p-top { position: absolute; top: 4px; right: 4px; z-index: 2; }
+.p-top .icon { width: 44px; height: 44px; border: 0; background: none; }
+#panel-body { overflow: auto; padding: 6px 18px 18px; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; border-radius: 20px; }
+#panel h2 { font: 400 27px/1.12 var(--display); letter-spacing: -.005em; margin: 12px 44px 8px 0; }
+#panel h3 { font: 700 14px/1.3 var(--body); color: var(--dim); margin: 20px 0 8px; }
+#panel p { margin: 0 0 12px; max-width: 62ch; }
+.look { color: var(--accent); font-size: 15px; }
+.q { font: italic 300 25px/1.2 var(--display); color: var(--accent); }
+.kind { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; font-size: 13.5px; color: var(--dim); }
+.chip { border: 1px solid var(--accent); color: var(--accent); border-radius: 999px; padding: 1px 10px; font-weight: 700; }
+.status { border: 1px dashed var(--dim); border-radius: 999px; padding: 1px 10px; color: var(--ink); }
+.whole { border-left: 2px solid var(--accent); padding: 2px 0 2px 12px; color: var(--dim); }
+.next { display: flex; flex-wrap: wrap; gap: 8px; }
+.go { border: 1px solid var(--line); background: rgba(255, 255, 255, .05); border-radius: 12px; padding: 9px 13px; min-height: 44px; text-align: left; font-size: 15px; }
+.go:hover { background: rgba(255, 255, 255, .1); }
+.primary { background: var(--accent); color: #07080f; border: 0; border-radius: 999px; padding: 12px 22px; min-height: 48px; font-weight: 700; font-size: 16px; }
+.ext, .hint, .fine { color: var(--dim); font-size: 14px; }
+.pager { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--dim); font-size: 14px; text-align: center; }
+.stars { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.stars .go { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.stars .go small { color: var(--dim); font-size: 13px; flex: none; }
+.stars .go.seen { border-color: var(--accent); }
+.defs { margin: 0 0 12px; display: grid; gap: 8px; }
+.defs div { display: grid; grid-template-columns: 7.2em 1fr; gap: 10px; }
+.defs dt { color: var(--accent); font-weight: 700; }
+.defs dd { margin: 0; }
+.invite { border-top: 1px solid var(--line); padding: 14px 0 4px; }
+.invite h3 { color: var(--ink) !important; font: 400 19px/1.2 var(--display) !important; margin: 0 0 6px !important; }
+.walk textarea { width: 100%; min-height: 76px; border-radius: 12px; border: 1px solid var(--line); background: rgba(255, 255, 255, .05); color: var(--ink); font: inherit; padding: 10px 12px; resize: vertical; }
+.walk label { display: block; font-weight: 700; margin: 0 0 6px; font-size: 14.5px; }
+.walk ol { margin: 0 0 12px; padding-left: 1.3em; }
+.walk li { margin-bottom: 8px; }
+.steps { display: flex; gap: 5px; margin: 0 0 12px; }
+.steps i { flex: 1; height: 4px; border-radius: 2px; background: rgba(255, 255, 255, .14); }
+
+#journey { position: absolute; left: 8px; right: 8px; bottom: 76px; z-index: 7; background: var(--sheet); border: 1px solid var(--line); border-radius: 20px; padding: 16px 16px 12px; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+#j-cap { font: italic 300 22px/1.28 var(--display); margin: 0 0 12px; max-width: 34ch; }
+.j-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.j-row .pill:disabled { opacity: .4; cursor: default; }
+#j-count { color: var(--dim); font-size: 14px; margin-left: auto; font-variant-numeric: tabular-nums; }
+#j-go { margin-top: 10px; }
+
+#reflect { position: absolute; inset: 0; z-index: 5; overflow: auto; background: rgba(4, 5, 11, .95); padding: 84px 20px 120px; -webkit-overflow-scrolling: touch; }
+.r-wrap { max-width: 66ch; margin: 0 auto; }
+#reflect h1 { font: 300 clamp(34px, 9vw, 52px)/1.04 var(--display); letter-spacing: -.012em; margin: 0 0 14px; }
+#reflect .lede { font: italic 300 22px/1.3 var(--display); color: var(--pearl); margin: 0 0 14px; }
+#reflect h2 { font: 400 30px/1.12 var(--display); margin: 64px 0 6px; color: var(--pearl); }
+#reflect h3 { font: 400 25px/1.15 var(--display); margin: 44px 0 4px; color: var(--wc, var(--ink)); scroll-margin-top: 84px; }
+#reflect h4 { font: 700 17px/1.3 var(--body); margin: 28px 0 6px; scroll-margin-top: 84px; }
+#reflect p { margin: 0 0 10px; }
+#reflect section { --accent: var(--wc, var(--pearl)); scroll-margin-top: 84px; }
+#reflect article { scroll-margin-top: 84px; }
+.r-toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 8px; }
+.r-toc .go { min-height: 40px; padding: 7px 12px; }
+.r-links { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 6px 0 0; }
+.r-links button { background: none; border: 0; padding: 6px 0; min-height: 32px; text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 4px; text-align: left; }
+.see { margin: 8px 0 4px; }
+
+#atlas { position: absolute; inset: 0; z-index: 20; background: #04050b; display: flex; flex-direction: column; }
+.a-head { display: flex; gap: 8px; align-items: center; padding: 10px 12px 6px 16px; flex: none; }
+.a-head h2 { font: 400 22px/1.1 var(--display); margin: 0; flex: none; }
+#a-search { flex: 1; min-width: 0; height: 44px; border-radius: 999px; border: 1px solid var(--line); background: rgba(255, 255, 255, .06); padding: 0 16px; }
+#a-search::placeholder { color: var(--dim); }
+#a-trail { padding: 0 16px 6px; margin: 0; color: var(--dim); font-size: 14px; flex: none; }
+#a-map { flex: 1; min-height: 0; position: relative; touch-action: none; overflow: hidden; }
+#a-map > svg { width: 100%; height: 100%; display: block; }
+#a-zoom { position: absolute; left: 12px; bottom: 10px; display: flex; flex-direction: column; gap: 6px; }
+#a-zoom .icon { width: 40px; height: 40px; font: 400 20px/1 var(--body); }
+#a-results { position: absolute; left: 12px; right: 12px; top: 4px; max-height: 70%; overflow: auto; background: #0b0c1c; border: 1px solid var(--line); border-radius: 16px; padding: 8px; display: grid; gap: 6px; z-index: 2; }
+#a-results .go { width: 100%; }
+#a-results .go small { display: block; color: var(--dim); font-size: 13px; }
+#a-card { flex: none; max-height: 36%; overflow: auto; border-top: 1px solid var(--line); background: #0b0c1c; padding: 14px 16px 18px; }
+#a-card h3 { font: 400 23px/1.15 var(--display); margin: 0 0 6px; color: var(--accent); }
+#a-card p { margin: 0 0 10px; max-width: 62ch; }
+.a-edge { fill: none; stroke: #f4dfae; stroke-width: 2; opacity: .13; }
+.a-edge.lit { opacity: .55; }
+.a-edge.on { opacity: .95; stroke-width: 3; }
+.a-trunk { stroke: #f4dfae; stroke-width: 5; opacity: .5; fill: none; stroke-linecap: round; }
+.a-node { cursor: pointer; }
+.a-node circle.ring { fill: rgba(4, 5, 11, .9); stroke: var(--c); stroke-width: 3; }
+.a-node.seen circle.ring { fill: var(--c); }
+.a-node circle.glow { fill: var(--c); opacity: .16; }
+.a-node text { fill: var(--ink); font: 500 35px var(--body); paint-order: stroke; stroke: #04050b; stroke-width: 9px; stroke-linejoin: round; }
+.a-node text.n { font: 500 23px var(--display); fill: var(--ink); stroke: none; }
+.a-node.seen text.n { fill: #07080f; }
+.a-node.here circle.you { stroke: #fff; stroke-width: 2.5; fill: none; stroke-dasharray: 5 7; }
+.a-node:focus-visible { outline: none; }
+.a-node:focus-visible circle.ring { stroke: var(--focus); stroke-width: 6; }
+.a-dot { fill: none; stroke: var(--c); stroke-width: 1.5; opacity: 0; transition: opacity .2s; }
+.a-dot.seen { fill: var(--c); }
+#a-map.deep .a-dot { opacity: .9; }
+
+#prefs { position: absolute; inset: 0; z-index: 30; background: rgba(2, 3, 8, .66); display: grid; place-items: end center; }
+.sheet { width: min(540px, 100%); max-height: 90%; overflow: auto; background: #0b0c1c; border: 1px solid var(--line); border-radius: 22px 22px 0 0; padding: 14px 18px 22px; }
+.sheet-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.sheet h2 { font: 400 27px/1.1 var(--display); margin: 0; }
+.sheet h3 { font: 700 15px/1.3 var(--body); margin: 20px 0 8px; }
+fieldset { border: 0; padding: 0; margin: 0 0 18px; min-width: 0; }
+legend { font-weight: 700; padding: 0; margin-bottom: 8px; }
+.seg { display: flex; flex-wrap: wrap; gap: 6px; }
+.seg label { position: relative; }
+.seg input { position: absolute; opacity: 0; inset: 0; }
+.seg span { display: block; border: 1px solid var(--line); border-radius: 999px; padding: 9px 16px; min-height: 42px; }
+.seg input:checked + span { background: var(--ink); color: #05060d; border-color: var(--ink); font-weight: 700; }
+.seg input:focus-visible + span { outline: 2px solid var(--focus); outline-offset: 2px; }
+.check { display: flex; align-items: center; gap: 10px; min-height: 44px; }
+.check input { width: 22px; height: 22px; accent-color: var(--pearl); }
+input[type="range"] { width: 100%; accent-color: var(--pearl); height: 32px; }
+.sheet .fine { margin: 6px 0 0; }
+
+#arrival { position: absolute; inset: 0; z-index: 15; display: flex; flex-direction: column; justify-content: flex-end; padding: 20px 20px 26px; pointer-events: none; background: linear-gradient(rgba(4, 5, 11, 0) 42%, rgba(4, 5, 11, .86)); }
+#arrival > * { pointer-events: auto; }
+.a-mark { position: absolute; left: 20px; top: 18px; margin: 0; font: 500 16px/1.2 var(--display); }
+#a-cap { font: italic 300 clamp(24px, 6.6vw, 38px)/1.18 var(--display); max-width: 20ch; min-height: 2.4em; margin: 0 0 16px; color: var(--pearl); }
+.a-invite h1 { font: 300 clamp(31px, 8.6vw, 58px)/1.03 var(--display); letter-spacing: -.014em; margin: 0 0 12px; max-width: 15ch; }
+.a-invite p { font: italic 300 20px/1.3 var(--display); color: var(--pearl); margin: 0 0 20px; max-width: 30ch; }
+.a-row { display: flex; gap: 6px 14px; flex-wrap: wrap; align-items: center; }
+.quiet { background: none; border: 0; color: var(--dim); text-decoration: underline; text-underline-offset: 4px; padding: 12px 4px; min-height: 44px; }
+#app.arriving #top, #app.arriving #dock, #app.arriving #zoom, #app.arriving #nodes, #app.arriving #panel { display: none; }
+
+#hint { position: absolute; left: 50%; bottom: 150px; z-index: 9; transform: translateX(-50%); width: max-content; max-width: min(88%, 420px); text-align: center; background: rgba(9, 10, 22, .92); border: 1px solid var(--line); border-radius: 14px; padding: 10px 16px; font-size: 14.5px; opacity: 0; pointer-events: none; transition: opacity .4s; }
+#hint.on { opacity: 1; }
+#app.has-panel #hint { bottom: auto; top: 96px; }
+
+#app[data-mode="reflect"] #stage { visibility: hidden; }
+#app[data-mode="reflect"] #panel, #app[data-mode="reflect"] #crumbs, #app[data-mode="journey"] #panel { display: none; }
+#app[data-mode="reflect"] #top { background: linear-gradient(rgba(4, 5, 11, .97) 60%, rgba(4, 5, 11, 0)); }
+
+#app[data-mode="reflect"] #btn-tree { visibility: hidden; }
+#app[data-mode="reflect"] #dock { background: linear-gradient(rgba(4, 5, 11, 0), #04050b 42%); }
+@media (max-width: 430px) {
+  #dock { gap: 6px; padding: 26px 10px 12px; }
+  .modes button { padding: 8px 10px; }
+  .pill { padding: 8px 12px; }
+}
+@media (max-width: 375px) {
+  .modes button { padding: 8px 8px; font-size: 14px; }
+  .pill { padding: 8px 10px; font-size: 14px; }
+  .wordmark { font-size: 15px; }
+}
+@media (min-width: 900px) {
+  #panel { left: auto; right: 18px; top: 84px; bottom: 92px; width: 400px; max-height: none; }
+  #journey { left: 50%; right: auto; transform: translateX(-50%); width: min(720px, 90%); bottom: 88px; padding: 20px 22px 16px; }
+  #j-cap { font-size: 26px; }
+  #app.has-panel #zoom { display: flex; right: 436px; }
+  #app.has-panel #mnav { display: flex; left: calc(50% - 209px); }
+  #mnav { bottom: 84px; }
+  #arrival { padding: 40px 6vw 56px; }
+  .a-mark { left: 6vw; top: 28px; }
+  #prefs { place-items: center; }
+  .sheet { border-radius: 22px; }
+  #atlas { flex-direction: row; flex-wrap: wrap; }
+  .a-head, #a-trail { flex: 0 0 100%; }
+  #a-map { flex: 1 1 0; height: calc(100% - 96px); }
+  #a-card { flex: 0 0 380px; max-height: none; height: calc(100% - 96px); border-top: 0; border-left: 1px solid var(--line); }
+  #hint { bottom: 110px; }
+  #top { padding: 16px 20px 34px 26px; }
+  .wordmark { font-size: 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation-duration: .01s !important; }
+  .node.nudge::before { animation: none; transform: scale(1.4); opacity: .8; }
+}
+
+</style>
+</head>
+<body>
+<a class="skip" href="#reflect" id="skiplink">Skip the visual universe and read everything as text</a>
+<div id="app" class="arriving" data-mode="explore" data-loc="tree">
+
+  <div id="stage" tabindex="0" role="group" aria-label="The Tree of Emergence. Every branch, fruit and star is a button. Arrow keys turn the view, plus and minus move closer or farther.">
+    <canvas id="sky" aria-hidden="true"></canvas>
+    <div id="nodes"></div>
+  </div>
+  <div id="bloom" aria-hidden="true"></div>
+
+  <header id="top">
+    <div class="brand">
+      <button type="button" class="wordmark" id="home" data-go="tree">AI Freedom Trust Federation</button>
+      <nav id="crumbs" aria-label="Where you are"></nav>
+      <p id="count" hidden></p>
+    </div>
+    <div class="tools">
+      <button type="button" class="icon" id="btn-sound" aria-pressed="false" aria-label="Sound" title="Sound">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4h3l4 4V6L7 10H4z"/><path d="M15 9.5a3.5 3.5 0 0 1 0 5M17.5 7a7 7 0 0 1 0 10"/></svg>
+      </button>
+      <button type="button" class="icon" id="btn-pause" aria-pressed="false" aria-label="Pause all motion" title="Pause all motion">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg>
+      </button>
+      <button type="button" class="icon" id="btn-menu" aria-label="Comfort and preferences" title="Comfort and preferences">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14M5 16h14"/><circle cx="9" cy="8" r="2.2" fill="#0b0c1c"/><circle cx="15" cy="16" r="2.2" fill="#0b0c1c"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div id="zoom">
+    <button type="button" class="icon" id="z-in" aria-label="Move closer">+</button>
+    <button type="button" class="icon" id="z-out" aria-label="Move farther">&minus;</button>
+    <button type="button" class="icon" id="z-fit" aria-label="See the whole view">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+    </button>
+  </div>
+
+  <nav id="mnav" aria-label="The seven movements" hidden>
+    <button type="button" class="pill" id="m-prev"></button>
+    <span id="m-pos"></span>
+    <button type="button" class="pill" id="m-next"></button>
+  </nav>
+
+  <aside id="panel" aria-label="What you found" hidden>
+    <div class="p-top"><button type="button" class="icon" id="panel-close" aria-label="Close this panel">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div id="panel-body"></div>
+  </aside>
+
+  <div id="journey" hidden>
+    <p id="j-cap" aria-live="polite"></p>
+    <div class="j-row">
+      <button type="button" class="pill" id="j-prev">Back</button>
+      <button type="button" class="pill" id="j-play" aria-pressed="true">Pause</button>
+      <button type="button" class="pill" id="j-next">Next</button>
+      <button type="button" class="pill" id="j-voice" aria-pressed="false" hidden>Narrate</button>
+      <span id="j-count"></span>
+    </div>
+    <button type="button" class="primary" id="j-go" hidden></button>
+  </div>
+
+  <main id="reflect" tabindex="-1" hidden></main>
+
+  <footer id="dock">
+    <button type="button" class="pill" id="btn-tree" hidden>Tree</button>
+    <div class="modes" role="group" aria-label="Ways to explore">
+      <button type="button" data-mode="journey" aria-pressed="false">Journey</button>
+      <button type="button" data-mode="explore" aria-pressed="true">Explore</button>
+      <button type="button" data-mode="reflect" aria-pressed="false">Reflect</button>
+    </div>
+    <button type="button" class="pill" id="btn-import" title="Restore a previously exported journey">Import journey</button>
+    <input id="journey-file" type="file" accept=".json,application/json" hidden aria-label="Choose a previously exported journey">
+    <button type="button" class="pill" id="btn-export" title="Save a private copy of your discoveries">Export journey</button>
+    <button type="button" class="pill" id="btn-atlas">Atlas</button>
+  </footer>
+
+  <section id="atlas" role="dialog" aria-modal="true" aria-labelledby="a-title" hidden>
+    <div class="a-head">
+      <h2 id="a-title">Celestial Atlas</h2>
+      <label class="sr" for="a-search">Search every world and discovery</label>
+      <input id="a-search" type="search" placeholder="Search the universe" autocomplete="off">
+      <button type="button" class="icon" id="a-close" aria-label="Close the atlas">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <p id="a-trail"></p>
+    <div id="a-map">
+      <div id="a-results" hidden></div>
+      <div id="a-zoom">
+        <button type="button" class="icon" id="az-in" aria-label="Zoom in">+</button>
+        <button type="button" class="icon" id="az-out" aria-label="Zoom out">&minus;</button>
+        <button type="button" class="icon" id="az-fit" aria-label="See the whole atlas">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+      </div>
+    </div>
+    <div id="a-card"></div>
+  </section>
+
+  <section id="prefs" role="dialog" aria-modal="true" aria-labelledby="prefs-title" hidden>
+    <div class="sheet">
+      <div class="sheet-head">
+        <h2 id="prefs-title">Comfort</h2>
+        <button type="button" class="icon" id="prefs-close" aria-label="Close">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+      <fieldset>
+        <legend>Motion</legend>
+        <div class="seg">
+          <label><input type="radio" name="motion" id="motion-full" value="full"><span>Full</span></label>
+          <label><input type="radio" name="motion" id="motion-gentle" value="gentle"><span>Gentle</span></label>
+          <label><input type="radio" name="motion" id="motion-still" value="still"><span>Still</span></label>
+        </div>
+        <p class="fine">Gentle keeps the worlds alive and stops the camera from flying. Still holds every picture in place.</p>
+      </fieldset>
+      <fieldset>
+        <legend>Visual richness</legend>
+        <div class="seg">
+          <label><input type="radio" name="intensity" id="int-rich" value="rich"><span>Rich</span></label>
+          <label><input type="radio" name="intensity" id="int-balanced" value="balanced"><span>Balanced</span></label>
+          <label><input type="radio" name="intensity" id="int-light" value="light"><span>Light</span></label>
+        </div>
+        <p class="fine">Light is kinder to older phones and to batteries. Nothing you can read is removed.</p>
+      </fieldset>
+      <fieldset>
+        <legend>Sound</legend>
+        <label class="check"><input type="checkbox" id="pref-sound"> Play the soundscape</label>
+        <label for="pref-vol" class="sr">Volume</label>
+        <input type="range" id="pref-vol" min="0" max="1" step="0.05" value="0.6">
+        <p class="fine">Every sound is made on your device as you travel. Nothing you need to know is carried by sound alone.</p>
+      </fieldset>
+      <fieldset>
+        <legend>Your journey</legend>
+        <label class="check"><input type="checkbox" id="pref-remember"> Remember my journey on this device</label>
+        <p class="fine">Off until you choose it. Kept only in this browser. Nothing is sent anywhere.</p>
+        <p><button type="button" class="go" id="pref-forget">Forget my journey</button></p>
+      </fieldset>
+      <fieldset>
+        <legend>The Awakening</legend>
+        <p><button type="button" class="go" id="pref-replay">Watch the arrival again</button></p>
+      </fieldset>
+      <h3>How to read the labels</h3>
+      <dl class="defs" id="legend"></dl>
+      <p class="fine">Everything here comes from the federation's published works. Symbolic pairings are labeled as metaphor, and nothing is presented as established science.</p>
+    </div>
+  </section>
+
+  <div id="arrival">
+    <p class="a-mark">AI Freedom Trust Federation</p>
+    <p id="a-cap" aria-live="polite"></p>
+    <div class="a-invite" id="a-invite" hidden>
+      <h1>A living federation for human freedom in the age of intelligence</h1>
+      <p>One root. Many branches. Every fruit returns to its source.</p>
+    </div>
+    <div class="a-row">
+      <button type="button" class="primary" id="a-enter" hidden>Enter the Living Universe</button>
+      <button type="button" class="quiet" id="a-skip">Skip the arrival</button>
+      <button type="button" class="quiet" id="a-quiet">Arrive quietly</button>
+    </div>
+  </div>
+
+  <div id="hint" role="status"></div>
+  <div id="live" class="sr" aria-live="polite"></div>
+</div>
+<noscript>
+  <div style="position:fixed;inset:0;z-index:99;background:#04050b;color:#f5eede;padding:24px;font:16px/1.5 system-ui,sans-serif;overflow:auto">
+    <h1 style="font-weight:400">AI Freedom Trust Federation</h1>
+    <p>A living federation for human freedom in the age of intelligence. One root. Many branches. Every fruit returns to its source.</p>
+    <p>The Living Universe needs scripting to draw the Tree of Emergence. You can read the federation's public home at
+    <a style="color:#f4dfae" href="https://aifreedomtrustfederation.github.io/www.aifreedomtrust.com/">aifreedomtrust.com</a>.</p>
+  </div>
+</noscript>
+<script>
+(function () {
+'use strict';
+/* Content map. Every name, relationship and status here comes from the federation's
+   published material: the public home page, the One Eternal Scroll of the Word of ALO'ha,
+   and its stewardship procedure. Nothing is invented to fill space. */
+const C = {
+  red: '#ff5f4f', orange: '#ff9a3d', gold: '#ffd461', green: '#48e0a2', blue: '#52a9ff',
+  indigo: '#827bff', violet: '#c68fff', pearl: '#f4dfae', white: '#fff4e2', amber: '#ffbf6b'
+};
+
+const SITE = 'https://aifreedomtrustfederation.github.io/www.aifreedomtrust.com/';
+const PDF = 'https://aifreedomtrustfederation.github.io/AI-Freedom-Trust/docs/pdf/';
+const SCROLL_URL = PDF + 'one-eternal-scroll-of-aloha.pdf';
+
+const KINDS = {
+  protocol: ['Protocol', 'A practice to follow.'],
+  doctrine: ['Doctrine', "Held within the federation's covenant tradition."],
+  metaphor: ['Metaphor', 'An image for orientation, never a literal claim.'],
+  principle: ['Principle', 'A commitment the federation makes.'],
+  vision: ['Vision', 'How the federation describes itself.'],
+  philosophy: ['Design philosophy', 'A way of seeing, not a physical law.'],
+  stage: ['Growth stage', 'How the Tree is read.'],
+  rule: ['Reading rule', 'What keeps the Tree truthful.'],
+  work: ['Living work', 'Status as the federation states it.'],
+  current: ['Current', 'One of four streams of work.'],
+  aspiration: ['Aspiration', 'An intention, not yet an achievement.'],
+  published: ['Published work', 'Open to read in full.'],
+  note: ['Doctrine note', "Held within the federation's covenant tradition."],
+  plate: ['Plate', 'An illustration from the Scroll.'],
+  scroll: ['From the Scroll', 'A symbolic, spiritual, governance and design framework.'],
+  invitation: ['Invitation', 'A way to take part.']
+};
+
+const SCORING = 'The Scroll asks this as reflective questioning, never as spiritual scoring or rank. If the answer is no, pause and assign a corrective action.';
+const MNEMONIC = 'The Scroll calls these pairings mnemonic, not scientific measurements. They help you remember the order. They claim nothing about the body.';
+
+function movement(o) {
+  const stars = [
+    { id: o.id + '-movement', t: o.name, k: 'protocol', b: [o.practice],
+      w: o.place, links: o.moveLinks },
+    { id: o.id + '-question', t: o.q, k: 'protocol', b: [o.qText, SCORING],
+      w: 'One of seven questions on the Axis of Responsible Presence.',
+      links: [['the-scroll:sc-note5', 'Read the Axis of Responsible Presence']] },
+    { id: o.id + '-article', t: 'Article ' + o.art + ': ' + o.artTitle, k: 'doctrine', b: o.artBody,
+      w: 'The Scroll pairs this article with ' + o.name + ', movement ' + o.n + ' of seven.',
+      links: [['the-scroll', 'Open the Scroll']], src: ['Read the Scroll in full', SCROLL_URL] },
+    { id: o.id + '-capacity', t: o.capacity, k: 'metaphor',
+      b: ['The Scroll pairs ' + o.name + ' with ' + o.capWords + '.', MNEMONIC],
+      w: 'Seven colors, one spectrum. The same seven colors mark the seven branches of the Tree.',
+      links: [['converge:converge-article', 'Why the Scroll speaks in colors']] }
+  ];
+  if (o.zone) stars.push(o.zone);
+  return { id: o.id, type: 'movement', n: o.n, name: o.name, color: o.color, env: o.id,
+    look: o.look, intro: o.intro, q: o.q, stars: stars };
+}
+
+const WORLDS = [
+  movement({
+    id: 'ground', n: 1, name: 'Ground', color: C.red, look: 'The red world of foundations',
+    intro: 'A cavern beneath the Tree, where roots come down through stone. The first movement happens here: arrive, and say what you are about to do before you do it.',
+    practice: 'Enter the green zone. Before anything is decided, state the purpose, the covenant, who holds authority, how much time there is, what stays confidential, and how each person may take part.',
+    place: 'First of the seven movements. Every cycle begins here and comes back here.',
+    moveLinks: [['witness', 'Next movement: Witness'], ['the-scroll:sc-zones', 'What the green zone is']],
+    q: 'Is it grounded?', qText: 'The first question to ask of an action before it is taken.',
+    art: 'I', artTitle: 'One field, many expressions',
+    artBody: ['What is released returns, and what is held must circulate. Every local act belongs to a larger covenant ecology.'],
+    capacity: 'Root, red', capWords: 'the root and the color red',
+    zone: { id: 'ground-zone', t: 'Green zone: arrive', k: 'protocol',
+      b: ["On the facilitator's card, this is the moment of arrival. Purpose, authority, consent, the people affected, the current evidence and any conflicts are all put on the table."],
+      w: 'The federation calls this equilibrium its Greenshift, the living center.',
+      links: [['vision:vision-greenshift', 'See Greenshift, equilibrium'], ['living-tree', 'Enter the Living Tree']] }
+  }),
+  movement({
+    id: 'witness', n: 2, name: 'Witness', color: C.orange, look: 'The orange world of flow',
+    intro: 'An ocean of moving light. The second movement asks you to receive what is present before you interpret it.',
+    practice: 'Receive what is present. Keep the observed record apart from interpretation.',
+    place: 'Second of the seven movements, after Ground and before Name.',
+    moveLinks: [['name', 'Next movement: Name'], ['the-scroll:sc-note2', 'Read the Green-Zone Covenant']],
+    q: 'Is it generative?', qText: 'The second question to ask of an action before it is taken.',
+    art: 'II', artTitle: 'The observer is accountable',
+    artBody: ['Before acting, a person or council must observe, name its uncertainty, steady its own reactivity, and accept responsibility.'],
+    capacity: 'Sacral, orange', capWords: 'the sacral center and the color orange',
+    zone: { id: 'witness-plate', t: 'The observer at equilibrium', k: 'plate',
+      b: ['Plate II of the Scroll shows where the observer stands: at the crossing of the warm and cool currents, responding in proportion, neither detached nor controlling.'],
+      w: 'Witnessing is done from the green zone.',
+      links: [['the-scroll:sc-plate2', 'See Plate II in the Scroll']] }
+  }),
+  movement({
+    id: 'name', n: 3, name: 'Name', color: C.gold, look: 'The golden world of illumination',
+    intro: 'A sun over open ground. The third movement gives each statement its true name, so that nothing passes as more certain than it is.',
+    practice: 'Label each central statement as doctrine, metaphor, hypothesis or protocol. Link every factual claim to its sources and reviewers.',
+    place: 'Third of the seven movements. The labels on every discovery in this universe follow this practice.',
+    moveLinks: [['differentiate', 'Next movement: Differentiate'], ['the-scroll:sc-registers', 'The four registers of meaning']],
+    q: 'Is it proportionate?', qText: 'The third question to ask of an action before it is taken.',
+    art: 'III', artTitle: 'Differentiation and integration belong together',
+    artBody: ['Expansion stands for creativity, plurality and risk. Convergence stands for memory, repair and return. Stewardship holds both in balance.'],
+    capacity: 'Solar plexus, yellow', capWords: 'the solar plexus and the color yellow',
+    zone: { id: 'name-registers', t: 'Four names for a claim', k: 'protocol',
+      b: ['Doctrine, metaphor, hypothesis, protocol. The Scroll defines each one and asks every decision record to carry a register of its claims.'],
+      w: 'This is how the federation keeps symbol and evidence from being mistaken for each other.',
+      links: [['the-scroll:sc-registers', 'Read the four registers']] }
+  }),
+  movement({
+    id: 'differentiate', n: 4, name: 'Differentiate', color: C.green, look: 'The green world of interconnection',
+    intro: 'A forest joined underground. The fourth movement opens the field and lets real alternatives grow.',
+    practice: 'Open the field. Develop real alternatives, and examine their gifts, costs, risks and consequences.',
+    place: 'Fourth of the seven movements, before Converge.',
+    moveLinks: [['converge', 'Next movement: Converge']],
+    q: 'Is it compassionate?', qText: 'The fourth question to ask of an action before it is taken.',
+    art: 'IV', artTitle: 'Coherence is not conformity',
+    artBody: ['Unity means reconciled difference, not erased identity. Consent, cultural authority, lawful process and dissent stay essential.'],
+    capacity: 'Heart, green', capWords: 'the heart and the color green',
+    zone: { id: 'differentiate-zone', t: 'Expansion: differentiate', k: 'protocol',
+      b: ["On the facilitator's card: generate options, welcome dissent, map risks, avoid premature certainty."],
+      w: 'The federation calls expansion its Redshift, the outward movement, and points it toward the Vision.',
+      links: [['vision:vision-redshift', 'See Redshift, expansion'], ['vision', 'Enter the Vision']] }
+  }),
+  movement({
+    id: 'converge', n: 5, name: 'Converge', color: C.blue, look: 'The blue world of expression',
+    intro: 'Chambers of resonance, where waves gather toward a center. The fifth movement brings many voices to one decision without silencing any of them.',
+    practice: 'Move toward a decision through the authorized rule. Preserve dissent, and record the conditions of assent.',
+    place: 'Fifth of the seven movements.',
+    moveLinks: [['covenant', 'Next movement: Covenant']],
+    q: 'Is it truthful?', qText: 'The fifth question to ask of an action before it is taken.',
+    art: 'V', artTitle: 'The body is a living participant',
+    artBody: ['Chakras, color bands, breath and resonance offer a contemplative language for the layered human person.',
+      'The Scroll describes that person as rooted in matter, moved by desire, entrusted with power, opened by love, formed by truthful speech, refined by discernment, and oriented toward communion.'],
+    capacity: 'Throat, blue', capWords: 'the throat and the color blue',
+    zone: { id: 'converge-zone', t: 'Convergence: integrate', k: 'protocol',
+      b: ["On the facilitator's card: apply the authorized rule, preserve distinctions, select safeguards, assign responsibility."],
+      w: 'The federation calls convergence its Blueshift, the inward movement, and points it toward the working systems.',
+      links: [['vision:vision-blueshift', 'See Blueshift, convergence'], ['living-works', 'Enter Living Works']] }
+  }),
+  movement({
+    id: 'covenant', n: 6, name: 'Covenant', color: C.indigo, look: 'The indigo world of perception',
+    intro: 'An observatory among galaxies. The sixth movement turns a decision into a promise that someone keeps.',
+    practice: 'Turn the decision into stewardship: an owner, resources, milestones, safeguards, a review date, and a remedy.',
+    place: 'Sixth of the seven movements.',
+    moveLinks: [['return', 'Next movement: Return']],
+    q: 'Is it discerning?', qText: 'The sixth question to ask of an action before it is taken.',
+    art: 'VI', artTitle: 'Technology serves covenant memory',
+    artBody: ['AI and ledgers may help keep records and verify them. They cannot replace conscience, elders, professionals, communities, trustees, courts, or freely given consent.'],
+    capacity: 'Third eye, indigo', capWords: 'the third eye and the color indigo'
+  }),
+  movement({
+    id: 'return', n: 7, name: 'Return', color: C.violet, look: 'The violet world of unity',
+    intro: 'A sanctuary where seven streams meet. The seventh movement brings the action home, repairs what needs repair, and begins again.',
+    practice: 'Bring the action back to the green zone. Assess outcomes and harms, repair what needs repair, and open the next cycle.',
+    place: 'Seventh of the seven movements. It hands the cycle back to Ground.',
+    moveLinks: [['ground', 'The cycle opens again: Ground'], ['the-scroll:sc-horizon', 'The white horizon']],
+    q: 'To what unity does it return?', qText: 'The seventh question to ask of an action before it is taken.',
+    art: 'VII', artTitle: 'Return must become restitution',
+    artBody: ['In governance, return means correction, repair, benefit-sharing, ecological restoration, transparent accounting, and renewed relationship.'],
+    capacity: 'Crown, violet', capWords: 'the crown and the color violet',
+    zone: { id: 'return-zone', t: 'Return: learn', k: 'protocol',
+      b: ["On the facilitator's card: measure outcomes, hear the people affected, correct errors, revise doctrine or protocol."],
+      w: 'The federation names unity its Violetshift, the movement of integration.',
+      links: [['vision:vision-violetshift', 'See Violetshift, unity'], ['the-scroll:sc-note1', 'Read Circulation and Return']] }
+  }),
+
+  { id: 'vision', type: 'fruit', num: 'I', name: 'Vision', color: C.amber, env: 'vision',
+    look: 'First sphere',
+    intro: "The federation's shared covenant in its own words: one purpose, three principles and four shifts.",
+    stars: [
+      { id: 'vision-federation', t: 'A living federation', k: 'vision',
+        b: ['A living federation for human freedom in the age of intelligence.'],
+        w: 'Everything on the Tree grows from this sentence.',
+        links: [['living-tree', 'Enter the Living Tree']], src: ["Visit the federation's public home", SITE] },
+      { id: 'vision-author', t: 'Humanity Remains the Author', k: 'principle',
+        b: ['AI may extend our reach, but it must not inherit our agency. Meaningful authority stays with people, consent, conscience and communities.'],
+        w: 'First of three principles.',
+        links: [['covenant:covenant-article', 'Article VI: Technology serves covenant memory']] },
+      { id: 'vision-sovereignty', t: 'Sovereignty Should Serve Life', k: 'principle',
+        b: ['Freedom is more than escaping centralized control. Tools should enlarge choice, resilience, dignity and self-determination.'],
+        w: 'Second of three principles.',
+        links: [['federation-structure:fs-ground', 'The Ground: what lies beneath the vision']] },
+      { id: 'vision-repairs', t: 'Build What Repairs', k: 'principle',
+        b: ['Technology earns its place when it restores trust, reduces needless dependency, strengthens stewardship, and turns imagination into useful service.'],
+        w: 'Third of three principles.',
+        links: [['return:return-article', 'Article VII: Return must become restitution'], ['living-works', 'Enter Living Works']] },
+      { id: 'vision-redshift', t: 'Redshift, expansion', k: 'philosophy',
+        b: ['The outward movement: discover the vision.', "The four shifts express the federation's design philosophy, not physical laws."],
+        w: 'In the Scroll, expansion is the moment to differentiate.',
+        links: [['differentiate:differentiate-zone', 'Expansion in the seven movements']] },
+      { id: 'vision-greenshift', t: 'Greenshift, equilibrium', k: 'philosophy',
+        b: ['The living center: explore the Living Tree.', "The four shifts express the federation's design philosophy, not physical laws."],
+        w: 'In the Scroll, the green zone is where every cycle begins and ends.',
+        links: [['living-tree', 'Enter the Living Tree'], ['ground:ground-zone', 'The green zone in the seven movements']] },
+      { id: 'vision-blueshift', t: 'Blueshift, convergence', k: 'philosophy',
+        b: ['The inward movement: meet the working systems.', "The four shifts express the federation's design philosophy, not physical laws."],
+        w: 'In the Scroll, convergence is the moment to integrate.',
+        links: [['living-works', 'Enter Living Works'], ['converge:converge-zone', 'Convergence in the seven movements']] },
+      { id: 'vision-violetshift', t: 'Violetshift, unity', k: 'philosophy',
+        b: ['Integration: find your way through the whole federation.', "The four shifts express the federation's design philosophy, not physical laws."],
+        w: 'The seventh movement asks to what unity an action returns.',
+        links: [['atlas', 'Open the Celestial Atlas'], ['return', 'Enter Return']] }
+    ] },
+
+  { id: 'living-tree', type: 'fruit', num: 'II', name: 'Living Tree', color: C.amber, env: 'livingTree',
+    look: 'Second sphere',
+    intro: 'How the Tree itself is read: six stages of growth from source to outcome, and the rule that keeps the picture truthful.',
+    stars: [
+      { id: 'lt-directory', t: 'More than a directory', k: 'vision',
+        b: ['The Tree shows how ideas, systems, communities and responsibilities grow from common roots.'],
+        w: 'It is why the Tree sits at the center of this universe.', links: [['tree', 'Return to the Tree']] },
+      { id: 'lt-root', t: 'One root', k: 'vision',
+        b: ['One root. Many branches. Every fruit returns to its source.',
+          'Six spheres surround the one root: Vision, Living Tree, Living Works, Federation Structure, Path Ahead and Living Library.'],
+        w: 'You are inside the second sphere now.', links: [['living-library', 'Follow a fruit to its source']] },
+      { id: 'lt-roots', t: 'Roots', k: 'stage',
+        b: ['Sources: the published material that everything else grows from. A source is a root, never a fruit.'],
+        w: 'First of six growth stages.', links: [['living-library', 'Descend to the roots']] },
+      { id: 'lt-trunk', t: 'Trunk', k: 'stage',
+        b: ['The federation itself: the shared body that every branch passes through.'],
+        w: 'Second of six growth stages.', links: [['tree:trunk', 'See what rises through the trunk']] },
+      { id: 'lt-branches', t: 'Branches', k: 'stage',
+        b: ['Systems that grow from the trunk.'],
+        w: 'Third of six growth stages.', links: [['living-works', 'Meet the working systems']] },
+      { id: 'lt-leaves', t: 'Leaves', k: 'stage',
+        b: ['Capabilities: what a system can actually do.'],
+        w: 'Fourth of six growth stages.', links: [] },
+      { id: 'lt-flowers', t: 'Flowers', k: 'stage',
+        b: ['Verified work in progress.'],
+        w: 'Fifth of six growth stages.', links: [] },
+      { id: 'lt-fruits', t: 'Fruits', k: 'stage',
+        b: ['Real outcomes. Only what the public can actually reach is shown as fruit, and unverified outcomes are left out.'],
+        w: 'Sixth of six growth stages.', links: [['tree', 'See the six fruits on the Tree']] },
+      { id: 'lt-provenance', t: 'Structure is not provenance', k: 'rule',
+        b: ['Belonging to the federation is not evidence of having contributed to an outcome. The Tree draws membership and contribution as separate lines.'],
+        w: 'This rule is why some connections here are shown and others are not.',
+        links: [['the-scroll:sc-note4', 'Read Multiple Witnesses, One Record']] }
+    ] },
+
+  { id: 'living-works', type: 'fruit', num: 'III', name: 'Living Works', color: C.amber, env: 'livingWorks',
+    look: 'Third sphere',
+    intro: "Seven places where the federation's ideas are being built, each with its status stated plainly.",
+    stars: [
+      { id: 'lw-applied', t: 'Applied in the world', k: 'work', status: 'Live revenue unverified', name: 'Capital City Provisions',
+        b: ['A real-world proving ground: hospitality, food distribution, customer care, quoting and delivery.'],
+        w: 'Carried by the current the federation calls The Work.',
+        links: [['federation-structure:fs-work', 'See The Work'], ['path-ahead:pa-7', 'Its place on the Path Ahead']] },
+      { id: 'lw-foundations', t: 'Sovereign foundations', k: 'work', status: 'Emerging', name: 'AIFT Cloud App Foundry',
+        b: ["Emerging foundations for decentralized computing: shared provider nodes, tools for bringing applications to life, and control of one's own domain."],
+        w: 'Carried by the current the federation calls The Ground.',
+        links: [['federation-structure:fs-ground', 'See The Ground']] },
+      { id: 'lw-craft', t: 'Shared craft', k: 'work', name: 'AIFT Forge',
+        b: ['A workshop of templates, coordination practices and shared language.'],
+        w: 'Part of the current the federation calls The Trust.',
+        links: [['federation-structure:fs-trust', 'See The Trust']] },
+      { id: 'lw-roots', t: 'Common roots', k: 'work', status: 'Canonical draft', name: 'AIFT Genesis',
+        b: ["The federation's seed pattern: identity, constitutional structure, and the canonical Tree of Emergence."],
+        w: 'The Tree you are exploring is kept here.',
+        links: [['living-tree', 'Enter the Living Tree']] },
+      { id: 'lw-economy', t: 'Economic imagination', k: 'work', status: 'Concept', name: 'Aetherion',
+        b: ['Regenerative value, cryptographic trust and post-quantum sovereignty.'],
+        w: 'Carried by the current the federation calls The Stewardship.',
+        links: [['federation-structure:fs-stewardship', 'See The Stewardship'], ['living-library:ll-flight', 'Its Flight Paper in the Library']] },
+      { id: 'lw-doorway', t: 'Public doorway', k: 'work', name: 'aifreedomtrust.com',
+        b: ['The portal that lets the branches be read as one story.'],
+        w: 'Part of the current the federation calls The Trust.',
+        links: [['path-ahead:pa-2', 'Its place on the Path Ahead']], src: ['Visit the public home', SITE] },
+      { id: 'lw-garden', t: 'The wider garden', k: 'work', name: 'Research and earlier experiments',
+        b: ['Earlier experiments and inherited tools, kept visible but not central.'],
+        w: 'Kept in view, and kept apart from the active work.', links: [] }
+    ] },
+
+  { id: 'federation-structure', type: 'fruit', num: 'IV', name: 'Federation Structure', color: C.amber, env: 'structure',
+    look: 'Fourth sphere',
+    intro: "Four currents carry the federation's work: The Trust, The Ground, The Work and The Stewardship.",
+    stars: [
+      { id: 'fs-currents', t: 'Four currents', k: 'vision',
+        b: ['The federation moves in four currents: The Trust, The Ground, The Work and The Stewardship.',
+          'Its constitutional proposition: the Federation may coordinate what it does not own.'],
+        w: 'The currents run through the trunk and out into the Living Works.',
+        links: [['tree:trunk', 'See what rises through the trunk'], ['living-works', 'Enter Living Works']] },
+      { id: 'fs-trust', t: 'The Trust', k: 'current',
+        b: ['The public covenant: mission, governance, identity, standards, and the responsibility to speak truthfully about what the Federation is and is not.'],
+        w: 'First of four currents.',
+        links: [['living-works:lw-doorway', 'Public doorway'], ['living-works:lw-craft', 'Shared craft']] },
+      { id: 'fs-ground', t: 'The Ground', k: 'current',
+        b: ['What lies beneath the vision: computing, networks, naming and automation, meant to stay inspectable and increasingly sovereign.'],
+        w: 'Second of four currents. A different thing from Ground, the first movement.',
+        links: [['living-works:lw-foundations', 'Sovereign foundations']] },
+      { id: 'fs-work', t: 'The Work', k: 'current',
+        b: ['The places where ideas meet ordinary life: businesses, services, publishing, research, and tools that must actually help people.'],
+        w: 'Third of four currents.',
+        links: [['living-works:lw-applied', 'Applied in the world']] },
+      { id: 'fs-stewardship', t: 'The Stewardship', k: 'current',
+        b: ['The long horizon: value systems, wallets, datasets, agents, governance patterns, and experiments in responsible civilization-scale intelligence.'],
+        w: 'Fourth of four currents.',
+        links: [['living-works:lw-economy', 'Economic imagination']] }
+    ] },
+
+  { id: 'path-ahead', type: 'fruit', num: 'V', name: 'Path Ahead', color: C.amber, env: 'path',
+    look: 'Fifth sphere',
+    intro: 'Seven steps the federation has set for itself. They are intentions, and they are labeled as intentions.',
+    stars: [
+      { id: 'pa-0', t: 'The next chapter is convergence', k: 'aspiration',
+        b: ['Seven steps lead toward it. None of them is reported here as finished.'],
+        w: 'Convergence is the inward movement, the Blueshift.',
+        links: [['vision:vision-blueshift', 'See Blueshift, convergence']] },
+      { id: 'pa-1', t: 'A living doorway', step: 1, k: 'aspiration',
+        b: ["Make the public portal feel less like a directory and more like the living doorway to the Federation's covenant, work and imagination."],
+        w: 'First of seven steps.', links: [['living-works:lw-doorway', 'Public doorway']] },
+      { id: 'pa-2', t: 'One public home', step: 2, k: 'aspiration',
+        b: ['Establish aifreedomtrust.com as the canonical public home, from which every major branch can be understood and reached.'],
+        w: 'Second of seven steps.', links: [['living-works:lw-doorway', 'Public doorway']] },
+      { id: 'pa-3', t: 'A shared voice', step: 3, k: 'aspiration',
+        b: ["Give active projects a recognizable shared voice while preserving each one's purpose, authority and truth."],
+        w: 'Third of seven steps.', links: [['federation-structure:fs-trust', 'See The Trust']] },
+      { id: 'pa-4', t: 'Living told from emerging', step: 4, k: 'aspiration',
+        b: ['Make the difference between living systems, emerging prototypes, research, doctrine and archival work understandable at a glance.'],
+        w: 'Fourth of seven steps.', links: [['living-works', 'See how each work states its status']] },
+      { id: 'pa-5', t: 'Something to inspect', step: 5, k: 'aspiration',
+        b: ['Connect every major vision to something a person can inspect: a demonstration, a document, a reproducible result, or a measurable next action.'],
+        w: 'Fifth of seven steps.', links: [['living-library', 'Read the published works']] },
+      { id: 'pa-6', t: 'Serious review, invited', step: 6, k: 'aspiration',
+        b: ['Invite serious external review of the AetherCore empirical work: its evidence, its limitations, its reproducibility path and its open questions.'],
+        w: 'Sixth of seven steps.', links: [['living-library:ll-empirical', 'The Empirical Trust Paper'], ['seed', 'How to take part']] },
+      { id: 'pa-7', t: 'Answering for outcomes', step: 7, k: 'aspiration',
+        b: ['Let applied projects such as Capital City Provisions show what responsible technology looks like when it serves real people, keeps records, and answers for outcomes.'],
+        w: 'Seventh of seven steps.', links: [['living-works:lw-applied', 'Applied in the world']] }
+    ] },
+
+  { id: 'living-library', type: 'fruit', num: 'VI', name: 'Living Library', color: C.pearl, env: 'roots',
+    look: 'Sixth sphere, and the roots of the Tree',
+    intro: 'Every fruit returns to its source. Beneath the Tree lie seven published works, each one open to read in full.',
+    stars: [
+      { id: 'll-scroll', t: "The One Eternal Scroll of the Word of ALO'ha", short: 'The Scroll', k: 'published', status: 'Doctrine edition',
+        b: ['Illustrated doctrine and a stewardship procedure. The federation presents it as a symbolic, spiritual, governance and design framework.',
+          'Its own title page says what it is not: an investment offer, scientific proof, a legal opinion, a medical protocol, or a live token sale.'],
+        w: 'The seven movements and the colors of the branches come from this work.',
+        links: [['the-scroll', 'Step inside the Scroll']], src: ['Read the Scroll in full', SCROLL_URL] },
+      { id: 'll-flight', t: 'Aetherion Flight Paper', short: 'Flight Paper', k: 'published', status: 'Concept',
+        b: ['A paper on a post-quantum sovereign network.'],
+        w: 'A source for the work called Economic imagination.',
+        links: [['living-works:lw-economy', 'Economic imagination']],
+        src: ['Read the Flight Paper', PDF + 'aetherion-flight-paper-post-quantum-sovereign-network.pdf'] },
+      { id: 'll-genesis', t: 'Aetherion Genesis White Paper', short: 'Genesis White Paper', k: 'published', status: 'Alpha edition',
+        b: ['The Aetherion Genesis white paper, published as an alpha edition.'],
+        w: 'A source for the work called Economic imagination.',
+        links: [['living-works:lw-economy', 'Economic imagination']],
+        src: ['Read the Genesis White Paper', PDF + 'aetherion-genesis-whitepaper-alpha.pdf'] },
+      { id: 'll-circle', t: 'Circleunchain and Biozoe', short: 'Circleunchain + Biozoe', k: 'published', status: 'Source summary',
+        b: ['A summary of the sources behind Circleunchain and Biozoe.'],
+        w: 'Part of the written covenant beneath the Tree.', links: [],
+        src: ['Read the summary', PDF + 'aetherion-circleunchain-biozoe-source-summary.pdf'] },
+      { id: 'll-economy', t: 'Aetherion Restorative Civilization Economy', short: 'Aetherion Economy', k: 'published', status: 'Concept',
+        b: ["The federation's paper on a restorative economy."],
+        w: 'A source for the current called The Stewardship.',
+        links: [['federation-structure:fs-stewardship', 'See The Stewardship']],
+        src: ['Read the Economy paper', PDF + 'aetherion-restorative-civilization-economy.pdf'] },
+      { id: 'll-aethercore', t: 'AetherCore White Paper, Volume I', short: 'AetherCore Vol. I', k: 'published',
+        b: ['The first volume of the AetherCore white paper.'],
+        w: 'Read alongside the Empirical Trust Paper.',
+        links: [['living-library:ll-empirical', 'The Empirical Trust Paper']],
+        src: ['Read Volume I', PDF + 'aethercore-white-paper-volume-i.pdf'] },
+      { id: 'll-empirical', t: 'AetherCore Empirical Trust Paper', short: 'Empirical Trust Paper', k: 'published', status: 'Awaiting external review',
+        b: ['An empirical paper on trust density.',
+          'The federation marks it as awaiting external review, and invites scrutiny of its evidence, limitations, reproducibility path and open questions.'],
+        w: 'Here the federation makes an empirical claim and asks to be checked.',
+        links: [['path-ahead:pa-6', 'Its place on the Path Ahead'], ['seed', 'How to take part']],
+        src: ['Read the Empirical Trust Paper', PDF + 'aethercore-empirical-trust-density-covid.pdf'] }
+    ] },
+
+  { id: 'the-scroll', type: 'inner', parent: 'living-library', name: 'The Scroll', color: C.pearl, env: 'scroll',
+    look: 'Inside the Living Library',
+    intro: "Inside the Scroll: ALO'ha, four registers of meaning, the seven movements, five doctrine notes and the plates. Its figure is the torus, a shape for emergence and return.",
+    stars: [
+      { id: 'sc-aloha', t: "ALO'ha", k: 'doctrine',
+        b: ["The Scroll calls ALO'ha the divine breath of love, life, mercy and coherence.",
+          "The federation practices it as a discipline of relationship: it may coordinate what it does not own."],
+        w: "It is what rises through the trunk of the Tree.", links: [['tree:trunk', 'See the trunk']], src: ['Read the Scroll in full', SCROLL_URL] },
+      { id: 'sc-registers', t: 'Four registers of meaning', k: 'scroll',
+        list: [['Doctrine', 'Interpret within the declared covenant tradition.'],
+          ['Metaphor', 'Use for orientation. Do not claim literal identity.'],
+          ['Hypothesis', 'Define variables, evidence, falsifiers and review.'],
+          ['Protocol', 'Name authority, consent, inputs, outputs, records and stop conditions.']],
+        b: ['The Scroll states that it does not claim quantum physics proves any religious, political or legal doctrine. It uses such terms as analogues.'],
+        w: 'The labels on the discoveries in this universe follow these four registers wherever the Scroll assigns one.',
+        links: [['name', 'Enter Name, the movement that applies them']] },
+      { id: 'sc-movements', t: 'The seven movements', k: 'protocol',
+        b: ['Ground, Witness, Name, Differentiate, Converge, Covenant, Return. A stewardship procedure for decisions.',
+          'Every cycle returns to truth, repair and renewed relationship.'],
+        w: 'Each movement is a branch of the Tree.',
+        links: [['ground', 'Ground'], ['witness', 'Witness'], ['name', 'Name'], ['differentiate', 'Differentiate'],
+          ['converge', 'Converge'], ['covenant', 'Covenant'], ['return', 'Return']] },
+      { id: 'sc-zones', t: 'The green zone and five moments', k: 'protocol',
+        list: [['Green zone', 'Arrive.'], ['Expansion', 'Differentiate.'], ['Convergence', 'Integrate.'],
+          ['White horizon', 'Complete.'], ['Return', 'Learn.']],
+        b: ['The green plane is the living present, where the outward and inward currents meet and where a person or council must observe and act responsibly.'],
+        w: "The facilitator's card walks a council through these five moments.",
+        links: [['ground:ground-zone', 'Arrive'], ['differentiate:differentiate-zone', 'Differentiate'],
+          ['converge:converge-zone', 'Integrate'], ['return:return-zone', 'Learn']] },
+      { id: 'sc-horizon', t: 'The white horizon', k: 'scroll',
+        b: ['The white horizon does not abolish color. It reveals the unity that every color carried within itself. The Scroll calls it the completed spectrum.'],
+        w: 'On the Tree, pale light rises through the trunk and opens into seven colors along the branches.',
+        links: [['return', 'Enter Return']] },
+      { id: 'sc-plate1', t: 'Plate I: The Complete Cycle', k: 'plate',
+        b: ['An outward current carries intelligence into form. An inward current gathers form into memory. The green plane between them is the threshold where responsibility arises.'],
+        w: 'The torus around you is drawn from this plate.', links: [['the-scroll:sc-note1', 'Note I: Circulation and Return']] },
+      { id: 'sc-plate2', t: 'Plate II: The Observer at Equilibrium', k: 'plate',
+        b: ['The warm spectrum drives expansion and the cool spectrum drives convergence. Their crossing forms the green zone, where the observer responds in proportion, neither detached nor controlling.'],
+        w: 'This is where the second movement stands.', links: [['witness', 'Enter Witness']] },
+      { id: 'sc-plate3', t: 'Plate III: Every Point Contains the Whole', k: 'plate',
+        b: ['The whole is present through the integrity of each part. The doctrine is federal rather than imperial: each point stays faithful to its own place.'],
+        w: 'It is why a federation, and no single center, holds this Tree.', links: [['federation-structure', 'Enter Federation Structure']] },
+      { id: 'sc-note1', t: 'Note I: Circulation and Return', k: 'note',
+        b: ['Creation moves in circulating currents, not in one-way ascent. A council action should begin in the green zone and carry a path for return and review.'],
+        w: 'The first and seventh movements keep this note.', links: [['ground', 'Ground'], ['return', 'Return']] },
+      { id: 'sc-note2', t: 'Note II: The Green-Zone Covenant', k: 'note',
+        b: ['The observer is part of the field. Before a consequential decision, leaders pause, disclose conflicts, separate observation from interpretation, and do not proceed under coercion or impairment.'],
+        w: 'The second movement keeps this note.', links: [['witness', 'Enter Witness']] },
+      { id: 'sc-note3', t: 'Note III: Holographic Stewardship', k: 'note',
+        b: ["The federation's values should appear in every local node. Each follows a minimum charter, may add stricter protections, cannot speak for a people without authorization, and audits how burdens and benefits are shared."],
+        w: 'Read with Plate III.', links: [['the-scroll:sc-plate3', 'Plate III: Every Point Contains the Whole']] },
+      { id: 'sc-note4', t: 'Note IV: Multiple Witnesses, One Record', k: 'note',
+        b: ['Canon is a governed memory. Each artifact needs an identifier, provenance, and clear marking of derivatives. AI-generated material cannot count as independent evidence.'],
+        w: 'The Tree applies the same care to its own connections.', links: [['living-tree:lt-provenance', 'Structure is not provenance']] },
+      { id: 'sc-note5', t: 'Note V: The Axis of Responsible Presence', k: 'note',
+        b: ['Before high-impact action, test it against seven capacities: grounded, generative, proportionate, compassionate, truthful, discerning, and oriented beyond ego.',
+          'Use them as reflection, never as scoring or rank.'],
+        w: 'Each of the seven movements carries one of these questions.',
+        links: [['ground:ground-question', 'Is it grounded?'], ['seed:walk', 'Walk the seven movements']] }
+    ] }
+];
+
+/* The Tree's own two discoveries. */
+const TRUNK = { id: 'trunk', t: "The trunk: ALO'ha", k: 'doctrine',
+  b: ["ALO'ha is the federation's discipline of relationship.",
+    'Its constitutional proposition is simple: the Federation may coordinate what it does not own. A person, a family, a community or a project can take part without surrendering its center.'],
+  w: 'Every branch and every fruit is held by this one relationship.',
+  links: [['the-scroll:sc-aloha', "ALO'ha in the Scroll"], ['vision', 'The three principles, in Vision'], ['federation-structure', 'The four currents']] };
+
+const SEED = { id: 'seed', t: 'The seed: where you come in',
+  b: ['A seed holds the whole pattern and has not yet decided what to become. These are the ways in that the federation has actually opened.'],
+  invites: [
+    { id: 'walk', t: 'Walk a decision through the seven movements',
+      b: 'Bring something real that you have to decide. The Tree will walk it with you, branch by branch. Nothing you write leaves this page.', act: ['seed:walk', 'Begin the walk'] },
+    { id: 'read', t: 'Read the written covenant',
+      b: 'Seven works lie beneath the Tree, each open in full.', act: ['living-library', 'Descend to the roots'] },
+    { id: 'review', t: 'Offer serious review',
+      b: 'The federation invites external review of its empirical work: evidence, limitations, reproducibility and open questions.', act: ['living-library:ll-empirical', 'Open the Empirical Trust Paper'] },
+    { id: 'home', t: "Visit the federation's public home",
+      b: 'The canonical doorway to the covenant, the work and the imagination.', href: SITE, hrefLabel: 'Open aifreedomtrust.com' }
+  ] };
+
+/* Guided journey: one stop per place on the Tree. */
+const JOURNEY = [
+  { node: null, cap: 'One root. Many branches. Every fruit returns to its source.' },
+  { node: 'roots', cap: 'Beneath the Tree lies the written covenant: seven works, each open to read in full.', go: 'living-library', goLabel: 'Descend to the roots' },
+  { node: 'trunk', cap: "Through the trunk rises ALO'ha, the federation's discipline of relationship.", go: 'tree:trunk', goLabel: 'Read about the trunk' },
+  { node: 'ground', cap: 'Ground. Enter the green zone and say what you are about to do. Is it grounded?' },
+  { node: 'witness', cap: 'Witness. Receive what is present before you interpret it. Is it generative?' },
+  { node: 'name', cap: 'Name. Call each claim what it is: doctrine, metaphor, hypothesis or protocol. Is it proportionate?' },
+  { node: 'differentiate', cap: 'Differentiate. Open the field and let real alternatives grow. Is it compassionate?' },
+  { node: 'converge', cap: 'Converge. Decide by the authorized rule, and keep the dissent on record. Is it truthful?' },
+  { node: 'covenant', cap: 'Covenant. Give the decision an owner, safeguards and a remedy. Is it discerning?' },
+  { node: 'return', cap: 'Return. Come back, repair what needs repair, and begin again. To what unity does it return?' },
+  { node: 'vision', cap: 'Six fruits hang in the canopy. Vision holds one purpose, three principles and four shifts.' },
+  { node: 'living-tree', cap: 'Living Tree: how growth is read, from source to outcome.' },
+  { node: 'living-works', cap: 'Living Works: seven places where the ideas are being built, each with its status stated plainly.' },
+  { node: 'federation-structure', cap: 'Federation Structure: four currents called The Trust, The Ground, The Work and The Stewardship.' },
+  { node: 'path-ahead', cap: 'Path Ahead: seven steps toward convergence, labeled as intentions.' },
+  { node: 'living-library', cap: 'Living Library: the fruit that leads back down to the roots.' },
+  { node: 'seed', cap: 'And the seed, where you come in.', go: 'seed', goLabel: 'Open the seed' }
+];
+
+const WORLD = {};
+const STAR = {};
+WORLDS.forEach(function (w) {
+  WORLD[w.id] = w;
+  w.stars.forEach(function (s) { s.world = w.id; STAR[s.id] = s; });
+});
+const MOVEMENTS = WORLDS.filter(function (w) { return w.type === 'movement'; });
+const FRUITS = WORLDS.filter(function (w) { return w.type === 'fruit'; });
+
+/* A small projection engine: glowing lines and points in three dimensions, drawn on a 2D canvas.
+   Chosen over a 3D library so the universe runs on ordinary phones and has nothing to fail to load. */
+var TAU = Math.PI * 2;
+function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
+function lerp(a, b, t) { return a + (b - a) * t; }
+function ease(t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+function smooth(a, b, x) { var t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); }
+function RNG(seed) {
+  var a = seed >>> 0;
+  return function () {
+    a = a + 0x6D2B79F5 | 0;
+    var t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function hashStr(s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+function rgbOf(c) {
+  if (c.charAt(0) === '#') { var n = parseInt(c.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+  var m = c.match(/\d+/g); return [+m[0], +m[1], +m[2]];
+}
+/* Blends are quantized to eighths so the sprite cache stays small. */
+function mix(c1, c2, t) {
+  t = Math.round(clamp(t, 0, 1) * 8) / 8;
+  var a = rgbOf(c1), b = rgbOf(c2);
+  return 'rgb(' + Math.round(lerp(a[0], b[0], t)) + ',' + Math.round(lerp(a[1], b[1], t)) + ',' + Math.round(lerp(a[2], b[2], t)) + ')';
+}
+function dist2(a, b) { var x = a[0] - b[0], y = a[1] - b[1], z = a[2] - b[2]; return x * x + y * y + z * z; }
+function circle(cx, cy, cz, r, axis, n, ph) {
+  var pts = [], i, a, c, s; ph = ph || 0;
+  for (i = 0; i < n; i++) {
+    a = i / n * TAU + ph; c = Math.cos(a) * r; s = Math.sin(a) * r;
+    pts.push(axis === 'y' ? [cx + c, cy, cz + s] : axis === 'z' ? [cx + c, cy + s, cz] : [cx, cy + c, cz + s]);
+  }
+  return pts;
+}
+function polyAt(path, u) {
+  var f = clamp(u, 0, 1) * (path.length - 1), i = Math.floor(f), k = f - i;
+  if (i >= path.length - 1) return path[path.length - 1];
+  var a = path[i], b = path[i + 1];
+  return [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
+}
+
+var SPR = {};
+function sprite(color) {
+  var s = SPR[color]; if (s) return s;
+  var c = document.createElement('canvas'); c.width = c.height = 64;
+  var g = c.getContext('2d'), k = rgbOf(color), q = k[0] + ',' + k[1] + ',' + k[2];
+  var gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+  gr.addColorStop(0, 'rgba(255,255,255,1)');
+  gr.addColorStop(.1, 'rgba(' + q + ',.95)');
+  gr.addColorStop(.36, 'rgba(' + q + ',.3)');
+  gr.addColorStop(1, 'rgba(' + q + ',0)');
+  g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
+  return (SPR[color] = c);
+}
+function haze(color) {
+  var key = 'h' + color, s = SPR[key]; if (s) return s;
+  var c = document.createElement('canvas'); c.width = c.height = 128;
+  var g = c.getContext('2d'), k = rgbOf(color), q = k[0] + ',' + k[1] + ',' + k[2];
+  var gr = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  gr.addColorStop(0, 'rgba(' + q + ',.5)');
+  gr.addColorStop(.5, 'rgba(' + q + ',.16)');
+  gr.addColorStop(1, 'rgba(' + q + ',0)');
+  g.fillStyle = gr; g.fillRect(0, 0, 128, 128);
+  return (SPR[key] = c);
+}
+
+function Scene(o) {
+  o = o || {};
+  this.lines = []; this.dots = []; this.nodes = [];
+  this.bg = o.bg || ['#030409', '#090a1c'];
+  this.neb = o.neb || ['#3b2f86', '#17485c', '#5a2452'];
+  this.sky = o.sky == null ? 1 : o.sky;
+  this.fit = o.fit || { w: 3.6, h: 4.6 };
+  this.center = o.center || [0, .25, 0];
+  this.home = { yaw: o.yaw || 0, pitch: o.pitch == null ? .08 : o.pitch, zoom: 1, tx: this.center[0], ty: this.center[1], tz: this.center[2] };
+  this.cam = { yaw: this.home.yaw, pitch: this.home.pitch, zoom: 1, tx: this.center[0], ty: this.center[1], tz: this.center[2] };
+  this.pitchLim = o.pitchLim || [-.4, .75];
+  this.zoomLim = o.zoomLim || [.55, 3.6];
+  this.yawLim = o.yawLim || null;
+  this.spin = o.spin || 0;
+  this.grow = 1; this.lit = 1; this.hi = null; this.found = {}; this.overlay = null;
+}
+Scene.prototype.line = function (pts, color, w, o) {
+  o = o || {};
+  var n = pts.length, p = new Float32Array(n * 3), i;
+  for (i = 0; i < n; i++) { p[i * 3] = pts[i][0]; p[i * 3 + 1] = pts[i][1]; p[i * 3 + 2] = pts[i][2]; }
+  var L = { p: p, n: n, color: color, w: w, a: o.a == null ? 1 : o.a, t0: o.t0 || 0, t1: o.t1 == null ? 1 : Math.min(1, o.t1),
+    dyn: o.dyn || null, env: !!o.env, sway: !!o.sway, tag: o.tag || null, star: o.star || null,
+    halo: o.halo !== false, closed: !!o.closed };
+  if (L.t1 <= L.t0) L.t1 = L.t0 + .01;
+  this.lines.push(L); return L;
+};
+Scene.prototype.dot = function (x, y, z, s, color, o) {
+  o = o || {};
+  var d = { x: x, y: y, z: z, ox: x, oy: y, oz: z, s: s, color: color, a: o.a == null ? 1 : o.a,
+    tw: o.tw == null ? (x * 12.9898 + y * 78.233 + z * 37.719) % TAU + 7 : o.tw,
+    t0: o.t0 || 0, dyn: o.dyn || null, env: !!o.env, tag: o.tag || null, sway: !!o.sway };
+  this.dots.push(d); return d;
+};
+Scene.prototype.node = function (n) {
+  n.ph = this.nodes.length * 1.7; n.pri = n.pri || 1;
+  this.nodes.push(n); return n;
+};
+
+var V = { W: 0, H: 0, dpr: 1, F: 1, cx: 0, cy: 0, ox: 0, oy: 0, q: 1, ctx: null, cv: null,
+  cyw: 1, syw: 0, cp: 1, sp: 0, dist: 10, tx: 0, ty: 0, tz: 0 };
+var px = 0, py = 0, ps = 0, pz = 0;
+function proj(x, y, z) {
+  var dx = x - V.tx, dy = y - V.ty, dz = z - V.tz;
+  /* z points toward the viewer; a positive pitch looks down from above. */
+  var x1 = dx * V.cyw + dz * V.syw, z1 = dz * V.cyw - dx * V.syw;
+  var y2 = dy * V.cp - z1 * V.sp, z2 = dy * V.sp + z1 * V.cp;
+  var zc = V.dist - z2;
+  if (zc < .2) return false;
+  ps = V.F / zc; px = V.cx + x1 * ps; py = V.cy - y2 * ps; pz = zc;
+  return true;
+}
+function setView(scene) {
+  var c = scene.cam;
+  V.cyw = Math.cos(c.yaw); V.syw = Math.sin(c.yaw); V.cp = Math.cos(c.pitch); V.sp = Math.sin(c.pitch);
+  V.tx = c.tx; V.ty = c.ty; V.tz = c.tz;
+  V.dist = V.F * Math.max(scene.fit.w / (V.W * .92), scene.fit.h / (V.H * .78)) / c.zoom;
+  V.cx = V.W / 2 + V.ox; V.cy = V.H / 2 + V.oy;
+}
+function sizeCanvas(cv, cap) {
+  var r = cv.getBoundingClientRect();
+  V.cv = cv; V.W = Math.max(1, r.width); V.H = Math.max(1, r.height);
+  V.dpr = Math.min(window.devicePixelRatio || 1, cap);
+  cv.width = Math.round(V.W * V.dpr); cv.height = Math.round(V.H * V.dpr);
+  V.ctx = cv.getContext('2d');
+  V.F = 2.2 * Math.min(V.W, V.H);
+}
+
+var STARS = null, NEBS = null;
+function initSky() {
+  var r = RNG(99), i, u, th, s, x, y, z, ct = Math.cos(1.05), st = Math.sin(1.05), y2;
+  STARS = [];
+  for (i = 0; i < 2600; i++) {
+    u = (i % 5 < 2) ? (r() + r() + r() - 1.5) * .28 : r() * 2 - 1;
+    th = r() * TAU; s = Math.sqrt(Math.max(0, 1 - u * u));
+    x = s * Math.cos(th); y = u; z = s * Math.sin(th);
+    y2 = y * ct - z * st; z = y * st + z * ct; y = y2;
+    STARS.push({ x: x, y: y, z: z, m: Math.pow(r(), 3.2) * 1.7 + .32, c: r() < .1 ? '#ffe2a8' : (r() < .22 ? '#bcd6ff' : '#ffffff'), tw: r() * TAU });
+  }
+  NEBS = [];
+  for (i = 0; i < 8; i++) {
+    th = i / 8 * TAU + r(); u = (r() - .5) * .5; s = Math.sqrt(1 - u * u);
+    x = s * Math.cos(th); y = u; z = s * Math.sin(th);
+    y2 = y * ct - z * st; z = y * st + z * ct; y = y2;
+    NEBS.push({ x: x, y: y, z: z, size: .55 + r() * .6, k: i % 3 });
+  }
+}
+function drawSky(scene, t, alpha) {
+  var ctx = V.ctx, Fs = .58 * Math.max(V.W, V.H), i, s, x1, z1, y2, z2, sx, sy, a, sz;
+  var a0 = alpha * scene.sky; if (a0 <= .01) return;
+  var n = V.q > .8 ? STARS.length : V.q > .5 ? 1500 : 800;
+  if (V.q > .5) {
+    for (i = 0; i < NEBS.length; i++) {
+      s = NEBS[i];
+      x1 = s.x * V.cyw + s.z * V.syw; z1 = s.z * V.cyw - s.x * V.syw;
+      y2 = s.y * V.cp - z1 * V.sp; z2 = -(s.y * V.sp + z1 * V.cp);
+      if (z2 < .15) continue;
+      sx = V.W / 2 + x1 / z2 * Fs; sy = V.H / 2 - y2 / z2 * Fs; sz = s.size * Fs;
+      if (sx < -sz || sx > V.W + sz || sy < -sz || sy > V.H + sz) continue;
+      ctx.globalAlpha = Math.min(1, .5 * a0);
+      ctx.drawImage(haze(scene.neb[s.k]), sx - sz, sy - sz, sz * 2, sz * 2);
+    }
+  }
+  for (i = 0; i < n; i++) {
+    s = STARS[i];
+    x1 = s.x * V.cyw + s.z * V.syw; z1 = s.z * V.cyw - s.x * V.syw;
+    y2 = s.y * V.cp - z1 * V.sp; z2 = -(s.y * V.sp + z1 * V.cp);
+    if (z2 < .1) continue;
+    sx = V.W / 2 + x1 / z2 * Fs; sy = V.H / 2 - y2 / z2 * Fs;
+    if (sx < 0 || sx > V.W || sy < 0 || sy > V.H) continue;
+    a = Math.min(1, (.3 + s.m * .42) * a0 * (.8 + .2 * Math.sin(t * .9 + s.tw)));
+    ctx.globalAlpha = a;
+    if (s.m > 1.45 && V.q > .5) { sz = s.m * 3.4; ctx.drawImage(sprite(s.c), sx - sz, sy - sz, sz * 2, sz * 2); }
+    else { ctx.fillStyle = s.c; ctx.fillRect(sx, sy, s.m, s.m); }
+  }
+}
+
+function render(scene, t, skyAlpha) {
+  var ctx = V.ctx, W = V.W, H = V.H;
+  setView(scene);
+  ctx.setTransform(V.dpr, 0, 0, V.dpr, 0, 0);
+  ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
+  var g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, scene.bg[0]); g.addColorStop(1, scene.bg[1]);
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  ctx.globalCompositeOperation = 'lighter'; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  drawSky(scene, t, skyAlpha == null ? 1 : skyAlpha);
+
+  var lit = scene.lit, hi = scene.hi, grow = scene.grow, halo = V.q > .5;
+  var i, j, L, p, n, gf, a, w, fm, mf, fr, first, sw, sc, x, y, z;
+  for (i = 0; i < scene.lines.length; i++) {
+    L = scene.lines[i];
+    gf = grow >= 1 ? 1 : clamp((grow - L.t0) / (L.t1 - L.t0), 0, 1);
+    if (gf <= 0) continue;
+    if (L.dyn) L.dyn(t, L.p, L);
+    a = L.a * (L.env ? lit : 1);
+    if (hi) a *= (L.tag === hi) ? 1.25 : (L.tag === 'core' ? .8 : .28);
+    if (L.star) a *= scene.found[L.star] ? 1.15 : .32;
+    if (a <= .004) continue;
+    p = L.p; n = L.n; fm = (n - 1) * gf; mf = Math.floor(fm); fr = fm - mf;
+    ctx.beginPath(); first = true; sw = 0; sc = 0;
+    for (j = 0; j <= mf; j++) {
+      x = p[j * 3]; y = p[j * 3 + 1]; z = p[j * 3 + 2];
+      if (L.sway) x += Math.sin(t * .5 + y * 1.1) * .012 * y;
+      if (!proj(x, y, z)) { first = true; continue; }
+      if (first) { ctx.moveTo(px, py); first = false; } else ctx.lineTo(px, py);
+      sw += ps; sc++;
+    }
+    if (fr > .001 && mf < n - 1 && !first) {
+      x = lerp(p[mf * 3], p[mf * 3 + 3], fr); y = lerp(p[mf * 3 + 1], p[mf * 3 + 4], fr); z = lerp(p[mf * 3 + 2], p[mf * 3 + 5], fr);
+      if (L.sway) x += Math.sin(t * .5 + y * 1.1) * .012 * y;
+      if (proj(x, y, z)) ctx.lineTo(px, py);
+    }
+    if (!sc) continue;
+    if (L.closed && gf >= 1 && sc === n) ctx.closePath();
+    w = Math.max(.6, L.w * (sw / sc));
+    ctx.strokeStyle = L.color;
+    if (halo && L.halo) { ctx.globalAlpha = Math.min(1, a * .15); ctx.lineWidth = w * 4.2; ctx.stroke(); }
+    ctx.globalAlpha = Math.min(1, a); ctx.lineWidth = w; ctx.stroke();
+  }
+
+  var d, r, thin = V.q <= .5, dl = scene.dots;
+  for (i = 0; i < dl.length; i++) {
+    d = dl[i];
+    if (thin && d.env && (i & 1)) continue;
+    if (grow < 1 && grow < d.t0) continue;
+    if (d.dyn) d.dyn(d, t);
+    a = d.a * (d.env ? lit : 1);
+    if (hi && d.tag) a *= d.tag === hi ? 1.2 : .28;
+    if (d.tw) a *= .74 + .26 * Math.sin(t * 1.3 + d.tw);
+    if (a <= .01) continue;
+    x = d.x; if (d.sway) x += Math.sin(t * .5 + d.y * 1.1) * .012 * d.y;
+    if (!proj(x, d.y, d.z)) continue;
+    r = d.s * ps; if (grow < 1) r *= smooth(d.t0, d.t0 + .06, grow);
+    if (px < -r || px > W + r || py < -r || py > H + r) continue;
+    ctx.globalAlpha = Math.min(1, a);
+    if (r < 1.2) { ctx.fillStyle = d.color; ctx.fillRect(px - .65, py - .65, 1.3, 1.3); }
+    else ctx.drawImage(sprite(d.color), px - r, py - r, r * 2, r * 2);
+  }
+
+  if (scene.overlay) scene.overlay(ctx, t);
+
+  var nd, R, ap, pu;
+  for (i = 0; i < scene.nodes.length; i++) {
+    nd = scene.nodes[i];
+    if (nd.hidden) { nd._on = false; continue; }
+    ap = grow >= 1 ? 1 : smooth(nd.t0 || .9, (nd.t0 || .9) + .06, grow);
+    x = nd.x; if (nd.sway) x += Math.sin(t * .5 + nd.y * 1.1) * .012 * nd.y;
+    if (ap <= 0 || !proj(x, nd.y, nd.z)) { nd._on = false; continue; }
+    nd._x = px; nd._y = py; nd._z = pz;
+    nd._on = px > -20 && px < W + 20 && py > -20 && py < H + 20;
+    if (!nd._on) continue;
+    R = Math.max(5.5, nd.r * ps) * ap; pu = 1 + .07 * Math.sin(t * 1.5 + nd.ph);
+    a = (hi && nd.kind !== 'leaf' && nd.id !== hi) ? .3 : 1;
+    ctx.globalAlpha = a * ap;
+    ctx.drawImage(sprite(nd.color), px - R * 3.3 * pu, py - R * 3.3 * pu, R * 6.6 * pu, R * 6.6 * pu);
+    ctx.strokeStyle = nd.color; ctx.lineWidth = 1.2;
+    ctx.globalAlpha = .9 * a * ap; ctx.beginPath(); ctx.arc(px, py, R * 1.25, 0, TAU); ctx.stroke();
+    if (nd.seen) { ctx.globalAlpha = (nd.done ? .95 : .45) * a; ctx.lineWidth = nd.done ? 2.4 : 1.2; ctx.beginPath(); ctx.arc(px, py, R * 1.75, 0, TAU); ctx.stroke(); ctx.lineWidth = 1.2; }
+    if (nd.sel) { ctx.globalAlpha = .55 + .35 * Math.sin(t * 2.2); ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(px, py, R * 2.2 + 2, 0, TAU); ctx.stroke(); }
+  }
+  ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+}
+
+/* The Tree of Emergence. Pale light rises from one root through the trunk and opens into
+   seven colors along seven branches, lowest to highest: Ground at the base, Return at the crown.
+   Six fruits hang between the branches, attached to the trunk and to no single movement. */
+function leafLabel(s) { return s.t.indexOf(':') > 0 ? s.t.split(':')[0] : (s.short || s.t); }
+
+function buildTree() {
+  var S = new Scene({ fit: { w: 4.1, h: 6.1 }, center: [0, 1.25, 0], yaw: -.55, pitch: .1,
+    bg: ['#030409', '#0a0b1e'], neb: ['#3b2f86', '#17485c', '#5a2452'], spin: .035, pitchLim: [-.35, .8] });
+  var r = RNG(11), H = 2.72, i, j, k, u, s, pts;
+
+  /* The green plane at the foot of the Tree: the living present, where every cycle begins and ends. */
+  for (k = 1; k <= 5; k++) S.line(circle(0, 0, 0, k * .5, 'y', 64), C.green, .006, { a: k === 2 ? .22 : .12, t0: .02, t1: .22, closed: true, halo: false, tag: 'plane' });
+  for (k = 0; k < 6; k++) S.line(circle(Math.cos(k / 6 * TAU) * .5, 0, Math.sin(k / 6 * TAU) * .5, .5, 'y', 48), C.green, .005, { a: .08, t0: .05, t1: .25, closed: true, halo: false, tag: 'plane' });
+
+  var strands = [];
+  for (s = 0; s < 9; s++) {
+    pts = []; var a0 = s / 9 * TAU;
+    for (i = 0; i <= 28; i++) {
+      u = i / 28; var y = u * H, rad = .018 + .15 * Math.pow(1 - u, 1.25) + .17 * Math.pow(1 - u, 7), ang = a0 + u * 2.6 + Math.sin(u * 6 + s) * .12;
+      pts.push([Math.cos(ang) * rad, y, Math.sin(ang) * rad]);
+    }
+    strands.push(pts);
+    S.line(pts, mix(C.pearl, C.white, (s % 3) / 2), .015, { t0: .14, t1: .5, tag: 'core', sway: true, a: .72, halo: s % 3 === 0 });
+  }
+
+  for (i = 0; i < 7; i++) {
+    var ang0 = i / 7 * TAU + .35, bend = (r() - .5) * .5, reach = 1.25 + r() * .45, depth = 1.0 + r() * .35;
+    pts = [];
+    for (j = 0; j <= 20; j++) {
+      u = j / 20; var a = ang0 + bend * u + Math.sin(u * 5 + i) * .08, rad2 = .1 + u * reach;
+      pts.push([Math.cos(a) * rad2, .12 - depth * Math.pow(u, 1.35) - .12 * Math.sin(u * Math.PI), Math.sin(a) * rad2]);
+    }
+    S.line(pts, mix(C.pearl, C.amber, .25), .018, { t0: 0, t1: .3, tag: 'core', a: .8 });
+    for (k = 0; k < 3; k++) {
+      var st = pts[8 + k * 4], q = [], a2 = ang0 + (r() - .5) * 1.6, dr = .25 + r() * .1;
+      for (j = 0; j <= 8; j++) { u = j / 8; q.push([st[0] + Math.cos(a2) * u * .45, st[1] - u * dr - u * u * .15, st[2] + Math.sin(a2) * u * .45]); }
+      S.line(q, mix(C.pearl, C.amber, .5), .008, { t0: .12, t1: .36, tag: 'core', a: .55, halo: false });
+      S.dot(q[8][0], q[8][1], q[8][2], .05, C.pearl, { a: .6, t0: .36 });
+    }
+  }
+
+  S.flows = []; S.tips = {}; var leafSpots = {};
+  MOVEMENTS.forEach(function (m, i) {
+    var col = m.color, y0 = 1.02 + i * .27, phi = i * 2.39996 + .4, el = (i === 6 ? 84 : 12 + i * 10.5) * Math.PI / 180, len = 1.78 - i * .125;
+    var dx = Math.cos(el) * Math.cos(phi), dy = Math.sin(el), dz = Math.cos(el) * Math.sin(phi), limb = [], j, k, u;
+    for (j = 0; j <= 22; j++) {
+      u = j / 22; var lift = i === 6 ? 0 : len * .24 * u * u, wob = Math.sin(u * 7 + i * 2) * .03 * u;
+      limb.push([.05 * dx + dx * len * u + wob * dz, y0 + dy * len * u + lift, .05 * dz + dz * len * u - wob * dx]);
+    }
+    var t0 = .36 + i * .045, t1 = Math.min(.94, t0 + .3);
+    S.line(limb.slice(0, 9), mix(C.pearl, col, .38), .026, { t0: t0, t1: t0 + .12, tag: m.id, sway: true });
+    S.line(limb.slice(8, 16), mix(C.pearl, col, .75), .021, { t0: t0 + .1, t1: t0 + .21, tag: m.id, sway: true });
+    S.line(limb.slice(15), col, .016, { t0: t0 + .2, t1: t1, tag: m.id, sway: true });
+    var tip = limb[22], spots = []; S.tips[m.id] = tip;
+    for (k = 0; k < 7; k++) {
+      var bu = .28 + k * .11, b0 = limb[Math.round(bu * 22)], side = k % 2 ? 1 : -1;
+      var a = phi + side * (.9 + r() * .5), up = .25 + r() * .5, bl = (.34 + r() * .22) * (1 - bu * .35) + .12, q = [];
+      for (j = 0; j <= 9; j++) { u = j / 9; q.push([b0[0] + Math.cos(a) * bl * u * Math.cos(up), b0[1] + Math.sin(up) * bl * u + .06 * u * u, b0[2] + Math.sin(a) * bl * u * Math.cos(up)]); }
+      S.line(q, col, .009, { t0: t0 + .2 + bu * .08, t1: t1 + .03, tag: m.id, sway: true, a: .8 });
+      var e = q[9]; if (k < 5) spots.push(e);
+      for (var w = 0; w < 2; w++) {
+        var a3 = a + (r() - .5) * 1.8, tl = .12 + r() * .14, lf = .3 + r() * .4, tw = [e];
+        for (j = 1; j <= 4; j++) { u = j / 4; tw.push([e[0] + Math.cos(a3) * tl * u, e[1] + tl * u * lf, e[2] + Math.sin(a3) * tl * u]); }
+        S.line(tw, col, .006, { t0: t1 - .02, t1: t1 + .05, tag: m.id, sway: true, a: .6, halo: false });
+        for (j = 0; j < 4; j++) {
+          var lp = tw[1 + j];
+          S.dot(lp[0] + (r() - .5) * .1, lp[1] + (r() - .5) * .1, lp[2] + (r() - .5) * .1, .045 + r() * .06, mix(col, C.white, r() * .5),
+            { t0: Math.min(.97, t1 + r() * .04), tag: m.id, a: .85, sway: true });
+        }
+      }
+    }
+    leafSpots[m.id] = spots;
+    S.dot(tip[0], tip[1], tip[2], .3, col, { t0: t1, tag: m.id, a: .7, sway: true, tw: 0 });
+    var sp = strands[i % 9], path = [];
+    for (j = 0; j < sp.length && sp[j][1] < y0; j++) path.push(sp[j]);
+    S.flows.push({ path: path.concat(limb), col: col, id: m.id });
+    S.node({ id: m.id, kind: 'movement', x: tip[0], y: tip[1], z: tip[2], r: .085, color: col, label: m.name, pri: 3, t0: t1, phi: phi, sway: true });
+  });
+
+  S.flows.forEach(function (f, fi) {
+    [0, .5].forEach(function (off) {
+      var ph = fi * .137 + off;
+      S.dot(0, 0, 0, .1, f.col, { t0: .98, tag: f.id, tw: 0, a: .9, dyn: function (d, t) {
+        var uu = (t * .06 + ph) % 1, p = polyAt(f.path, uu);
+        d.x = p[0]; d.y = p[1]; d.z = p[2]; d.a = Math.sin(uu * Math.PI) * .95;
+      } });
+    });
+  });
+
+  FRUITS.forEach(function (f, j) {
+    var y = 1.18 + j * .27, phi = (j + .5) * 2.39996 + .4 + Math.PI, reach = .8 + (j % 2) * .14, pts = [], k, u;
+    for (k = 0; k <= 14; k++) { u = k / 14; var rad = .06 + u * reach; pts.push([Math.cos(phi) * rad, y + Math.sin(u * Math.PI * .9) * .2 - u * u * .34, Math.sin(phi) * rad]); }
+    S.line(pts, mix(C.pearl, C.amber, .6), .011, { t0: .62, t1: .86, tag: 'core', sway: true, a: .75 });
+    var e = pts[14];
+    S.dot(e[0], e[1] - .02, e[2], .34, C.amber, { t0: .88, a: .7, tw: 0, sway: true });
+    S.node({ id: f.id, kind: 'fruit', x: e[0], y: e[1] - .02, z: e[2], r: .1, color: C.amber, label: f.name, num: f.num, pri: 2, t0: .88, phi: phi, sway: true });
+  });
+
+  S.dot(0, .07, 0, .42, C.white, { t0: 0, a: .9, tw: 0 });
+  S.node({ id: 'seed', kind: 'seed', x: 0, y: .07, z: 0, r: .07, color: C.white, label: 'The seed', pri: 2, t0: .02 });
+  S.node({ id: 'trunk', kind: 'trunk', x: 0, y: .74, z: 0, r: .065, color: C.pearl, label: 'The trunk', pri: 1, t0: .5 });
+  S.node({ id: 'roots', kind: 'roots', x: 0, y: -.95, z: 0, r: .08, color: C.pearl, label: 'The roots', pri: 2, t0: .3 });
+  var top = S.tips['return'];
+  S.dot(top[0], top[1] + .05, top[2], .6, C.white, { t0: .97, a: .45, tw: 0, sway: true });
+
+  MOVEMENTS.forEach(function (m) {
+    var sp = leafSpots[m.id];
+    m.stars.forEach(function (st, k) {
+      var p = sp[k % sp.length];
+      S.node({ id: m.id + ':' + st.id, kind: 'leaf', parent: m.id, star: st.id, x: p[0], y: p[1] + .04, z: p[2], r: .04,
+        color: mix(m.color, C.white, .4), label: leafLabel(st), pri: 1, hidden: true, t0: .99, sway: true });
+    });
+  });
+
+  /* Drifting dust, so the dark around the Tree has depth. */
+  for (i = 0; i < 150; i++) {
+    var d = S.dot((r() - .5) * 7, -1.5 + r() * 6, (r() - .5) * 7, .02 + r() * .03, r() < .3 ? C.pearl : '#cfd6ff', { a: .25 + r() * .4, env: true });
+    d.ph = r() * TAU;
+    d.dyn = function (d, t) { d.x = d.ox + Math.sin(t * .11 + d.ph) * .25; d.y = d.oy + Math.cos(t * .09 + d.ph * 1.7) * .2; };
+  }
+  return S;
+}
+
+/* Thirteen world environments. The seven movement worlds follow the visual directions for the
+   red, orange, golden, green, blue, indigo and violet worlds. They are settings for the
+   movements, not definitions of them. */
+function layoutMovement(n) {
+  return n >= 5
+    ? [[0, .35, 0], [-.95, 1.3, -.3], [.95, 1.2, .2], [-.9, -.6, .25], [.9, -.7, -.2]]
+    : [[0, .35, 0], [0, 1.5, -.2], [-.95, -.5, .2], [.95, -.5, -.1]];
+}
+var LAYOUT = {
+  'vision': [[0, .3, 0], [-1.0, 1.1, .15], [0, 1.8, -.2], [1.0, 1.1, .1], [-1.15, -.5, .2], [-.42, -1.2, -.1], [.42, -1.2, .1], [1.15, -.5, -.2]],
+  'living-tree': [[-1.0, 1.7, .1], [0, -1.8, 0], [0, -1.15, .2], [0, -.2, .1], [-.8, .5, .2], [.85, .8, -.2], [-.5, 1.15, -.2], [.55, 1.55, .15], [1.0, -.8, -.1]],
+  'living-works': [[-.75, -1.1, .3], [.75, -.6, -.2], [-.75, -.1, .1], [.75, .4, .25], [-.75, .9, -.2], [.75, 1.4, .1], [-.75, 1.9, -.3]],
+  'federation-structure': [[0, .3, 0], [-.85, 1.3, .2], [.85, 1.3, -.2], [-.85, -.7, -.2], [.85, -.7, .2]],
+  'path-ahead': [[.35, 2.35, -2.6], [-.78, -1.8, .5], [.78, -1.25, .3], [-.78, -.7, .1], [.78, -.15, -.1], [-.78, .4, -.3], [.78, .95, -.5], [-.6, 1.5, -.7]],
+  'living-library': [[0, -1.75, .2], [-.95, .55, .2], [.95, .55, -.2], [-.95, -.35, -.25], [.95, -.35, .25], [-.95, -1.2, .15], [.95, -1.2, -.15]],
+  'the-scroll': [[0, .3, 0], [-.75, 1.0, .2], [.75, 1.0, -.2], [-.75, -.45, -.2], [.75, -.45, .2],
+    [-1.15, 1.95, 0], [0, 2.3, -.2], [1.15, 1.95, 0], [-1.3, .3, .3], [1.3, .3, -.3], [-1.15, -1.35, 0], [0, -1.8, .2], [1.15, -1.35, 0]]
+};
+/* Which star each constellation line starts from. -1 means the environment draws the tie itself. */
+var CONS = {
+  'living-tree': [4, -1, 1, 2, 3, 4, 5, 6, 3],
+  'living-works': [-1, -1, -1, -1, -1, -1, -1],
+  'living-library': [-1, -1, -1, -1, -1, -1, -1],
+  'path-ahead': [7, -1, -1, -1, -1, -1, -1, -1],
+  'the-scroll': [-1, 0, 0, 0, 0, 1, 0, 2, 1, 2, 3, 3, 4]
+};
+var STARCOL = {
+  'vision-redshift': C.red, 'vision-greenshift': C.green, 'vision-blueshift': C.blue, 'vision-violetshift': C.violet,
+  'lt-roots': C.green, 'lt-trunk': C.gold, 'lt-branches': C.blue, 'lt-leaves': C.violet, 'lt-flowers': C.pearl, 'lt-fruits': C.orange
+};
+
+function motes(S, r, n, col, box, fn) {
+  for (var i = 0; i < n; i++) {
+    var d = S.dot((r() - .5) * box[0], box[3] + r() * box[1], (r() - .5) * box[2], .03 + r() * .045,
+      typeof col === 'function' ? col(r()) : col, { env: true, a: .35 + r() * .5 });
+    d.v = .05 + r() * .12; d.ph = r() * TAU; d.h = box[1]; d.y0 = box[3]; d.wd = box[0]; d.dyn = fn;
+  }
+}
+function rise(d, t) { d.y = d.y0 + ((d.oy - d.y0) + t * d.v) % d.h; d.x = d.ox + Math.sin(t * .4 + d.ph) * .12; }
+function drift(d, t) { d.x = d.ox + Math.sin(t * .23 + d.ph) * .18; d.y = d.oy + Math.cos(t * .19 + d.ph * 1.3) * .14; }
+function stream(d, t) { d.x = ((d.ox + d.wd / 2 + t * d.v * 2.4) % d.wd) - d.wd / 2; d.y = d.oy + Math.sin(t * .6 + d.ph) * .1; }
+
+var ENV = {
+  ground: function (S, r) {
+    S.bg = ['#090205', '#220709']; S.neb = ['#5a1220', '#40100c', '#6a2a14']; S.sky = .22;
+    var i, j, u, pts, a, R, x, z;
+    for (i = 0; i < 7; i++) {
+      var y = -2.0 + i * .16; R = 3.9 - i * .42; pts = [];
+      for (j = 0; j < 56; j++) { u = j / 56 * TAU; var rr = R * (1 + .07 * Math.sin(u * 3 + i) + .04 * Math.sin(u * 7 + i * 2)); pts.push([Math.cos(u) * rr, y + .05 * Math.sin(u * 5 + i), Math.sin(u) * rr]); }
+      S.line(pts, '#b8402f', .012, { a: .34, env: true, closed: true, halo: false });
+    }
+    for (i = 0; i < 18; i++) {
+      a = r() * TAU; R = .5 + Math.sqrt(r()) * 2.9; x = Math.cos(a) * R; z = Math.sin(a) * R; var l = 1.2 + r() * 2.4, wx = r() * TAU; pts = [];
+      for (j = 0; j <= 14; j++) { u = j / 14; pts.push([x + Math.sin(u * 4 + wx) * .12 * u, 3.2 - u * l, z + Math.cos(u * 3.3 + wx) * .12 * u]); }
+      S.line(pts, mix('#ff7a4a', '#ffc08a', r()), .014, { a: .55, env: true });
+      S.dot(pts[14][0], pts[14][1], pts[14][2], .09, '#ffb07a', { env: true, a: .7 });
+    }
+    for (i = 0; i < 20; i++) {
+      a = r() * TAU; R = 1.3 + r() * 2.2; x = Math.cos(a) * R; z = Math.sin(a) * R;
+      var h = .45 + r() * 1.0, wd = .07 + r() * .08, lx = (r() - .5) * .5, lz = (r() - .5) * .5, by = -1.95;
+      var top = [x + lx * h, by + h, z + lz * h], bot = [x, by, z], mid = [], col = mix(C.red, '#ff2d7a', r());
+      for (j = 0; j < 4; j++) { var q = j / 4 * TAU + a; mid.push([x + lx * h * .35 + Math.cos(q) * wd, by + h * .35, z + lz * h * .35 + Math.sin(q) * wd]); }
+      for (j = 0; j < 4; j++) S.line([bot, mid[j], top], col, .008, { a: .7, env: true, halo: false });
+      S.line(mid, col, .007, { a: .6, env: true, halo: false, closed: true });
+      S.dot(top[0], top[1], top[2], .14, col, { env: true, a: .8 });
+    }
+    motes(S, r, 110, function (q) { return mix('#ff5a3a', '#ffc27a', q); }, [6, 5, 6, -2], rise);
+  },
+
+  witness: function (S, r) {
+    S.bg = ['#080405', '#2e1305']; S.neb = ['#7a3a0c', '#5a1e10', '#8a5a14']; S.sky = .6;
+    var i, j;
+    S.dot(0, -.9, -7, 4.6, '#ff9a3d', { env: true, a: .5, tw: 0 });
+    for (i = 0; i < 20; i++) (function (k) {
+      var z = -4.2 + k * .36, n = 44, pts = [];
+      for (var j = 0; j < n; j++) pts.push([-3.6 + j * (7.2 / (n - 1)), -1.5, z]);
+      S.line(pts, mix('#ff7a1e', '#ffd69a', k / 20), .012, { a: .3 + .3 * (k / 20), env: true, halo: k % 2 === 0,
+        dyn: function (t, p) { for (var j = 0; j < n; j++) { var x = p[j * 3]; p[j * 3 + 1] = -1.5 + .15 * Math.sin(x * 1.25 + t * .55 + k * .7) + .07 * Math.sin(x * 2.9 - t * .8 + k * 1.9); } } });
+    })(i);
+    for (i = 0; i < 5; i++) {
+      var a = i / 5 * TAU + .6, R = 1.9 + r() * 1.2, x = Math.cos(a) * R, z = Math.sin(a) * R - .6, y = -.2 + r() * 1.9, rad = .3 + r() * .4;
+      for (j = 0; j < 4; j++) S.line(circle(x, y - j * .09, z, rad * (1 - j * .24), 'y', 28), mix('#ffb463', '#ffe2b0', j / 4), .009, { a: .6 - j * .1, env: true, closed: true, halo: j === 0 });
+      for (j = 0; j < 3; j++) { var fx = x + (r() - .5) * rad, fz = z + (r() - .5) * rad; S.line([[fx, y - .3, fz], [fx + .03, y - .6 - r() * .5, fz]], '#ffc98a', .006, { a: .4, env: true, halo: false }); }
+      S.dot(x, y + .05, z, .3, '#ffc98a', { env: true, a: .45 });
+    }
+    motes(S, r, 120, function (q) { return mix('#ff8a2a', '#ffe0b0', q); }, [7.2, 3.6, 6, -1.4], stream);
+  },
+
+  name: function (S, r) {
+    S.bg = ['#080602', '#30210a']; S.neb = ['#7a5a0c', '#5a3a08', '#8a6a1c']; S.sky = .45;
+    var sx = 0, sy = 1.5, sz = -6, i, k, gy = -1.8;
+    S.dot(sx, sy, sz, 3.8, '#ffe6a0', { env: true, a: .75, tw: 0 });
+    S.dot(sx, sy, sz, 1.5, '#fff6dc', { env: true, a: .9, tw: 0 });
+    [1.0, 1.35, 1.8, 2.45].forEach(function (R, k) { S.line(circle(sx, sy, sz, R, 'z', 72), mix(C.gold, C.white, .25), .012, { a: .6 - k * .1, env: true, closed: true }); });
+    for (k = 0; k < 2; k++) S.line(circle(sx, sy, sz, 2.45, 'z', 3, k * Math.PI / 3 + Math.PI / 2), C.gold, .009, { a: .45, env: true, closed: true, halo: false });
+    S.line(circle(sx, sy, sz, 3.1, 'z', 12), C.gold, .008, { a: .35, env: true, closed: true, halo: false });
+    for (i = 0; i < 36; i++) (function (a0, long) {
+      S.line([[0, 0, 0], [0, 0, 0]], '#ffe9a8', .008, { a: long ? .5 : .3, env: true, halo: false,
+        dyn: function (t, p) { var a = a0 + t * .02, r0 = 3.25, r1 = long ? 4.6 : 3.8; p[0] = sx + Math.cos(a) * r0; p[1] = sy + Math.sin(a) * r0; p[2] = sz; p[3] = sx + Math.cos(a) * r1; p[4] = sy + Math.sin(a) * r1; p[5] = sz; } });
+    })(i / 36 * TAU, i % 3 === 0);
+    for (i = -6; i <= 6; i++) S.line([[i * .12, gy, sz], [i * 1.1, gy, 3.5]], C.gold, .01, { a: i === 0 ? .6 : .32, env: true, halo: i === 0 });
+    for (i = 0; i < 8; i++) { var z = 3 - i * i * .16 - i * .2, f = (z - sz) / (3.5 - sz), half = 6 * (.12 + .98 * f); S.line([[-half, gy, z], [half, gy, z]], C.gold, .007, { a: .22, env: true, halo: false }); }
+    motes(S, r, 90, function (q) { return mix(C.gold, C.white, q); }, [6, 5, 6, -1.8], drift);
+  },
+
+  differentiate: function (S, r) {
+    S.bg = ['#020807', '#06261e']; S.neb = ['#0c5a44', '#0a3a4a', '#1c6a3c']; S.sky = .5;
+    var gy = -1.9, P = [], i, j, k, u, pts, a, R;
+    for (i = 0; i < 70; i++) { a = r() * TAU; R = Math.sqrt(r()) * 3.8; P.push([Math.cos(a) * R, gy + (r() - .5) * .06, Math.sin(a) * R]); }
+    P.forEach(function (p, i) {
+      var best = [];
+      for (var j = 0; j < P.length; j++) if (j !== i) best.push([dist2(p, P[j]), j]);
+      best.sort(function (a, b) { return a[0] - b[0]; });
+      for (var k = 0; k < 2; k++) {
+        var q = P[best[k][1]];
+        if (best[k][1] > i || k === 0) S.line([p, [(p[0] + q[0]) / 2 + (r() - .5) * .1, gy, (p[2] + q[2]) / 2 + (r() - .5) * .1], q], '#39ffb0', .007, { a: .4, env: true, halo: false });
+      }
+      S.dot(p[0], p[1], p[2], .06, '#7dffc8', { env: true, a: .6 });
+    });
+    for (i = 0; i < 11; i++) {
+      a = i / 11 * TAU + r() * .3; R = 1.9 + r() * 1.7; var x = Math.cos(a) * R, z = Math.sin(a) * R, h = 2.2 + r() * 1.6, wx = r() * TAU; pts = [];
+      for (j = 0; j <= 12; j++) { u = j / 12; pts.push([x + Math.sin(u * 3 + wx) * .08, gy + u * h, z + Math.cos(u * 2.5 + wx) * .08]); }
+      S.line(pts, '#2fbf8a', .03, { a: .5, env: true });
+      for (k = 0; k < 3; k++) { var ra = a + k * 2.1; S.line([[x, gy + .25, z], [x + Math.cos(ra) * .3, gy, z + Math.sin(ra) * .3]], '#2fbf8a', .014, { a: .4, env: true, halo: false }); }
+      var tx = pts[12][0], ty = pts[12][1], tz = pts[12][2];
+      for (k = 0; k < 26; k++) { var q = r() * TAU, e = (r() - .5) * 1.4, rr = .25 + r() * .6; S.dot(tx + Math.cos(q) * Math.cos(e) * rr, ty + Math.sin(e) * rr * .7, tz + Math.sin(q) * Math.cos(e) * rr, .05 + r() * .08, mix(C.green, '#c8ffe4', r()), { env: true, a: .7 }); }
+      for (k = 0; k < 3; k++) { var q2 = r() * TAU; S.line([[tx, ty - .2, tz], [tx + Math.cos(q2) * .5, ty + .15 + r() * .3, tz + Math.sin(q2) * .5]], '#2fbf8a', .01, { a: .4, env: true, halo: false }); }
+    }
+    for (k = 0; k < 3; k++) { pts = []; for (j = 0; j <= 40; j++) { u = j / 40; pts.push([-3.8 + u * 7.6, gy + .02, Math.sin(u * 5) * .7 + (k - 1) * .09 + .9]); } S.line(pts, '#8fffdc', .012, { a: .5, env: true }); }
+    motes(S, r, 110, function (q) { return mix('#eaffb0', '#9fffd0', q); }, [6.5, 5, 6.5, -1.9], rise);
+  },
+
+  converge: function (S, r) {
+    S.bg = ['#02040b', '#081c42']; S.neb = ['#0c2a7a', '#103a6a', '#2a1c7a']; S.sky = .7;
+    var gy = -1.7, i, j;
+    for (i = 0; i < 9; i++) (function (k) {
+      var n = 56;
+      S.line(circle(0, gy, 0, 1, 'y', n), '#7cc6ff', .012, { a: .5, env: true, closed: true, halo: k % 3 === 0,
+        dyn: function (t, p, L) { var ph = (k / 9 + t * .035) % 1, R = 4.2 * (1 - ph) + .12; for (var j = 0; j < n; j++) { var a = j / n * TAU; p[j * 3] = Math.cos(a) * R; p[j * 3 + 2] = Math.sin(a) * R; } L.a = .6 * Math.sin(ph * Math.PI); } });
+    })(i);
+    for (i = 0; i < 9; i++) {
+      var a = i / 9 * TAU + .2, R = 2.4 + r() * 1.0, x = Math.cos(a) * R, z = Math.sin(a) * R, h = 1.2 + r() * 2.2, wd = .14 + r() * .1, col = mix(C.blue, '#cfeaff', r());
+      var bot = circle(x, gy, z, wd, 'y', 6, a), top = circle(x, gy + h, z, wd, 'y', 6, a), apex = [x, gy + h + wd * 1.8, z];
+      S.line(bot, col, .007, { a: .5, env: true, closed: true, halo: false });
+      S.line(top, col, .007, { a: .6, env: true, closed: true, halo: false });
+      for (j = 0; j < 6; j++) S.line([bot[j], top[j], apex], col, .008, { a: .6, env: true, halo: j % 3 === 0 });
+      S.dot(apex[0], apex[1], apex[2], .16, col, { env: true, a: .8 });
+    }
+    for (i = 0; i < 7; i++) (function (k) {
+      var n = 40, x0 = (k - 3) * .75;
+      S.line(circle(0, 0, 0, 1, 'y', n), '#a6d6ff', .009, { a: .4, env: true, halo: false,
+        dyn: function (t, p) { for (var j = 0; j < n; j++) { var y = -1.6 + j * (5 / (n - 1)); p[j * 3] = x0 + .2 * Math.sin(y * 2.6 + k) * Math.sin(t * .7 + k * .9); p[j * 3 + 1] = y; p[j * 3 + 2] = -3.2; } } });
+    })(i);
+    motes(S, r, 80, function (q) { return mix(C.blue, C.white, q); }, [6, 5, 6, -1.7], drift);
+  },
+
+  covenant: function (S, r) {
+    S.bg = ['#030311', '#100c3c']; S.neb = ['#2a1c8a', '#3a2a9a', '#1c2a6a']; S.sky = 1.25;
+    var i;
+    for (i = 0; i < 6; i++) (function (k) {
+      var n = 72, R = 2.2 + k * .2, tilt = .3 + k * .5, sp = .03 + k * .012, col = mix(C.indigo, '#d6d3ff', k / 6);
+      var L = S.line(circle(0, 0, 0, R, 'y', n), col, .011, { a: .5, env: true, closed: true, halo: k % 2 === 0,
+        dyn: function (t, p) {
+          var az = t * sp + k, ct = Math.cos(tilt), st = Math.sin(tilt), ca = Math.cos(az), sa = Math.sin(az);
+          for (var j = 0; j < n; j++) { var a = j / n * TAU, x = Math.cos(a) * R, z = Math.sin(a) * R, z1 = z * ct; p[j * 3] = x * ca - z1 * sa; p[j * 3 + 1] = -z * st + .3; p[j * 3 + 2] = x * sa + z1 * ca; }
+        } });
+      S.dot(0, 0, 0, .16, '#e6e4ff', { env: true, a: .9, tw: 0, dyn: function (d, t) {
+        var f = ((t * .012 * (k + 1) + k * .17) % 1) * n, j = Math.floor(f), fr = f - j, j2 = (j + 1) % n, p = L.p;
+        d.x = lerp(p[j * 3], p[j2 * 3], fr); d.y = lerp(p[j * 3 + 1], p[j2 * 3 + 1], fr); d.z = lerp(p[j * 3 + 2], p[j2 * 3 + 2], fr);
+      } });
+    })(i);
+    [[-2.6, 2.6, -5], [2.9, 1.2, -6], [-1.2, -1.9, -6.5]].forEach(function (g, gi) {
+      var tilt = .5 + gi * .6;
+      for (var i = 0; i < 150; i++) {
+        var arm = i % 2, rr = Math.pow(r(), .7) * 1.1, a = arm * Math.PI + rr * 4.5 + (r() - .5) * .5, x = Math.cos(a) * rr, z = Math.sin(a) * rr, y = (r() - .5) * .06;
+        S.dot(g[0] + x, g[1] + y * Math.cos(tilt) + z * Math.sin(tilt), g[2] + z * Math.cos(tilt), .045 + r() * .06, ['#c9c5ff', '#9fd4ff', '#ffdcf4'][gi], { env: true, a: .7 });
+      }
+      S.dot(g[0], g[1], g[2], .7, '#ffffff', { env: true, a: .35, tw: 0 });
+    });
+    motes(S, r, 60, function (q) { return mix(C.indigo, C.white, q); }, [6, 5, 6, -2], drift);
+  },
+
+  'return': function (S, r) {
+    S.bg = ['#070312', '#200e40']; S.neb = ['#4a1c8a', '#6a2a8a', '#2a1c6a']; S.sky = .9;
+    var mx = 0, my = .4, mz = -2.6, cs = [[0, 0]], a, k;
+    for (k = 0; k < 6; k++) { a = k / 6 * TAU; cs.push([Math.cos(a) * .62, Math.sin(a) * .62]); }
+    for (k = 0; k < 6; k++) { a = k / 6 * TAU + Math.PI / 6; cs.push([Math.cos(a) * 1.074, Math.sin(a) * 1.074]); }
+    for (k = 0; k < 6; k++) { a = k / 6 * TAU; cs.push([Math.cos(a) * 1.24, Math.sin(a) * 1.24]); }
+    cs.forEach(function (c, ci) {
+      var n = 40;
+      S.line(circle(0, 0, 0, .62, 'z', n), mix(C.violet, C.white, ci === 0 ? .6 : .2), .009, { a: ci < 7 ? .6 : .38, env: true, closed: true, halo: ci < 7,
+        dyn: function (t, p) {
+          var rot = t * .012, cx = mx + c[0] * Math.cos(rot) - c[1] * Math.sin(rot), cy = my + c[0] * Math.sin(rot) + c[1] * Math.cos(rot);
+          for (var j = 0; j < n; j++) { var q = j / n * TAU; p[j * 3] = cx + Math.cos(q) * .62; p[j * 3 + 1] = cy + Math.sin(q) * .62; p[j * 3 + 2] = mz; }
+        } });
+    });
+    S.line(circle(mx, my, mz, 1.86, 'z', 80), C.violet, .012, { a: .55, env: true, closed: true });
+    S.line(circle(mx, my, mz, 2.0, 'z', 80), '#e6ccff', .007, { a: .4, env: true, closed: true, halo: false });
+    MOVEMENTS.forEach(function (m, k) {
+      var a0 = k / 7 * TAU + .3, pts = [], n = 44, i;
+      for (i = 0; i <= n; i++) { var u = i / n, rad = 3.6 * Math.pow(1 - u, 1.15), an = a0 + u * 2.0; pts.push([mx + Math.cos(an) * rad, my + Math.sin(an) * rad * .85, 2.2 + (mz - 2.2) * u]); }
+      S.line(pts.slice(0, 34), m.color, .017, { a: .75, env: true });
+      S.line(pts.slice(33), mix(m.color, C.white, .75), .014, { a: .8, env: true });
+      [0, 1 / 3, 2 / 3].forEach(function (off) {
+        var ph = off + k * .09;
+        S.dot(0, 0, 0, .13, m.color, { env: true, a: .9, tw: 0, dyn: function (d, t) { var u = (t * .05 + ph) % 1, p = polyAt(pts, u); d.x = p[0]; d.y = p[1]; d.z = p[2]; d.a = Math.sin(u * Math.PI); } });
+      });
+    });
+    S.dot(mx, my, mz, 1.9, C.white, { env: true, a: .85, tw: 0 });
+    S.dot(mx, my, mz, .7, '#ffffff', { a: .9, tw: 0 });
+    motes(S, r, 70, function (q) { return mix(C.violet, C.white, q); }, [6, 5, 5, -2], drift);
+  },
+
+  vision: function (S, r) {
+    S.bg = ['#05040d', '#1b0d24']; S.neb = ['#5a1c3a', '#2a1c6a', '#1c4a4a']; S.sky = 1;
+    var gy = -1.75, i;
+    S.dot(0, -1.4, -7, 4.4, '#ff8a6a', { env: true, a: .35, tw: 0 });
+    S.line(circle(0, gy, 0, 1.25, 'y', 72), C.green, .014, { a: .7, env: true, closed: true });
+    S.line(circle(0, gy, 0, 1.33, 'y', 72), C.green, .006, { a: .4, env: true, closed: true, halo: false });
+    for (i = 0; i < 5; i++) (function (k) {
+      var n = 64;
+      S.line(circle(0, gy, 0, 1, 'y', n), C.red, .011, { a: .5, env: true, closed: true, halo: k % 2 === 0,
+        dyn: function (t, p, L) { var ph = (k / 5 + t * .04) % 1, R = 1.45 + ph * 3.2; for (var j = 0; j < n; j++) { var a = j / n * TAU; p[j * 3] = Math.cos(a) * R; p[j * 3 + 2] = Math.sin(a) * R; } L.a = .6 * (1 - ph) * smooth(0, .15, ph); } });
+      S.line(circle(0, gy, 0, 1, 'y', n), C.blue, .011, { a: .5, env: true, closed: true, halo: k % 2 === 0,
+        dyn: function (t, p, L) { var ph = (k / 5 + t * .04) % 1, R = 1.15 * (1 - ph) + .04; for (var j = 0; j < n; j++) { var a = j / n * TAU; p[j * 3] = Math.cos(a) * R; p[j * 3 + 2] = Math.sin(a) * R; } L.a = .6 * Math.sin(ph * Math.PI); } });
+    })(i);
+    S.line(circle(0, .3, -.3, 2.95, 'z', 96), C.violet, .012, { a: .45, env: true, closed: true });
+    S.line(circle(0, .3, -.3, 3.1, 'z', 96), C.violet, .006, { a: .25, env: true, closed: true, halo: false });
+    motes(S, r, 70, function (q) { return mix(C.pearl, C.white, q); }, [6, 5, 6, -1.8], drift);
+  },
+
+  livingTree: function (S, r) {
+    S.bg = ['#03060a', '#0b1e18']; S.neb = ['#0c4a3a', '#1c2a6a', '#3a2a0c']; S.sky = .8;
+    var gy = -.62, i, j, k, u, pts, a;
+    for (k = 1; k <= 3; k++) S.line(circle(0, gy, 0, k * .7, 'y', 60), C.green, .007, { a: .2, env: true, closed: true, halo: false });
+    for (i = 0; i < 6; i++) {
+      a = i / 6 * TAU + .4; pts = [];
+      for (j = 0; j <= 14; j++) { u = j / 14; pts.push([Math.cos(a + u * .4) * (.06 + u * 1.15), gy - Math.pow(u, 1.3) * 1.05, Math.sin(a + u * .4) * (.06 + u * 1.15)]); }
+      S.line(pts, C.green, .016, { a: .6, env: true });
+    }
+    for (i = 0; i < 5; i++) {
+      pts = []; a = i / 5 * TAU;
+      for (j = 0; j <= 12; j++) { u = j / 12; var rad = .12 * (1 - .5 * u) + .02; pts.push([Math.cos(a + u * 2) * rad, gy + u * 1.0, Math.sin(a + u * 2) * rad]); }
+      S.line(pts, C.gold, .018, { a: .7, env: true });
+    }
+    for (i = 0; i < 5; i++) {
+      a = i / 5 * TAU + .7; var el = .5 + r() * .5, len = 1.0 + r() * .3; pts = [];
+      for (j = 0; j <= 14; j++) { u = j / 14; pts.push([Math.cos(a) * Math.cos(el) * len * u, gy + 1.0 + Math.sin(el) * len * u + .15 * u * u, Math.sin(a) * Math.cos(el) * len * u]); }
+      S.line(pts, C.blue, .014, { a: .7, env: true });
+      var e = pts[14];
+      for (k = 0; k < 14; k++) S.dot(e[0] + (r() - .5) * .5, e[1] + (r() - .5) * .4, e[2] + (r() - .5) * .5, .05 + r() * .05, C.violet, { env: true, a: .75 });
+      for (k = 0; k < 3; k++) S.dot(e[0] + (r() - .5) * .4, e[1] + .1 + r() * .2, e[2] + (r() - .5) * .4, .11, C.pearl, { env: true, a: .9 });
+      S.dot(e[0] + .08, e[1] - .2, e[2], .2, C.orange, { env: true, a: .85, tw: 0 });
+    }
+    motes(S, r, 70, function (q) { return mix(C.green, C.white, q); }, [6, 5, 6, -2], drift);
+  },
+
+  livingWorks: function (S, r, w, pos) {
+    S.bg = ['#04060a', '#131f14']; S.neb = ['#1c4a2a', '#3a3a0c', '#0c3a4a']; S.sky = .8;
+    var gy = -2.0, k, j, u;
+    for (k = 1; k <= 4; k++) S.line(circle(0, gy, 0, k * .8, 'y', 60), '#9fe0b0', .007, { a: .2, env: true, closed: true, halo: false });
+    pos.forEach(function (p, i) {
+      var pts = [], bx = p[0] * .45, bz = p[2] + .3;
+      for (j = 0; j <= 16; j++) { u = j / 16; pts.push([lerp(bx, p[0], u * u) + Math.sin(u * 5 + i) * .05 * (1 - u), lerp(gy, p[1] - .1, u), lerp(bz, p[2], u)]); }
+      S.line(pts, '#9fe0b0', .014, { a: .7, env: true, star: w.stars[i].id });
+      for (k = 0; k < 3; k++) { var q = pts[4 + k * 4], sd = k % 2 ? 1 : -1; S.line([q, [q[0] + sd * .22, q[1] + .12, q[2] + .08]], '#c8f5c0', .009, { a: .55, env: true, halo: false, star: w.stars[i].id }); S.dot(q[0] + sd * .22, q[1] + .12, q[2] + .08, .07, '#c8f5c0', { env: true, a: .7 }); }
+    });
+    motes(S, r, 90, function (q) { return mix(C.amber, C.white, q); }, [6, 5, 6, -2], drift);
+  },
+
+  structure: function (S, r, w, pos) {
+    S.bg = ['#04050c', '#14172e']; S.neb = ['#2a2a6a', '#1c3a5a', '#4a2a4a']; S.sky = 1;
+    var i;
+    for (i = 1; i <= 4; i++) (function (c, ci) {
+      [0, 1, 2].forEach(function (s) {
+        var n = 46;
+        S.line(circle(0, 0, 0, 1, 'y', n), mix(C.pearl, C.white, s / 2), .011, { a: .5, env: true, halo: s === 0,
+          dyn: function (t, p) { for (var j = 0; j < n; j++) { var y = -2.7 + j * (5.8 / (n - 1)), ang = y * 1.5 + ci * 1.3 + t * .35 + s * 2.094, rad = .17 + .05 * Math.sin(y * 1.2 + ci); p[j * 3] = c[0] + Math.cos(ang) * rad; p[j * 3 + 1] = y; p[j * 3 + 2] = c[2] + Math.sin(ang) * rad; } } });
+      });
+      [0, .25, .5, .75].forEach(function (off) {
+        S.dot(0, 0, 0, .1, C.white, { env: true, a: .8, tw: 0, dyn: function (d, t) { var u = (t * .06 + off + ci * .11) % 1, y = -2.7 + u * 5.8, ang = y * 1.5 + ci * 1.3 + t * .35; d.x = c[0] + Math.cos(ang) * .17; d.y = y; d.z = c[2] + Math.sin(ang) * .17; d.a = Math.sin(u * Math.PI) * .8; } });
+      });
+    })(pos[i], i);
+    S.line(circle(0, .3, 0, 1.28, 'z', 72), C.pearl, .007, { a: .25, env: true, closed: true, halo: false });
+    motes(S, r, 70, function (q) { return mix(C.pearl, '#cfd6ff', q); }, [6, 5, 6, -2], drift);
+  },
+
+  path: function (S, r, w, pos) {
+    S.bg = ['#03040a', '#0d1836']; S.neb = ['#1c2a7a', '#2a1c5a', '#0c3a5a']; S.sky = 1.1;
+    var hz = [pos[0][0], pos[0][1] - .25, pos[0][2] - 1.5], i, path = [];
+    S.dot(hz[0], hz[1], hz[2], 3.6, '#bcd6ff', { env: true, a: .5, tw: 0 });
+    S.dot(hz[0], hz[1], hz[2], 1.2, C.white, { env: true, a: .7, tw: 0 });
+    for (i = -5; i <= 5; i++) if (i) S.line([[i * 1.3, -1.9, 3], [hz[0] + i * .05, hz[1], hz[2]]], '#9fc4ff', .008, { a: .25, env: true, halo: false });
+    for (i = 1; i <= 7; i++) path.push([pos[i][0], pos[i][1] - .28, pos[i][2]]);
+    path.push(hz);
+    S.line(path, C.pearl, .016, { a: .6, env: true });
+    for (i = 1; i <= 7; i++) {
+      S.line(circle(pos[i][0], pos[i][1] - .28, pos[i][2], .26, 'y', 32), C.pearl, .009, { a: .6, env: true, closed: true, star: w.stars[i].id });
+      S.line(circle(pos[i][0], pos[i][1] - .28, pos[i][2], .38, 'y', 32), C.pearl, .005, { a: .25, env: true, closed: true, halo: false });
+    }
+    motes(S, r, 80, function (q) { return mix('#9fc4ff', C.white, q); }, [6, 5, 8, -2], drift);
+  },
+
+  roots: function (S, r, w, pos) {
+    S.bg = ['#060403', '#1e1608']; S.neb = ['#4a3a0c', '#3a2408', '#5a4a1c']; S.sky = .12;
+    var i, j, k, u, pts;
+    S.dot(0, 3.2, 0, 2.6, C.pearl, { env: true, a: .45, tw: 0 });
+    for (i = 0; i < 6; i++) { pts = []; var y = -2.3 + i * .95; for (j = 0; j <= 36; j++) { u = j / 36; pts.push([-3.8 + u * 7.6, y + .09 * Math.sin(u * 9 + i * 2) + .05 * Math.sin(u * 23 + i), -1.4 + .5 * Math.sin(u * 3 + i)]); } S.line(pts, '#8a6a3a', .008, { a: .22, env: true, halo: false }); }
+    pos.forEach(function (p, i) {
+      pts = [];
+      for (j = 0; j <= 22; j++) { u = j / 22; pts.push([lerp(0, p[0], Math.pow(u, .8)) + Math.sin(u * 5 + i * 1.7) * .1 * Math.sin(u * Math.PI), lerp(3.1, p[1] + .12, Math.pow(u, 1.15)), lerp(0, p[2], u) + Math.cos(u * 4 + i) * .08 * Math.sin(u * Math.PI)]); }
+      S.line(pts, mix(C.pearl, C.amber, .3), .02, { a: .75, env: true, star: w.stars[i].id });
+      for (k = 0; k < 3; k++) {
+        var st = pts[9 + k * 4], q = [], a = r() * TAU, l = .3 + r() * .3;
+        for (j = 0; j <= 6; j++) { u = j / 6; q.push([st[0] + Math.cos(a) * l * u, st[1] - .2 * u - .1 * u * u, st[2] + Math.sin(a) * l * u]); }
+        S.line(q, mix(C.pearl, C.amber, .55), .008, { a: .5, env: true, halo: false });
+        S.dot(q[6][0], q[6][1], q[6][2], .06, C.pearl, { env: true, a: .6 });
+      }
+    });
+    for (i = 0; i < 9; i++) {
+      var a2 = r() * TAU, R = 1.6 + r() * 1.8; pts = [];
+      for (j = 0; j <= 16; j++) { u = j / 16; pts.push([Math.cos(a2) * R * Math.pow(u, .8), 3.1 - u * (3.2 + r() * .1 + i * .2), Math.sin(a2) * R * Math.pow(u, .8) - .8]); }
+      S.line(pts, mix(C.pearl, C.amber, .6), .009, { a: .35, env: true, halo: false });
+    }
+    motes(S, r, 90, function (q) { return mix(C.amber, C.pearl, q); }, [6, 5, 5, -2.2], drift);
+  },
+
+  scroll: function (S, r) {
+    S.bg = ['#04040b', '#121022']; S.neb = ['#3a1c5a', '#1c3a5a', '#5a3a1c']; S.sky = .9;
+    var tc = [0, .3, -2.3], R = 2.3, rr = 1.05, i, j;
+    for (i = 0; i < 18; i++) {
+      var phi = i / 18 * TAU, cph = Math.cos(phi), sph = Math.sin(phi), out = [], inn = [], th, d;
+      for (j = 0; j <= 12; j++) {
+        th = -Math.PI / 2 + j / 12 * Math.PI; d = R + rr * Math.cos(th); out.push([tc[0] + d * cph, tc[1] + rr * Math.sin(th), tc[2] + d * sph]);
+        th = Math.PI / 2 + j / 12 * Math.PI; d = R + rr * Math.cos(th); inn.push([tc[0] + d * cph, tc[1] + rr * Math.sin(th), tc[2] + d * sph]);
+      }
+      S.line(out, mix(C.red, C.gold, (i % 6) / 5), .008, { a: .4, env: true, halo: i % 3 === 0 });
+      S.line(inn, mix(C.blue, C.violet, (i % 6) / 5), .008, { a: .4, env: true, halo: i % 3 === 0 });
+    }
+    [R - rr, R, R + rr].forEach(function (R2, k) { S.line(circle(tc[0], tc[1], tc[2], R2, 'y', 80), C.green, .012, { a: k === 1 ? .35 : .6, env: true, closed: true }); });
+    for (i = 0; i < 54; i++) (function (phi, th0) {
+      S.dot(0, 0, 0, .1, C.orange, { env: true, a: .85, tw: 0, dyn: function (d, t) {
+        var th = th0 + t * .22, dd = R + rr * Math.cos(th);
+        d.x = tc[0] + dd * Math.cos(phi); d.y = tc[1] + rr * Math.sin(th); d.z = tc[2] + dd * Math.sin(phi);
+        d.color = Math.cos(th) > 0 ? C.orange : C.blue;
+      } });
+    })(r() * TAU, r() * TAU);
+    motes(S, r, 60, function (q) { return mix(C.pearl, C.white, q); }, [6, 5, 5, -2], drift);
+  }
+};
+
+function buildWorld(id) {
+  var w = WORLD[id];
+  var S = new Scene({ fit: { w: 3.5, h: 4.7 }, center: [0, .25, 0], yaw: 0, pitch: .06, yawLim: [-1.15, 1.15] });
+  var r = RNG(hashStr(id)), pos = LAYOUT[id] || layoutMovement(w.stars.length), cons = CONS[id];
+  if (id === 'path-ahead') { S.fit = { w: 3.3, h: 4.4 }; S.center = [0, .1, 0]; S.home.ty = S.cam.ty = .1; S.home.pitch = S.cam.pitch = .12; }
+  if (id === 'the-scroll') { S.fit = { w: 3.9, h: 5.1 }; }
+  ENV[w.env](S, r, w, pos);
+  w.stars.forEach(function (s, i) {
+    var p = pos[i], from = cons ? cons[i] : (i ? 0 : -1), col = STARCOL[s.id] || (w.type === 'movement' ? (i ? mix(w.color, C.white, .3) : w.color) : (i ? C.pearl : w.color));
+    if (from >= 0) S.line([pos[from], p], col, .008, { a: .6, star: s.id, halo: false });
+    S.node({ id: s.id, kind: 'star', star: s.id, x: p[0], y: p[1], z: p[2], r: i === 0 ? .1 : .075, color: col,
+      label: s.step ? s.step + '. ' + s.t : (s.short || s.t), pri: i === 0 ? 3 : 2 });
+  });
+  return S;
+}
+
+/* State, camera, input, travel between worlds, and the discovery panel. */
+var $ = function (s, el) { return (el || document).querySelector(s); };
+var $$ = function (s, el) { return Array.prototype.slice.call((el || document).querySelectorAll(s)); };
+function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+function copy(o) { var r = {}; for (var k in o) r[k] = o[k]; return r; }
+
+var app, stage, cv, nodesEl, panel, panelBody, bloomEl, liveEl, hintEl;
+var state = { mode: 'explore', loc: 'tree', star: null, focus: null, paused: false, arriving: true, panel: false,
+  visited: {}, found: {}, seenArrival: false,
+  set: { motion: 'full', intensity: 'balanced', sound: false, vol: .6, remember: false } };
+var scenes = {}, cur = null, T = 0, lastT = 0, dirty = true, tween = null, idleAt = 0, busy = false, frameN = 0;
+var drag = { on: false, moved: 0, pts: {} }, vel = { y: 0, p: 0 }, pinch = null, suppress = false;
+var STORE = 'aiftf-living-universe';
+
+function getScene(id) { if (!scenes[id]) scenes[id] = id === 'tree' ? buildTree() : buildWorld(id); return scenes[id]; }
+function nodeById(S, id) { for (var i = 0; i < S.nodes.length; i++) if (S.nodes[i].id === id) return S.nodes[i]; return null; }
+function now() { return performance.now(); }
+function fullMotion() { return state.set.motion === 'full' && !state.paused; }
+
+/* ---------- memory: nothing is written unless the visitor asks for it ---------- */
+function save() {
+  if (!state.set.remember) return;
+  try { localStorage.setItem(STORE, JSON.stringify({ v: 1, visited: state.visited, found: state.found, set: state.set, seenArrival: state.seenArrival })); } catch (e) {}
+}
+function load() {
+  try {
+    var d = JSON.parse(localStorage.getItem(STORE) || 'null');
+    if (d && d.v === 1 && d.set && d.set.remember) {
+      state.visited = d.visited || {}; state.found = d.found || {}; state.seenArrival = !!d.seenArrival;
+      for (var k in d.set) if (k in state.set) state.set[k] = d.set[k];
+      state.set.sound = false;
+      return true;
+    }
+  } catch (e) {}
+  return false;
+}
+function forget() {
+  try { localStorage.removeItem(STORE); } catch (e) {}
+  state.visited = {}; state.found = {}; state.seenArrival = false;
+  refresh();
+}
+
+/* ---------- announcements ---------- */
+function announce(msg) { liveEl.textContent = ''; setTimeout(function () { liveEl.textContent = msg; }, 60); }
+function toast(msg, ms) {
+  hintEl.textContent = msg; hintEl.classList.add('on'); toast.at = now();
+  clearTimeout(toast.t); toast.t = setTimeout(function () { hintEl.classList.remove('on'); }, ms || 2800);
+}
+
+/* ---------- canvas and comfort ---------- */
+function resize() {
+  sizeCanvas(cv, state.set.intensity === 'rich' ? 2 : state.set.intensity === 'balanced' ? 1.5 : 1);
+  dirty = true;
+}
+function setIntensity(level, auto) {
+  state.set.intensity = level; V.q = level === 'rich' ? 1 : level === 'balanced' ? .7 : .45;
+  app.dataset.intensity = level;
+  var el = document.getElementById('int-' + level); if (el) el.checked = true;
+  resize(); if (!auto) save();
+}
+function setMotion(m) {
+  state.set.motion = m; app.dataset.motion = m;
+  var el = document.getElementById('motion-' + m); if (el) el.checked = true;
+  if (m !== 'full') { vel.y = vel.p = 0; }
+  dirty = true; save();
+  if (typeof journeySchedule === 'function') journeySchedule();
+}
+var perfAcc = 0, perfN = 0, perfLocked = false;
+function perf(dt) {
+  if (perfLocked) return;
+  perfAcc += dt; perfN++;
+  if (perfN >= 80) {
+    var avg = perfAcc / perfN; perfAcc = perfN = 0;
+    if (avg > .036 && V.q > .5) setIntensity(V.q > .8 ? 'balanced' : 'light', true);
+  }
+}
+
+/* ---------- camera ---------- */
+function flyTo(b, dur, done) {
+  var c = cur.cam, a = copy(c), k;
+  b = copy(b); for (k in a) if (!(k in b)) b[k] = a[k];
+  var d = b.yaw - a.yaw; d = ((d + Math.PI) % TAU + TAU) % TAU - Math.PI; b.yaw = a.yaw + d;
+  if (cur.yawLim) b.yaw = clamp(b.yaw, cur.yawLim[0], cur.yawLim[1]);
+  b.zoom = clamp(b.zoom, cur.zoomLim[0], cur.zoomLim[1]);
+  if (state.set.motion === 'still' || state.paused) { cur.cam = b; tween = null; dirty = true; if (done) done(); return; }
+  tween = { a: a, b: b, t0: now(), dur: (dur || 900) * (state.set.motion === 'gentle' ? .55 : 1), done: done || null };
+}
+function stepCamera(dt) {
+  var c = cur.cam, k;
+  if (tween) {
+    var u = (now() - tween.t0) / tween.dur; if (u > 1) u = 1;
+    var e = ease(u);
+    for (k in tween.b) c[k] = lerp(tween.a[k], tween.b[k], e);
+    if (u >= 1) { var cb = tween.done; tween = null; if (cb) cb(); }
+    return;
+  }
+  if (!drag.on) {
+    if (Math.abs(vel.y) + Math.abs(vel.p) > .0002) {
+      c.yaw += vel.y; c.pitch = clamp(c.pitch + vel.p, cur.pitchLim[0], cur.pitchLim[1]);
+      vel.y *= .92; vel.p *= .92;
+    }
+    if (fullMotion() && !arrival.on && !state.panel && state.mode === 'explore' && now() - idleAt > 5000) {
+      if (cur.spin) c.yaw += cur.spin * dt;
+      else c.yaw += (Math.sin(T * .1) * .2 - c.yaw) * Math.min(1, dt * .2);
+    }
+  }
+  if (cur.yawLim) c.yaw = clamp(c.yaw, cur.yawLim[0], cur.yawLim[1]);
+}
+function zoomBy(f) { var c = cur.cam; if (tween && !tween.done) tween = null; c.zoom = clamp(c.zoom * f, cur.zoomLim[0], cur.zoomLim[1]); idleAt = now(); dirty = true; }
+function fitView() { idleAt = now(); if (state.loc === 'tree' && !state.panel) { state.focus = null; refresh(); } flyTo(cur.home, 900); }
+function offsets() {
+  var wide = V.W >= 900;
+  if (state.mode === 'journey') return [0, wide ? -V.H * .05 : -V.H * .1];
+  if (!state.panel) return [0, 0];
+  return wide ? [-209, 0] : [0, -V.H * .2];
+}
+
+/* ---------- the frame ---------- */
+function frame(ts) {
+  requestAnimationFrame(frame);
+  var dt = Math.min(.05, (ts - lastT) / 1000 || 0); lastT = ts;
+  if (state.mode === 'reflect' || document.hidden || !cur || atlas.open) return;
+  var o = offsets(), moving = Math.abs(o[0] - V.ox) + Math.abs(o[1] - V.oy) > .5;
+  var still = state.set.motion === 'still' || state.paused;
+  var active = !!tween || drag.on || moving || Math.abs(vel.y) + Math.abs(vel.p) > .0002 || arrival.on;
+  if (still && !active && !dirty) return;
+  if (!still || arrival.on) T += dt;
+  if (arrival.on) stepArrival(dt);
+  stepCamera(dt);
+  if (still) { V.ox = o[0]; V.oy = o[1]; }
+  else { var kk = Math.min(1, dt * 6); V.ox += (o[0] - V.ox) * kk; V.oy += (o[1] - V.oy) * kk; }
+  render(cur, T, arrival.on ? smooth(0, 2.4, arrival.t) : 1);
+  placeNodes();
+  if (!still && !arrival.on && !busy) perf(dt);
+  dirty = false;
+}
+
+/* ---------- nodes: every interactive point is a real button ---------- */
+function nodeAria(n) {
+  if (n.kind === 'movement') { var m = WORLD[n.id]; return m.name + ', movement ' + m.n + ' of 7. ' + m.q; }
+  if (n.kind === 'fruit') return n.label + ', fruit ' + n.num + ' of VI';
+  if (n.id === 'roots') return 'The roots: the Living Library';
+  if (n.id === 'trunk') return "The trunk: ALO'ha";
+  if (n.id === 'seed') return 'The seed: where you come in';
+  return n.label;
+}
+function syncNodes() {
+  nodesEl.textContent = '';
+  cur.nodes.forEach(function (n) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'node k-' + n.kind + ' off';
+    b.innerHTML = (n.num ? '<span class="num" aria-hidden="true">' + n.num + '</span>' : '') + '<span class="lab">' + esc(n.label) + '</span>';
+    b.setAttribute('aria-label', nodeAria(n));
+    b.addEventListener('click', function () { onNode(n); });
+    nodesEl.appendChild(b);
+    n.el = b; n._shown = false; n._lh = undefined;
+    if (state.nudge && state.loc === 'tree' && n.id === 'ground') b.classList.add('nudge');
+  });
+  measureLabels();
+}
+function measureLabels() {
+  if (!cur) return;
+  cur.nodes.forEach(function (n) {
+    if (!n.el) return;
+    var was = n.el.classList.contains('off'); n.el.classList.remove('off');
+    var l = n.el.querySelector('.lab'); n.lw = l.offsetWidth || 90; n.lh = l.offsetHeight || 18;
+    if (was) n.el.classList.add('off');
+  });
+}
+function placeNodes() {
+  var list = cur.nodes, i, n, on;
+  for (i = 0; i < list.length; i++) {
+    n = list[i]; if (!n.el) continue;
+    on = !!n._on && !n.hidden;
+    if (on !== n._shown) { n.el.classList.toggle('off', !on); n._shown = on; }
+    if (on) n.el.style.transform = 'translate3d(' + n._x.toFixed(1) + 'px,' + n._y.toFixed(1) + 'px,0)';
+  }
+  if ((frameN++ % 6) === 0) declutter();
+}
+function declutter() {
+  var list = cur.nodes.filter(function (n) { return n._shown; }), placed = [], i;
+  list.sort(function (a, b) { return ((b.sel ? 9 : 0) + b.pri) - ((a.sel ? 9 : 0) + a.pri) || a._z - b._z; });
+  placed.push([0, 0, V.W, 66, 9], [0, V.H - 62, V.W, V.H, 9]);
+  list.forEach(function (n) { placed.push([n._x - 13, n._y - 13, n._x + 13, n._y + 13, n.pri]); });
+  list.forEach(function (n) {
+    var w = n.lw || 90, h = n.lh || 18, x0 = n._x - w / 2 - 3, x1 = n._x + w / 2 + 3, y0 = n._y + 15, y1 = n._y + 18 + h, hit = false, p;
+    if (n.dimLab) hit = true;
+    else if (!n.sel) for (i = 0; i < placed.length; i++) { p = placed[i]; if (p[4] < n.pri) continue; if (x0 < p[2] && x1 > p[0] && y0 < p[3] && y1 > p[1]) { hit = true; break; } }
+    if (!hit) placed.push([x0, y0, x1, y1, 9]);
+    if (n._lh !== hit) { n.el.classList.toggle('hide-lab', hit); n._lh = hit; }
+    n.el.style.zIndex = String(Math.max(1, 3000 - Math.round(n._z * 100)));
+  });
+}
+
+/* ---------- what is lit, what has been seen ---------- */
+function refresh() {
+  if (!cur) return;
+  var id = state.loc;
+  if (id === 'tree') {
+    var hiId = (state.focus && WORLD[state.focus] && WORLD[state.focus].type === 'movement') ? state.focus : null;
+    cur.nodes.forEach(function (n) {
+      if (n.kind === 'leaf') { n.seen = !!state.found[n.star]; n.hidden = state.focus !== n.parent; n.sel = state.star === n.star; }
+      else {
+        var wid = n.id === 'roots' ? 'living-library' : n.id;
+        n.seen = !!state.visited[wid]; n.done = worldDone(wid); n.sel = state.focus === n.id && !state.star;
+        n.dimLab = !!hiId && n.id !== hiId;
+      }
+    });
+    cur.hi = hiId;
+  } else {
+    var w = WORLD[id], c = 0;
+    w.stars.forEach(function (s) { if (state.found[s.id]) c++; });
+    cur.found = state.found; cur.lit = .55 + .45 * (c / w.stars.length);
+    cur.nodes.forEach(function (n) { n.seen = !!state.found[n.star]; n.sel = state.star === n.star; });
+  }
+  dirty = true;
+}
+function worldDone(id) { var w = WORLD[id]; return !!w && w.stars.every(function (s) { return state.found[s.id]; }); }
+function setScene(id) {
+  cur = getScene(id); state.loc = id; state.star = null; tween = null; vel.y = vel.p = 0;
+  var w = WORLD[id];
+  if (w) state.visited[id] = 1;
+  app.dataset.loc = id; app.dataset.kind = w ? w.type : 'tree';
+  app.style.setProperty('--accent', w ? w.color : C.pearl);
+  stage.setAttribute('aria-label', (w ? w.name : 'The Tree of Emergence') + '. Every point of light is a button. Arrow keys turn the view, plus and minus move closer or farther.');
+  syncNodes(); refresh(); crumbs(); Sound.setWorld(id); setHash(id); save(); updateCount(); updateMnav();
+  var bt = $('#btn-tree'); bt.hidden = id === 'tree'; bt.textContent = w && w.parent ? 'Back' : 'Tree';
+  bt.setAttribute('aria-label', w && w.parent ? 'Back to ' + WORLD[w.parent].name : 'Return to the Tree');
+}
+var booting = false;
+function setHash(id) {
+  if (booting) return;
+  try { if (location.hash.slice(1) !== id && !(id === 'tree' && !location.hash)) location.hash = id; } catch (e) {}
+}
+function crumbs() {
+  var id = state.loc, w = WORLD[id], sep = '<span aria-hidden="true">/</span>', h;
+  h = id === 'tree' ? '<span aria-current="page">Tree of Emergence</span>' : '<button type="button" data-go="tree" aria-label="Tree of Emergence">Tree</button>';
+  if (w) {
+    if (w.parent) h += sep + '<button type="button" data-go="' + w.parent + '">' + esc(WORLD[w.parent].name) + '</button>';
+    h += sep + '<button type="button" aria-current="page" data-go="' + id + '">' + esc(w.name) + '</button>';
+  }
+  $('#crumbs').innerHTML = h;
+}
+
+/* ---------- the panel ---------- */
+function openPanel(html) {
+  panelBody.innerHTML = html; panel.hidden = false; state.panel = true; app.classList.add('has-panel');
+  panelBody.scrollTop = 0;
+  var h = $('h2', panelBody); if (h) { h.tabIndex = -1; try { h.focus({ preventScroll: true }); } catch (e) {} }
+  dirty = true;
+}
+function closePanel() {
+  if (!state.panel && !state.star) return;
+  panel.hidden = true; state.panel = false; app.classList.remove('has-panel');
+  state.star = null; refresh();
+}
+function kindRow(s) {
+  var K = KINDS[s.k]; if (!K) return '';
+  return '<p class="kind"><span class="chip">' + esc(K[0]) + '</span>' + (s.status ? '<span class="status">' + esc(s.status) + '</span>' : '') + '<span class="gloss">' + esc(K[1]) + '</span></p>';
+}
+function bodyHTML(s) {
+  var h = '';
+  if (s.list) h += '<dl class="defs">' + s.list.map(function (d) { return '<div><dt>' + esc(d[0]) + '</dt><dd>' + esc(d[1]) + '</dd></div>'; }).join('') + '</dl>';
+  (s.b || []).forEach(function (p) { h += '<p>' + esc(p) + '</p>'; });
+  return h;
+}
+function linkBtns(links) {
+  if (!links || !links.length) return '';
+  return '<h3>Where next</h3><div class="next">' + links.map(function (l) { return '<button type="button" class="go" data-go="' + esc(l[0]) + '">' + esc(l[1]) + '</button>'; }).join('') + '</div>';
+}
+function srcLink(s) {
+  return s.src ? '<p><a class="src" href="' + esc(s.src[1]) + '" target="_blank" rel="noopener">' + esc(s.src[0]) + '</a> <span class="ext">Opens the original.</span></p>' : '';
+}
+function starList(w, attr) {
+  return '<ul class="stars">' + w.stars.map(function (s) {
+    var v = attr === 'data-go' ? w.id + ':' + s.id : s.id;
+    return '<li><button type="button" class="go' + (state.found[s.id] ? ' seen' : '') + '" ' + attr + '="' + v + '"><span>' + esc(s.t) + '</span><small>' + esc(KINDS[s.k][0]) + '</small></button></li>';
+  }).join('') + '</ul>';
+}
+function showStarPanel(s) {
+  var w = WORLD[s.world], h = '<h2>' + esc(s.t) + '</h2>';
+  if (s.name) h += '<p class="look">' + esc(s.name) + '</p>';
+  h += kindRow(s) + bodyHTML(s);
+  if (s.w) h += '<p class="whole">' + esc(s.w) + '</p>';
+  h += linkBtns(s.links) + srcLink(s);
+  if (w) {
+    var i = w.stars.indexOf(s), n = w.stars.length;
+    if (state.loc === 'tree') h += '<p style="margin-top:16px"><button type="button" class="primary" data-go="' + w.id + ':' + s.id + '">Enter ' + esc(w.name) + '</button></p>';
+    h += '<div class="pager"><button type="button" class="go" data-star="' + w.stars[(i + n - 1) % n].id + '">Previous</button><span>' + (i + 1) + ' of ' + n + ' in ' + esc(w.name) + '</span><button type="button" class="go" data-star="' + w.stars[(i + 1) % n].id + '">Next</button></div>';
+  }
+  openPanel(h);
+}
+function showPreview(id) {
+  var w = WORLD[id], mv = w.type === 'movement';
+  var h = '<h2>' + esc(w.name) + '</h2><p class="look">' + esc(w.look) + (mv ? '. Movement ' + w.n + ' of 7.' : '.') + '</p>';
+  if (w.q) h += '<p class="q">' + esc(w.q) + '</p>';
+  h += '<p>' + esc(w.intro) + '</p><p><button type="button" class="primary" data-go="' + id + '">' + (id === 'living-library' ? 'Descend to the roots' : 'Enter ' + esc(w.name)) + '</button></p>';
+  h += '<h3>' + (mv ? 'On this branch' : 'Inside') + '</h3>' + starList(w, mv ? 'data-star' : 'data-go');
+  openPanel(h);
+}
+function showWorld(id) {
+  var w = WORLD[id], c = w.stars.filter(function (s) { return state.found[s.id]; }).length;
+  var h = '<h2>' + esc(w.name) + '</h2><p class="look">' + esc(w.look) + '.</p>';
+  if (w.q) h += '<p class="q">' + esc(w.q) + '</p>';
+  h += '<p>' + esc(w.intro) + '</p><p class="hint">' + (c === w.stars.length ? 'You have opened every star here, and this world is fully lit.' : 'Touch a star to open it. You have opened ' + c + ' of ' + w.stars.length + ' here, and the world brightens with each one.') + '</p>' + starList(w, 'data-star');
+  if (w.type === 'movement') { var nx = MOVEMENTS[w.n % 7]; h += '<h3>The cycle continues</h3><div class="next"><button type="button" class="go" data-go="' + nx.id + '">' + esc(nx.name) + '</button></div>'; }
+  openPanel(h);
+}
+function showSeed() {
+  var h = '<h2>' + esc(SEED.t) + '</h2>';
+  SEED.b.forEach(function (p) { h += '<p>' + esc(p) + '</p>'; });
+  SEED.invites.forEach(function (v) {
+    h += '<div class="invite"><h3>' + esc(v.t) + '</h3><p>' + esc(v.b) + '</p><p>' +
+      (v.href ? '<a class="src" href="' + esc(v.href) + '" target="_blank" rel="noopener">' + esc(v.hrefLabel) + '</a>'
+        : '<button type="button" class="go" data-go="' + v.act[0] + '">' + esc(v.act[1]) + '</button>') + '</p></div>';
+  });
+  openPanel(h);
+}
+
+/* A reflective walk through the seven movements. Notes stay in this page's memory only. */
+var walk = { i: 0, notes: ['', '', '', '', '', '', ''] };
+function showWalk(i) {
+  walk.i = i;
+  var h, m, k;
+  if (i >= 7) {
+    h = '<h2>Your walk, returned</h2><p>Seven movements, one cycle. The Scroll ends every cycle the same way: with truth, repair and renewed relationship.</p><div class="walk"><ol>';
+    MOVEMENTS.forEach(function (mm, j) { h += '<li><strong>' + esc(mm.name) + '.</strong> ' + (walk.notes[j] ? esc(walk.notes[j]) : '<span class="fine">Nothing written.</span>') + '</li>'; });
+    h += '</ol></div><div class="next">' + (DL ? '<button type="button" class="go" id="walk-save">Save my notes as a file</button>' : '') + '<button type="button" class="go" id="walk-copy">Copy my notes</button><button type="button" class="go" data-walk="0">Walk again</button><button type="button" class="go" data-go="the-scroll:sc-movements">Read the procedure in the Scroll</button></div><p class="fine" style="margin-top:12px">These notes exist only on this screen. Close the page and they are gone. They are a reflection, not legal, medical or financial advice.</p>';
+    state.focus = null; refresh(); flyTo(cur.home, 1200);
+    openPanel(h); return;
+  }
+  m = MOVEMENTS[i];
+  h = '<h2>' + esc(m.name) + '</h2><div class="steps" aria-hidden="true">';
+  for (k = 0; k < 7; k++) h += '<i style="background:' + (k <= i ? MOVEMENTS[k].color : '') + '"></i>';
+  h += '</div><p class="look">Movement ' + (i + 1) + ' of 7 on your walk.</p><p>' + esc(m.stars[0].b[0]) + '</p><p class="q">' + esc(m.q) + '</p>';
+  h += '<div class="walk"><label for="walk-note">Your note for ' + esc(m.name) + ' (optional)</label><textarea id="walk-note">' + esc(walk.notes[i]) + '</textarea></div>';
+  h += '<p class="fine">Ask the question as reflection, never as scoring or rank.</p><div class="pager">' +
+    (i > 0 ? '<button type="button" class="go" data-walk="' + (i - 1) + '">Back</button>' : '<span></span>') +
+    '<button type="button" class="primary" data-walk="' + (i + 1) + '">' + (i === 6 ? 'Complete the cycle' : 'Next: ' + esc(MOVEMENTS[i + 1].name)) + '</button></div>';
+  focusTree(m.id, false);
+  app.style.setProperty('--accent', m.color);
+  openPanel(h);
+}
+function keepNote() { var t = document.getElementById('walk-note'); if (t && walk.i < 7) walk.notes[walk.i] = t.value.slice(0, 2000); }
+
+/* ---------- the Tree ---------- */
+function focusTree(id, withPanel) {
+  var S = scenes.tree, n = nodeById(S, id), v; if (!n) return;
+  state.focus = id; state.star = null; refresh(); idleAt = now();
+  if (n.kind === 'movement') v = { tx: n.x * .62, ty: n.y - .12, tz: n.z * .62, zoom: 2.0, yaw: n.phi - 1.0, pitch: .12 };
+  else if (n.kind === 'fruit') v = { tx: n.x * .8, ty: n.y + .05, tz: n.z * .8, zoom: 2.4, yaw: n.phi - 1.0, pitch: .1 };
+  else if (id === 'roots') v = { tx: 0, ty: -.55, tz: 0, zoom: 1.9, pitch: -.1 };
+  else if (id === 'trunk') v = { tx: 0, ty: .9, tz: 0, zoom: 2.1, pitch: .08 };
+  else v = { tx: 0, ty: .25, tz: 0, zoom: 2.4, pitch: .2 };
+  flyTo(v, 1100);
+  app.style.setProperty('--accent', n.color);
+  if (!withPanel) return;
+  if (n.kind === 'movement' || n.kind === 'fruit') showPreview(id);
+  else if (id === 'roots') showPreview('living-library');
+  else if (id === 'trunk') { state.visited.trunk = 1; save(); showStarPanel(TRUNK); }
+  else { state.visited.seed = 1; save(); showSeed(); }
+}
+function onNode(n) {
+  idleAt = now(); clearNudge();
+  if (state.mode === 'journey') setMode('explore', true);
+  if (state.loc === 'tree' && n.kind !== 'leaf') focusTree(n.id, true);
+  else openStar(n.star);
+}
+function openStar(id) {
+  var s = STAR[id]; if (!s) return;
+  var wasDone = worldDone(s.world);
+  state.star = id; state.found[id] = 1; save(); refresh(); idleAt = now();
+  if (!wasDone && worldDone(s.world)) setTimeout(function () { toast('You have opened everything in ' + WORLD[s.world].name + '. Its light is now full.', 4200); Sound.chime(); }, 1000);
+  var n = nodeById(cur, state.loc === 'tree' ? s.world + ':' + id : id);
+  if (state.loc === 'tree') {
+    if (state.focus !== s.world) { state.focus = s.world; refresh(); }
+    if (n) flyTo({ tx: n.x * .8, ty: n.y, tz: n.z * .8, zoom: 2.7 }, 800);
+  } else if (n) flyTo({ tx: n.x * .55, ty: lerp(cur.center[1], n.y, .6), tz: n.z * .55, zoom: 1.5 }, 800);
+  Sound.chime();
+  showStarPanel(s);
+  announce(s.t);
+}
+
+/* ---------- travel ---------- */
+function transition(color, origin, swap, after) {
+  var m = state.paused ? 'still' : state.set.motion;
+  bloomEl.style.setProperty('--bc', color);
+  bloomEl.style.setProperty('--bx', origin[0].toFixed(0) + 'px'); bloomEl.style.setProperty('--by', origin[1].toFixed(0) + 'px');
+  busy = true;
+  if (m !== 'full') {
+    bloomEl.className = 'fade on';
+    setTimeout(function () { swap(); bloomEl.className = 'fade'; busy = false; after(); dirty = true; }, m === 'still' ? 30 : 170);
+    return;
+  }
+  bloomEl.className = 'grow on';
+  setTimeout(function () {
+    swap(); bloomEl.className = 'grow out'; after(); dirty = true;
+    setTimeout(function () { bloomEl.className = ''; busy = false; }, 950);
+  }, 770);
+}
+function travel(id, star) {
+  if (busy) return;
+  var w = WORLD[id]; if (!w) return;
+  var from = state.loc, n = nodeById(cur, (from === 'tree' && id === 'living-library' && state.focus === 'roots') ? 'roots' : id), origin = [V.cx, V.cy];
+  if (n && n._on) { origin = [n._x, n._y]; if (fullMotion()) flyTo({ tx: n.x, ty: n.y, tz: n.z, zoom: 3.4 }, 740); }
+  if (WORLD[from]) toast('From ' + WORLD[from].name + ' to ' + w.name);
+  transition(w.color, origin, function () {
+    closePanel(); state.focus = null; setScene(id);
+    cur.cam = copy(cur.home); cur.cam.zoom = .62;
+  }, function () {
+    flyTo({ zoom: 1 }, 1300);
+    if (star) setTimeout(function () { if (state.loc === id) openStar(star); }, fullMotion() ? 800 : 0); else showWorld(id);
+    announce('You have arrived in ' + w.name + '. ' + w.intro);
+  });
+}
+function travelTree(cb) {
+  if (busy) return;
+  var from = state.loc, n = null;
+  transition(C.pearl, [V.cx, V.cy], function () {
+    closePanel(); setScene('tree');
+    n = nodeById(cur, from);
+    cur.cam = copy(cur.home);
+    if (n) { cur.cam.tx = n.x; cur.cam.ty = n.y; cur.cam.tz = n.z; cur.cam.zoom = 2.9; cur.cam.yaw = n.phi - 1.0; }
+    state.focus = n ? from : null; refresh();
+  }, function () {
+    flyTo(cur.home, 1400);
+    announce('You are back at the Tree of Emergence.');
+    if (cb) cb();
+  });
+}
+function toTree(cb) { if (state.loc === 'tree') { if (cb) cb(); } else travelTree(cb); }
+function back() {
+  var w = WORLD[state.loc];
+  if (w && w.parent) travel(w.parent);
+  else if (w) travelTree();
+  else if (state.panel || state.focus) { closePanel(); state.focus = null; refresh(); flyTo(cur.home, 900); app.style.setProperty('--accent', C.pearl); }
+}
+function go(t) {
+  if (!t) return;
+  if (state.mode === 'reflect') return reflectGo(t);
+  if (state.mode === 'journey') setMode('explore', true);
+  if (t === 'atlas') return openAtlas();
+  var parts = t.split(':'), w = parts[0], s = parts[1];
+  if (w === 'tree') {
+    toTree(function () {
+      if (s === 'trunk') focusTree('trunk', true);
+      else { closePanel(); state.focus = null; refresh(); flyTo(cur.home, 1000); app.style.setProperty('--accent', C.pearl); }
+    });
+    return;
+  }
+  if (w === 'seed') { toTree(function () { if (s === 'walk') showWalk(0); else focusTree('seed', true); }); return; }
+  if (!WORLD[w]) return;
+  if (state.loc === w) { if (s) openStar(s); else { state.star = null; refresh(); flyTo(cur.home, 800); showWorld(w); } return; }
+  travel(w, s);
+}
+
+/* ---------- input ---------- */
+function wireStage() {
+  stage.addEventListener('pointerdown', function (e) {
+    if (state.arriving) return;
+    idleAt = now(); hintEl.classList.remove('on');
+    drag.pts[e.pointerId] = { x: e.clientX, y: e.clientY };
+    var ids = Object.keys(drag.pts);
+    if (ids.length === 1) { drag.on = true; drag.moved = 0; vel.y = vel.p = 0; }
+    if (ids.length === 2) { var a = drag.pts[ids[0]], b = drag.pts[ids[1]]; pinch = { d: Math.hypot(a.x - b.x, a.y - b.y) || 1, z: cur.cam.zoom }; }
+  });
+  stage.addEventListener('pointermove', function (e) {
+    var p = drag.pts[e.pointerId]; if (!p) return;
+    var dx = e.clientX - p.x, dy = e.clientY - p.y; p.x = e.clientX; p.y = e.clientY;
+    var ids = Object.keys(drag.pts);
+    if (ids.length >= 2 && pinch) {
+      var a = drag.pts[ids[0]], b = drag.pts[ids[1]];
+      if (tween && !tween.done) tween = null;
+      if (!tween) cur.cam.zoom = clamp(pinch.z * Math.hypot(a.x - b.x, a.y - b.y) / pinch.d, cur.zoomLim[0], cur.zoomLim[1]);
+      drag.moved = 99; dirty = true; return;
+    }
+    drag.moved += Math.abs(dx) + Math.abs(dy);
+    if (drag.moved > 8) {
+      if (tween && !tween.done) tween = null;
+      if (!tween) {
+        cur.cam.yaw += dx * .0065; cur.cam.pitch = clamp(cur.cam.pitch + dy * .0045, cur.pitchLim[0], cur.pitchLim[1]);
+        if (state.set.motion === 'full') { vel.y = dx * .0065; vel.p = dy * .0045; }
+      }
+      try { stage.setPointerCapture(e.pointerId); } catch (err) {}
+      dirty = true; idleAt = now();
+    }
+  });
+  var end = function (e) {
+    if (!drag.pts[e.pointerId]) return;
+    delete drag.pts[e.pointerId];
+    var left = Object.keys(drag.pts).length;
+    if (left < 2) pinch = null;
+    if (left === 0) {
+      drag.on = false;
+      if (drag.moved > 8) { suppress = true; setTimeout(function () { suppress = false; }, 80); }
+    }
+  };
+  stage.addEventListener('pointerup', end);
+  stage.addEventListener('pointercancel', end);
+  stage.addEventListener('click', function (e) { if (suppress) { e.stopPropagation(); e.preventDefault(); } }, true);
+  stage.addEventListener('wheel', function (e) { if (state.arriving) return; e.preventDefault(); zoomBy(Math.exp(-e.deltaY * .0012)); }, { passive: false });
+  stage.addEventListener('keydown', function (e) {
+    if (state.arriving) return;
+    var c = cur.cam, k = e.key;
+    if (k === 'ArrowLeft') c.yaw -= .14; else if (k === 'ArrowRight') c.yaw += .14;
+    else if (k === 'ArrowUp') c.pitch = clamp(c.pitch + .08, cur.pitchLim[0], cur.pitchLim[1]);
+    else if (k === 'ArrowDown') c.pitch = clamp(c.pitch - .08, cur.pitchLim[0], cur.pitchLim[1]);
+    else if (k === '+' || k === '=') zoomBy(1.2); else if (k === '-' || k === '_') zoomBy(1 / 1.2);
+    else if (k === '0') fitView(); else return;
+    e.preventDefault(); if (tween && !tween.done) tween = null; idleAt = now(); dirty = true;
+  });
+}
+function wirePanel() {
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest ? e.target : null; if (!t) return;
+    var el;
+    if ((el = t.closest('[data-walk]'))) { keepNote(); showWalk(+el.dataset.walk); return; }
+    if ((el = t.closest('#walk-save'))) { saveWalk(); return; }
+    if ((el = t.closest('#walk-copy'))) {
+      var txt = MOVEMENTS.map(function (m, j) { return m.name + ': ' + (walk.notes[j] || ''); }).join('\n');
+      try { navigator.clipboard.writeText(txt).then(function () { toast('Copied your notes'); }, function () { toast('Copying is not available here. Select the text to copy it.'); }); }
+      catch (err) { toast('Copying is not available here. Select the text to copy it.'); }
+      return;
+    }
+    if ((el = t.closest('[data-see]'))) { var tg = el.dataset.see; setMode('explore', true, true); go(tg); return; }
+    if ((el = t.closest('[data-star]'))) {
+      if (state.mode === 'reflect') return;
+      openStar(el.dataset.star); return;
+    }
+    if ((el = t.closest('[data-go]'))) { keepNote(); closeAtlas(); go(el.dataset.go); return; }
+  });
+  document.addEventListener('pointerdown', function () { if (hintEl.classList.contains('on') && now() - (toast.at || 0) > 700) hintEl.classList.remove('on'); }, true);
+  $('#panel-close').addEventListener('click', function () {
+    keepNote(); closePanel();
+    if (state.loc === 'tree') app.style.setProperty('--accent', C.pearl);
+    stage.focus({ preventScroll: true });
+  });
+}
+
+/* Three ways to explore, the Celestial Atlas, comfort settings, sound, and the arrival. */
+
+/* ---------- modes ---------- */
+function setMode(m, quiet, stay) {
+  if (m === state.mode) return;
+  var prev = state.mode, here = (prev === 'reflect' && !stay) ? reflectHere() : null;
+  state.mode = m; app.dataset.mode = m;
+  $$('.modes button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.mode === m)); });
+  clearTimeout(J.timer); if (prev === 'journey') Voice.stop();
+  $('#journey').hidden = m !== 'journey';
+  updateMnav();
+  $('#reflect').hidden = m !== 'reflect';
+  if (m === 'reflect') {
+    var target = state.star ? 'r-' + state.star
+      : state.loc !== 'tree' ? 'r-' + state.loc
+      : state.focus === 'trunk' ? 'r-trunk' : state.focus === 'seed' ? 'r-seed'
+      : state.focus === 'roots' ? 'r-living-library' : (state.focus && WORLD[state.focus]) ? 'r-' + state.focus : null;
+    closePanel(); buildReflect();
+    var R = $('#reflect'), el = target && document.getElementById(target);
+    R.scrollTop = 0; if (el) el.scrollIntoView();
+    try { R.focus({ preventScroll: true }); } catch (e) {}
+    Sound.hush(true);
+  } else Sound.hush(false);
+  if (prev === 'reflect' && !stay) {
+    if (here && here !== state.loc) { if (here === 'tree') toTree(); else if (WORLD[here] && m === 'explore') travel(here); }
+  }
+  if (m === 'journey') startJourney();
+  if (!quiet) announce(m === 'journey' ? 'Cinematic journey. A guided path around the Tree.' : m === 'reflect' ? 'Discovery and reflection. Everything as readable text.' : 'Free explorer.');
+  dirty = true;
+}
+
+/* ---------- cinematic journey ---------- */
+var J = { i: 0, playing: true, timer: null, gen: 0 };
+function stopFor(id) { for (var i = 0; i < JOURNEY.length; i++) if (JOURNEY[i].node === id) return i; return -1; }
+function startJourney() {
+  var begin = function () { var i = state.focus ? stopFor(state.focus) : -1; showStop(i >= 0 ? i : 0); };
+  closePanel();
+  if (state.loc !== 'tree') { var from = state.loc; travelTree(function () { var i = stopFor(from); showStop(i >= 0 ? i : 0); }); }
+  else begin();
+}
+function showStop(i) {
+  J.i = clamp(i, 0, JOURNEY.length - 1);
+  var s = JOURNEY[J.i], goBtn = $('#j-go'), target = s.go || (s.node && WORLD[s.node] ? s.node : null);
+  $('#j-cap').textContent = s.cap;
+  $('#j-count').textContent = (J.i + 1) + ' of ' + JOURNEY.length;
+  if (target) { goBtn.hidden = false; goBtn.dataset.go = target; goBtn.textContent = s.goLabel || ('Enter ' + WORLD[s.node].name); } else goBtn.hidden = true;
+  $('#j-prev').disabled = J.i === 0; $('#j-next').disabled = J.i === JOURNEY.length - 1;
+  Voice.done = Voice.speak(s.cap);
+  if (state.loc === 'tree') {
+    if (s.node) focusTree(s.node, false);
+    else { state.focus = null; refresh(); flyTo(scenes.tree.home, 1500); app.style.setProperty('--accent', C.pearl); }
+  }
+  journeySchedule();
+}
+function journeySchedule() {
+  clearTimeout(J.timer); J.gen++;
+  var gen = J.gen, auto = fullMotion(), pb = $('#j-play');
+  if (!pb) return;
+  pb.hidden = !auto;
+  pb.textContent = J.playing ? 'Pause' : 'Play'; pb.setAttribute('aria-pressed', String(J.playing));
+  if (state.mode !== 'journey' || !auto || !J.playing) return;
+  var next = function () {
+    if (gen !== J.gen || state.mode !== 'journey') return;
+    if (J.i < JOURNEY.length - 1) showStop(J.i + 1); else { J.playing = false; journeySchedule(); }
+  };
+  if (Voice.on) Voice.done.then(function () { if (gen === J.gen) J.timer = setTimeout(next, 1600); });
+  else J.timer = setTimeout(next, 9000);
+}
+
+/* ---------- discovery and reflection: the whole universe as readable text ---------- */
+var reflectBuilt = false;
+function rArticle(s, tag) {
+  var h = '<article id="r-' + s.id + '"><' + tag + '>' + esc(s.t) + '</' + tag + '>';
+  if (s.name) h += '<p class="look">' + esc(s.name) + '</p>';
+  h += kindRow(s) + bodyHTML(s);
+  if (s.w) h += '<p class="whole">' + esc(s.w) + '</p>';
+  if (s.links && s.links.length) h += '<div class="r-links">' + s.links.map(function (l) { return '<button type="button" data-go="' + esc(l[0]) + '">' + esc(l[1]) + '</button>'; }).join('') + '</div>';
+  h += srcLink(s) + '</article>';
+  return h;
+}
+function rWorld(w) {
+  var mv = w.type === 'movement';
+  var h = '<section id="r-' + w.id + '" data-world="' + w.id + '" style="--wc:' + w.color + '"><h3>' + (mv ? w.n + '. ' : w.num ? w.num + '. ' : '') + esc(w.name) + '</h3>';
+  h += '<p class="look">' + esc(w.look) + '.</p>' + (w.q ? '<p class="q">' + esc(w.q) + '</p>' : '') + '<p>' + esc(w.intro) + '</p>';
+  h += '<p class="see"><button type="button" class="go" data-see="' + w.id + '">See ' + esc(w.name) + ' in the universe</button></p>';
+  w.stars.forEach(function (s) { h += rArticle(s, 'h4'); });
+  return h + '</section>';
+}
+function buildReflect() {
+  if (reflectBuilt) return; reflectBuilt = true;
+  var h = '<div class="r-wrap"><header id="reflect-top" data-world="tree"><h1>AI Freedom Trust Federation</h1>';
+  h += '<p class="lede">A living federation for human freedom in the age of intelligence.</p>';
+  h += '<p>One root. Many branches. Every fruit returns to its source. This page holds the whole Living Universe in words: every world, every discovery, and the ties between them.</p>';
+  h += '<nav class="r-toc" aria-label="Contents"><button type="button" class="go" data-go="tree:trunk">The trunk</button>';
+  WORLDS.forEach(function (w) { h += '<button type="button" class="go" data-go="' + w.id + '">' + esc(w.name) + '</button>'; });
+  h += '<button type="button" class="go" data-go="seed">The seed</button></nav>';
+  h += '<p class="fine">Everything here comes from the federation\'s published works. Each discovery carries a label that says what kind of statement it is. Symbolic pairings are labeled as metaphor, and nothing is presented as established science.</p></header>';
+  h += '<section data-world="tree"><h2>The Tree of Emergence</h2><p>The Tree shows how ideas, systems, communities and responsibilities grow from common roots. Seven branches carry the seven movements. Six fruits open into worlds. The roots hold the written covenant.</p>';
+  h += '<div id="r-trunk">' + rArticle({ id: 'trunk-a', t: TRUNK.t, k: TRUNK.k, b: TRUNK.b, w: TRUNK.w, links: TRUNK.links }, 'h3') + '</div></section>';
+  h += '<h2>The seven movements</h2><p>A stewardship procedure for decisions, taken from the Scroll. Each movement is a branch, each has its color, and each asks one question.</p>';
+  MOVEMENTS.forEach(function (w) { h += rWorld(w); });
+  h += '<h2>The six fruits</h2><p>Six spheres surround the one root. Each fruit opens into a world.</p>';
+  FRUITS.forEach(function (w) { h += rWorld(w); });
+  h += '<h2>Inside the Scroll</h2>' + rWorld(WORLD['the-scroll']);
+  h += '<section id="r-seed" data-world="tree"><h2>' + esc(SEED.t) + '</h2>';
+  SEED.b.forEach(function (p) { h += '<p>' + esc(p) + '</p>'; });
+  SEED.invites.forEach(function (v) {
+    h += '<h4>' + esc(v.t) + '</h4><p>' + esc(v.b) + '</p><p>' + (v.href ? '<a class="src" href="' + esc(v.href) + '" target="_blank" rel="noopener">' + esc(v.hrefLabel) + '</a>'
+      : v.id === 'walk' ? '<button type="button" class="go" data-see="seed:walk">Begin the walk on the Tree</button>'
+      : '<button type="button" class="go" data-go="' + v.act[0] + '">' + esc(v.act[1]) + '</button>') + '</p>';
+  });
+  h += '</section><section data-world="tree"><h2>How to read the labels</h2><dl class="defs">' + legendHTML() + '</dl></section></div>';
+  $('#reflect').innerHTML = h;
+}
+function legendHTML() {
+  return ['protocol', 'doctrine', 'metaphor', 'principle', 'philosophy', 'work', 'aspiration', 'published'].map(function (k) {
+    return '<div><dt>' + esc(KINDS[k][0]) + '</dt><dd>' + esc(KINDS[k][1]) + '</dd></div>';
+  }).join('');
+}
+function reflectGo(t) {
+  if (t === 'atlas') return openAtlas();
+  var p = t.split(':'), id = p[0] === 'tree' ? (p[1] === 'trunk' ? 'r-trunk' : 'reflect-top') : p[0] === 'seed' ? 'r-seed' : 'r-' + (p[1] || p[0]);
+  var el = document.getElementById(id); if (!el) return;
+  el.scrollIntoView({ behavior: state.set.motion === 'full' ? 'smooth' : 'auto' });
+  var hd = el.querySelector('h1,h2,h3,h4') || el; hd.tabIndex = -1; try { hd.focus({ preventScroll: true }); } catch (e) {}
+}
+function reflectHere() {
+  var R = $('#reflect'), best = null, top = R.getBoundingClientRect().top + 140;
+  $$('[data-world]', R).forEach(function (s) { if (s.getBoundingClientRect().top <= top) best = s.dataset.world; });
+  return best;
+}
+
+/* ---------- the Celestial Atlas ---------- */
+var AP = { 'return': [550, 330], covenant: [735, 460], converge: [365, 565], differentiate: [745, 670], name: [355, 775], witness: [755, 880], ground: [345, 985],
+  trunk: [550, 1075], seed: [550, 1170], 'living-library': [550, 1290], 'the-scroll': [550, 1410],
+  'path-ahead': [985, 520], 'federation-structure': [115, 640], 'living-works': [985, 760], 'living-tree': [115, 880], vision: [985, 1000] };
+var atlas = { built: false, x: 0, y: 0, k: 1, sel: null, pts: {}, pinch: null, moved: 0 };
+function atlasEdges() {
+  var E = {}, add = function (a, b) { if (a === b || !AP[a] || !AP[b]) return; var k = a < b ? a + '|' + b : b + '|' + a; E[k] = [a, b]; };
+  var tgt = function (l) { return l === 'tree:trunk' ? 'trunk' : l.split(':')[0]; };
+  MOVEMENTS.forEach(function (m, i) { if (i < 6) add(m.id, MOVEMENTS[i + 1].id); });
+  WORLDS.forEach(function (w) { w.stars.forEach(function (s) { (s.links || []).forEach(function (l) { add(w.id, tgt(l[0])); }); }); });
+  TRUNK.links.forEach(function (l) { add('trunk', tgt(l[0])); });
+  SEED.invites.forEach(function (v) { if (v.act) add('seed', tgt(v.act[0])); });
+  add('living-library', 'the-scroll'); add('seed', 'trunk'); add('seed', 'living-library');
+  return Object.keys(E).map(function (k) { return E[k]; });
+}
+function aName(id) { return WORLD[id] ? WORLD[id].name : id === 'trunk' ? 'The trunk' : 'The seed'; }
+function aColor(id) { var w = WORLD[id]; return w ? (w.type === 'movement' ? w.color : w.type === 'fruit' && id !== 'living-library' ? C.amber : C.pearl) : (id === 'seed' ? C.white : C.pearl); }
+function buildAtlas() {
+  if (atlas.built) return; atlas.built = true;
+  var h = '<svg viewBox="0 240 1100 1220" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Map of the Living Universe"><g id="a-g">';
+  h += '<path class="a-trunk" d="M550 1290 L550 330"/>';
+  atlasEdges().forEach(function (e) {
+    var a = AP[e[0]], b = AP[e[1]], mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2, dx = b[0] - a[0], dy = b[1] - a[1];
+    h += '<path class="a-edge" data-a="' + e[0] + '" data-b="' + e[1] + '" d="M' + a[0] + ' ' + a[1] + ' Q' + (mx - dy * .12).toFixed(0) + ' ' + (my + dx * .12).toFixed(0) + ' ' + b[0] + ' ' + b[1] + '"/>';
+  });
+  Object.keys(AP).forEach(function (id) {
+    var p = AP[id], w = WORLD[id], col = aColor(id), n = w ? (w.n || w.num || '') : '', side = p[0] < 300 ? 'start' : p[0] > 800 ? 'end' : (p[0] === 550 ? 'beside' : 'middle');
+    var lx = side === 'start' ? p[0] - 30 : side === 'end' ? p[0] + 30 : side === 'beside' ? p[0] + 44 : p[0], ly = side === 'beside' ? p[1] + 13 : p[1] + 68;
+    h += '<g class="a-node" data-id="' + id + '" tabindex="0" role="button" aria-label="' + esc(aName(id)) + '" style="--c:' + col + '">';
+    h += '<circle class="glow" cx="' + p[0] + '" cy="' + p[1] + '" r="52"/><circle class="you" cx="' + p[0] + '" cy="' + p[1] + '" r="40" fill="none"/><circle class="ring" cx="' + p[0] + '" cy="' + p[1] + '" r="26"/>';
+    if (n) h += '<text class="n" x="' + p[0] + '" y="' + (p[1] + 8) + '" text-anchor="middle">' + n + '</text>';
+    h += '<text x="' + lx + '" y="' + ly + '" text-anchor="' + (side === 'beside' ? 'start' : side) + '">' + esc(aName(id)) + '</text>';
+    if (w) w.stars.forEach(function (s, i) { var a = i / w.stars.length * TAU - Math.PI / 2; h += '<circle class="a-dot" data-star="' + s.id + '" cx="' + (p[0] + Math.cos(a) * 40).toFixed(1) + '" cy="' + (p[1] + Math.sin(a) * 40).toFixed(1) + '" r="4.5"/>'; });
+    h += '</g>';
+  });
+  h += '</g></svg>';
+  $('#a-map').insertAdjacentHTML('afterbegin', h);
+  var map = $('#a-map');
+  $$('.a-node', map).forEach(function (g) {
+    g.addEventListener('click', function () { if (atlas.moved < 8) atlasSelect(g.dataset.id); });
+    g.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); atlasSelect(g.dataset.id); } });
+  });
+  map.addEventListener('pointerdown', function (e) {
+    if (e.target.closest('#a-zoom') || e.target.closest('#a-results')) return;
+    atlas.pts[e.pointerId] = { x: e.clientX, y: e.clientY }; atlas.moved = 0;
+    var ids = Object.keys(atlas.pts);
+    if (ids.length === 2) { var a = atlas.pts[ids[0]], b = atlas.pts[ids[1]]; atlas.pinch = { d: Math.hypot(a.x - b.x, a.y - b.y) || 1, k: atlas.k }; }
+  });
+  map.addEventListener('pointermove', function (e) {
+    var p = atlas.pts[e.pointerId]; if (!p) return;
+    var dx = e.clientX - p.x, dy = e.clientY - p.y; p.x = e.clientX; p.y = e.clientY;
+    var ids = Object.keys(atlas.pts), u = atlasUnit();
+    if (ids.length >= 2 && atlas.pinch) { var a = atlas.pts[ids[0]], b = atlas.pts[ids[1]]; atlasZoom(atlas.pinch.k * Math.hypot(a.x - b.x, a.y - b.y) / atlas.pinch.d, true); atlas.moved = 99; return; }
+    atlas.moved += Math.abs(dx) + Math.abs(dy);
+    if (atlas.moved > 8) { atlas.x += dx * u; atlas.y += dy * u; atlasApply(); }
+  });
+  var end = function (e) { delete atlas.pts[e.pointerId]; if (Object.keys(atlas.pts).length < 2) atlas.pinch = null; };
+  map.addEventListener('pointerup', end); map.addEventListener('pointercancel', end);
+  map.addEventListener('wheel', function (e) { e.preventDefault(); atlasZoom(atlas.k * Math.exp(-e.deltaY * .0015), true); }, { passive: false });
+}
+function atlasUnit() { var r = $('#a-map').getBoundingClientRect(); return 1 / Math.min(r.width / 1100, r.height / 1220); }
+function atlasApply() {
+  var k = atlas.k, lim = 700 * k;
+  atlas.x = clamp(atlas.x, -lim, lim); atlas.y = clamp(atlas.y, -lim * 1.3, lim * 1.3);
+  $('#a-g').setAttribute('transform', 'translate(' + (550 + atlas.x).toFixed(1) + ' ' + (850 + atlas.y).toFixed(1) + ') scale(' + k.toFixed(3) + ') translate(-550 -850)');
+  $('#a-map').classList.toggle('deep', k > 1.55);
+}
+function atlasZoom(k) { atlas.k = clamp(k, .8, 4.5); atlasApply(); }
+function atlasMark() {
+  var here = state.loc === 'tree' ? (state.focus === 'trunk' || state.focus === 'seed' ? state.focus : null) : state.loc, nW = 0;
+  $$('#a-map .a-node').forEach(function (g) {
+    var id = g.dataset.id, seen = !!state.visited[id]; if (seen && WORLD[id]) nW++;
+    g.classList.toggle('seen', seen); g.classList.toggle('here', id === here);
+  });
+  $$('#a-map .a-dot').forEach(function (d) { d.classList.toggle('seen', !!state.found[d.dataset.star]); });
+  $$('#a-map .a-edge').forEach(function (e) {
+    e.classList.toggle('lit', !!state.visited[e.dataset.a] && !!state.visited[e.dataset.b]);
+    e.classList.toggle('on', atlas.sel === e.dataset.a || atlas.sel === e.dataset.b);
+  });
+  $('#a-trail').textContent = nW ? 'Filled circles mark the ' + nW + ' of ' + WORLDS.length + ' worlds you have visited. A line brightens when you know both ends.'
+    : 'Touch a place to see what it holds and how it ties to the rest.';
+}
+function atlasSelect(id) {
+  atlas.sel = id; atlasMark();
+  var w = WORLD[id], h, ties = [];
+  $$('#a-map .a-edge.on').forEach(function (e) { var o = e.dataset.a === id ? e.dataset.b : e.dataset.a; if (ties.indexOf(o) < 0) ties.push(o); });
+  $('#a-card').style.setProperty('--accent', aColor(id));
+  if (w) {
+    var c = w.stars.filter(function (s) { return state.found[s.id]; }).length;
+    h = '<h3>' + esc(w.name) + '</h3><p>' + esc(w.intro) + '</p><p><button type="button" class="primary" data-go="' + id + '">' + (state.loc === id ? 'You are here' : 'Travel to ' + esc(w.name)) + '</button></p>';
+    h += '<p class="fine">' + c + ' of ' + w.stars.length + ' opened.</p>' + starList(w, 'data-go');
+  } else if (id === 'trunk') h = '<h3>' + esc(TRUNK.t) + '</h3><p>' + esc(TRUNK.b[0]) + '</p><p><button type="button" class="primary" data-go="tree:trunk">Go to the trunk</button></p>';
+  else h = '<h3>' + esc(SEED.t) + '</h3><p>' + esc(SEED.b[0]) + '</p><p><button type="button" class="primary" data-go="seed">Go to the seed</button></p>';
+  if (ties.length) h += '<h3 style="font:700 14px/1.3 var(--body);color:var(--dim);margin-top:16px">Tied to</h3><div class="next">' + ties.map(function (t) { return '<button type="button" class="go" data-atlas="' + t + '">' + esc(aName(t)) + '</button>'; }).join('') + '</div>';
+  $('#a-card').innerHTML = h; $('#a-card').scrollTop = 0;
+}
+function openAtlas() {
+  buildAtlas(); $('#atlas').hidden = false; atlas.open = true; $('#a-results').hidden = true; $('#a-search').value = '';
+  atlas.x = atlas.y = 0; atlas.k = 1; atlasApply();
+  atlasSelect(state.loc !== 'tree' ? state.loc : (state.focus && AP[state.focus === 'roots' ? 'living-library' : state.focus]) ? (state.focus === 'roots' ? 'living-library' : state.focus) : 'trunk');
+  try { $('#a-close').focus(); } catch (e) {}
+}
+function closeAtlas() { var a = $('#atlas'); if (a && !a.hidden) { a.hidden = true; atlas.open = false; dirty = true; } }
+function atlasSearch(q) {
+  var box = $('#a-results'); q = q.trim().toLowerCase();
+  if (q.length < 2) { box.hidden = true; return; }
+  var out = [];
+  WORLDS.forEach(function (w) {
+    if ((w.name + ' ' + w.intro + ' ' + w.look).toLowerCase().indexOf(q) >= 0) out.push([w.id, w.name, w.look]);
+    w.stars.forEach(function (s) {
+      var hay = (s.t + ' ' + (s.name || '') + ' ' + (s.short || '') + ' ' + (s.b || []).join(' ') + ' ' + (s.list || []).join(' ') + ' ' + (s.status || '')).toLowerCase();
+      if (hay.indexOf(q) >= 0) out.push([w.id + ':' + s.id, s.t, 'In ' + w.name]);
+    });
+  });
+  if ((TRUNK.t + TRUNK.b.join(' ')).toLowerCase().indexOf(q) >= 0) out.push(['tree:trunk', TRUNK.t, 'On the Tree']);
+  if ((SEED.t + SEED.invites.map(function (v) { return v.t + v.b; }).join(' ')).toLowerCase().indexOf(q) >= 0) out.push(['seed', SEED.t, 'On the Tree']);
+  box.innerHTML = out.length ? out.slice(0, 30).map(function (o) { return '<button type="button" class="go" data-go="' + o[0] + '">' + esc(o[1]) + '<small>' + esc(o[2]) + '</small></button>'; }).join('')
+    : '<p class="fine" style="margin:8px">Nothing in the universe matches that yet. Try a movement, a principle, or a work by name.</p>';
+  box.hidden = false;
+}
+
+/* ---------- sound: generated on the device, never started without a tap ---------- */
+var TONES = { tree: 130.81, ground: 130.81, witness: 146.83, name: 164.81, differentiate: 174.61, converge: 196, covenant: 220, 'return': 246.94,
+  vision: 196, 'living-tree': 174.61, 'living-works': 164.81, 'federation-structure': 146.83, 'path-ahead': 220, 'living-library': 110, 'the-scroll': 123.47 };
+var Sound = { ctx: null, master: null, voices: [], on: false, hushed: false, root: 130.81,
+  start: function () {
+    try {
+      if (!this.ctx) {
+        var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return false;
+        var c = this.ctx = new AC(), lp = c.createBiquadFilter(), self = this;
+        this.master = c.createGain(); this.master.gain.value = 0;
+        lp.type = 'lowpass'; lp.frequency.value = 900; this.master.connect(lp); lp.connect(c.destination);
+        [[.5, .22, 'sine'], [1, .5, 'sine'], [1.5, .2, 'sine'], [2.005, .1, 'triangle']].forEach(function (v) {
+          var o = c.createOscillator(), g = c.createGain(); o.type = v[2]; o.frequency.value = self.root * v[0]; g.gain.value = v[1];
+          o.connect(g); g.connect(self.master); o.start(); self.voices.push({ o: o, r: v[0] });
+        });
+        var l = c.createOscillator(), lg = c.createGain(); l.frequency.value = .07; lg.gain.value = 260; l.connect(lg); lg.connect(lp.frequency); l.start();
+      }
+      this.ctx.resume(); this.on = true; this.setWorld(state.loc); this.level();
+      return true;
+    } catch (e) { return false; }
+  },
+  stop: function () { this.on = false; this.level(); },
+  level: function () { if (this.ctx) this.master.gain.setTargetAtTime(this.on && !this.hushed ? state.set.vol * .16 : 0, this.ctx.currentTime, .6); },
+  hush: function (h) { this.hushed = h; this.level(); },
+  setWorld: function (id) {
+    this.root = TONES[id] || TONES.tree;
+    if (!this.ctx) return; var t = this.ctx.currentTime, r = this.root;
+    this.voices.forEach(function (v) { v.o.frequency.setTargetAtTime(r * v.r, t, 1.1); });
+  },
+  chime: function () {
+    if (!this.on || !this.ctx || this.hushed) return;
+    try {
+      var c = this.ctx, o = c.createOscillator(), g = c.createGain(), t = c.currentTime;
+      o.type = 'sine'; o.frequency.value = this.root * 4; g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(state.set.vol * .07, t + .02); g.gain.exponentialRampToValueAtTime(.0001, t + 1.4);
+      o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + 1.5);
+    } catch (e) {}
+  }
+};
+function setSound(on) {
+  if (on && !Sound.start()) { on = false; toast('Sound is not available in this browser.'); }
+  if (!on) Sound.stop();
+  state.set.sound = on;
+  $('#btn-sound').setAttribute('aria-pressed', String(on)); $('#pref-sound').checked = on;
+}
+
+/* ---------- comfort sheet ---------- */
+function openPrefs() { $('#prefs').hidden = false; try { $('#prefs-close').focus(); } catch (e) {} }
+function closePrefs() { $('#prefs').hidden = true; try { $('#btn-menu').focus(); } catch (e) {} }
+function setPaused(p) {
+  state.paused = p; $('#btn-pause').setAttribute('aria-pressed', String(p));
+  $('#btn-pause').setAttribute('aria-label', p ? 'Resume motion' : 'Pause all motion');
+  if (p) { tween = null; vel.y = vel.p = 0; } dirty = true; journeySchedule();
+  toast(p ? 'Motion paused. The view holds still until you resume.' : 'Motion resumed.');
+}
+
+/* ---------- first-visit nudge ---------- */
+function setNudge() { state.nudge = true; var n = nodeById(scenes.tree, 'ground'); if (n && n.el) n.el.classList.add('nudge'); }
+function clearNudge() { if (!state.nudge) return; state.nudge = false; $$('.node.nudge').forEach(function (b) { b.classList.remove('nudge'); }); }
+
+/* ---------- progress ---------- */
+function updateCount() {
+  var n = WORLDS.filter(function (w) { return state.visited[w.id]; }).length, d = WORLDS.filter(function (w) { return worldDone(w.id); }).length, el = $('#count');
+  if (!el) return;
+  el.hidden = n === 0;
+  el.textContent = 'Visited ' + n + ' of ' + WORLDS.length + ' worlds' + (d ? ', ' + d + ' fully lit' : '');
+}
+
+/* ---------- walking the cycle from world to world ---------- */
+function updateMnav() {
+  var w = WORLD[state.loc], nav = $('#mnav');
+  if (!nav) return;
+  if (!w || w.type !== 'movement' || state.mode !== 'explore') { nav.hidden = true; return; }
+  var pv = MOVEMENTS[(w.n + 5) % 7], nx = MOVEMENTS[w.n % 7];
+  nav.hidden = false;
+  $('#m-prev').dataset.go = pv.id; $('#m-prev').innerHTML = '<span aria-hidden="true">&lsaquo;</span> ' + esc(pv.name);
+  $('#m-prev').setAttribute('aria-label', 'Previous movement: ' + pv.name);
+  $('#m-next').dataset.go = nx.id; $('#m-next').innerHTML = esc(nx.name) + ' <span aria-hidden="true">&rsaquo;</span>';
+  $('#m-next').setAttribute('aria-label', 'Next movement: ' + nx.name + (w.n === 7 ? ', the cycle begins again' : ''));
+  $('#m-pos').textContent = w.n + ' of 7';
+}
+
+/* ---------- narration: the Claude voice where offered, the browser's voice otherwise ---------- */
+var DL = null;
+var Voice = { t: null, on: false, done: Promise.resolve(),
+  show: function () { var b = $('#j-voice'); if (b) b.hidden = false; },
+  init: function () {
+    var self = this, fallback = function () { if (window.speechSynthesis && window.SpeechSynthesisUtterance) self.show(); };
+    try {
+      if (window.claude && window.claude.use) {
+        window.claude.use('tts').then(function (t) { if (t) { self.t = t; self.show(); } else fallback(); }, fallback);
+        window.claude.use('downloads').then(function (d) { DL = d || null; }, function () {});
+      } else fallback();
+    } catch (e) { fallback(); }
+  },
+  speak: function (text) {
+    var self = this;
+    return new Promise(function (res) {
+      if (!self.on) return res();
+      if (self.t) {
+        self.t.speak(text, { voice: 'airy', rate: .95, language: 'en' }).then(res, function (e) {
+          if (e && (e.code === 'not_granted' || e.code === 'unavailable')) { self.t = null; self.setOn(false); toast('Narration is not available here.'); }
+          res();
+        });
+        return;
+      }
+      try {
+        speechSynthesis.cancel();
+        var u = new SpeechSynthesisUtterance(text); u.rate = .95; u.lang = 'en';
+        u.onend = u.onerror = function () { res(); };
+        speechSynthesis.speak(u);
+      } catch (e) { res(); }
+    });
+  },
+  stop: function () { try { if (this.t) this.t.stop(); else if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {} },
+  setOn: function (on) {
+    this.on = on; var b = $('#j-voice');
+    b.setAttribute('aria-pressed', String(on)); b.textContent = on ? 'Stop narration' : 'Narrate';
+    if (!on) this.stop();
+  }
+};
+function saveWalk() {
+  var d = new Date(), txt = 'My walk through the seven movements\n' + d.toDateString() + '\n\n';
+  MOVEMENTS.forEach(function (m, j) { txt += m.n + '. ' + m.name + '\n' + m.q + '\n' + (walk.notes[j] || '(nothing written)') + '\n\n'; });
+  txt += 'From the Living Universe of the AI Freedom Trust Federation.\nA reflection, not legal, medical or financial advice.\n';
+  if (!DL) { toast('Saving files is not available here. Use Copy instead.'); return; }
+  DL.save({ filename: 'my-seven-movements.txt', data: txt }).then(function () { toast('Saved your notes.'); }, function (e) {
+    var c = e && e.code;
+    toast(c === 'declined' ? 'Not saved. Your notes are still here.' : c === 'rate_limited' ? 'A save is already waiting for your answer.' : 'Saving is not available here. Use Copy instead.');
+  });
+}
+
+/* ---------- the arrival ---------- */
+var arrival = { on: false, t: 0, net: null, cap: -1 };
+var CAPS = [[2.4, 'A living federation for human freedom in the age of intelligence.'], [7.6, 'One root.'], [9.7, 'One root. Many branches.'], [11.8, 'One root. Many branches. Every fruit returns to its source.']];
+function buildNet() {
+  var r = RNG(5), P = [], E = [], i, j;
+  for (i = 0; i < 84; i++) { var u = r() * 2 - 1, th = r() * TAU, s = Math.sqrt(1 - u * u), R = .5 + Math.pow(r(), .6) * 3.0; P.push([s * Math.cos(th) * R, .07 + u * R * .8, s * Math.sin(th) * R]); }
+  P.forEach(function (p, i) {
+    var best = [];
+    for (j = 0; j < P.length; j++) if (j !== i) best.push([dist2(p, P[j]), j]);
+    best.sort(function (a, b) { return a[0] - b[0]; });
+    for (j = 0; j < 2; j++) E.push([i, best[j][1], Math.sqrt(Math.min(dist2(p, [0, .07, 0]), dist2(P[best[j][1]], [0, .07, 0])))]);
+  });
+  arrival.net = { P: P, E: E };
+}
+function drawArrival(ctx) {
+  var t = arrival.t, N = arrival.net, i, a, k, x0, y0, md = Math.min(V.W, V.H);
+  if (!proj(0, .07, 0)) return; x0 = px; y0 = py;
+  ctx.strokeStyle = C.pearl; ctx.lineWidth = 1.2;
+  for (i = 0; i < 6; i++) {
+    k = (t - .9 - i * .55) / 4.2; if (k <= 0 || k >= 1) continue;
+    ctx.globalAlpha = Math.sin(k * Math.PI) * .5; ctx.beginPath(); ctx.arc(x0, y0, k * md * .62, 0, TAU); ctx.stroke();
+  }
+  a = smooth(1.6, 3, t) * (1 - smooth(5.6, 7.2, t));
+  if (a > .01) {
+    var rr = md * .085 * (1 + smooth(1.6, 7, t) * .5); ctx.globalAlpha = a * .5;
+    ctx.beginPath(); ctx.arc(x0, y0, rr, 0, TAU); ctx.stroke();
+    for (i = 0; i < 6; i++) { ctx.beginPath(); ctx.arc(x0 + Math.cos(i / 6 * TAU + t * .05) * rr, y0 + Math.sin(i / 6 * TAU + t * .05) * rr, rr, 0, TAU); ctx.stroke(); }
+  }
+  if (t > 2.4 && t < 8.2) {
+    var g = ease(smooth(5.6, 7.5, t)), fade = 1 - smooth(7.3, 8.1, t), S2 = [], p;
+    for (i = 0; i < N.P.length; i++) {
+      p = N.P[i];
+      if (proj(lerp(p[0], 0, g), lerp(p[1], .07, g), lerp(p[2], 0, g))) S2.push([px, py, ps]); else S2.push(null);
+    }
+    ctx.lineWidth = 1;
+    for (i = 0; i < N.E.length; i++) {
+      var e = N.E[i], A = S2[e[0]], B = S2[e[1]]; if (!A || !B) continue;
+      a = smooth(2.5 + e[2] * .85, 3.1 + e[2] * .85, t) * fade; if (a <= .01) continue;
+      ctx.globalAlpha = a * .5; ctx.beginPath(); ctx.moveTo(A[0], A[1]); ctx.lineTo(B[0], B[1]); ctx.stroke();
+    }
+    for (i = 0; i < S2.length; i++) {
+      if (!S2[i]) continue; a = smooth(2.4, 4.5, t) * fade * (1 - g * .93); var sz = Math.max(3, S2[i][2] * .07);
+      ctx.globalAlpha = a; ctx.drawImage(sprite(i % 5 === 0 ? C.pearl : '#cfd6ff'), S2[i][0] - sz, S2[i][1] - sz, sz * 2, sz * 2);
+    }
+  }
+  a = smooth(6.6, 7.6, t) * (1 - smooth(8.2, 10.5, t));
+  if (a > .01) { var fs = md * .28 * a; ctx.globalAlpha = a; ctx.drawImage(sprite(C.white), x0 - fs, y0 - fs, fs * 2, fs * 2); }
+}
+function startArrival() {
+  var S = scenes.tree;
+  arrival.on = true; arrival.t = 0; arrival.cap = -1; state.arriving = true; app.classList.add('arriving');
+  $('#arrival').hidden = false; $('#a-invite').hidden = true; $('#a-enter').hidden = true; $('#a-cap').hidden = false; $('#a-cap').textContent = '';
+  $('#a-skip').hidden = false; $('#a-quiet').hidden = false;
+  if (state.loc !== 'tree') setScene('tree');
+  cur = S; S.grow = 0; S.hi = null; S.cam = { yaw: -1.2, pitch: .16, zoom: 1.15, tx: 0, ty: .07, tz: 0 };
+  if (!arrival.net) buildNet();
+  S.overlay = drawArrival;
+}
+function stepArrival(dt) {
+  var a = arrival, S = scenes.tree, c = S.cam; a.t += dt * 1.5; var t = a.t;
+  S.grow = clamp((t - 7.2) / 6.2, 0, .999);
+  var k1 = smooth(0, 7.2, t), k2 = smooth(7.4, 13.6, t);
+  c.yaw = -1.2 + t * .046; c.zoom = lerp(lerp(1.15, 2.3, k1), 1, k2); c.ty = lerp(.07, 1.25, k2); c.pitch = lerp(.16, .1, k2);
+  for (var i = CAPS.length - 1; i > a.cap; i--) if (t >= CAPS[i][0]) { a.cap = i; $('#a-cap').textContent = CAPS[i][1]; break; }
+  if (t > 14) endArrival();
+}
+function endArrival() {
+  var S = scenes.tree;
+  arrival.on = false; S.grow = 1; S.overlay = null;
+  $('#a-cap').hidden = true; $('#a-invite').hidden = false; $('#a-enter').hidden = false; $('#a-skip').hidden = true;
+  try { $('#a-enter').focus({ preventScroll: true }); } catch (e) {}
+}
+function enterUniverse(quiet) {
+  var S = scenes.tree;
+  arrival.on = false; S.grow = 1; S.overlay = null; state.arriving = false; state.seenArrival = true;
+  app.classList.remove('arriving'); $('#arrival').hidden = true;
+  if (quiet) setMotion('gentle');
+  if (state.loc === 'tree') { cur = S; var from = copy(S.cam); S.cam = from; flyTo(S.home, 1400); }
+  idleAt = now(); measureLabels(); crumbs(); save(); dirty = true;
+  if (state.loc === 'tree') {
+    var fresh = !WORLDS.some(function (w) { return state.visited[w.id]; });
+    if (fresh) { setNudge(); toast('Touch a branch to begin. The pulsing light is Ground, the first movement. Drag to turn the Tree.', 10000); }
+    else toast('Drag to turn the Tree. Pinch or scroll to come closer.', 6000);
+  }
+  try { stage.focus({ preventScroll: true }); } catch (e) {}
+}
+
+/* ---------- start ---------- */
+function hashWorld() { try { var h = decodeURIComponent(location.hash.slice(1)); return (WORLD[h] || h === 'reflect') ? h : null; } catch (e) { return null; } }
+function boot(snap) {
+  app = $('#app'); stage = $('#stage'); cv = $('#sky'); nodesEl = $('#nodes'); panel = $('#panel'); panelBody = $('#panel-body');
+  bloomEl = $('#bloom'); liveEl = $('#live'); hintEl = $('#hint');
+  var startHash = hashWorld(), remembered = load();
+  var reduce = false, small = false;
+  try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+  try { small = (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4; } catch (e) {}
+  if (!remembered) { state.set.motion = reduce ? 'still' : 'full'; state.set.intensity = small ? 'balanced' : 'rich'; }
+  else perfLocked = true;
+  initSky();
+  setIntensity(state.set.intensity, true); setMotion(state.set.motion);
+  scenes.tree = buildTree(); booting = true; setScene('tree'); booting = false;
+  $('#legend').innerHTML = legendHTML();
+  $('#pref-vol').value = state.set.vol; $('#pref-remember').checked = state.set.remember;
+
+  wireStage(); wirePanel();
+  window.addEventListener('resize', function () { resize(); measureLabels(); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { measureLabels(); dirty = true; });
+  $$('.modes button').forEach(function (b) { b.addEventListener('click', function () { setMode(b.dataset.mode); }); });
+  $('#btn-tree').addEventListener('click', back);
+  $('#btn-atlas').addEventListener('click', openAtlas);
+  $('#btn-export').addEventListener('click', function () {
+    // Private, explicit export; no remote service.
+    var record = { format: 'aift-living-universe-journey', version: 1,
+      exportedAt: new Date().toISOString(),
+      visited: JSON.parse(JSON.stringify(state.visited)),
+      found: JSON.parse(JSON.stringify(state.found)) };
+    var blob = new Blob([JSON.stringify(record, null, 2) + '\n'], { type: 'application/json' });
+    var url = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = url; a.download = 'living-universe-journey.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 30000);
+    announce('Your journey export has been prepared. It stays on your device.');
+  });
+  $('#btn-import').addEventListener('click', function () { $('#journey-file').click(); });
+  $('#journey-file').addEventListener('change', function () {
+    var input = this, file = input.files && input.files[0];
+    if (!file) return;
+    if (file.size > 1024 * 1024) { toast('That journey file is too large.'); input.value = ''; return; }
+    var reader = new FileReader();
+    reader.onerror = function () { toast('Unable to read that journey file.'); input.value = ''; };
+    reader.onload = function () {
+      try {
+        var d = JSON.parse(String(reader.result));
+        if (!d || d.format !== 'aift-living-universe-journey' || d.version !== 1 ||
+            !d.visited || !d.found || Array.isArray(d.visited) || Array.isArray(d.found) ||
+            typeof d.visited !== 'object' || typeof d.found !== 'object') throw Error('format');
+        var visited = Object.create(null), found = Object.create(null), count = 0;
+        Object.keys(d.visited).forEach(function (id) {
+          if (Object.prototype.hasOwnProperty.call(WORLD, id) && d.visited[id] === true) {
+            visited[id] = true; count++;
+          }
+        });
+        Object.keys(d.found).forEach(function (id) {
+          if (Object.prototype.hasOwnProperty.call(STAR, id) && d.found[id] === true) {
+            found[id] = true; count++;
+          }
+        });
+        if (!window.confirm('Restore ' + count + ' saved discoveries and visits? This will replace your current journey progress.')) return;
+        state.visited = visited; state.found = found;
+        save(); refresh(); dirty = true;
+        announce('Your saved journey has been restored.'); toast('Journey restored.');
+      } catch (e) { toast('This is not a valid Living Universe journey export.'); }
+      finally { input.value = ''; }
+    };
+    reader.readAsText(file);
+  });
+  $('#a-close').addEventListener('click', function () { closeAtlas(); try { $('#btn-atlas').focus(); } catch (e) {} });
+  $('#a-search').addEventListener('input', function () { atlasSearch(this.value); });
+  $('#atlas').addEventListener('click', function (e) { var b = e.target.closest('[data-atlas]'); if (b) atlasSelect(b.dataset.atlas); });
+  $('#az-in').addEventListener('click', function () { atlasZoom(atlas.k * 1.35); });
+  $('#az-out').addEventListener('click', function () { atlasZoom(atlas.k / 1.35); });
+  $('#az-fit').addEventListener('click', function () { atlas.x = atlas.y = 0; atlasZoom(1); });
+  $('#z-in').addEventListener('click', function () { zoomBy(1.3); });
+  $('#z-out').addEventListener('click', function () { zoomBy(1 / 1.3); });
+  $('#z-fit').addEventListener('click', fitView);
+  $('#btn-sound').addEventListener('click', function () { setSound(!state.set.sound); });
+  $('#btn-pause').addEventListener('click', function () { setPaused(!state.paused); });
+  $('#btn-menu').addEventListener('click', openPrefs);
+  $('#prefs-close').addEventListener('click', closePrefs);
+  $('#prefs').addEventListener('click', function (e) { if (e.target === this) closePrefs(); });
+  $$('input[name="motion"]').forEach(function (r) { r.addEventListener('change', function () { setMotion(r.value); }); });
+  $$('input[name="intensity"]').forEach(function (r) { r.addEventListener('change', function () { perfLocked = true; setIntensity(r.value); }); });
+  $('#pref-sound').addEventListener('change', function () { setSound(this.checked); });
+  $('#pref-vol').addEventListener('input', function () { state.set.vol = +this.value; Sound.level(); save(); });
+  $('#pref-remember').addEventListener('change', function () {
+    state.set.remember = this.checked;
+    if (this.checked) { save(); toast('Your journey will be remembered on this device.'); }
+    else { try { localStorage.removeItem(STORE); } catch (e) {} toast('Nothing is stored. Your journey lasts until you close this page.'); }
+  });
+  $('#pref-forget').addEventListener('click', function () { forget(); if (atlas.built) atlasMark(); toast('Your journey has been forgotten.'); });
+  $('#pref-replay').addEventListener('click', function () {
+    closePrefs(); closePanel(); if (state.mode !== 'explore') setMode('explore', true, true);
+    var play = function () { state.focus = null; refresh(); if (state.set.motion === 'still') setMotion('full'); if (state.paused) setPaused(false); startArrival(); };
+    if (state.loc !== 'tree') { setScene('tree'); }
+    play();
+  });
+  $('#j-prev').addEventListener('click', function () { showStop(J.i - 1); });
+  $('#j-next').addEventListener('click', function () { showStop(J.i + 1); });
+  $('#j-play').addEventListener('click', function () { J.playing = !J.playing; journeySchedule(); });
+  $('#j-voice').addEventListener('click', function () {
+    Voice.setOn(!Voice.on);
+    if (Voice.on) Voice.done = Voice.speak(JOURNEY[J.i].cap);
+    journeySchedule();
+  });
+  Voice.init();
+  $('#a-enter').addEventListener('click', function () { enterUniverse(false); });
+  $('#a-skip').addEventListener('click', function () { enterUniverse(false); });
+  $('#a-quiet').addEventListener('click', function () { enterUniverse(true); });
+  $('#skiplink').addEventListener('click', function (e) { e.preventDefault(); if (state.arriving) enterUniverse(false); setMode('reflect'); });
+  // Keep keyboard focus inside whichever modal is open.
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Tab') return;
+    var modal = !$('#prefs').hidden ? $('#prefs') : (!$('#atlas').hidden ? $('#atlas') : null);
+    if (!modal) return;
+    var items = $$( 'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])', modal)
+      .filter(function (el) { return !el.hidden && el.getClientRects().length > 0; });
+    if (!items.length) { e.preventDefault(); modal.focus(); return; }
+    var first = items[0], last = items[items.length - 1];
+    if (e.shiftKey && (document.activeElement === first || !modal.contains(document.activeElement))) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && (document.activeElement === last || !modal.contains(document.activeElement))) { e.preventDefault(); first.focus(); }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    if (!$('#prefs').hidden) closePrefs(); else if (!$('#atlas').hidden) { closeAtlas(); $('#btn-atlas').focus(); }
+    else if (state.arriving) enterUniverse(false); else if (state.mode === 'reflect') setMode('explore'); else if (state.panel) { keepNote(); closePanel(); } else back();
+  });
+  window.addEventListener('hashchange', function () {
+    var h = hashWorld(); if (!h || state.arriving || busy) return;
+    if (h === 'reflect') { setMode('reflect'); return; }
+    if (h !== state.loc) { if (state.mode === 'reflect') reflectGo(h); else go(h); }
+  });
+  document.addEventListener('visibilitychange', function () { if (Sound.ctx) { if (document.hidden) Sound.ctx.suspend(); else if (Sound.on) Sound.ctx.resume(); } lastT = now(); });
+
+  var start = (snap && WORLD[snap.loc]) ? snap.loc : startHash;
+  if (start === 'reflect') { enterUniverse(false); hintEl.classList.remove('on'); setMode('reflect', true); }
+  else if (start && WORLD[start]) { setScene(start); enterUniverse(false); hintEl.classList.remove('on'); showWorld(start); }
+  else if (reduce || state.set.motion === 'still' || (remembered && state.seenArrival) || (snap && snap.loc)) enterUniverse(false);
+  else startArrival();
+  requestAnimationFrame(frame);
+}
+try { if (window.claude && window.claude.hot && window.claude.hot.snapshot) window.claude.hot.snapshot(function () { return { loc: state.loc }; }); } catch (e) {}
+if (window.claude && window.claude.hot && window.claude.hot.ready) window.claude.hot.ready(boot); else boot((window.claude && window.claude.hot && window.claude.hot.data) || {});
+
+})();
+</script>
+</body>
+</html>

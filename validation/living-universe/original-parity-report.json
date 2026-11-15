@@ -1,0 +1,58 @@
+{
+  "original_zip_sha256": "fd8b3b371e28f28cd768854d96e67ed10a43e8b54ce747a8069e92cebb05cd4e",
+  "modules": {
+    "index.tpl.html": {
+      "original_sha256": "ec1c6eb250faa1b6d48b43793341fce5c77ef3b739d3497781f0694a6f7b9cb2",
+      "release_sha256": "68ddb24039ca38f33136b354348d9bbfbebd9ef018497c86ab8219b163f52365",
+      "unchanged": false
+    },
+    "app-core.js": {
+      "original_sha256": "210ee3f28180fee0a0342da107c7d3a9fdb648e82f9158e0d52e26e65825ccb3",
+      "release_sha256": "210ee3f28180fee0a0342da107c7d3a9fdb648e82f9158e0d52e26e65825ccb3",
+      "unchanged": true
+    },
+    "style.css": {
+      "original_sha256": "1c0a6db7b9a9f945f77059de1cf91deccbd933a018412a3200df12876be6ace2",
+      "release_sha256": "1c0a6db7b9a9f945f77059de1cf91deccbd933a018412a3200df12876be6ace2",
+      "unchanged": true
+    },
+    "worlds.js": {
+      "original_sha256": "3705a6b1f154eea96e52a9ad38a61824e022a8b761818095189acd40a0906064",
+      "release_sha256": "3705a6b1f154eea96e52a9ad38a61824e022a8b761818095189acd40a0906064",
+      "unchanged": true
+    },
+    "tree.js": {
+      "original_sha256": "14ccd4585cc8ec895e82d5735533c1d6b286ca98916a49e37e81774d23035ad7",
+      "release_sha256": "14ccd4585cc8ec895e82d5735533c1d6b286ca98916a49e37e81774d23035ad7",
+      "unchanged": true
+    },
+    "app-ui.js": {
+      "original_sha256": "31224b3d6f28596eb623a99fb3a41380c215a2020ee8d1f96d714abdc9564922",
+      "release_sha256": "03bd6ffeceabf89c36f240c865f41b5197fd24bcacf7b1cca42d820e0518aabe",
+      "unchanged": false
+    },
+    "engine.js": {
+      "original_sha256": "2f1cd9c5939497565b97ce126bd151409f99f4dfd086a528bf72ce8884f533b1",
+      "release_sha256": "2f1cd9c5939497565b97ce126bd151409f99f4dfd086a528bf72ce8884f533b1",
+      "unchanged": true
+    },
+    "data.js": {
+      "original_sha256": "2f3a0ac8dd112f2742bf2f53d6705754307e9e8620faecf9031becf55410f8d8",
+      "release_sha256": "2f3a0ac8dd112f2742bf2f53d6705754307e9e8620faecf9031becf55410f8d8",
+      "unchanged": true
+    }
+  },
+  "unchanged": [
+    "app-core.js",
+    "style.css",
+    "worlds.js",
+    "tree.js",
+    "engine.js",
+    "data.js"
+  ],
+  "modified": [
+    "index.tpl.html",
+    "app-ui.js"
+  ],
+  "missing": []
+}
