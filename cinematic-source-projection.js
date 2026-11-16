@@ -21,7 +21,7 @@ const description=document.createElement('p');description.textContent='Select a 
 const lineage=document.createElement('ol');lineage.setAttribute('aria-label','Source-to-outcome ancestry');
 const destination=document.createElement('a');destination.hidden=true;destination.textContent='Open documented destination';
 destination.rel='noopener noreferrer';
-inspector.append(heading,description,lineage,destination);host.append(inspector);
+inspector.append(heading,description,lineage,destination);host.after(inspector);
 const safe=value=>{try{const u=new URL(value,location.href);return u.protocol==='https:'||u.origin===location.origin?u.href:null}catch{return null}};
 const pathTo=node=>{const trail=[],seen=new Set();let current=node;while(current&&!seen.has(current.id)){trail.unshift(current);seen.add(current.id);current=byId.get(current.parent)}return trail};
 // Every published node participates. Curated anchors preserve the existing composition;
