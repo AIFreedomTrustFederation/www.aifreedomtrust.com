@@ -130,3 +130,11 @@
 .living-voyage-map:focus-visible{outline:3px solid var(--gold);outline-offset:4px}
 .living-voyage-window{pointer-events:none}
 @media(prefers-reduced-motion:reduce){.living-voyage-window{transition:none}}
+
+/* Accessible spatial camera: visible guidance without obscuring the playable hero. */
+.living-camera-help{max-width:65ch;margin:.8rem 0;color:#d4e6ec;font-size:.88rem;line-height:1.55}
+.living-camera-announcement:empty{display:none}
+.living-camera-announcement{font-size:.82rem;color:#f7d18a}
+.tree:focus-visible{outline:3px solid #f7d18a;outline-offset:5px;border-radius:16px}
+@media (max-width:600px){.living-camera-help{font-size:.82rem;line-height:1.5}.tree:focus-visible{outline-offset:2px}}
+@media (prefers-reduced-motion:reduce){.tree:focus-visible{animation:none;transition:none}}
