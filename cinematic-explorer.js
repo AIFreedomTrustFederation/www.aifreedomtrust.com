@@ -77,7 +77,7 @@ function updateMinimap(){
 function focusStage(kind){
   const candidates=nodes.filter(n=>n.kind===kind);
   if(!candidates.length){info.textContent='No published '+kind+' nodes are available. No outcome is implied.';return}
-  stage.value=kind;filter='';search.value='';choose(candidates[0].id);
+  filter='';search.value='';choose(candidates[0].id);stage.value=kind;draw();render();
   const p=pos.get(candidates[0].id);if(p)center(p);
 }
 for(const button of document.querySelectorAll('[data-stage]')){
