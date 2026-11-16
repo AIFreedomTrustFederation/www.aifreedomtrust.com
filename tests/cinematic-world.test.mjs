@@ -162,3 +162,16 @@ test('cinematic camera supports discoverable keyboard navigation and opt-in prec
  assert.match(css,/@media \(prefers-reduced-motion:reduce\)/);
  assert.doesNotMatch(js,/localStorage|sendBeacon|Math\.random|reward_xp/);
 });
+
+test('evidence missions use only published ancestry and never fabricated rewards',()=>{
+ const html=read('cinematic-world.html'),js=read('cinematic-evidence-missions.js'),css=read('cinematic-world.css');
+ assert.match(html,/cinematic-source-projection\.js[^]*cinematic-evidence-missions\.js/);
+ assert.match(js,/window\.AIFT_LINEAGE_NODES/);
+ assert.match(js,/safePath\(node\)/);
+ assert.match(js,/kind==='fruit'/);
+ assert.match(js,/No documented finished outcome/);
+ assert.match(js,/aria-pressed/);
+ assert.match(css,/\.living-mission-trail/);
+ assert.match(css,/\.living-evidence-missions button:focus-visible/);
+ assert.doesNotMatch(js,/fetch\(|sendBeacon|localStorage|Math\.random|reward_xp|window\.open/);
+});
