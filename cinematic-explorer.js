@@ -8,7 +8,7 @@ const byId=new Map(nodes.map(n=>[n.id,n])), roots=nodes.filter(n=>n.kind==='root
 const $=id=>document.getElementById(id), ns='http://www.w3.org/2000/svg';
 const svg=$('evidence-scene'), layer=$('evidence-nodes'), links=$('evidence-links'), list=$('evidence-list'), trail=$('evidence-trail'), info=$('evidence-info'), search=$('evidence-search'), stage=$('evidence-stage'), map=$('evidence-minimap');
 let selected='federation',history=[],scale=1,panX=0,panY=0,filter='',drag=null;
-const pointers=new Map();let pinch=null;const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
+const pointers=new Map();const semanticFocus={root:650,trunk:460,branch:300,leaf:185,flower:105,fruit:75};let pinch=null;const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
 const point=e=>{const r=svg.getBoundingClientRect();return {x:(e.clientX-r.left)*1000/r.width,y:(e.clientY-r.top)*800/r.height}};
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 const visible=n=>(!filter||[n.label,n.desc,n.kind].join(' ').toLowerCase().includes(filter))&&(stage.value==='all'||n.kind===stage.value);
@@ -22,7 +22,7 @@ function draw(){links.replaceChildren();layer.replaceChildren();for(const n of n
 for(const n of nodes){const p=pos.get(n.id),g=el('g',{transform:'translate('+p.x+' '+p.y+')',role:'button',tabindex:'0','aria-label':n.kind+': '+n.label,'aria-pressed':String(selected===n.id),class:'world-node'+(!visible(n)?' world-dim':'')},layer);g.dataset.id=n.id;el('circle',{r:n.kind==='trunk'?26:17,fill:'#071525',stroke:colors[n.kind],'stroke-width':selected===n.id?5:2.5},g);const t=el('text',{y:n.kind==='root'?33:-25,'text-anchor':'middle'},g);t.textContent=n.label.length>22?n.label.slice(0,20)+'…':n.label;g.addEventListener('click',()=>choose(n.id));g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose(n.id)}})}}
 function choose(id,remember=true){if(!byId.has(id))return;if(remember&&id!==selected)history.push(selected);selected=id;const n=byId.get(id);stage.value='all';draw();render();const p=pos.get(id);if(p&&window.matchMedia('(prefers-reduced-motion: reduce)').matches===false)center(p)}
 function center(p){panX=(500-p.x)*scale;panY=(400-p.y)*scale;transform()}
-function transform(){panX=clamp(panX,-1100,1100);panY=clamp(panY,-900,900);const group=$('evidence-camera');group.setAttribute('transform','translate('+panX+' '+panY+') translate(500 400) scale('+scale+') translate(-500 -400)');map.textContent='View '+Math.round(scale*100)+'% · '+byId.get(selected).kind+' selected';}
+function transform(){panX=clamp(panX,-1100,1100);panY=clamp(panY,-900,900);const group=$('evidence-camera');group.setAttribute('transform','translate('+panX+' '+panY+') translate(500 400) scale('+scale+') translate(-500 -400)');updateMinimap();}
 function render(){const n=byId.get(selected);info.replaceChildren();const heading=document.createElement('h3');heading.textContent=n.label;info.append(heading);const type=document.createElement('p');type.className='evidence-type';type.textContent=n.kind.toUpperCase()+' · Curated source evidence, not a live operational claim';info.append(type);const desc=document.createElement('p');desc.textContent=n.desc||'No published description.';info.append(desc);const url=escapeUrl(n.url);if(url){const a=document.createElement('a');a.href=url;a.textContent=n.kind==='fruit'?'Open the actual visitor experience':'Inspect published source or evidence';if(a.origin!==location.origin){a.target='_blank';a.rel='noopener noreferrer'}info.append(a)}
 trail.replaceChildren();for(const x of line(selected)){const b=document.createElement('button');b.type='button';b.textContent=x.label;b.addEventListener('click',()=>choose(x.id));trail.append(b)}
 list.replaceChildren();const filtered=nodes.filter(visible);for(const x of filtered){const b=document.createElement('button');b.type='button';b.textContent=x.label+' · '+x.kind;b.setAttribute('aria-current',String(x.id===selected));b.addEventListener('click',()=>choose(x.id));list.append(b)}if(!filtered.length){const p=document.createElement('p');p.textContent='No published nodes match this search or stage.';list.append(p)}
@@ -50,5 +50,39 @@ function endPointer(e){pointers.delete(e.pointerId);pinch=null;drag=null;if(poin
 for(const event of ['pointerup','pointercancel','lostpointercapture'])svg.addEventListener(event,endPointer);
 svg.addEventListener('wheel',e=>{if(e.ctrlKey){e.preventDefault();zoom(e.deltaY<0?1.12:1/1.12,point(e))}},{passive:false});
 svg.addEventListener('keydown',e=>{const d=32/scale;if(e.key==='ArrowLeft')panX+=d;else if(e.key==='ArrowRight')panX-=d;else if(e.key==='ArrowUp')panY+=d;else if(e.key==='ArrowDown')panY-=d;else return;e.preventDefault();transform()});
+
+// A functional, keyboard-operable overview: each marker represents an actual published node.
+// The viewport outline reflects camera state rather than an invented live-system metric.
+const overview=document.createElementNS(ns,'svg');
+overview.setAttribute('viewBox','0 0 1000 800');
+overview.setAttribute('role','group');
+overview.setAttribute('aria-label','Spatial minimap of published lineage; select a marker to focus its source');
+overview.setAttribute('class','world-overview');
+const overviewFrame=el('rect',{x:0,y:0,width:1000,height:800,rx:20,fill:'#071a2b',stroke:'#668fa1','stroke-width':8},overview);
+const overviewViewport=el('rect',{x:0,y:0,width:1000,height:800,rx:8,fill:'#9debd8', 'fill-opacity':'.07',stroke:'#f7d18a','stroke-width':7},overview);
+const overviewDots=el('g',{},overview);
+for(const n of nodes){const p=pos.get(n.id);if(!p)continue;const marker=el('circle',{cx:p.x,cy:p.y,r:n.kind==='trunk'?18:13,fill:colors[n.kind],stroke:'#071525','stroke-width':3,tabindex:0,role:'button','aria-label':'Focus '+n.kind+' '+n.label},overviewDots);marker.addEventListener('click',()=>choose(n.id));marker.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose(n.id)}})}
+map.replaceChildren(overview);
+const overviewStatus=document.createElement('span');
+overviewStatus.className='world-overview-status';
+map.append(overviewStatus);
+function updateMinimap(){
+  const width=1000/scale,height=800/scale;
+  overviewViewport.setAttribute('x',500-(500+panX)/scale);
+  overviewViewport.setAttribute('y',400-(400+panY)/scale);
+  overviewViewport.setAttribute('width',width);
+  overviewViewport.setAttribute('height',height);
+  overviewStatus.textContent='View '+Math.round(scale*100)+'% · '+byId.get(selected).kind+' selected';
+}
+function focusStage(kind){
+  const candidates=nodes.filter(n=>n.kind===kind);
+  if(!candidates.length){info.textContent='No published '+kind+' nodes are available. No outcome is implied.';return}
+  stage.value=kind;filter='';search.value='';choose(candidates[0].id);
+  const p=pos.get(candidates[0].id);if(p)center(p);
+}
+for(const button of document.querySelectorAll('[data-stage]')){
+  button.addEventListener('click',()=>focusStage(button.dataset.stage));
+}
+
 transform();draw();render();
 })();
