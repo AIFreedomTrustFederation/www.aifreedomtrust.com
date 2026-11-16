@@ -152,3 +152,13 @@ test('cinematic hero camera supports pan, pinch and accessible overview without 
  for(const token of ["pointers=new Map()","pointerdown","pointermove","pointercancel","setPointerCapture","pinchStart.distance","dragStart.view","mapWindow.setAttribute('width'","voyageMap.addEventListener('keydown'"])assert.ok(js.includes(token),token);
  assert.doesNotMatch(js,/Math\.random|reward_xp|sendBeacon|localStorage/);
 });
+
+
+test('cinematic camera supports discoverable keyboard navigation and opt-in precision zoom',()=>{
+ const js=read('cinematic-source-projection.js'),css=read('cinematic-world.css');
+ for(const token of ["cameraHelp.textContent","cameraAnnounce.setAttribute('role','status')","scene.setAttribute('tabindex','0')","aria-keyshortcuts","scene.addEventListener('keydown'","scene.addEventListener('wheel'","if(!e.ctrlKey&&!e.metaKey)return","passive:false","e.key==='ArrowLeft'","e.key==='ArrowRight'","e.key==='ArrowUp'","e.key==='ArrowDown'","e.key==='Home'","zoomAt=(factor,x,y)"])assert.ok(js.includes(token),token);
+ assert.match(css,/\.tree:focus-visible/);
+ assert.match(css,/\.living-camera-help/);
+ assert.match(css,/@media \(prefers-reduced-motion:reduce\)/);
+ assert.doesNotMatch(js,/localStorage|sendBeacon|Math\.random|reward_xp/);
+});
