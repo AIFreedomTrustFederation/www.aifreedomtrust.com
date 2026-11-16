@@ -146,3 +146,9 @@ test('hero voyage navigates only documented lineage with reversible camera and e
  assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
  assert.doesNotMatch(js,/localStorage|sendBeacon|Math\.random|reward_xp|fetch\(/);
 });
+
+test('cinematic hero camera supports pan, pinch and accessible overview without synthetic lineage',()=>{
+ const js=read('cinematic-source-projection.js');
+ for(const token of ["pointers=new Map()","pointerdown","pointermove","pointercancel","setPointerCapture","pinchStart.distance","dragStart.view","mapWindow.setAttribute('width'","voyageMap.addEventListener('keydown'"])assert.ok(js.includes(token),token);
+ assert.doesNotMatch(js,/Math\.random|reward_xp|sendBeacon|localStorage/);
+});
