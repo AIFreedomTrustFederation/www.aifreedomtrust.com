@@ -82,3 +82,14 @@
 .living-source-layer{pointer-events:none}.living-source-lines{fill:none;stroke:#9ee9c74d;stroke-width:2;stroke-linecap:round}.living-source-edge{transition:stroke .3s ease,stroke-width .3s ease;filter:drop-shadow(0 0 4px #5de6be77)}.living-source-edge.living-source-active{stroke:#f7d18a;stroke-width:4;filter:drop-shadow(0 0 10px #f7d18a)}.living-source-node{pointer-events:auto;cursor:pointer;outline:none}.living-source-node circle:nth-child(2){stroke:#fff8;stroke-width:1.5;filter:drop-shadow(0 0 8px #d8ffef);transition:r .2s ease,stroke-width .2s ease}.living-source-node:hover circle:nth-child(2),.living-source-node:focus-visible circle:nth-child(2),.living-source-node.living-source-active circle:nth-child(2){r:12;stroke:#fff;stroke-width:3;filter:drop-shadow(0 0 15px #fff6c2)}.living-source-node:focus-visible circle:first-child{stroke:#f7d18a;stroke-width:3}.living-source-status{position:absolute;z-index:5;left:clamp(1rem,5vw,4rem);bottom:1.6rem;max-width:min(52ch,48vw);padding:.55rem .8rem;border:1px solid #a6dec35c;border-radius:10px;background:#061827d9;color:#e3f8f1;font-size:.78rem;pointer-events:none;overflow-wrap:anywhere}
 @media(max-width:800px){.living-source-status{bottom:1.25rem;left:1rem;max-width:calc(100% - 2rem);font-size:.7rem}.living-source-node circle:first-child{r:25}}
 @media(prefers-reduced-motion:reduce){.living-source-edge,.living-source-node circle:nth-child(2){transition:none!important}}
+
+/* Published provenance is secondary to the playable full-screen Tree. */
+.living-source-inspector{max-width:1080px;margin:1.5rem auto;padding:clamp(1rem,3vw,2rem);border:1px solid #9ad9c35e;border-radius:22px;background:linear-gradient(125deg,#0b2337,#102a35 55%,#1b263e);color:#eaf6f4;box-shadow:0 20px 55px #0005}
+.living-source-inspector h2{margin:0 0 .5rem;color:#f7d897;font-size:clamp(1.2rem,3vw,1.8rem)}
+.living-source-inspector p{line-height:1.55;max-width:70ch}
+.living-source-inspector ol{display:flex;flex-wrap:wrap;gap:.5rem;list-style:none;padding:0;margin:1rem 0}
+.living-source-inspector li{padding:.55rem .8rem;border:1px solid #9ce7cc60;border-radius:12px;background:#173b48;overflow-wrap:anywhere}
+.living-source-inspector a{display:inline-flex;align-items:center;min-height:44px;padding:.6rem 1rem;border:1px solid #f7d897;border-radius:12px;color:#fff0bc}
+.living-source-inspector a:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.living-source-inspector [hidden]{display:none}
+@media(max-width:600px){.living-source-inspector{margin:1rem .75rem;border-radius:16px}.living-source-inspector ol{flex-direction:column}.living-source-inspector li{width:100%}}
