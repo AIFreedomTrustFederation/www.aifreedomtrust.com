@@ -160,5 +160,45 @@ for(const button of document.querySelectorAll('[data-stage]')){
   button.addEventListener('click',()=>focusStage(button.dataset.stage));
 }
 
+
+/* Evidence-grounded guided voyage: only documented lineage, no invented XP. */
+const voyage=document.createElement('section');
+voyage.className='evidence-voyage';voyage.setAttribute('aria-label','Guided emergence voyage');
+const voyageTitle=document.createElement('h3');voyageTitle.textContent='Voyage through emergence';
+const voyageHelp=document.createElement('p');voyageHelp.textContent='Trace published relationships from their source toward documented outcomes. A missing fruit is an evidence gap, not a locked reward.';
+const voyageProgress=document.createElement('p');voyageProgress.setAttribute('role','status');
+const voyageStops=document.createElement('ol');voyageStops.className='evidence-voyage-stops';
+const voyageButtons=document.createElement('div');voyageButtons.className='evidence-voyage-buttons';
+const start=document.createElement('button'),prev=document.createElement('button'),next=document.createElement('button');
+start.textContent='Trace selected lineage';prev.textContent='Previous';next.textContent='Next documented stop';
+for(const b of [start,prev,next]){b.type='button';voyageButtons.append(b)}
+voyage.append(voyageTitle,voyageHelp,voyageProgress,voyageStops,voyageButtons);
+info.insertAdjacentElement('beforebegin',voyage);
+let route=[],step=0;
+function paintVoyage(){
+ voyageStops.replaceChildren();
+ voyageProgress.textContent=route.length?'Documented stop '+(step+1)+' of '+route.length:'Choose a node, then trace its documented lineage.';
+ prev.disabled=!route.length||step===0;next.disabled=!route.length||step===route.length-1;
+ route.forEach((node,i)=>{const li=document.createElement('li'),b=document.createElement('button');
+ b.type='button';b.className='evidence-voyage-stop';b.setAttribute('aria-current',i===step?'step':'false');
+ const small=document.createElement('small');small.textContent=node.kind;
+ const strong=document.createElement('strong');strong.textContent=node.label;
+ b.append(small,strong);b.addEventListener('click',()=>travel(i));li.append(b);voyageStops.append(li)});
+ if(route.length&&step===route.length-1&&route[step].kind!=='fruit'){
+ const li=document.createElement('li');li.className='evidence-voyage-gap';li.textContent='The published trail ends here; no completed visitor outcome is documented.';voyageStops.append(li)}
+}
+function travel(i){if(i<0||i>=route.length)return;step=i;const node=route[i];choose(node.id);
+ scale={root:1.2,trunk:.85,branch:1.15,leaf:1.5,flower:1.7,fruit:1.7}[node.kind]||1;
+ center(pos.get(node.id));paintVoyage()}
+start.addEventListener('click',()=>{
+ route=line(selected);const visited=new Set(route.map(n=>n.id));
+ while(route.length<order.length){const children=nodes.filter(n=>n.parent===route[route.length-1].id&&!visited.has(n.id));
+ if(!children.length)break;const child=children.find(n=>n.kind==='fruit'&&n.url)||children[0];
+ route.push(child);visited.add(child.id)}
+ travel(0)});
+prev.addEventListener('click',()=>travel(step-1));
+next.addEventListener('click',()=>travel(step+1));
+paintVoyage();
+
 transform();draw();render();
 })();
