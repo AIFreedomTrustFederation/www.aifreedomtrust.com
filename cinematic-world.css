@@ -60,3 +60,19 @@
 .evidence-voyage button:focus-visible{outline:3px solid #f7d18a;outline-offset:3px}
 @media(max-width:600px){.evidence-voyage{padding:1rem;border-radius:18px}.evidence-voyage-stops{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.evidence-voyage-buttons button{flex:1 1 90px}}
 @media(prefers-reduced-motion:reduce){.evidence-voyage-stop{transition:none}.evidence-voyage-stop:hover{transform:none}}
+
+/* Cinematic stage constellation: real published lineage counts, not XP or live status. */
+.world-beacons{position:absolute;z-index:5;inset:14% 2% 20%;pointer-events:none}
+.world-beacon{position:absolute;pointer-events:auto;display:flex;flex-direction:column;gap:0;min-width:108px;min-height:52px;padding:.55rem .8rem;border:1px solid #b7c8d266;border-radius:16px;background:linear-gradient(140deg,#091727e8,#173146d9);box-shadow:0 0 24px #6cbcff33,0 12px 28px #0008;color:#fff;text-align:left;cursor:pointer;backdrop-filter:blur(9px);transition:transform .25s,border-color .25s,box-shadow .25s}
+.world-beacon strong{font-size:.88rem;letter-spacing:.03em}.world-beacon small{font-size:.67rem;color:#d1e5e9}
+.world-beacon[aria-pressed=true]{border-color:#f7d18a;box-shadow:0 0 0 2px #f7d18a55,0 0 28px #f7d18a66}
+.world-beacon:hover{transform:translateY(-4px)}.world-beacon:focus-visible{outline:3px solid #fff;outline-offset:4px}
+.world-beacon-root{left:8%;bottom:0;border-color:#fa758288}.world-beacon-trunk{left:43%;bottom:18%;border-color:#f7d18a88}
+.world-beacon-branch{right:9%;top:40%;border-color:#64e6b488}.world-beacon-leaf{left:7%;top:26%;border-color:#6cbcff88}
+.world-beacon-flower{left:39%;top:2%;border-color:#b392fa88}.world-beacon-fruit{right:8%;top:10%;border-color:#ffcf8288}
+.tree{translate:var(--look-x,0px) var(--look-y,0px);transition:translate .3s ease-out}
+.world-stage-panel{position:absolute;z-index:5;bottom:7rem;left:50%;transform:translateX(-50%);width:min(430px,86vw);text-align:center;color:#e4eef1;font-size:.78rem;pointer-events:none;text-shadow:0 2px 8px #000}
+.world-stage-panel p{margin:0}.world-stage-panel a{pointer-events:auto;color:#ffe0a1;text-decoration:underline}
+.world-stage-panel [hidden]{display:none}
+@media(max-width:700px){.world-beacons{inset:22% 1% 24%}.world-beacon{min-width:82px;min-height:48px;padding:.35rem .5rem;border-radius:12px}.world-beacon strong{font-size:.75rem}.world-beacon small{font-size:.58rem}.world-beacon-root{left:2%;bottom:0}.world-beacon-trunk{left:36%;bottom:16%}.world-beacon-branch{right:1%;top:42%}.world-beacon-leaf{left:1%;top:27%}.world-beacon-flower{left:36%;top:0}.world-beacon-fruit{right:1%;top:14%}.world-stage-panel{bottom:5.5rem;font-size:.68rem}}
+@media(prefers-reduced-motion:reduce){.tree{translate:none!important;transition:none}.world-beacon{transition:none}.world-beacon:hover{transform:none}}
