@@ -88,6 +88,18 @@ dl{display:grid;grid-template-columns:95px 1fr;gap:.6rem;overflow-wrap:anywhere}
 
 /* Journey epic: reversible spatial navigator and accessible route atlas */
 .journey-trail{display:flex;flex-wrap:wrap;gap:.45rem;align-items:center;padding:.8rem;border:1px solid #b99a57;border-radius:14px;background:linear-gradient(110deg,#341a32,#14394b,#132a47)}.journey-trail button{min-height:44px;border:1px solid #d6c48a;border-radius:10px;background:#102b43;color:#fff;padding:.55rem}.journey-trail button[aria-current=step]{background:#295d56;outline:2px solid #f5cd83}.journey-overview{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:.35rem;margin:1rem 0}.journey-overview button{min-height:58px;border:1px solid #8ba7c0;border-top:4px solid var(--stage-color,#f5cd83);background:#0c253c;color:#fff;border-radius:9px;padding:.4rem;overflow-wrap:anywhere}.journey-overview button[aria-current=step]{outline:3px solid #f5cd83}.journey-overview small{display:block;color:#d6e7f5}.journey-actions{display:flex;flex-wrap:wrap;gap:.5rem;margin:.6rem 0}.journey-actions button{min-height:44px;padding:.6rem 1rem;border-radius:9px;background:#164c60;color:white;border:1px solid #85d4db}@media(max-width:640px){.journey-overview{grid-template-columns:repeat(3,minmax(0,1fr))}.journey-trail{padding:.5rem}}@media(prefers-reduced-motion:reduce){.journey-trail *,.journey-overview *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* Evidence expedition lens: spectral stage rail, accessible mobile filters and no false completion */
+.quest-lens-controls{display:grid;grid-template-columns:minmax(13rem,2fr) repeat(2,minmax(10rem,1fr)) auto;gap:.65rem;margin:1.1rem 0;align-items:center}
+.quest-lens-controls input,.quest-lens-controls select{width:100%;min-height:44px;background:#10253c;color:#eaf4ff;border:1px solid #89a7c5;border-radius:12px;padding:.65rem}
+.quest-lens-rail{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:.5rem;margin:.75rem 0 1rem}
+.quest-stage-chip{border-top:4px solid var(--gold);min-height:48px;text-transform:capitalize;transition:transform .2s,box-shadow .2s}
+.quest-stage-chip[data-stage=root]{border-top-color:var(--red)}.quest-stage-chip[data-stage=branch]{border-top-color:#f6b874}.quest-stage-chip[data-stage=leaf]{border-top-color:var(--green)}.quest-stage-chip[data-stage=flower]{border-top-color:#ae90f9}.quest-stage-chip[data-stage=fruit]{border-top-color:var(--blue)}
+.quest-stage-chip:hover{transform:translateY(-3px);box-shadow:0 7px 22px #4a8fe044}.quest-lens-summary{color:var(--muted);font-size:.95rem}
+@media(max-width:850px){.quest-lens-controls{grid-template-columns:repeat(2,minmax(0,1fr))}.quest-lens-rail{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:520px){.quest-lens-controls{grid-template-columns:1fr}.quest-lens-rail{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(prefers-reduced-motion:reduce){.quest-stage-chip{transition:none}.quest-stage-chip:hover{transform:none}}
+@media(forced-colors:active){.quest-stage-chip{border:2px solid ButtonText}.quest-stage-chip[aria-pressed=true]{outline:3px solid Highlight}}
 </style><style>
 .canopy-panel{margin:1.4rem 0;border-color:#d5af6e;background:radial-gradient(ellipse at 50% 0%,#29405d,#0a172b 72%)}
 .canopy-shell{position:relative;overflow:auto;border:1px solid #7294af;border-radius:20px;background:repeating-radial-gradient(circle at 50% 50%,transparent 0 56px,#a6cfff16 57px 58px),radial-gradient(ellipse at 50% 55%,#22415a,#070f20 70%);box-shadow:inset 0 0 90px #071224}
@@ -331,6 +343,7 @@ el('clear').onclick=()=>{nodes=[];edges=[];selected='';navigation.reset();stage=
 render();
 })();
 </script><script type="module">
+import {questLens,QUEST_STAGES} from './living-universe-quest-lens.mjs';
 import {analyzeAtlas,filterAtlas,evidenceQuestPlan} from './living-universe-skill-atlas.mjs';
 import {canopyLayout,canopyLineage,canopyRoutes,canopyReadiness,SPECTRUM,STAGES} from './living-universe-canopy.mjs';
 let current=null;const byId=id=>document.getElementById(id);
@@ -417,11 +430,32 @@ const renderCanopy=()=>{
  const b=document.createElement('button');b.style.setProperty('--canopy-color',color);const name=document.createElement('strong');name.textContent=n.label;const detail=document.createElement('small');detail.textContent=n.stage+' · '+(n.issues?'evidence gap':'declared record')+' · '+n.roots+' contributing roots';b.append(name,detail);b.dataset.canopyId=n.id;b.onclick=()=>{open(n.id);focusCanopyRecord(n.id,'directory')};b.addEventListener('keydown',e=>{const next=canopyKeyboardMove(layout,n.id,e.key);if(next){e.preventDefault();focusCanopyRecord(next,'directory')}});directory.append(b)}
  announce.textContent=layout.nodes.length+' declared records · '+layout.connections.length+' direct declared connections · no independently verified achievements.';
 };
+const questLensState={search:'',stage:'',gate:'all'};
+const questLensControls=document.createElement('div');questLensControls.className='quest-lens-controls';
+questLensControls.setAttribute('role','search');questLensControls.setAttribute('aria-label','Filter evidence expeditions');
+const questSearch=document.createElement('input');questSearch.type='search';questSearch.placeholder='Search missions, roots, and evidence gaps';questSearch.setAttribute('aria-label','Search evidence missions');
+const questStage=document.createElement('select');questStage.setAttribute('aria-label','Filter missions by biological stage');
+for(const value of ['',...QUEST_STAGES]){const option=document.createElement('option');option.value=value;option.textContent=value||'All biological stages';questStage.append(option)}
+const questGate=document.createElement('select');questGate.setAttribute('aria-label','Filter by readiness gate');
+for(const value of ['all','blocked','pending','declared']){const option=document.createElement('option');option.value=value;option.textContent=value==='all'?'All evidence gates':value+' gates';questGate.append(option)}
+const questReset=document.createElement('button');questReset.type='button';questReset.textContent='Clear expedition filters';
+questLensControls.append(questSearch,questStage,questGate,questReset);
+const questLensSummary=document.createElement('p');questLensSummary.className='quest-lens-summary';questLensSummary.setAttribute('role','status');questLensSummary.setAttribute('aria-live','polite');
+const questLensRail=document.createElement('div');questLensRail.className='quest-lens-rail';questLensRail.setAttribute('aria-label','Evidence expedition stage distribution');
+function updateQuestLens(){questLensState.search=questSearch.value;questLensState.stage=questStage.value;questLensState.gate=questGate.value;renderQuestTheatre()}
+for(const control of [questSearch,questStage,questGate])control.addEventListener('input',updateQuestLens);
+questReset.addEventListener('click',()=>{questSearch.value='';questStage.value='';questGate.value='all';updateQuestLens()});
 const renderQuestTheatre=()=>{
  const board=byId('quest-board'),summary=byId('quest-summary');board.replaceChildren();
  if(!current){summary.textContent='Import evidence to reveal missions.';return}
- const plan=evidenceQuestPlan(current);summary.textContent=plan.total+' declared review missions · 0 verified completion receipts'+(plan.truncated?' · first '+plan.quests.length+' shown':'');
- for(const q of plan.quests){
+ const plan=evidenceQuestPlan(current,{limit:100}),lens=questLens(plan,{...questLensState,limit:100});
+ summary.textContent=plan.total+' declared review missions · 0 verified completion receipts'+(plan.truncated?' · first '+plan.quests.length+' scanned':'');
+ if(questLensControls.parentElement!==board.parentElement)board.before(questLensControls,questLensSummary,questLensRail);
+ questLensSummary.textContent=lens.visible+' of '+lens.total+' available missions · '+lens.gates.blocked+' blocked gates · '+lens.gates.pending+' pending gates · '+lens.gates.declared+' declared gates · zero verified achievements. Declared evidence is not live CI.';
+ questLensRail.replaceChildren();
+ for(const item of lens.stages){const b=document.createElement('button');b.type='button';b.className='quest-stage-chip';b.dataset.stage=item.stage;b.setAttribute('aria-pressed',String(questLensState.stage===item.stage));b.textContent=item.stage+' · '+item.visible+' / '+item.total;b.addEventListener('click',()=>{questStage.value=questStage.value===item.stage?'':item.stage;updateQuestLens()});questLensRail.append(b)}
+ if(!lens.visible){const empty=document.createElement('p');empty.textContent='No evidence missions match these filters. Clear filters to return to the full imported quest map.';board.append(empty)}
+ for(const q of lens.quests){
   const card=document.createElement('article');card.className='quest-card';
   const heading=document.createElement('h3');heading.textContent=q.label;
   const meta=document.createElement('p');meta.textContent=q.stage+' · '+q.status+' · '+q.rootIds.length+' contributing roots · not verified';

@@ -1,0 +1,36 @@
+name: Living Universe lineage acceptance
+on:
+  pull_request:
+    paths:
+      - 'atlas.html'
+      - 'root-lineage.html'
+      - 'lineage-data.js'
+      - 'evidence-expeditions.js'
+      - 'tests/lineage-contract.test.cjs'
+      - '.github/workflows/living-universe-lineage.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  lineage-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Check shared JavaScript syntax
+        run: |
+          node --check lineage-data.js
+          node --check evidence-expeditions.js
+          node --check tests/lineage-contract.test.cjs
+      - name: Run lineage and Atlas regression tests
+        run: node --test tests/lineage-contract.test.cjs
+      - name: Verify commit identity
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"

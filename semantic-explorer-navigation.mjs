@@ -153,7 +153,22 @@ export function mountExplorerNavigation(doc){
  sections[0].before(nav);
  win?.addEventListener('hashchange',followLocation);
  win?.addEventListener('popstate',followLocation);
- win?.addEventListener('aift:lineage-select',()=>activate(0));
+ // Route a source inspection across the existing workspaces without creating
+ // fabricated relationships or hiding the original published sections.
+ const routeLineage=(index,event)=>{
+  const id=event?.detail?.id;
+  if(typeof id!=='string'||id.length>200)return;
+  activate(index,{navigate:true,focus:true});
+  summary.textContent=EXPLORERS[index][1]+' · Inspect the selected source in curated evidence. No live CI inferred.';
+ };
+ win?.addEventListener('aift:lineage-select',event=>routeLineage(0,event));
+ win?.addEventListener('aift:lineage-compare',event=>routeLineage(6,event));
+ win?.addEventListener('aift:lineage-missions',event=>routeLineage(5,event));
+ win?.addEventListener('aift:evidence-inspect',event=>{
+  const id=event?.detail?.id;
+  if(typeof id!=='string'||id.length>200)return;
+  summary.textContent='Evidence inspected: '+id+'. Curated provenance only; no operational status inferred.';
+ });
  // Preserve ordinary anchor links into workspaces hidden by progressive disclosure.
  doc.addEventListener('click',event=>{
   const anchor=event.target?.closest?.('a[href^="#"]');

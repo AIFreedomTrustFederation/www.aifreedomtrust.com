@@ -11,3 +11,18 @@
 .cockpit-detail a{display:inline-block;margin:.35rem .7rem .35rem 0;overflow-wrap:anywhere}
 #evidence-cockpit button:focus-visible,#evidence-cockpit select:focus-visible,#evidence-cockpit input:focus-visible{outline:3px solid #f5d18c;outline-offset:3px}
 @media(prefers-reduced-motion:reduce){#evidence-cockpit *{animation:none!important;transition:none!important}}
+
+/* Integrated evidence journey: spectral minimap, reversible provenance, readiness theatre. */
+.cockpit-minimap{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:.35rem;position:relative;padding:.8rem;background:linear-gradient(100deg,rgba(255,88,119,.13),rgba(245,203,121,.12),rgba(66,230,173,.12),rgba(105,185,255,.13));border:1px solid rgba(245,203,121,.45);border-radius:1rem}
+.cockpit-minimap button{min-width:0;min-height:3.2rem;overflow-wrap:anywhere;border:1px solid rgba(230,240,255,.55);border-radius:.7rem;color:inherit;background:rgba(10,24,42,.75);font:inherit;font-size:.8rem;text-transform:capitalize}
+.cockpit-minimap button[aria-pressed=true]{box-shadow:inset 0 0 0 2px var(--trunk);background:rgba(245,203,121,.18)}
+.cockpit-history,.cockpit-trail,.cockpit-journey{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem}
+.cockpit-history button,.cockpit-trail button,.cockpit-journey button{font:inherit;min-height:2.8rem;padding:.55rem .85rem;border-radius:.7rem;border:1px solid rgba(245,203,121,.7);background:rgba(48,71,112,.3);color:inherit;overflow-wrap:anywhere}
+.cockpit-history button:disabled{opacity:.45;cursor:not-allowed}
+.cockpit-trail,.cockpit-journey,.cockpit-gaps{padding:1rem;border-radius:1rem;border:1px solid rgba(105,185,255,.45);background:linear-gradient(125deg,rgba(255,88,119,.09),rgba(66,230,173,.06) 55%,rgba(105,185,255,.1))}
+.cockpit-journey h4,.cockpit-gaps h4{flex:1 0 100%;margin:.1rem 0}
+.cockpit-gate-documented,.cockpit-gate-gap{padding:.65rem .85rem;margin:.4rem 0;border-left:4px solid var(--branch);background:rgba(66,230,173,.08)}
+.cockpit-gate-gap{border-left-color:var(--root);background:rgba(255,88,119,.08)}
+@media(max-width:680px){.cockpit-minimap{grid-template-columns:repeat(3,minmax(0,1fr))}.cockpit-history button{flex:1 1 7rem}.cockpit-trail button,.cockpit-journey button{flex:1 1 100%}}
+@media(prefers-reduced-motion:reduce){.cockpit-minimap *,.cockpit-trail *,.cockpit-journey *{scroll-behavior:auto;animation:none!important;transition:none!important}}
+@media(forced-colors:active){.cockpit-minimap,.cockpit-trail,.cockpit-journey,.cockpit-gaps{border:1px solid CanvasText}.cockpit-gate-documented,.cockpit-gate-gap{border-left:4px solid Highlight}}

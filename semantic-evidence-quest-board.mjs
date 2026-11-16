@@ -31,10 +31,11 @@ export function mountQuestBoard(doc){
  const help=make('p','This expedition is a source-evidence checklist, not personal XP, CI health, production readiness or an earned achievement.');
  host.replaceChildren(status,controls,summary,results,help);
  let quests=[];
+ let focusedId=null;
  function render(){
   results.replaceChildren();
   const needle=search.value.trim().toLocaleLowerCase();
-  const matches=quests.filter(q=>(!filter.value||q.state===filter.value)&&
+  const matches=quests.filter(q=>(!focusedId||q.id===focusedId)&&(!filter.value||q.state===filter.value)&&
    (!needle||(q.label+' '+q.summary+' '+q.evidence.join(' ')).toLocaleLowerCase().includes(needle)));
   summary.textContent=matches.length+' of '+quests.length+' documented outcomes shown · '+quests.filter(q=>q.state==='evidence-attested').length+' with source-backed lineage; not release readiness.';
   if(!matches.length){results.append(make('p','No recorded outcomes match this filter. No evidence or progress has been inferred.'));return}
@@ -61,7 +62,12 @@ export function mountQuestBoard(doc){
    card.append(inspect);results.append(card);
   }
  }
- search.addEventListener('input',render);filter.addEventListener('change',render);
+ search.addEventListener('input',()=>{focusedId=null;render()});filter.addEventListener('change',()=>{focusedId=null;render()});
+ doc.defaultView?.addEventListener('aift:lineage-missions',event=>{
+  const id=event.detail?.id;
+  if(typeof id!=='string'||!quests.some(q=>q.id===id))return;
+  focusedId=id;filter.value='';search.value='';render();
+ });
  fetch('data/living-universe.json').then(response=>{
   if(!response.ok)throw Error('manifest HTTP '+response.status);
   return response.json();

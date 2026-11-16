@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {projectWorld} from '../world-projection.mjs';
 import {cockpitModel} from '../semantic-evidence-cockpit.mjs';
+import {createNavigation} from '../living-universe-navigation.mjs';
 const manifest=JSON.parse(readFileSync(new URL('../data/living-universe.json',import.meta.url),'utf8'));
 const world=projectWorld(manifest);
 const all=cockpitModel(world);
@@ -16,4 +17,44 @@ assert(cockpitModel(world,{evidence:'evidence-needed'}).nodes.every(n=>n.evidenc
 assert(cockpitModel(world,{query:'no-match-unique-9f31'}).total===0);
 for(const fruit of all.nodes.filter(n=>n.kind==='fruit'))assert(!fruit.destination||!new URL(fruit.destination).hostname.toLowerCase().endsWith('github.com'));
 assert.throws(()=>cockpitModel(world,{stage:'repository'}),TypeError);
+// Reversible inspection must not manufacture source relationships or achievements.
+const nav=createNavigation(all.nodes,[]);
+if(all.nodes.length>1){
+ const first=all.nodes[0].id,second=all.nodes[1].id;
+ nav.inspect(first);nav.inspect(second);
+ assert.equal(nav.back()?.id,first);
+ assert.equal(nav.forward()?.id,second);
+ assert.equal(nav.neighbors(first).length,0);
+ assert.equal(nav.snapshot().visited.length,2);
+ nav.reset();assert.equal(nav.snapshot().selected,null);
+}
+const cockpitSource=readFileSync(new URL('../semantic-evidence-cockpit.mjs',import.meta.url),'utf8');
+const cockpitStyle=readFileSync(new URL('../semantic-evidence-cockpit.css',import.meta.url),'utf8');
+for(const feature of ['cockpit-minimap','cockpit-trail','cockpit-journey','cockpit-gaps','navigation.back()','navigation.forward()','Source attestation'])assert(cockpitSource.includes(feature),'Missing integrated UXI feature: '+feature);
+assert(cockpitStyle.includes('prefers-reduced-motion'));
+assert(cockpitStyle.includes('forced-colors'));
+assert(!cockpitSource.includes('localStorage'));
 console.log('Evidence cockpit: biological stages, filters, attestation boundaries passed');
+
+const readModule=name=>readFileSync(new URL('../'+name,import.meta.url),'utf8');
+const explorer=readModule('semantic-explorer-navigation.mjs');
+const comparison=readModule('semantic-lineage-comparison.mjs');
+const quests=readModule('semantic-evidence-quest-board.mjs');
+// Integrated journey contract: one selected curated ID can travel from evidence
+// cockpit to spatial theatre, source comparison and missions without inventing data.
+for(const event of ['aift:lineage-select','aift:lineage-compare','aift:lineage-missions','aift:evidence-inspect','aift:lineage-focus']){
+ assert(cockpitSource.includes(event)||explorer.includes(event),'Missing cross-workspace event: '+event);
+}
+assert.match(cockpitSource,/Compare source lineage/);
+assert.match(cockpitSource,/Explore evidence missions/);
+assert.match(cockpitSource,/byId\.has\(id\)/);
+assert.match(explorer,/routeLineage\(6,event\)/);
+assert.match(explorer,/routeLineage\(5,event\)/);
+assert.match(comparison,/scene\.nodes\.some\(n=>n\.id===id\)/);
+assert.match(comparison,/selects\[0\]\.value=id/);
+assert.match(quests,/quests\.some\(q=>q\.id===id\)/);
+assert.match(quests,/focusedId=id/);
+for(const source of [cockpitSource,explorer,comparison,quests]){
+ assert(!source.includes('localStorage'),'No persistent tracking or invented progress');
+}
+console.log('Cross-workspace evidence expedition routing contract passed');

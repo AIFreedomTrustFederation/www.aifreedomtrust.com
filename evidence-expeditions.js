@@ -1,0 +1,153 @@
+/* Living Universe evidence quests: static, read-only; no invented live statuses. */
+(function(global){'use strict';
+const nodes=global.AIFT_LINEAGE_NODES;
+if(!Array.isArray(nodes))return;
+const styles=document.createElement('style');
+styles.textContent=`
+.aift-quest-world{--q-gold:#f7d48c;--q-red:#ff597e;--q-green:#6af1b6;--q-blue:#75cfff;color:#f4f7ff;background:radial-gradient(ellipse at 5% 5%,#56234477,transparent 42%),radial-gradient(ellipse at 95% 70%,#145b7477,transparent 50%),#091427;border:1px solid #ffffff35;border-radius:24px;padding:clamp(1rem,3vw,2.5rem);margin:2rem auto;max-width:1200px;box-shadow:0 18px 60px #0005}
+.aift-quest-world *{box-sizing:border-box}.aift-quest-world h2{color:#fff;font:clamp(1.7rem,3vw,2.7rem)/1.2 Georgia,serif;margin:.2em 0}.aift-quest-world p{color:#d4e3ef;max-width:75ch}.aift-quest-world .q-spectrum{height:5px;background:linear-gradient(90deg,var(--q-red),#ffac67,var(--q-gold),var(--q-green),var(--q-blue),#b28dff);border-radius:20px;margin:1rem 0 1.5rem}
+.aift-quest-world .q-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,.85fr);gap:1rem}.aift-quest-world .q-card{border:1px solid #ffffff38;background:#12233dcc;border-radius:18px;padding:1.1rem;min-width:0}.aift-quest-world .q-options{display:grid;gap:.6rem}.aift-quest-world button{width:100%;text-align:left;padding:.8rem 1rem;border:1px solid #ffffff40;border-radius:12px;background:#1c3455;color:#fff;font:inherit;cursor:pointer}.aift-quest-world button[aria-pressed=true]{border-color:var(--q-gold);box-shadow:inset 4px 0 var(--q-gold);background:#344264}.aift-quest-world button:focus-visible,.aift-quest-world a:focus-visible{outline:3px solid var(--q-gold);outline-offset:3px}.aift-quest-world a{color:#aee8ff;overflow-wrap:anywhere}.aift-quest-world .q-kicker{color:var(--q-gold);font-size:.8rem;text-transform:uppercase;letter-spacing:.12em}.aift-quest-world .q-chain{display:flex;flex-wrap:wrap;gap:.45rem;align-items:center;margin:1rem 0}.aift-quest-world .q-step{border:1px solid #ffffff44;border-radius:999px;padding:.3rem .65rem;font-size:.85rem;background:#1b2d48}.aift-quest-world .q-step[data-kind=root]{border-color:var(--q-red)}.aift-quest-world .q-step[data-kind=trunk]{border-color:var(--q-gold)}.aift-quest-world .q-step[data-kind=fruit]{border-color:var(--q-green)}.aift-quest-world .q-meta{font-size:.85rem;color:#c3d4e6}.aift-quest-world .q-empty{border-left:3px solid var(--q-gold);padding-left:1rem}.aift-quest-world .q-links{display:flex;flex-wrap:wrap;gap:1rem}
+@media(max-width:720px){.aift-quest-world .q-layout{grid-template-columns:1fr}.aift-quest-world{border-radius:16px}.aift-quest-world button{min-height:44px}}
+@media(prefers-reduced-motion:no-preference){.aift-quest-world button{transition:background .18s,border-color .18s,transform .18s}.aift-quest-world button:hover{transform:translateY(-2px)}}
+`;
+styles.textContent += "\n.aift-quest-world .q-constellation{margin-top:1.3rem;border:1px solid #ffffff38;border-radius:20px;padding:clamp(1rem,2.5vw,2rem);background:radial-gradient(circle at 0 100%,#6d284255,transparent 45%),radial-gradient(circle at 100% 0,#165c6755,transparent 48%),#0b1930}\n.aift-quest-world .q-stagebar{display:flex;flex-wrap:wrap;gap:.45rem;margin:1rem 0}.aift-quest-world .q-stagebar button{width:auto;min-width:72px;font-size:.88rem}.aift-quest-world .q-search-label{display:block;font-weight:700;margin:.7rem 0 .4rem}.aift-quest-world input[type=search]{width:100%;max-width:650px;padding:.8rem;border:1px solid #b0cadc;border-radius:12px;background:#0c2036;color:white;font:inherit}.aift-quest-world input:focus-visible{outline:3px solid var(--q-gold);outline-offset:3px}\n.aift-quest-world .q-constellation-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(230px,.7fr);gap:1rem;margin-top:1rem}.aift-quest-world .q-node-index{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.5rem;max-height:420px;overflow:auto;align-content:start}.aift-quest-world .q-node-index button{height:100%;min-height:76px}.aift-quest-world .q-node-index button strong,.aift-quest-world .q-node-index button small{display:block}.aift-quest-world .q-node-index button small{color:#c2d5e6;font-size:.76rem;margin-top:.3rem}.aift-quest-world .q-node-index button[aria-current=true]{border-color:var(--q-gold);background:#3a3f65}\n.aift-quest-world .q-map-card{border:1px solid #ffffff40;border-radius:16px;background:#112541;padding:1rem;align-self:start}.aift-quest-world .q-map{display:flex;flex-wrap:wrap;align-items:center;gap:.3rem;margin:1rem 0}.aift-quest-world .q-map-step{width:auto;padding:.45rem .65rem;font-size:.82rem}.aift-quest-world .q-map-step[data-kind=root]{border-color:var(--q-red)}.aift-quest-world .q-map-step[data-kind=trunk]{border-color:var(--q-gold)}.aift-quest-world .q-map-step[data-kind=fruit]{border-color:var(--q-green)}\n@media(max-width:720px){.aift-quest-world .q-constellation-layout{grid-template-columns:1fr}.aift-quest-world .q-node-index{max-height:320px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}}\n";
+document.head.append(styles);
+const byId=new Map(nodes.map(n=>[n.id,n]));
+const candidates=nodes.filter(n=>n.kind==='fruit'||(n.kind==='branch'&&!nodes.some(c=>c.parent===n.id&&c.kind==='fruit')));
+const host=document.createElement('section');host.className='aift-quest-world';
+const instanceId='aift-expedition-'+(document.querySelectorAll('.aift-quest-world').length+1);
+host.id=instanceId;host.setAttribute('aria-label','Evidence expeditions');
+host.innerHTML='<div class="q-kicker">Living Universe · Evidence expeditions</div><h2>Trace what the roots nourish</h2><p>Explore documented source-to-outcome paths. These are research journeys, not earned achievements or live release checks.</p><div class="q-spectrum" aria-hidden="true"></div><div class="q-layout"><div class="q-card"><h3>Choose an expedition</h3><div class="q-options" role="group" aria-label="Select a lineage expedition"></div></div><div class="q-card" aria-live="polite" aria-atomic="true"><div class="q-detail"></div></div></div>';
+const options=host.querySelector('.q-options'),detail=host.querySelector('.q-detail');
+function lineage(node){const chain=[],seen=new Set();while(node&&!seen.has(node.id)){chain.unshift(node);seen.add(node.id);node=byId.get(node.parent)}return chain}
+function select(id){const node=byId.get(id);if(!node)return;options.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.id===id)));detail.replaceChildren();
+const kicker=document.createElement('div');kicker.className='q-kicker';kicker.textContent=node.kind==='fruit'?'Documented public destination':'Source-backed capability · outcome not verified';
+const heading=document.createElement('h3');heading.textContent=node.label;
+const description=document.createElement('p');description.textContent=node.desc;
+const chain=document.createElement('div');chain.className='q-chain';chain.setAttribute('aria-label','Source lineage');
+lineage(node).forEach((n,i)=>{if(i){const arrow=document.createElement('span');arrow.textContent='›';arrow.setAttribute('aria-hidden','true');chain.append(arrow)}const step=document.createElement('span');step.className='q-step';step.dataset.kind=n.kind;step.textContent=n.label+' · '+n.kind;chain.append(step)});
+const meta=document.createElement('p');meta.className='q-meta';meta.textContent='Evidence: curated source map · live verification not claimed';
+const links=document.createElement('div');links.className='q-links';
+for(const n of [node,...lineage(node).filter(n=>n.kind==='root')]){const a=document.createElement('a');a.href=n.url;a.textContent=n===node?'Open documented '+(node.kind==='fruit'?'outcome':'source'):'Inspect repository root';if(/^https?:/.test(n.url))a.rel='noopener noreferrer';links.append(a)}
+detail.append(kicker,heading,description,chain,meta,links);
+if(node.kind!=='fruit'){const gap=document.createElement('p');gap.className='q-empty';gap.textContent='No finished public product is verified for this capability. Its source and documented functions remain explorable.';detail.append(gap)}
+}
+
+/* Semantic constellation: derived only from the immutable curated catalog. */
+const explorer=document.createElement('section');explorer.className='q-constellation';explorer.setAttribute('aria-label','Explore source-to-outcome constellation');
+explorer.innerHTML='<div class="q-kicker">Source-to-outcome constellation</div><h3>Navigate the living federation</h3><p>Move through the documented hierarchy. Repository roots are sources, never finished products. A missing fruit means the outcome is not verified.</p><div class="q-stagebar" role="group" aria-label="Filter by emergence stage"></div><label class="q-search-label" for="'+instanceId+'-search">Search source systems and capabilities</label><input id="'+instanceId+'-search" type="search" autocomplete="off" placeholder="Search roots, branches, knowledge and outcomes"><div class="q-constellation-layout"><div><p class="q-meta" id="'+instanceId+'-count" role="status"></p><div class="q-node-index" role="list" aria-label="Accessible constellation index"></div></div><div class="q-map-card"><div class="q-kicker">Lineage minimap</div><div class="q-map" aria-label="Reversible source lineage"></div><p class="q-meta">Select any ancestor to retrace the journey. Links open documented sources, never simulated products.</p></div></div>';
+host.append(explorer);
+const stagebar=explorer.querySelector('.q-stagebar'),search=explorer.querySelector('input[type=search]'),index=explorer.querySelector('.q-node-index'),count=explorer.querySelector('[role=status]'),minimap=explorer.querySelector('.q-map');
+const stages=[['all','All'],['root','Roots'],['trunk','Trunk'],['branch','Systems'],['leaf','Knowledge'],['flower','Emerging'],['fruit','Outcomes']];
+let stage='all',focusedNode=null;
+function showNode(id){
+ const node=byId.get(id);if(!node)return;focusedNode=node;
+ buildJourney(id);
+ const path=lineage(node);minimap.replaceChildren();
+ path.forEach((n,i)=>{if(i){const arrow=document.createElement('span');arrow.textContent='›';arrow.setAttribute('aria-hidden','true');minimap.append(arrow)}
+ const button=document.createElement('button');button.type='button';button.className='q-map-step';button.dataset.kind=n.kind;button.textContent=n.label;button.setAttribute('aria-label','Inspect '+n.kind+' '+n.label);
+ button.addEventListener('click',()=>showNode(n.id));minimap.append(button)});
+ index.querySelectorAll('button').forEach(b=>b.setAttribute('aria-current',String(b.dataset.id===id)));
+ spatialNodes.forEach((el,key)=>{el.setAttribute('aria-current',String(key===id));el.setAttribute('data-path',String(journeyPath.some(n=>n.id===key)))});
+ if(candidates.some(n=>n.id===id))select(id);
+ else {detail.replaceChildren();const title=document.createElement('h3');title.textContent=node.label;const desc=document.createElement('p');desc.textContent=node.desc;const status=document.createElement('p');status.className='q-empty';status.textContent='Curated source evidence only; no completed public outcome or live verification is implied.';const link=document.createElement('a');link.href=node.url;link.textContent='Inspect documented source';if(/^https?:/.test(node.url))link.rel='noopener noreferrer';detail.append(title,desc,status,link)}
+}
+function renderIndex(){
+ const query=search.value.trim().toLocaleLowerCase();const matching=nodes.filter(n=>(stage==='all'||n.kind===stage)&&[n.label,n.desc,n.kind].join(' ').toLocaleLowerCase().includes(query));
+ index.replaceChildren();count.textContent=matching.length+' documented nodes · curated, not live';
+ for(const node of matching){const item=document.createElement('div');item.setAttribute('role','listitem');const button=document.createElement('button');button.type='button';button.dataset.id=node.id;button.dataset.kind=node.kind;button.setAttribute('aria-current',String(focusedNode?.id===node.id));const name=document.createElement('strong');name.textContent=node.label;const type=document.createElement('small');type.textContent=node.kind==='root'?'Repository source':node.kind==='fruit'?'Documented public outcome':node.kind+' · curated';button.append(name,type);button.addEventListener('click',()=>showNode(node.id));item.append(button);index.append(item)}
+ renderSky();
+ if(!matching.length){const empty=document.createElement('p');empty.className='q-empty';empty.textContent='No documented nodes match. Try another stage or search term.';index.append(empty)}
+}
+for(const [kind,label] of stages){const button=document.createElement('button');button.type='button';button.textContent=label;button.setAttribute('aria-pressed',String(kind===stage));button.addEventListener('click',()=>{stage=kind;stagebar.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));renderIndex()});stagebar.append(button)}
+search.addEventListener('input',renderIndex); // Initial render follows spatial initialization.
+
+
+/* Spatial view: deterministic coordinates from catalog ancestry, never simulated live status. */
+styles.textContent += `\n.aift-quest-world .q-sky{position:relative;min-height:360px;overflow:hidden;border:1px solid #ffffff40;border-radius:18px;background:radial-gradient(circle at 50% 52%,#2b486a,transparent 46%),radial-gradient(circle at 12% 90%,#542b55,transparent 40%),#071325;margin:1rem 0}.aift-quest-world .q-sky svg{display:block;width:100%;height:auto;min-height:360px}.aift-quest-world .q-sky-line{stroke:#a9c8dc77;stroke-width:1.3;fill:none}.aift-quest-world .q-sky-node{cursor:pointer;outline:none}.aift-quest-world .q-sky-node circle{fill:#183858;stroke:#9ad9f7;stroke-width:2}.aift-quest-world .q-sky-node[data-kind=root] circle{stroke:var(--q-red)}.aift-quest-world .q-sky-node[data-kind=trunk] circle{stroke:var(--q-gold);fill:#5c492d}.aift-quest-world .q-sky-node[data-kind=fruit] circle{stroke:var(--q-green)}.aift-quest-world .q-sky-node[aria-current=true] circle,.aift-quest-world .q-sky-node:focus circle{stroke-width:5}.aift-quest-world .q-sky-node text{fill:#fff;font-size:11px;paint-order:stroke;stroke:#071325;stroke-width:3px;stroke-linejoin:round;pointer-events:none}.aift-quest-world .q-sky-note{font-size:.85rem;color:#d4e3ef;margin:.4rem 0 0}@media(max-width:720px){.aift-quest-world .q-sky{overflow-x:auto}.aift-quest-world .q-sky svg{min-width:680px}}\n`;
+const sky=document.createElement('div');sky.className='q-sky';sky.setAttribute('aria-label','Interactive spatial constellation; accessible list follows');
+const skyNote=document.createElement('p');skyNote.className='q-sky-note';skyNote.textContent='Spatial constellation · use Tab and Enter to inspect a node, or use the searchable text index below. Positions represent curated lineage, not geographic or operational coordinates.';
+explorer.insertBefore(sky,explorer.querySelector('.q-constellation-layout'));explorer.insertBefore(skyNote,explorer.querySelector('.q-constellation-layout'));
+const svgNS='http://www.w3.org/2000/svg';const svg=document.createElementNS(svgNS,'svg');svg.setAttribute('viewBox','0 0 960 560');svg.setAttribute('role','group');svg.setAttribute('aria-label','Curated source-to-outcome network');sky.append(svg);
+/* Reversible spatial camera: presentation-only, no data or provenance mutation. */
+styles.textContent += `
+.aift-quest-world .q-camera{display:flex;gap:.55rem;flex-wrap:wrap;align-items:center;margin:.8rem 0}
+.aift-quest-world .q-camera button{width:auto;min-width:44px;min-height:44px;border:1px solid #f7d48c77;background:#132c46;color:#fff;border-radius:12px;padding:.5rem .8rem}
+.aift-quest-world .q-camera button:focus-visible{outline:3px solid #fff4b2;outline-offset:3px}
+.aift-quest-world .q-camera-note{color:#dce7f2;font-size:.85rem}
+.aift-quest-world .q-sky svg{transition:view-box .35s ease}
+@media(prefers-reduced-motion:reduce){.aift-quest-world .q-sky svg{transition:none}}
+`;
+const camera=document.createElement('div');camera.className='q-camera';camera.setAttribute('role','group');camera.setAttribute('aria-label','Spatial constellation zoom and navigation');
+const cameraStatus=document.createElement('span');cameraStatus.className='q-camera-note';cameraStatus.setAttribute('role','status');cameraStatus.setAttribute('aria-live','polite');
+let cameraScale=1,cameraX=480,cameraY=280;
+function applyCamera(){
+ const width=960/cameraScale,height=560/cameraScale;
+ cameraX=Math.max(width/2,Math.min(960-width/2,cameraX));
+ cameraY=Math.max(height/2,Math.min(560-height/2,cameraY));
+ svg.setAttribute('viewBox',[cameraX-width/2,cameraY-height/2,width,height].join(' '));
+ cameraStatus.textContent=Math.round(cameraScale*100)+'% · '+(cameraScale===1?'Full constellation':'Focused constellation')+' · curated positions';
+}
+function moveCamera(scale,x,y){cameraScale=Math.max(1,Math.min(3,scale));cameraX=x;cameraY=y;applyCamera()}
+function cameraButton(label,handler){const b=document.createElement('button');b.type='button';b.textContent=label;b.setAttribute('aria-label',label+' constellation');b.addEventListener('click',handler);camera.append(b)}
+cameraButton('Zoom in',()=>moveCamera(cameraScale*1.4,cameraX,cameraY));
+cameraButton('Zoom out',()=>moveCamera(cameraScale/1.4,cameraX,cameraY));
+cameraButton('Focus selected',()=>{const p=positions.get(focusedNode?.id||'federation');if(p)moveCamera(2,p.x,p.y)});
+cameraButton('Reset view',()=>moveCamera(1,480,280));
+camera.append(cameraStatus);sky.before(camera);applyCamera();
+const children=new Map();nodes.forEach(n=>{if(n.parent){const a=children.get(n.parent)||[];a.push(n);children.set(n.parent,a)}});
+const positions=new Map();positions.set('federation',{x:480,y:270});
+const roots=nodes.filter(n=>n.kind==='root');roots.forEach((n,i)=>{const angle=-Math.PI/2+i*2*Math.PI/roots.length;positions.set(n.id,{x:480+Math.cos(angle)*205,y:270+Math.sin(angle)*175})});
+for(const root of roots){const descendants=nodes.filter(n=>{let x=n,steps=0;while(x.parent&&steps++<nodes.length){if(x.parent===root.id)return true;x=byId.get(x.parent)||{};}return false});const center=positions.get(root.id);descendants.forEach((n,i)=>{const angle=-Math.PI/2+i*2*Math.PI/Math.max(descendants.length,1);const depth=lineage(n).length-2;positions.set(n.id,{x:Math.max(45,Math.min(915,center.x+Math.cos(angle)*(65+depth*18))),y:Math.max(35,Math.min(525,center.y+Math.sin(angle)*(55+depth*12)))})})}
+/* Guided journey: one coherent route through verified source classifications. */
+styles.textContent += `
+.aift-quest-world .q-journey{border:1px solid #f7d48c77;border-radius:18px;padding:1rem;margin:1rem 0;background:linear-gradient(115deg,#53274088,#123d4688,#14244c);box-shadow:inset 0 0 35px #d5ac3720}
+.aift-quest-world .q-journey-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.aift-quest-world .q-journey-actions{display:flex;gap:.5rem;flex-wrap:wrap}
+.aift-quest-world .q-journey-actions button{width:auto;min-width:90px}
+.aift-quest-world .q-journey-track{display:flex;gap:.4rem;overflow-x:auto;padding:.8rem 0}
+.aift-quest-world .q-journey-track button{width:auto;min-width:112px;flex:1;text-align:center;font-size:.82rem}
+.aift-quest-world .q-journey-track button[aria-current=step]{border-color:var(--q-gold);background:#5c4835}
+.aift-quest-world .q-journey-note{font-size:.85rem;color:#dce7f2}
+.aift-quest-world .q-sky-node[data-path=true] circle{filter:drop-shadow(0 0 8px #f7d48c);stroke-width:4}
+.aift-quest-world .q-sky-line[data-path=true]{stroke:#f7d48c;stroke-width:3;opacity:1}
+@media(max-width:720px){.aift-quest-world .q-journey-track button{min-width:104px}.aift-quest-world .q-journey-actions button{min-height:44px}}
+@media(prefers-reduced-motion:reduce){.aift-quest-world .q-sky-node circle{filter:none}}
+`;
+const journey=document.createElement('section');journey.className='q-journey';journey.setAttribute('aria-label','Guided source to outcome journey');
+journey.innerHTML='<div class="q-journey-head"><div><div class="q-kicker">Guided exploration</div><h3>Follow the evidence</h3></div><div class="q-journey-actions"><button type="button" data-action="previous">Previous</button><button type="button" data-action="next">Next stage</button></div></div><p class="q-journey-note" role="status" aria-live="polite"></p><div class="q-journey-track" role="group" aria-label="Journey stages"></div>';
+explorer.insertBefore(journey,sky);
+const journeyTrack=journey.querySelector('.q-journey-track'),journeyNote=journey.querySelector('.q-journey-note');
+let journeyPath=[],journeyStep=0;
+function buildJourney(id){
+ const selected=byId.get(id);if(!selected)return;
+ const ancestors=lineage(selected);
+ const trunk=ancestors.find(n=>n.kind==='trunk');
+ const root=ancestors.find(n=>n.kind==='root');
+ journeyPath=[root,trunk,...ancestors.filter(n=>n.kind!=='root'&&n.kind!=='trunk')].filter(Boolean);
+ journeyStep=Math.max(0,journeyPath.findIndex(n=>n.id===id));
+ drawJourney();
+}
+function drawJourney(){
+ journeyTrack.replaceChildren();
+ journeyPath.forEach((n,i)=>{const button=document.createElement('button');button.type='button';button.textContent=n.kind+' · '+n.label;button.setAttribute('aria-current',i===journeyStep?'step':'false');button.addEventListener('click',()=>{journeyStep=i;showNode(n.id)});journeyTrack.append(button)});
+ const node=journeyPath[journeyStep];journeyNote.textContent=node?'Stage '+(journeyStep+1)+' of '+journeyPath.length+': '+node.label+' · '+node.kind+'. Curated provenance, not live verification.':'Select a source to begin.';
+ journey.querySelector('[data-action=previous]').disabled=journeyStep===0;
+ journey.querySelector('[data-action=next]').disabled=journeyStep>=journeyPath.length-1;
+}
+journey.querySelector('[data-action=previous]').addEventListener('click',()=>{if(journeyStep>0){journeyStep--;showNode(journeyPath[journeyStep].id)}});
+journey.querySelector('[data-action=next]').addEventListener('click',()=>{if(journeyStep<journeyPath.length-1){journeyStep++;showNode(journeyPath[journeyStep].id)}});
+
+const spatialNodes=new Map();
+function svgElement(tag,attrs){const el=document.createElementNS(svgNS,tag);for(const [k,v] of Object.entries(attrs))el.setAttribute(k,String(v));return el}
+function renderSky(){svg.replaceChildren();spatialNodes.clear();const visible=new Set(nodes.filter(n=>(stage==='all'||n.kind===stage)&&[n.label,n.desc,n.kind].join(' ').toLocaleLowerCase().includes(search.value.trim().toLocaleLowerCase())).map(n=>n.id));
+for(const n of nodes){const a=positions.get(n.id),b=positions.get(n.parent);if(!a||!b)continue;const line=svgElement('path',{d:'M'+a.x+','+a.y+' Q480,270 '+b.x+','+b.y,class:'q-sky-line',opacity:visible.has(n.id)?'.8':'.18','data-path':String(journeyPath.some(p=>p.id===n.id)&&journeyPath.some(p=>p.id===n.parent))});svg.append(line)}
+for(const n of nodes){const p=positions.get(n.id);if(!p)continue;const group=svgElement('g',{class:'q-sky-node',transform:'translate('+p.x+' '+p.y+')',tabindex:'0',role:'button','aria-label':'Inspect '+n.kind+' '+n.label,'aria-current':String(focusedNode?.id===n.id),'data-kind':n.kind,'data-path':String(journeyPath.some(p=>p.id===n.id)),opacity:visible.has(n.id)?'1':'.22'});group.append(svgElement('circle',{r:n.kind==='trunk'?19:n.kind==='root'?14:10}));const label=svgElement('text',{y:n.kind==='trunk'?32:25,'text-anchor':'middle'});label.textContent=n.label;group.append(label);group.addEventListener('click',()=>showNode(n.id));group.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showNode(n.id)}});svg.append(group);spatialNodes.set(n.id,group)}
+}
+
+// Spatial state must exist before renderIndex invokes renderSky.
+renderIndex();
+
+candidates.forEach(n=>{const button=document.createElement('button');button.type='button';button.dataset.id=n.id;button.setAttribute('aria-pressed','false');button.textContent=n.label+(n.kind==='fruit'?' · public outcome':' · investigate evidence gap');button.addEventListener('click',()=>select(n.id));options.append(button)});
+const mount=document.querySelector('main')||document.body;mount.append(host);if(candidates.length)showNode(candidates[0].id);
+})(window);
