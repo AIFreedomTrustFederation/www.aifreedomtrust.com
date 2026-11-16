@@ -45,7 +45,8 @@ const voyageZoomIn=document.createElement('button');voyageZoomIn.type='button';v
 const voyageZoomOut=document.createElement('button');voyageZoomOut.type='button';voyageZoomOut.textContent='Zoom out −';
 const voyageMap=document.createElement('svg');voyageMap.classList.add('living-voyage-map');voyageMap.setAttribute('viewBox','0 0 100 100');
 voyageMap.setAttribute('role','img');voyageMap.setAttribute('aria-label','Spatial overview of the selected source on the Tree');
-const mapMarker=document.createElementNS(ns,'circle');mapMarker.setAttribute('r','3');mapMarker.setAttribute('fill','#f5d68c');voyageMap.append(mapMarker);
+const mapMarker=document.createElementNS(ns,'circle');mapMarker.setAttribute('r','3');mapMarker.setAttribute('fill','#f5d68c');
+const mapWindow=document.createElementNS(ns,'rect');mapWindow.setAttribute('class','living-voyage-window');mapWindow.setAttribute('fill','none');mapWindow.setAttribute('stroke','#f5d68c');mapWindow.setAttribute('stroke-width','1.4');voyageMap.append(mapWindow,mapMarker);
 voyageControls.append(voyageBack,voyageReset,voyageZoomIn,voyageZoomOut);
 voyage.append(voyageTitle,voyageHint,voyageTrail,voyageNext,voyageControls,voyageMap);
 inspector.insertBefore(voyage,controls);
@@ -54,6 +55,8 @@ const setView=(x,y,w)=>{
  const size=Math.max(250,Math.min(1000,w)),max=1000-size;
  view={x:Math.max(0,Math.min(max,x)),y:Math.max(0,Math.min(max,y)),w:size,h:size};
  scene.setAttribute('viewBox',[view.x,view.y,view.w,view.h].join(' '));
+ mapWindow.setAttribute('x',String(view.x/10));mapWindow.setAttribute('y',String(view.y/10));
+ mapWindow.setAttribute('width',String(view.w/10));mapWindow.setAttribute('height',String(view.h/10));
 };
 function frame(node){
  const p=locations[node.id];if(!p)return;
@@ -87,6 +90,46 @@ voyageBack.addEventListener('click',()=>{
 voyageReset.addEventListener('click',()=>{setView(0,0,1000);mapMarker.setAttribute('cx','50');mapMarker.setAttribute('cy','50')});
 voyageZoomIn.addEventListener('click',()=>setView(view.x+view.w*.125,view.y+view.h*.125,view.w*.75));
 voyageZoomOut.addEventListener('click',()=>setView(view.x-view.w/6,view.y-view.h/6,view.w*4/3));
+/* Pan the actual SVG camera with one finger or a mouse; pinch with two fingers.
+   Gesture recognition never invents nodes or changes documented selection. */
+const pointers=new Map();let dragStart=null,pinchStart=null,gestureMoved=false;
+const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+scene.style.touchAction='none';
+scene.addEventListener('pointerdown',e=>{
+ if(e.target.closest?.('.living-source-node'))return;
+ pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+ if(pointers.size===1){dragStart={x:e.clientX,y:e.clientY,view:{...view}};pinchStart=null;gestureMoved=false}
+ if(pointers.size===2){const [a,b]=[...pointers.values()];pinchStart={distance:Math.max(1,distance(a,b)),view:{...view}};dragStart=null;gestureMoved=true}
+ scene.setPointerCapture?.(e.pointerId);
+});
+scene.addEventListener('pointermove',e=>{
+ if(!pointers.has(e.pointerId))return;
+ pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+ const rect=scene.getBoundingClientRect();if(!rect.width||!rect.height)return;
+ if(pointers.size===2&&pinchStart){
+  const [a,b]=[...pointers.values()],size=pinchStart.view.w*pinchStart.distance/Math.max(1,distance(a,b));
+  const cx=pinchStart.view.x+pinchStart.view.w/2,cy=pinchStart.view.y+pinchStart.view.h/2;
+  setView(cx-size/2,cy-size/2,size);gestureMoved=true;
+ }else if(pointers.size===1&&dragStart){
+  const dx=e.clientX-dragStart.x,dy=e.clientY-dragStart.y;
+  if(Math.hypot(dx,dy)>5)gestureMoved=true;
+  if(gestureMoved){const factor=dragStart.view.w/Math.min(rect.width,rect.height);setView(dragStart.view.x-dx*factor,dragStart.view.y-dy*factor,dragStart.view.w)}
+ }
+});
+const finishGesture=e=>{
+ if(!pointers.has(e.pointerId))return;
+ pointers.delete(e.pointerId);
+ if(scene.hasPointerCapture?.(e.pointerId))scene.releasePointerCapture(e.pointerId);
+ if(pointers.size===0){dragStart=null;pinchStart=null;gestureMoved=false}
+ else if(pointers.size===1){dragStart=null;pinchStart=null}
+};
+scene.addEventListener('pointerup',finishGesture);scene.addEventListener('pointercancel',finishGesture);
+voyageMap.setAttribute('tabindex','0');voyageMap.setAttribute('role','button');
+voyageMap.setAttribute('aria-label','Spatial overview: activate to view the entire Tree');
+const resetMap=()=>{setView(0,0,1000);mapMarker.setAttribute('cx','50');mapMarker.setAttribute('cy','50')};
+voyageMap.addEventListener('click',resetMap);
+voyageMap.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();resetMap()}});
+setView(0,0,1000);
 
 const safe=value=>{try{const u=new URL(value,location.href);return u.protocol==='https:'||u.origin===location.origin?u.href:null}catch{return null}};
 const pathTo=node=>{const trail=[],seen=new Set();let current=node;while(current&&!seen.has(current.id)){trail.unshift(current);seen.add(current.id);current=byId.get(current.parent)}return trail};
