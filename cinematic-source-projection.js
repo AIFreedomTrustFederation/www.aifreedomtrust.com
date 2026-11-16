@@ -47,8 +47,10 @@ const voyageMap=document.createElement('svg');voyageMap.classList.add('living-vo
 voyageMap.setAttribute('role','img');voyageMap.setAttribute('aria-label','Spatial overview of the selected source on the Tree');
 const mapMarker=document.createElementNS(ns,'circle');mapMarker.setAttribute('r','3');mapMarker.setAttribute('fill','#f5d68c');
 const mapWindow=document.createElementNS(ns,'rect');mapWindow.setAttribute('class','living-voyage-window');mapWindow.setAttribute('fill','none');mapWindow.setAttribute('stroke','#f5d68c');mapWindow.setAttribute('stroke-width','1.4');voyageMap.append(mapWindow,mapMarker);
+const cameraHelp=document.createElement('p');cameraHelp.className='living-camera-help';cameraHelp.textContent='Explore the Tree: drag to pan, pinch or scroll to zoom. Focus the Tree and use arrow keys to move, + or − to zoom, Home to reset. Select a luminous source to follow its documented lineage.';
+const cameraAnnounce=document.createElement('p');cameraAnnounce.className='living-camera-announcement';cameraAnnounce.setAttribute('role','status');cameraAnnounce.setAttribute('aria-live','polite');
 voyageControls.append(voyageBack,voyageReset,voyageZoomIn,voyageZoomOut);
-voyage.append(voyageTitle,voyageHint,voyageTrail,voyageNext,voyageControls,voyageMap);
+voyage.append(voyageTitle,voyageHint,voyageTrail,voyageNext,voyageControls,cameraHelp,cameraAnnounce,voyageMap);
 inspector.insertBefore(voyage,controls);
 let view={x:0,y:0,w:1000,h:1000},previous=[];
 const setView=(x,y,w)=>{
@@ -94,6 +96,29 @@ voyageZoomOut.addEventListener('click',()=>setView(view.x-view.w/6,view.y-view.h
    Gesture recognition never invents nodes or changes documented selection. */
 const pointers=new Map();let dragStart=null,pinchStart=null,gestureMoved=false;
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+scene.setAttribute('tabindex','0');
+scene.setAttribute('aria-keyshortcuts','ArrowUp ArrowDown ArrowLeft ArrowRight + - Home');
+scene.setAttribute('aria-describedby','tree-desc');
+const zoomAt=(factor,x,y)=>{const next=view.w*factor;const ratio=Math.max(0,Math.min(1,(x-view.x)/view.w)),vertical=Math.max(0,Math.min(1,(y-view.y)/view.h));setView(x-next*ratio,y-next*vertical,next)};
+scene.addEventListener('wheel',e=>{
+ if(!e.ctrlKey&&!e.metaKey)return; // preserve normal page scrolling
+ e.preventDefault();const rect=scene.getBoundingClientRect();
+ const u=Math.max(0,Math.min(1,(e.clientX-rect.left)/Math.max(1,rect.width))),v=Math.max(0,Math.min(1,(e.clientY-rect.top)/Math.max(1,rect.height)));
+ zoomAt(e.deltaY>0?1.12:.89,view.x+u*view.w,view.y+v*view.h);
+},{passive:false});
+scene.addEventListener('keydown',e=>{
+ if(e.target!==scene)return;
+ const shift=view.w*.12;
+ if(e.key==='ArrowLeft')setView(view.x-shift,view.y,view.w);
+ else if(e.key==='ArrowRight')setView(view.x+shift,view.y,view.w);
+ else if(e.key==='ArrowUp')setView(view.x,view.y-shift,view.w);
+ else if(e.key==='ArrowDown')setView(view.x,view.y+shift,view.w);
+ else if(e.key==='+'||e.key==='=')zoomAt(.8,view.x+view.w/2,view.y+view.h/2);
+ else if(e.key==='-'||e.key==='_')zoomAt(1.25,view.x+view.w/2,view.y+view.h/2);
+ else if(e.key==='Home')resetMap();
+ else return;
+ e.preventDefault();cameraAnnounce.textContent='Tree camera '+Math.round(1000/view.w*100)+'% zoom.';
+});
 scene.style.touchAction='none';
 scene.addEventListener('pointerdown',e=>{
  if(e.target.closest?.('.living-source-node'))return;
