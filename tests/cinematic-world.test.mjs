@@ -58,3 +58,14 @@ test('touch tap selects real lineage nodes despite SVG pointer capture',()=>{
  assert.match(js,/gestureMoved=true;choose\(id\)/);
  assert.match(js,/if\(gestureMoved\|\|pinchUsed\)/);
 });
+
+// Stage controls are a single accessible selection state, not six permanently
+// hard-coded pressed buttons. This must stay true after zoom, reset and filters.
+test('stage controls expose synchronized aria-pressed state',()=>{
+ const js=read('cinematic-explorer.js');
+ assert.match(js,/function syncStageControls\(kind\)/);
+ assert.match(js,/button\.setAttribute\('aria-pressed',String\(active\)\)/);
+ assert.match(js,/function focusStage\(kind\)\{\s*syncStageControls\(kind\)/);
+ assert.match(js,/syncStageControls\('root'\);transform\(\)/);
+ assert.match(js,/syncStageControls\(null\)/);
+});
