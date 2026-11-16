@@ -48,6 +48,15 @@ function buildUi(world){
   if(c.evidenceNeeded.length)shared.append(el('p','Evidence gaps for '+c.evidenceNeeded.length+' selected entity or entities. Structural membership is not proof of contribution.'));
  }
  selects.forEach(s=>s.addEventListener('change',render));render();
+ document.defaultView?.addEventListener('aift:lineage-compare',event=>{
+  const id=event.detail?.id;
+  if(typeof id!=='string'||!scene.nodes.some(n=>n.id===id))return;
+  selects[0].value=id;
+  if(selects[1].value===id&&scene.nodes.length>1){
+   selects[1].value=scene.nodes.find(n=>n.id!==id).id;
+  }
+  render();
+ });
 }
 if(typeof document!=='undefined'&&$('comparison-result')){
  fetch('data/living-universe.json').then(r=>{if(!r.ok)throw Error('Manifest unavailable');return r.json()}).then(data=>buildUi(projectWorld(data))).catch(()=>{$('comparison-result').textContent='Curated comparison unavailable. No live status inferred.'});
