@@ -23,8 +23,49 @@ for(const n of nodes){const p=pos.get(n.id),g=el('g',{transform:'translate('+p.x
 function choose(id,remember=true){if(!byId.has(id))return;if(remember&&id!==selected)history.push(selected);selected=id;const n=byId.get(id);stage.value='all';draw();render();const p=pos.get(id);if(p&&window.matchMedia('(prefers-reduced-motion: reduce)').matches===false)center(p)}
 function center(p){panX=(500-p.x)*scale;panY=(400-p.y)*scale;transform()}
 function transform(){panX=clamp(panX,-1100,1100);panY=clamp(panY,-900,900);const group=$('evidence-camera');group.setAttribute('transform','translate('+panX+' '+panY+') translate(500 400) scale('+scale+') translate(-500 -400)');updateMinimap();}
+
+// Evidence journey: navigable, source-backed routes. These are exploration steps,
+// not XP, unlocked achievements, deployment health, or inferred product ownership.
+const journey=document.createElement('section');
+journey.className='evidence-journey';
+journey.setAttribute('aria-label','Documented growth paths');
+const journeyTitle=document.createElement('h4');
+journeyTitle.textContent='Follow documented growth';
+const journeyHint=document.createElement('p');
+journeyHint.className='evidence-journey-hint';
+const journeySteps=document.createElement('div');
+journeySteps.className='evidence-journey-steps';
+journey.append(journeyTitle,journeyHint,journeySteps);
+info.insertAdjacentElement('afterend',journey);
+function renderJourney(){
+  journeySteps.replaceChildren();
+  const current=byId.get(selected);
+  const ancestors=line(selected);
+  const descendants=nodes.filter(n=>n.parent===selected);
+  journeyHint.textContent='A curated source-to-outcome trail. '+ancestors.length+' documented lineage stage'+(ancestors.length===1?'':'s')+' to this point; '+descendants.length+' directly connected next step'+(descendants.length===1?'':'s')+'.';
+  const options=[];
+  if(current.parent&&byId.has(current.parent))options.push({id:current.parent,action:'Trace toward source'});
+  for(const child of descendants)options.push({id:child.id,action:'Explore connected '+child.kind});
+  if(!options.length){const p=document.createElement('p');p.textContent='No further documented relationships from this node. This is an evidence gap, not a locked reward.';journeySteps.append(p)}
+  for(const option of options){
+    const target=byId.get(option.id);
+    const button=document.createElement('button');
+    button.type='button';
+    button.className='evidence-journey-step';
+    const action=document.createElement('small');action.textContent=option.action;
+    const label=document.createElement('strong');label.textContent=target.label;
+    button.append(action,label);
+    button.addEventListener('click',()=>choose(option.id));
+    journeySteps.append(button);
+  }
+  if(current.kind==='fruit'){
+    const href=escapeUrl(current.url);
+    if(href){const a=document.createElement('a');a.href=href;a.textContent='Visit documented experience';if(a.origin!==location.origin){a.target='_blank';a.rel='noopener noreferrer'}journeySteps.append(a)}
+  }
+}
+
 function render(){const n=byId.get(selected);info.replaceChildren();const heading=document.createElement('h3');heading.textContent=n.label;info.append(heading);const type=document.createElement('p');type.className='evidence-type';type.textContent=n.kind.toUpperCase()+' · Curated source evidence, not a live operational claim';info.append(type);const desc=document.createElement('p');desc.textContent=n.desc||'No published description.';info.append(desc);const url=escapeUrl(n.url);if(url){const a=document.createElement('a');a.href=url;a.textContent=n.kind==='fruit'?'Open the actual visitor experience':'Inspect published source or evidence';if(a.origin!==location.origin){a.target='_blank';a.rel='noopener noreferrer'}info.append(a)}
-trail.replaceChildren();for(const x of line(selected)){const b=document.createElement('button');b.type='button';b.textContent=x.label;b.addEventListener('click',()=>choose(x.id));trail.append(b)}
+renderJourney();trail.replaceChildren();for(const x of line(selected)){const b=document.createElement('button');b.type='button';b.textContent=x.label;b.addEventListener('click',()=>choose(x.id));trail.append(b)}
 list.replaceChildren();const filtered=nodes.filter(visible);for(const x of filtered){const b=document.createElement('button');b.type='button';b.textContent=x.label+' · '+x.kind;b.setAttribute('aria-current',String(x.id===selected));b.addEventListener('click',()=>choose(x.id));list.append(b)}if(!filtered.length){const p=document.createElement('p');p.textContent='No published nodes match this search or stage.';list.append(p)}
 $('evidence-back').disabled=!history.length;$('evidence-count').textContent=roots.length+' source roots · '+branches.length+' systems · '+leaves.length+' capabilities · '+fruits.length+' published visitor destinations. No live CI claims.'}
 $('evidence-back').addEventListener('click',()=>{const id=history.pop();if(id)choose(id,false)});
