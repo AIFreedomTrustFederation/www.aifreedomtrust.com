@@ -112,3 +112,13 @@ test('source projection includes future published nodes and keyboard fallback',(
  assert.match(js,/e\.key==='Enter'\|\|e\.key===' '/);
  assert.doesNotMatch(js,/Math\.random|fetch\(|localStorage|sendBeacon/);
 });
+
+test('cinematic source inspector provides ancestry and safe real destinations without inventing fruit',()=>{
+ const js=read('cinematic-source-projection.js'),css=read('cinematic-world.css');
+ for(const token of ["living-source-inspector","host.after(inspector)","lineage.replaceChildren()","for(const ancestor of trail)","destination.hidden=!link","destination.removeAttribute('href')","noopener noreferrer"])assert.ok(js.includes(token),token);
+ assert.match(js,/node.kind==='root'\?'Verified source root/);
+ assert.match(js,/node.kind==='fruit'\?'Documented visitor-facing outcome/);
+ assert.match(css,/\.living-source-inspector/);
+ assert.match(css,/\.living-source-inspector a:focus-visible/);
+ assert.doesNotMatch(js,/localStorage|sendBeacon|Math\.random|reward_xp/);
+});
