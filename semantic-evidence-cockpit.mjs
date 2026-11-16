@@ -72,12 +72,16 @@ export function renderCockpit(root,world){
   for(const [label,ok] of gates){const item=make('p',(ok?'Documented: ':'Evidence needed: ')+label);item.className=ok?'cockpit-gate-documented':'cockpit-gate-gap';gaps.append(item)}
   gaps.append(make('p','Documentation does not establish deployment, test success, security clearance, or an earned achievement.'));
  };
- const show=(id,{record=true}={})=>{
+ const show=(id,{record=true,announce=true}={})=>{
   const node=byId.get(id);if(!node)return;
-  navigation.inspect(id,{record});selected=id;detail.replaceChildren(make('h4',node.label),make('p',node.description||'No description supplied.'),make('p','Stage: '+node.kind+' · Evidence: '+node.evidence));
+  navigation.inspect(id,{record});selected=id;
+  if(announce)doc.defaultView?.dispatchEvent(new CustomEvent('aift:evidence-inspect',{detail:{id,kind:node.kind,sourceRoots:[...node.sourceRoots]}}));
+  detail.replaceChildren(make('h4',node.label),make('p',node.description||'No description supplied.'),make('p','Stage: '+node.kind+' · Evidence: '+node.evidence));
   if(node.kind==='fruit'&&!node.destination)detail.append(make('p','Outcome destination not verified; this entity cannot be treated as a completed deliverable.'));
   if(node.kind==='fruit'&&node.destination)safeLink(node.destination,'Open documented outcome',detail);
   const jump=make('button','Explore in spatial theatre');jump.type='button';jump.onclick=()=>doc.defaultView?.dispatchEvent(new CustomEvent('aift:lineage-select',{detail:{id}}));detail.append(jump);
+  const compare=make('button','Compare source lineage');compare.type='button';compare.onclick=()=>doc.defaultView?.dispatchEvent(new CustomEvent('aift:lineage-compare',{detail:{id}}));detail.append(compare);
+  const mission=make('button','Explore evidence missions');mission.type='button';mission.onclick=()=>doc.defaultView?.dispatchEvent(new CustomEvent('aift:lineage-missions',{detail:{id}}));detail.append(mission);
   const roots=make('p','Contributing roots: '+(node.sourceRoots.join(', ')||'No attested contributing roots'));detail.append(roots);
   if(!node.evidenceUrls.length)detail.append(make('p','No source attestation links recorded.'));
   for(const [i,url] of node.evidenceUrls.entries())safeLink(url,'Source attestation '+(i+1),detail);
@@ -97,6 +101,15 @@ export function renderCockpit(root,world){
  back.onclick=()=>{const n=navigation.back();if(n){show(n.id,{record:false});refresh()}};
  forward.onclick=()=>{const n=navigation.forward();if(n){show(n.id,{record:false});refresh()}};
  reset.onclick=()=>{navigation.reset();selected=null;detail.replaceChildren(make('p','Journey cleared. Select an entity to inspect its evidence.'));renderJourney(null);refresh()};
+ doc.defaultView?.addEventListener('aift:lineage-focus',event=>{
+  const id=event.detail?.id;
+  if(typeof id!=='string'||!byId.has(id))return;
+  const node=byId.get(id);
+  if(stage.value!=='all'&&stage.value!==node.kind)stage.value='all';
+  if(evidence.value!=='all'&&evidence.value!==node.evidence)evidence.value='all';
+  query.value='';
+  show(id,{announce:false});refresh();
+ });
  for(const control of [query,stage,evidence])control.addEventListener(control===query?'input':'change',refresh);
  renderJourney(null);refresh();
 }
