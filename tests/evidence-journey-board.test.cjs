@@ -17,3 +17,21 @@ test('search and reversible lineage work across both shared public surfaces',()=
   assert.match(source,/forced-colors:active/);
   assert.ok(source.includes('if(!/^https?:\\/\\//.test(n.url))continue'));
 });
+
+test('shared six-stage biological map and evidence theatre are bounded and accessible',()=>{
+ assert.match(source,/const STAGES=\['root','trunk','branch','leaf','flower','fruit'\]/);
+ assert.match(source,/aria-label','Biological source-to-outcome map'/);
+ assert.match(source,/aria-label','Evidence readiness theatre'/);
+ assert.match(source,/stageCounts=new Map/);
+ assert.match(source,/activeStage===s/);
+ assert.match(source,/renderStageMap\(\)/);
+ assert.match(source,/renderGates\(node\)/);
+ assert.match(source,/Repository-root ancestry/);
+ assert.match(source,/Evidence independence/);
+ assert.match(source,/Accessible experience/);
+ assert.match(source,/No result is certified by exploration alone/);
+ assert.match(source,/github\\.com/);
+ assert.match(source,/grid-template-columns:repeat\(6,minmax\(0,1fr\)\)/);
+ assert.match(source,/max-width:520px/);
+ assert.doesNotMatch(source,/fetch\s*\(|XMLHttpRequest|localStorage|sessionStorage|sendBeacon|Math\.random\s*\(/);
+});
