@@ -10,3 +10,16 @@
 
 /* Source-backed spatial overview: compact, legible and touch-friendly at every breakpoint. */
 .evidence-minimap{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;min-width:0}.world-overview{width:min(210px,48vw);height:auto;aspect-ratio:5/4;border-radius:10px;flex:none;overflow:visible}.world-overview [role=button]{cursor:pointer;outline:none}.world-overview [role=button]:focus-visible{stroke:white;stroke-width:9}.world-overview-status{font-size:.85rem;color:#e6e4d8}@media(max-width:440px){.world-overview{width:min(160px,45vw)}.evidence-minimap{gap:.5rem}}
+
+
+/* Source-backed journey cards, not gamified health claims. */
+.evidence-journey{margin-block:1.25rem;padding:1rem;border:1px solid rgba(145,219,206,.35);border-radius:1.1rem;background:linear-gradient(135deg,rgba(21,67,78,.64),rgba(18,24,58,.6))}
+.evidence-journey h4{margin:0 0 .45rem;color:#f4dfad}
+.evidence-journey-hint{font-size:.9rem;line-height:1.5;color:#c8e3e7}
+.evidence-journey-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,12rem),1fr));gap:.65rem}
+.evidence-journey-step{display:flex;flex-direction:column;align-items:flex-start;gap:.35rem;text-align:left;min-height:3.2rem;padding:.8rem;border:1px solid rgba(115,212,193,.5);border-radius:.75rem;color:#f5fafb;background:#0d3040;overflow-wrap:anywhere;cursor:pointer}
+.evidence-journey-step small{color:#a9e6d9}
+.evidence-journey-step:hover,.evidence-journey-step:focus-visible{outline:2px solid #e5d09b;outline-offset:2px;background:#1c4758}
+.evidence-journey-steps>a{color:#f7d18a;align-self:center}
+@media(max-width:440px){.evidence-journey{padding:.75rem}.evidence-journey-steps{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.evidence-journey-step{transition:none}}
