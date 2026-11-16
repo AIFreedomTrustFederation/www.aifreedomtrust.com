@@ -124,3 +124,9 @@
 .living-voyage-map{display:block;width:min(130px,40vw);height:auto;aspect-ratio:1;margin-left:auto;border:1px solid #9de6d266;border-radius:50%;background:radial-gradient(circle,#316b6b55 0%,#0a1b30 75%);pointer-events:none}
 @media(max-width:600px){.living-voyage{border-radius:1rem}.living-voyage-trail{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.living-voyage-trail button,.living-voyage-controls button{width:100%}.living-voyage-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(prefers-reduced-motion:reduce){.living-voyage *{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+
+/* Spatial camera affordances; keep visual controls operable on touch and keyboard. */
+.living-voyage-map{cursor:pointer;touch-action:manipulation}
+.living-voyage-map:focus-visible{outline:3px solid var(--gold);outline-offset:4px}
+.living-voyage-window{pointer-events:none}
+@media(prefers-reduced-motion:reduce){.living-voyage-window{transition:none}}
