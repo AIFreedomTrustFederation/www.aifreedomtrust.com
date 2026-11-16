@@ -31,3 +31,19 @@ test('search moves camera to a real matching published node',()=>{
  assert.match(js,/nodes\.find\(visible\)/);
  assert.match(js,/center\(pos\.get\(match\.id\)\)/);
 });
+
+// Regression guard for the integrated mobile journey and navigation controls.
+test('stage dropdown and stage buttons share semantic focus behavior',()=>{
+ const js=read('cinematic-explorer.js');
+ assert.match(js,/stage\.addEventListener\('change',\(\)=>\{if\(stage\.value==='all'\)/);
+ assert.match(js,/focusStage\(stage\.value\)/);
+ assert.match(js,/const target=candidates\.find\(n=>n\.id===selected\)\|\|candidates\[0\]/);
+ assert.match(js,/scale=targetScale;center\(pos\.get\(target\.id\)\)/);
+});
+test('touch gestures do not accidentally activate lineage nodes and search remains reversible',()=>{
+ const js=read('cinematic-explorer.js');
+ assert.match(js,/gestureMoved=true/);
+ assert.match(js,/if\(gestureMoved\)\{e\.preventDefault\(\);return;/);
+ assert.match(js,/if\(match\.id!==selected\)history\.push\(selected\)/);
+ assert.match(js,/e\.pointerType==='mouse'/);
+});
