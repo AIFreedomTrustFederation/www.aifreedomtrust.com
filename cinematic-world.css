@@ -93,3 +93,15 @@
 .living-source-inspector a:focus-visible{outline:3px solid #fff;outline-offset:3px}
 .living-source-inspector [hidden]{display:none}
 @media(max-width:600px){.living-source-inspector{margin:1rem .75rem;border-radius:16px}.living-source-inspector ol{flex-direction:column}.living-source-inspector li{width:100%}}
+
+/* Searchable source provenance: a complete accessible alternative to spatial SVG exploration. */
+.living-source-controls{display:flex;flex-wrap:wrap;gap:1rem;align-items:end;margin-top:1.5rem}
+.living-source-controls label{display:grid;gap:.35rem;flex:1 1 220px;font-weight:700;color:#e3f4ee}
+.living-source-controls input,.living-source-controls select{width:100%;min-height:48px;border:1px solid #9ce7cc88;border-radius:12px;padding:.65rem .8rem;background:#071a2c;color:#f6f4ed;font:inherit}
+.living-source-controls :is(input,select):focus-visible{outline:3px solid #f7d897;outline-offset:3px}
+.living-source-directory{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:.55rem;padding:0;margin:1rem 0 0;max-height:360px;overflow:auto}
+.living-source-directory button{width:100%;min-height:48px;text-align:left;padding:.65rem .85rem;border:1px solid #9ce7cc55;border-radius:12px;background:#143347;color:#f4f9f8;font:inherit;cursor:pointer;overflow-wrap:anywhere}
+.living-source-directory button[aria-pressed=true]{border-color:#f7d897;background:#28534e}
+.living-source-directory button:focus-visible{outline:3px solid #f7d897;outline-offset:2px}
+.living-source-node[aria-current=true] circle:nth-child(2){stroke:#f7d897;stroke-width:3}
+@media(max-width:600px){.living-source-controls{display:grid;gap:.8rem}.living-source-directory{grid-template-columns:1fr;max-height:320px}}
