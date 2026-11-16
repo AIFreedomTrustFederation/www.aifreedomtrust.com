@@ -21,7 +21,15 @@ const description=document.createElement('p');description.textContent='Select a 
 const lineage=document.createElement('ol');lineage.setAttribute('aria-label','Source-to-outcome ancestry');
 const destination=document.createElement('a');destination.hidden=true;destination.textContent='Open documented destination';
 destination.rel='noopener noreferrer';
-inspector.append(heading,description,lineage,destination);host.after(inspector);
+const controls=document.createElement('div');controls.className='living-source-controls';
+const searchLabel=document.createElement('label');searchLabel.textContent='Find a documented source or experience ';
+const search=document.createElement('input');search.type='search';search.placeholder='Search the living Tree';search.setAttribute('aria-controls','living-source-directory');searchLabel.append(search);
+const filterLabel=document.createElement('label');filterLabel.textContent=' Growth stage ';
+const filter=document.createElement('select');for(const [value,label] of [['all','All stages'],['root','Roots'],['trunk','Trunk'],['branch','Branches'],['leaf','Leaves'],['flower','Flowers'],['fruit','Fruits']]){const option=document.createElement('option');option.value=value;option.textContent=label;filter.append(option)}filterLabel.append(filter);
+const directory=document.createElement('ul');directory.id='living-source-directory';directory.className='living-source-directory';directory.setAttribute('aria-label','Accessible documented source directory');
+const count=document.createElement('p');count.setAttribute('role','status');
+controls.append(searchLabel,filterLabel);
+inspector.append(heading,description,lineage,destination,controls,count,directory);host.after(inspector);
 const safe=value=>{try{const u=new URL(value,location.href);return u.protocol==='https:'||u.origin===location.origin?u.href:null}catch{return null}};
 const pathTo=node=>{const trail=[],seen=new Set();let current=node;while(current&&!seen.has(current.id)){trail.unshift(current);seen.add(current.id);current=byId.get(current.parent)}return trail};
 // Every published node participates. Curated anchors preserve the existing composition;
@@ -37,6 +45,27 @@ for(const kind of Object.keys(stageBands)){
 }
 // A node may have an unpublished parent: never manufacture an edge in that case.
 const projectedIds=new Set(visible.map(n=>n.id));
+let selectedId=null;
+const anchors=new Map();
+function selectNode(node){
+ selectedId=node.id;focus(node);
+ const anchor=anchors.get(node.id);if(anchor){anchor.setAttribute('aria-current','true')}
+ for(const [id,element] of anchors){if(id!==node.id)element.removeAttribute('aria-current')}
+}
+function renderDirectory(){
+ const term=search.value.trim().toLocaleLowerCase(),kind=filter.value;
+ const matches=visible.filter(n=>(kind==='all'||n.kind===kind)&&(!term||(n.label+' '+n.id+' '+n.kind).toLocaleLowerCase().includes(term)));
+ directory.replaceChildren();
+ for(const node of matches){
+  const item=document.createElement('li'),button=document.createElement('button');
+  button.type='button';button.textContent=node.label+' · '+node.kind;
+  button.setAttribute('aria-pressed',String(node.id===selectedId));
+  button.addEventListener('click',()=>{selectNode(node);const anchor=anchors.get(node.id);anchor?.focus({preventScroll:true});});
+  item.append(button);directory.append(item);
+ }
+ count.textContent=matches.length+' of '+visible.length+' documented nodes shown. No live status is implied.';
+}
+search.addEventListener('input',renderDirectory);filter.addEventListener('change',renderDirectory);
 for(const node of visible){
  const p=locations[node.id],parent=byId.get(node.parent),q=parent&&projectedIds.has(parent.id)&&locations[parent.id];
  if(q){const edge=document.createElementNS(ns,'path');edge.setAttribute('d',`M${q[0]} ${q[1]} Q${(p[0]+q[0])/2} ${Math.min(p[1],q[1])-40} ${p[0]} ${p[1]}`);edge.setAttribute('class','living-source-edge');edge.dataset.from=parent.id;edge.dataset.to=node.id;lines.append(edge)}
@@ -49,10 +78,10 @@ for(const node of visible){
  const title=document.createElementNS(ns,'title');title.textContent=node.label+' · '+node.kind;
  anchor.append(halo,dot,title);
  anchor.addEventListener('pointerenter',()=>focus(node));
- anchor.addEventListener('focus',()=>focus(node));
- anchor.addEventListener('click',e=>{if(!link){e.preventDefault();focus(node)}});
- if(!link)anchor.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();focus(node)}});
- dots.append(anchor);
+ anchor.addEventListener('focus',()=>selectNode(node));
+ anchor.addEventListener('click',e=>{e.preventDefault();selectNode(node)});
+ anchor.addEventListener('keydown',e=>{if(e.key===' '){e.preventDefault();selectNode(node)}});
+ dots.append(anchor);anchors.set(node.id,anchor);
 }
 function focus(node){
  const trail=pathTo(node),ids=new Set(trail.map(n=>n.id));
@@ -67,7 +96,8 @@ function focus(node){
  destination.hidden=!link;
  if(link){destination.href=link;destination.textContent=node.kind==='fruit'?'Open documented experience':'Open published source';if(new URL(link).origin!==location.origin){destination.target='_blank'}else destination.removeAttribute('target')}
  else {destination.removeAttribute('href');destination.removeAttribute('target')}
-
+ if(directory.children.length)for(const button of directory.querySelectorAll('button'))button.setAttribute('aria-pressed',String(button.textContent===node.label+' · '+node.kind));
 }
+renderDirectory();
 host.addEventListener('pointerleave',()=>{if(!reduced.matches&&!host.contains(document.activeElement)){dots.querySelectorAll('.living-source-active').forEach(n=>n.classList.remove('living-source-active'));lines.querySelectorAll('.living-source-active').forEach(n=>n.classList.remove('living-source-active'))}});
 })();
