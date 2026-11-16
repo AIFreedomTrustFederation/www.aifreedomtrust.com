@@ -11,3 +11,23 @@ test('minimap is actual spatial navigation, not a status-only label',()=>{const 
 
 
 test('source-backed exploration journey has real parent-child navigation and evidence-gap fallback',()=>{const js=read('cinematic-explorer.js'),css=read('cinematic-world.css');for(const token of ['renderJourney','nodes.filter(n=>n.parent===selected)','line(selected)','Trace toward source','No further documented relationships','Visit documented experience','choose(option.id)'])assert.ok(js.includes(token),token);assert.match(css,/\.evidence-journey-step/);assert.doesNotMatch(js,/reward_xp|Math\.random|localStorage|sendBeacon/);});
+
+test('mobile spatial input uses SVG screen transform rather than CSS rectangle approximation',()=>{
+ const js=read('cinematic-explorer.js');
+ assert.match(js,/createSVGPoint\(\)/);
+ assert.match(js,/getScreenCTM\(\)/);
+ assert.match(js,/matrixTransform\(matrix\.inverse\(\)\)/);
+ assert.doesNotMatch(js,/\(e\.clientX-r\.left\)\*1000\/r\.width/);
+});
+test('stage selection performs source-backed semantic zoom and preserves missing-evidence honesty',()=>{
+ const js=read('cinematic-explorer.js');
+ assert.match(js,/targetScale=\{root:/);
+ assert.match(js,/scale=targetScale;center/);
+ assert.match(js,/No documented.*nodes exist in the published lineage/);
+ assert.match(js,/scrollIntoView/);
+});
+test('search moves camera to a real matching published node',()=>{
+ const js=read('cinematic-explorer.js');
+ assert.match(js,/nodes\.find\(visible\)/);
+ assert.match(js,/center\(pos\.get\(match\.id\)\)/);
+});
