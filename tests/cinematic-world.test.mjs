@@ -84,3 +84,18 @@ test('cinematic landing stage beacons use published lineage and remain non-decep
  assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
  assert.doesNotMatch(js,/localStorage|sendBeacon|fetch\(|XMLHttpRequest|Math\.random\(/);
 });
+
+
+test('cinematic hero projects only real lineage records and preserves root-to-fruit semantics',()=>{
+ const html=read('cinematic-world.html'),js=read('cinematic-source-projection.js'),css=read('cinematic-world.css');
+ assert.match(html,/cinematic-source-projection\.js/);
+ assert.match(js,/window\.AIFT_LINEAGE_NODES/);
+ assert.match(js,/nodes\.filter\(n=>locations\[n\.id\]\)/);
+ assert.match(js,/const trail=\[\],seen=new Set\(\)/);
+ assert.match(js,/node\.kind==='fruit'/);
+ assert.match(js,/rel','noopener noreferrer'/);
+ assert.match(js,/aria-label/);
+ assert.match(css,/\.living-source-node:focus-visible/);
+ assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
+ assert.doesNotMatch(js,/fetch\(|localStorage|sendBeacon|Math\.random|reward_xp/);
+});
