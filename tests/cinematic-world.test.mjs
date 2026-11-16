@@ -90,7 +90,7 @@ test('cinematic hero projects only real lineage records and preserves root-to-fr
  const html=read('cinematic-world.html'),js=read('cinematic-source-projection.js'),css=read('cinematic-world.css');
  assert.match(html,/cinematic-source-projection\.js/);
  assert.match(js,/window\.AIFT_LINEAGE_NODES/);
- assert.match(js,/nodes\.filter\(n=>locations\[n\.id\]\)/);
+ assert.match(js,/nodes\.filter\(n=>n&&n\.id&&colors\[n\.kind\]\)/);
  assert.match(js,/const trail=\[\],seen=new Set\(\)/);
  assert.match(js,/node\.kind==='fruit'/);
  assert.match(js,/rel','noopener noreferrer'/);
@@ -98,4 +98,17 @@ test('cinematic hero projects only real lineage records and preserves root-to-fr
  assert.match(css,/\.living-source-node:focus-visible/);
  assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
  assert.doesNotMatch(js,/fetch\(|localStorage|sendBeacon|Math\.random|reward_xp/);
+});
+
+// Newly documented nodes must never silently disappear from the hero because their IDs
+// were absent from an older decorative placement table.
+test('source projection includes future published nodes and keyboard fallback',()=>{
+ const js=read('cinematic-source-projection.js');
+ assert.match(js,/const visible=nodes\.filter\(n=>n&&n\.id&&colors\[n\.kind\]\)/);
+ assert.match(js,/extra\.forEach\(\(n,i\)=>/);
+ assert.match(js,/locations\[n\.id\]=/);
+ assert.match(js,/projectedIds\.has\(parent\.id\)/);
+ assert.match(js,/anchor\.setAttribute\('tabindex','0'\)/);
+ assert.match(js,/e\.key==='Enter'\|\|e\.key===' '/);
+ assert.doesNotMatch(js,/Math\.random|fetch\(|localStorage|sendBeacon/);
 });
