@@ -69,3 +69,18 @@ test('stage controls expose synchronized aria-pressed state',()=>{
  assert.match(js,/syncStageControls\('root'\);transform\(\)/);
  assert.match(js,/syncStageControls\(null\)/);
 });
+
+test('cinematic landing stage beacons use published lineage and remain non-deceptive',()=>{
+ const html=read('cinematic-world.html'),js=read('cinematic-beacons.js'),css=read('cinematic-world.css');
+ for(const id of ['world-beacons','world-stage-status','world-destination'])assert.ok(html.includes('id="'+id+'"'),id);
+ assert.ok(html.includes('cinematic-beacons.js'));
+ for(const kind of ['root','trunk','branch','leaf','flower','fruit'])assert.ok(js.includes("'"+kind+"'"),kind);
+ assert.match(js,/window\.AIFT_LINEAGE_NODES/);
+ assert.match(js,/nodes\.filter\(n=>n\.kind===kind\)/);
+ assert.match(js,/No documented /);
+ assert.match(js,/safeLink\(first\.url\)/);
+ assert.match(js,/prefers-reduced-motion: reduce/);
+ assert.match(css,/@media\(max-width:700px\)/);
+ assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
+ assert.doesNotMatch(js,/localStorage|sendBeacon|fetch\(|XMLHttpRequest|Math\.random\(/);
+});
