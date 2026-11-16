@@ -47,3 +47,14 @@ test('touch gestures do not accidentally activate lineage nodes and search remai
  assert.match(js,/if\(match\.id!==selected\)history\.push\(selected\)/);
  assert.match(js,/e\.pointerType==='mouse'/);
 });
+
+// Pointer capture retargets touch-generated click events to the SVG. Selection must
+// therefore be resolved on a stationary pointerup, not solely from a node click.
+test('touch tap selects real lineage nodes despite SVG pointer capture',()=>{
+ const js=read('cinematic-explorer.js');
+ assert.match(js,/tapCandidate=e\.target\.closest\?\.\('\[data-id\]'\)/);
+ assert.match(js,/pinchUsed=true;tapCandidate=null/);
+ assert.match(js,/const tapped=e\.type==='pointerup'&&pointers\.size===1&&!gestureMoved&&!pinchUsed&&tapCandidate/);
+ assert.match(js,/gestureMoved=true;choose\(id\)/);
+ assert.match(js,/if\(gestureMoved\|\|pinchUsed\)/);
+});
