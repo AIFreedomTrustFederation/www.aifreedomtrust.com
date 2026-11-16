@@ -39,3 +39,24 @@
 @media(max-width:800px){.world{min-height:100svh;padding-bottom:15rem}.world .tree{width:125vw;right:-48%;bottom:5%;opacity:.85}.world-gates{left:1rem;right:1rem;bottom:3.2rem;width:auto;grid-template-columns:repeat(2,minmax(0,1fr))}.world-gate{grid-template-columns:1fr;padding:.7rem;gap:.25rem}.world-gate>span{grid-row:auto;font-size:1.4rem}.world-gate strong{font-size:.83rem}.world-gate small{font-size:.68rem}.world-note{bottom:.7rem}}
 @media(max-width:440px){.world{padding-top:6.5rem;padding-bottom:13rem}.world .tree{width:145vw;right:-62%;bottom:8%;opacity:.75}.intro h1{font-size:clamp(2.4rem,10vw,3.5rem)}.world-gates{bottom:3rem}.world-gate{min-height:94px}.world-gate small{line-height:1.3}}
 @media(prefers-reduced-motion:reduce){.world:before{animation:none}.world-gate{transition:none}.world-gate:hover{transform:none}}
+
+
+/* Guided voyage: cinematic stage rail backed by actual lineage nodes. */
+.evidence-voyage{padding:clamp(1rem,2.4vw,1.6rem);margin:0 0 1.2rem;border:1px solid #a1d8e64d;border-radius:24px;background:radial-gradient(ellipse at 100% 0%,#3b537a55,transparent 55%),linear-gradient(145deg,#0c2237f2,#07111ef5);box-shadow:0 18px 65px #0005,inset 0 1px #e0ffed1e}
+.evidence-voyage h3{margin:0 0 .3rem;color:#f7d18a;letter-spacing:.035em}
+.evidence-voyage p{margin:.35rem 0 1rem;color:#d4e7ed;font-size:.9rem;line-height:1.55}
+.evidence-voyage [role=status]{color:#a7f0d9;font-weight:700;font-variant-numeric:tabular-nums}
+.evidence-voyage-stops{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:.5rem}
+.evidence-voyage-stops li{flex:1 1 115px;min-width:0}
+.evidence-voyage-stop{width:100%;height:100%;min-height:66px;padding:.55rem .65rem;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:.1rem;text-align:left;border:1px solid #9dc9d455;border-radius:13px;background:#112c41;color:#f6f7fa;cursor:pointer;transition:transform .2s ease,background .2s ease}
+.evidence-voyage-stop small{text-transform:uppercase;letter-spacing:.13em;color:#9debd8;font-size:.65rem}
+.evidence-voyage-stop strong{font-size:.8rem;line-height:1.3;overflow-wrap:anywhere}
+.evidence-voyage-stop[aria-current=step]{border-color:#f7d18a;background:linear-gradient(135deg,#334c59,#19443e);box-shadow:inset 0 0 0 1px #f7d18a55,0 0 22px #64e6b422}
+.evidence-voyage-stop:hover{transform:translateY(-2px);background:#25485d}
+.evidence-voyage-gap{color:#ffd5ae;font-size:.82rem;padding:.6rem}
+.evidence-voyage-buttons{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.85rem}
+.evidence-voyage-buttons button{min-height:44px;padding:.5rem .8rem;border:1px solid #9adfcd70;border-radius:12px;background:#163c4a;color:#f6f7fa;cursor:pointer}
+.evidence-voyage-buttons button:disabled{opacity:.45;cursor:not-allowed}
+.evidence-voyage button:focus-visible{outline:3px solid #f7d18a;outline-offset:3px}
+@media(max-width:600px){.evidence-voyage{padding:1rem;border-radius:18px}.evidence-voyage-stops{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.evidence-voyage-buttons button{flex:1 1 90px}}
+@media(prefers-reduced-motion:reduce){.evidence-voyage-stop{transition:none}.evidence-voyage-stop:hover{transform:none}}
