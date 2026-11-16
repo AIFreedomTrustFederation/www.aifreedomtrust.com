@@ -9,7 +9,9 @@ const $=id=>document.getElementById(id), ns='http://www.w3.org/2000/svg';
 const svg=$('evidence-scene'), layer=$('evidence-nodes'), links=$('evidence-links'), list=$('evidence-list'), trail=$('evidence-trail'), info=$('evidence-info'), search=$('evidence-search'), stage=$('evidence-stage'), map=$('evidence-minimap');
 let selected='federation',history=[],scale=1,panX=0,panY=0,filter='',drag=null;
 const pointers=new Map();const semanticFocus={root:650,trunk:460,branch:300,leaf:185,flower:105,fruit:75};let pinch=null;const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
-const point=e=>{const r=svg.getBoundingClientRect();return {x:(e.clientX-r.left)*1000/r.width,y:(e.clientY-r.top)*800/r.height}};
+// Convert pointer coordinates using the actual SVG viewBox transform. Mobile
+// aspect-ratio letterboxing otherwise makes pinch anchors and drag offsets drift.
+const point=e=>{const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;const matrix=svg.getScreenCTM();if(!matrix)return {x:500,y:400};const q=p.matrixTransform(matrix.inverse());return {x:q.x,y:q.y}};
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 const visible=n=>(!filter||[n.label,n.desc,n.kind].join(' ').toLowerCase().includes(filter))&&(stage.value==='all'||n.kind===stage.value);
 const escapeUrl=url=>{try{const u=new URL(url,location.href);return u.protocol==='https:'||u.origin===location.origin?u.href:null}catch{return null}};
@@ -20,7 +22,7 @@ const extras=nodes.filter(n=>!pos.has(n.id));row(extras,105,70,930);
 function el(tag,attrs,parent){const e=document.createElementNS(ns,tag);for(const [k,v] of Object.entries(attrs||{}))e.setAttribute(k,String(v));if(parent)parent.append(e);return e}
 function draw(){links.replaceChildren();layer.replaceChildren();for(const n of nodes){const p=pos.get(n.id),q=pos.get(n.parent);if(q&&p){const path=el('path',{d:'M'+p.x+' '+p.y+' Q'+((p.x+q.x)/2)+' '+((p.y+q.y)/2)+' '+q.x+' '+q.y,fill:'none',stroke:colors[n.kind],class:'world-edge',opacity:line(selected).some(x=>x.id===n.id)?'.9':'.32'},links);path.dataset.to=n.id}}
 for(const n of nodes){const p=pos.get(n.id),g=el('g',{transform:'translate('+p.x+' '+p.y+')',role:'button',tabindex:'0','aria-label':n.kind+': '+n.label,'aria-pressed':String(selected===n.id),class:'world-node'+(!visible(n)?' world-dim':'')},layer);g.dataset.id=n.id;el('circle',{r:n.kind==='trunk'?26:17,fill:'#071525',stroke:colors[n.kind],'stroke-width':selected===n.id?5:2.5},g);const t=el('text',{y:n.kind==='root'?33:-25,'text-anchor':'middle'},g);t.textContent=n.label.length>22?n.label.slice(0,20)+'…':n.label;g.addEventListener('click',()=>choose(n.id));g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose(n.id)}})}}
-function choose(id,remember=true){if(!byId.has(id))return;if(remember&&id!==selected)history.push(selected);selected=id;const n=byId.get(id);stage.value='all';draw();render();const p=pos.get(id);if(p&&window.matchMedia('(prefers-reduced-motion: reduce)').matches===false)center(p)}
+function choose(id,remember=true){if(!byId.has(id))return;if(remember&&id!==selected)history.push(selected);selected=id;stage.value='all';draw();render();const p=pos.get(id);if(p)center(p)}
 function center(p){panX=(500-p.x)*scale;panY=(400-p.y)*scale;transform()}
 function transform(){panX=clamp(panX,-1100,1100);panY=clamp(panY,-900,900);const group=$('evidence-camera');group.setAttribute('transform','translate('+panX+' '+panY+') translate(500 400) scale('+scale+') translate(-500 -400)');updateMinimap();}
 
@@ -70,7 +72,10 @@ list.replaceChildren();const filtered=nodes.filter(visible);for(const x of filte
 $('evidence-back').disabled=!history.length;$('evidence-count').textContent=roots.length+' source roots · '+branches.length+' systems · '+leaves.length+' capabilities · '+fruits.length+' published visitor destinations. No live CI claims.'}
 $('evidence-back').addEventListener('click',()=>{const id=history.pop();if(id)choose(id,false)});
 $('evidence-reset').addEventListener('click',()=>{history=[];scale=1;panX=panY=0;filter='';search.value='';stage.value='all';selected='federation';transform();draw();render()});
-search.addEventListener('input',()=>{filter=search.value.trim().toLowerCase();draw();render()});stage.addEventListener('change',()=>{filter=search.value.trim().toLowerCase();draw();render()});
+search.addEventListener('input',()=>{filter=search.value.trim().toLowerCase();draw();render();
+  // Focus the first actual matching node so search is spatial, not merely a dimmer.
+  if(filter){const match=nodes.find(visible);if(match){selected=match.id;center(pos.get(match.id));draw();render()}}
+});stage.addEventListener('change',()=>{filter=search.value.trim().toLowerCase();draw();render()});
 function zoom(mult,anchor={x:500,y:400}){const next=clamp(scale*mult,.65,2.5),ratio=next/scale;panX=anchor.x-(anchor.x-panX-500)*ratio-500;panY=anchor.y-(anchor.y-panY-400)*ratio-400;scale=next;transform()}
 $('evidence-in').addEventListener('click',()=>zoom(1.2));$('evidence-out').addEventListener('click',()=>zoom(1/1.2));
 // One finger pans; two fingers pinch around their midpoint without losing the focused world point.
@@ -117,9 +122,20 @@ function updateMinimap(){
 }
 function focusStage(kind){
   const candidates=nodes.filter(n=>n.kind===kind);
-  if(!candidates.length){info.textContent='No published '+kind+' nodes are available. No outcome is implied.';return}
-  filter='';search.value='';choose(candidates[0].id);stage.value=kind;draw();render();
-  const p=pos.get(candidates[0].id);if(p)center(p);
+  filter='';search.value='';
+  if(!candidates.length){
+    stage.value=kind;draw();render();
+    const note=document.createElement('p');
+    note.textContent='No documented '+kind+' nodes exist in the published lineage. Nothing has been invented or unlocked.';
+    info.prepend(note);$('evidence-world').scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+    return;
+  }
+  choose(candidates[0].id);
+  stage.value=kind;draw();render();
+  // Semantic zoom makes each growth layer an actual camera destination.
+  const targetScale={root:1.25,trunk:.8,branch:1.2,leaf:1.55,flower:1.8,fruit:1.8}[kind]||1;
+  scale=targetScale;center(pos.get(candidates[0].id));
+  $('evidence-world').scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
 }
 for(const button of document.querySelectorAll('[data-stage]')){
   button.addEventListener('click',()=>focusStage(button.dataset.stage));
