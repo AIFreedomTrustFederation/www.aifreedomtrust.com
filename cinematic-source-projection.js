@@ -14,6 +14,14 @@ layer.append(lines,dots);scene.append(layer);
 const status=document.createElement('p');status.className='living-source-status';status.setAttribute('role','status');
 status.textContent='Select a luminous source to reveal its documented lineage.';
 host.append(status);
+const inspector=document.createElement('section');inspector.className='living-source-inspector';
+inspector.setAttribute('aria-label','Selected source and documented provenance');
+const heading=document.createElement('h2');heading.textContent='Explore the documented lineage';
+const description=document.createElement('p');description.textContent='Select a luminous point to inspect its published ancestry.';
+const lineage=document.createElement('ol');lineage.setAttribute('aria-label','Source-to-outcome ancestry');
+const destination=document.createElement('a');destination.hidden=true;destination.textContent='Open documented destination';
+destination.rel='noopener noreferrer';
+inspector.append(heading,description,lineage,destination);host.append(inspector);
 const safe=value=>{try{const u=new URL(value,location.href);return u.protocol==='https:'||u.origin===location.origin?u.href:null}catch{return null}};
 const pathTo=node=>{const trail=[],seen=new Set();let current=node;while(current&&!seen.has(current.id)){trail.unshift(current);seen.add(current.id);current=byId.get(current.parent)}return trail};
 // Every published node participates. Curated anchors preserve the existing composition;
@@ -51,6 +59,15 @@ function focus(node){
  dots.querySelectorAll('[data-node]').forEach(a=>a.classList.toggle('living-source-active',ids.has(a.dataset.node)));
  lines.querySelectorAll('[data-from]').forEach(p=>p.classList.toggle('living-source-active',ids.has(p.dataset.from)&&ids.has(p.dataset.to)));
  status.textContent=node.label+' · '+node.kind+' · '+trail.map(n=>n.label).join(' → ')+(node.kind==='fruit'?' · documented visitor destination':' · source lineage');
+ heading.textContent=node.label;
+ description.textContent=node.kind==='root'?'Verified source root; not a finished visitor outcome.':node.kind==='fruit'?'Documented visitor-facing outcome.':'Published '+node.kind+' in the federation lineage; no completed outcome is implied.';
+ lineage.replaceChildren();
+ for(const ancestor of trail){const item=document.createElement('li');item.textContent=ancestor.label+' ('+ancestor.kind+')';lineage.append(item)}
+ const link=safe(node.url);
+ destination.hidden=!link;
+ if(link){destination.href=link;destination.textContent=node.kind==='fruit'?'Open documented experience':'Open published source';if(new URL(link).origin!==location.origin){destination.target='_blank'}else destination.removeAttribute('target')}
+ else {destination.removeAttribute('href');destination.removeAttribute('target')}
+
 }
 host.addEventListener('pointerleave',()=>{if(!reduced.matches&&!host.contains(document.activeElement)){dots.querySelectorAll('.living-source-active').forEach(n=>n.classList.remove('living-source-active'));lines.querySelectorAll('.living-source-active').forEach(n=>n.classList.remove('living-source-active'))}});
 })();
