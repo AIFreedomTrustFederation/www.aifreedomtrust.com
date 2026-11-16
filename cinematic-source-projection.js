@@ -30,6 +30,64 @@ const directory=document.createElement('ul');directory.id='living-source-directo
 const count=document.createElement('p');count.setAttribute('role','status');
 controls.append(searchLabel,filterLabel);
 inspector.append(heading,description,lineage,destination,controls,count,directory);host.after(inspector);
+
+/* Evidence-bound voyage: a reversible source-to-outcome journey inside the hero.
+   Camera framing is presentation only; no product, readiness or relationship is inferred. */
+const voyage=document.createElement('nav');voyage.className='living-voyage';voyage.setAttribute('aria-label','Explore documented source lineage');
+const voyageTitle=document.createElement('h3');voyageTitle.textContent='Follow the living lineage';
+const voyageHint=document.createElement('p');voyageHint.textContent='Choose a published root or source. Follow only documented parent-child connections.';
+const voyageTrail=document.createElement('ol');voyageTrail.className='living-voyage-trail';
+const voyageNext=document.createElement('div');voyageNext.className='living-voyage-next';
+const voyageControls=document.createElement('div');voyageControls.className='living-voyage-controls';
+const voyageBack=document.createElement('button');voyageBack.type='button';voyageBack.textContent='← Previous source';
+const voyageReset=document.createElement('button');voyageReset.type='button';voyageReset.textContent='View whole Tree';
+const voyageZoomIn=document.createElement('button');voyageZoomIn.type='button';voyageZoomIn.textContent='Zoom in +';
+const voyageZoomOut=document.createElement('button');voyageZoomOut.type='button';voyageZoomOut.textContent='Zoom out −';
+const voyageMap=document.createElement('svg');voyageMap.classList.add('living-voyage-map');voyageMap.setAttribute('viewBox','0 0 100 100');
+voyageMap.setAttribute('role','img');voyageMap.setAttribute('aria-label','Spatial overview of the selected source on the Tree');
+const mapMarker=document.createElementNS(ns,'circle');mapMarker.setAttribute('r','3');mapMarker.setAttribute('fill','#f5d68c');voyageMap.append(mapMarker);
+voyageControls.append(voyageBack,voyageReset,voyageZoomIn,voyageZoomOut);
+voyage.append(voyageTitle,voyageHint,voyageTrail,voyageNext,voyageControls,voyageMap);
+inspector.insertBefore(voyage,controls);
+let view={x:0,y:0,w:1000,h:1000},previous=[];
+const setView=(x,y,w)=>{
+ const size=Math.max(250,Math.min(1000,w)),max=1000-size;
+ view={x:Math.max(0,Math.min(max,x)),y:Math.max(0,Math.min(max,y)),w:size,h:size};
+ scene.setAttribute('viewBox',[view.x,view.y,view.w,view.h].join(' '));
+};
+function frame(node){
+ const p=locations[node.id];if(!p)return;
+ const size=reduced.matches?800:560;
+ setView(p[0]-size/2,p[1]-size/2,size);
+ mapMarker.setAttribute('cx',String(p[0]/10));mapMarker.setAttribute('cy',String(p[1]/10));
+}
+function renderVoyage(node){
+ const trail=pathTo(node);voyageTrail.replaceChildren();voyageNext.replaceChildren();
+ for(const ancestor of trail){
+  const item=document.createElement('li'),button=document.createElement('button');
+  button.type='button';button.textContent=ancestor.label+' · '+ancestor.kind;
+  if(ancestor.id===node.id)button.setAttribute('aria-current','step');
+  button.addEventListener('click',()=>selectNode(ancestor));
+  item.append(button);voyageTrail.append(item);
+ }
+ const children=visible.filter(n=>n.parent===node.id);
+ const label=document.createElement('p');
+ label.textContent=children.length?'Continue along documented relationships:':'No further documented relationship or outcome is available here.';
+ voyageNext.append(label);
+ for(const child of children){
+  const button=document.createElement('button');button.type='button';button.textContent='Explore '+child.label+' · '+child.kind;
+  button.addEventListener('click',()=>selectNode(child));voyageNext.append(button);
+ }
+ voyageBack.disabled=previous.length===0;
+ frame(node);
+}
+voyageBack.addEventListener('click',()=>{
+ const id=previous.pop(),node=byId.get(id);if(node)selectNode(node,false);
+});
+voyageReset.addEventListener('click',()=>{setView(0,0,1000);mapMarker.setAttribute('cx','50');mapMarker.setAttribute('cy','50')});
+voyageZoomIn.addEventListener('click',()=>setView(view.x+view.w*.125,view.y+view.h*.125,view.w*.75));
+voyageZoomOut.addEventListener('click',()=>setView(view.x-view.w/6,view.y-view.h/6,view.w*4/3));
+
 const safe=value=>{try{const u=new URL(value,location.href);return u.protocol==='https:'||u.origin===location.origin?u.href:null}catch{return null}};
 const pathTo=node=>{const trail=[],seen=new Set();let current=node;while(current&&!seen.has(current.id)){trail.unshift(current);seen.add(current.id);current=byId.get(current.parent)}return trail};
 // Every published node participates. Curated anchors preserve the existing composition;
@@ -47,8 +105,9 @@ for(const kind of Object.keys(stageBands)){
 const projectedIds=new Set(visible.map(n=>n.id));
 let selectedId=null;
 const anchors=new Map();
-function selectNode(node){
- selectedId=node.id;focus(node);
+function selectNode(node,record=true){
+ if(record&&selectedId&&selectedId!==node.id)previous.push(selectedId);
+ selectedId=node.id;focus(node);renderVoyage(node);
  const anchor=anchors.get(node.id);if(anchor){anchor.setAttribute('aria-current','true')}
  for(const [id,element] of anchors){if(id!==node.id)element.removeAttribute('aria-current')}
 }
