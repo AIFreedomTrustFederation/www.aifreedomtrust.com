@@ -32,7 +32,7 @@ try {
         nodes.filter(a => a.href.startsWith('https:') && a.target === '_blank' &&
           (!a.rel.includes('noopener') || !a.rel.includes('noreferrer'))).map(a => a.href)
       ), [], name + ' safe external links');
-      const buttons = page.locator('button:visible');
+      const buttons = page.locator('button:visible:not([disabled])');
       if (await buttons.count()) {
         await buttons.first().focus();
         assert.ok(await buttons.first().evaluate(e => document.activeElement === e), name + ' keyboard focus');
