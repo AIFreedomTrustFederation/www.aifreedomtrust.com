@@ -35,3 +35,26 @@ assert(cockpitStyle.includes('prefers-reduced-motion'));
 assert(cockpitStyle.includes('forced-colors'));
 assert(!cockpitSource.includes('localStorage'));
 console.log('Evidence cockpit: biological stages, filters, attestation boundaries passed');
+
+const readModule=name=>readFileSync(new URL('../'+name,import.meta.url),'utf8');
+const explorer=readModule('semantic-explorer-navigation.mjs');
+const comparison=readModule('semantic-lineage-comparison.mjs');
+const quests=readModule('semantic-evidence-quest-board.mjs');
+// Integrated journey contract: one selected curated ID can travel from evidence
+// cockpit to spatial theatre, source comparison and missions without inventing data.
+for(const event of ['aift:lineage-select','aift:lineage-compare','aift:lineage-missions','aift:evidence-inspect','aift:lineage-focus']){
+ assert(cockpitSource.includes(event)||explorer.includes(event),'Missing cross-workspace event: '+event);
+}
+assert.match(cockpitSource,/Compare source lineage/);
+assert.match(cockpitSource,/Explore evidence missions/);
+assert.match(cockpitSource,/byId\.has\(id\)/);
+assert.match(explorer,/routeLineage\(6,event\)/);
+assert.match(explorer,/routeLineage\(5,event\)/);
+assert.match(comparison,/scene\.nodes\.some\(n=>n\.id===id\)/);
+assert.match(comparison,/selects\[0\]\.value=id/);
+assert.match(quests,/quests\.some\(q=>q\.id===id\)/);
+assert.match(quests,/focusedId=id/);
+for(const source of [cockpitSource,explorer,comparison,quests]){
+ assert(!source.includes('localStorage'),'No persistent tracking or invented progress');
+}
+console.log('Cross-workspace evidence expedition routing contract passed');
