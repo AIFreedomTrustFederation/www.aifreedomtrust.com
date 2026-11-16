@@ -105,3 +105,22 @@
 .living-source-directory button:focus-visible{outline:3px solid #f7d897;outline-offset:2px}
 .living-source-node[aria-current=true] circle:nth-child(2){stroke:#f7d897;stroke-width:3}
 @media(max-width:600px){.living-source-controls{display:grid;gap:.8rem}.living-source-directory{grid-template-columns:1fr;max-height:320px}}
+
+
+/* Living Universe 3.0: source-backed hero voyage and reversible spatial camera. */
+.living-voyage{margin:1.25rem 0;padding:clamp(.85rem,2vw,1.5rem);border:1px solid #81e8ca75;border-radius:1.25rem;background:radial-gradient(ellipse at 100% 0%,#385d8066,transparent 65%),linear-gradient(140deg,#0c2435,#101b32);box-shadow:0 16px 42px #0005}
+.living-voyage h3{margin:0 0 .4rem;color:#f5d68c;letter-spacing:.025em}
+.living-voyage p{color:#cfe9e7;line-height:1.5}
+.living-voyage-trail{display:flex;flex-wrap:wrap;gap:.5rem;list-style:none;padding:0;margin:1rem 0}
+.living-voyage-trail li{min-width:0}
+.living-voyage button{min-height:44px;padding:.55rem .8rem;border:1px solid #9de6d277;border-radius:.8rem;background:#15384a;color:#f6fbfa;cursor:pointer;text-align:left;overflow-wrap:anywhere}
+.living-voyage button[aria-current=step]{background:#355047;border-color:#f5d68c;box-shadow:0 0 0 1px #f5d68c55}
+.living-voyage button:hover:not(:disabled){background:#275567}
+.living-voyage button:focus-visible{outline:3px solid #f5d68c;outline-offset:3px}
+.living-voyage button:disabled{opacity:.45;cursor:not-allowed}
+.living-voyage-next{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem}
+.living-voyage-next p{flex-basis:100%;margin:.25rem 0}
+.living-voyage-controls{display:flex;flex-wrap:wrap;gap:.5rem;margin:1rem 0}
+.living-voyage-map{display:block;width:min(130px,40vw);height:auto;aspect-ratio:1;margin-left:auto;border:1px solid #9de6d266;border-radius:50%;background:radial-gradient(circle,#316b6b55 0%,#0a1b30 75%);pointer-events:none}
+@media(max-width:600px){.living-voyage{border-radius:1rem}.living-voyage-trail{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.living-voyage-trail button,.living-voyage-controls button{width:100%}.living-voyage-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(prefers-reduced-motion:reduce){.living-voyage *{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
