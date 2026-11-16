@@ -1,0 +1,60 @@
+name: Living Universe isolated preview
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CF_PREVIEW_PROJECT: ${{ vars.LIVING_UNIVERSE_PREVIEW_PROJECT }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require complete integrated source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s living-universe-full.html
+          test -s source/src/data.js
+          test -s source/build.py
+          test -d source/tests
+          test "$(wc -c < living-universe-full.html)" -gt 150000
+      - name: Verify original content and reproducible build
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo '2f3a0ac8dd112f2742bf2f53d6705754307e9e8620faecf9031becf55410f8d8  source/src/data.js' | sha256sum -c -
+          python3 scripts/check_living_universe_canonical.py
+          python3 scripts/check_living_universe_preservation.py
+          python3 -m unittest discover -s source/tests -v
+          for file in source/src/*.js; do node --check "$file"; done
+          python3 source/build.py
+          cmp source/dist/index.html living-universe-full.html
+      - name: Package standalone preview
+        run: |
+          mkdir -p /tmp/lu-preview
+          cp living-universe-full.html /tmp/lu-preview/index.html
+          printf '%s\n' 'User-initiated preview. Not production.' > /tmp/lu-preview/README.txt
+      - name: Upload browser-openable preview artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: living-universe-complete-preview
+          path: /tmp/lu-preview/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Publish to isolated Cloudflare Pages preview only when configured
+        if: ${{ env.CF_API_TOKEN != '' && env.CF_ACCOUNT_ID != '' && env.CF_PREVIEW_PROJECT != '' }}
+        run: |
+          set -euo pipefail
+          case "$CF_PREVIEW_PROJECT" in
+            ""|www-aifreedomtrust-com|aifreedomtrust-com|aifreedomtrust|www-aifreedomtrust) echo 'Refusing possible production project'; exit 1;;
+          esac
+          CLOUDFLARE_API_TOKEN="$CF_API_TOKEN" CLOUDFLARE_ACCOUNT_ID="$CF_ACCOUNT_ID" \
+            npx --yes wrangler@4 pages deploy /tmp/lu-preview \
+              --project-name "$CF_PREVIEW_PROJECT" --branch living-universe-preview

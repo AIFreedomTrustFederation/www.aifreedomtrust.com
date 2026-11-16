@@ -52,6 +52,8 @@ Root live URL:
 https://aifreedomtrustfederation.github.io/
 ```
 
-## Termux repair script
+## Termux Pages repair script — mutating operation
 
-Use `scripts/aift-pages-repair.sh` from this repository to normalize Pages sources, remove accidental custom domains where possible, and audit live URLs.
+The checked-in `scripts/aift-pages-repair.sh` is **not a read-only audit**. It installs Termux packages, may request GitHub authentication, and iterates over a hard-coded list of repositories. For each accessible target with the configured branch, it invokes the GitHub Pages `PUT` or `POST` API and attempts `DELETE` on the Pages custom-domain endpoint. Running it can change publishing sources or remove configured custom domains across repositories; its subsequent HTTP smoke checks do not establish authorized or healthy deployment.
+
+Do not run this script as a routine verification check. Before any Pages or custom-domain changes, review the actual target settings and obtain the repository owner's required approval under [`AGENTS.md`](../AGENTS.md). For an audit-only pass, inspect workflow results, Pages settings, and live URLs without invoking the repair script. The script's repository list and branch choices are configuration assumptions, not independently verified current deployment evidence.

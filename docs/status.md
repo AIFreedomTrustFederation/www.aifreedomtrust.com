@@ -22,6 +22,7 @@ Last local stewardship update: 2026-06-20.
 Checks appropriate for this static portal:
 
 - `git diff --check`
+- `python -m unittest discover -s tests -v` and `python scripts/validate_static_site.py` for local HTML targets, fragments, unsafe URL schemes, and prohibited remote HTML resources across the five published HTML pages
 - local HTTP preview with `python -m http.server`
 - HTTP checks for `/`, `/styles.css`, `/assets/aift-federation-hero.png`, and key docs
 
@@ -35,10 +36,10 @@ Checks appropriate for this static portal:
 
 ## Known blockers
 
-- Public portal has no automated link checker yet.
+- The automated static validator does not verify external navigation destinations, browser-executed Tree modules or remote manifests, or live Pages responses.
 - Custom domain is still a roadmap item.
 - Public inventory needs a recurring update rhythm as repo statuses change.
 
 ## Next best repair
 
-Add a small static-site validation script that starts a local preview, checks core links/assets, and exits cleanly for CI or local verification.
+Add browser-level verification of the Living Tree's remote module and manifest integration, with separate checks for external links and live Pages responses. Do not treat these portal checks as proof that linked repositories are operational.

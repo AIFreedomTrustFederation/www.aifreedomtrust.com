@@ -1,0 +1,71 @@
+name: Import verified complete Living Universe source
+
+on:
+  workflow_dispatch:
+    inputs:
+      archive_url:
+        description: 'GitHub-hosted release asset URL or issue attachment URL for the exact verified ZIP'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: living-universe-source-import
+  cancel-in-progress: false
+
+jobs:
+  import-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - name: Check trusted GitHub archive location
+        env:
+          ARCHIVE_URL: ${{ inputs.archive_url }}
+        run: |
+          python3 - <<'PY'
+          import os, urllib.parse
+          url = urllib.parse.urlsplit(os.environ['ARCHIVE_URL'])
+          ok = (url.scheme == 'https' and url.hostname == 'github.com' and
+                (url.path.startswith('/AIFreedomTrustFederation/') or
+                 url.path.startswith('/user-attachments/assets/') or
+                 url.path.startswith('/user-attachments/files/')) and
+                not url.username and not url.password and not url.query and not url.fragment)
+          if not ok:
+              raise SystemExit('Only trusted github.com organization release assets or issue attachments are accepted')
+          PY
+      - name: Download pinned source ZIP
+        env:
+          ARCHIVE_URL: ${{ inputs.archive_url }}
+        run: |
+          curl --fail --location --retry 3 --max-time 120 --output /tmp/living-universe.zip "$ARCHIVE_URL"
+          echo '0ab68d61aad432d1389ebe5abc878f6f0e635cb9a6cd277daf60e9ab477f9856  /tmp/living-universe.zip' | sha256sum --check
+      - name: Import and verify original source, build, and tests
+        run: |
+          python3 scripts/import_living_universe_release.py /tmp/living-universe.zip
+          for file in source/src/*.js; do node --check "$file"; done
+      - name: Open draft PR containing the actual website source
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          branch="automation/living-universe-full-source-${GITHUB_RUN_ID}"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "$branch"
+          git add living-universe-full.html source validation/living-universe release/living-universe docs/living-universe-release
+          if git diff --cached --quiet; then
+            echo 'No source changes to propose'; exit 0
+          fi
+          git commit -m 'feat: integrate complete checksum-verified Living Universe source'
+          git push origin "$branch"
+          gh pr create --base main --head "$branch" --draft \
+            --title 'Integrate complete verified Living Universe website source' \
+            --body 'Automated import of the full original Living Universe and additive enhancements. ZIP SHA-256: 0ab68d61aad432d1389ebe5abc878f6f0e635cb9a6cd277daf60e9ab477f9856. Includes standalone HTML, editable modules, build, tests and source verification. Preservation and reproducible build passed before PR creation. Do not merge until exact-head CI and real-browser acceptance pass. No production deployment is authorized.'
