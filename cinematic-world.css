@@ -7,3 +7,6 @@
 @media(max-width:850px){.evidence-layout{grid-template-columns:1fr}.evidence-viewport svg{max-height:none}.evidence-toolbar{align-items:stretch}.evidence-aside{max-height:none}.hud{flex-wrap:wrap}.hud nav{max-width:100%;overflow-wrap:anywhere}}
 @media(max-width:440px){.evidence-world{padding-inline:.8rem}.evidence-toolbar label{flex-basis:100%}.evidence-camera-buttons{width:100%}.evidence-camera-buttons button{flex:1}.evidence-viewport svg{min-height:310px}.hud nav{font-size:.7rem;gap:.4rem}.hud nav a{padding:.25rem}}
 @media(prefers-reduced-motion:reduce){.evidence-world *{animation:none!important;transition:none!important}}
+
+/* Source-backed spatial overview: compact, legible and touch-friendly at every breakpoint. */
+.evidence-minimap{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;min-width:0}.world-overview{width:min(210px,48vw);height:auto;aspect-ratio:5/4;border-radius:10px;flex:none;overflow:visible}.world-overview [role=button]{cursor:pointer;outline:none}.world-overview [role=button]:focus-visible{stroke:white;stroke-width:9}.world-overview-status{font-size:.85rem;color:#e6e4d8}@media(max-width:440px){.world-overview{width:min(160px,45vw)}.evidence-minimap{gap:.5rem}}
