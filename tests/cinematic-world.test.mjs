@@ -133,3 +133,16 @@ test('cinematic source directory is searchable, filtered and keyboard navigable'
  assert.match(css,/max-width:600px/);
  assert.doesNotMatch(js,/localStorage|sendBeacon|Math\.random|reward_xp/);
 });
+
+
+test('hero voyage navigates only documented lineage with reversible camera and evidence gaps',()=>{
+ const js=read('cinematic-source-projection.js'),css=read('cinematic-world.css');
+ for(const token of ['living-voyage','pathTo(node)','visible.filter(n=>n.parent===node.id)','No further documented relationship or outcome','previous.push(selectedId)','previous.pop()','scene.setAttribute(\'viewBox\'','voyageBack','voyageReset','voyageZoomIn','voyageZoomOut','living-voyage-map'])assert.ok(js.includes(token),token);
+ assert.match(js,/Math\.max\(250,Math\.min\(1000,w\)\)/);
+ assert.match(js,/if\(record&&selectedId&&selectedId!==node\.id\)previous\.push\(selectedId\)/);
+ assert.match(css,/\.living-voyage-trail/);
+ assert.match(css,/\.living-voyage-controls/);
+ assert.match(css,/@media\(max-width:600px\)/);
+ assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
+ assert.doesNotMatch(js,/localStorage|sendBeacon|Math\.random|reward_xp|fetch\(/);
+});
