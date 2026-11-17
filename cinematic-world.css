@@ -1,0 +1,235 @@
+:root{color-scheme:dark;--gold:#f7d18a;--text:#f6f4ed;--muted:#c8d9e0;--red:#fa7582;--green:#64e6b4;--blue:#6cbcff}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#040b16;color:var(--text);font:16px/1.6 system-ui,-apple-system,sans-serif}a{color:inherit}.skip{position:absolute;left:-9999px;top:1rem;z-index:20;background:white;color:black;padding:1rem}.skip:focus{left:1rem}.hud{position:absolute;z-index:4;top:0;left:0;right:0;display:flex;align-items:center;gap:1rem;justify-content:space-between;padding:1rem clamp(1rem,4vw,3rem);background:linear-gradient(#020713e8,#02071300)}.brand{font-weight:900;color:var(--gold);text-decoration:none;white-space:nowrap}.hud-title{font-size:.73rem;letter-spacing:.2em;text-align:center}.hud-title small{display:block;color:#9debd8}.hud nav{display:flex;gap:1rem;flex-wrap:wrap;font-size:.83rem}.hud nav a{text-decoration:none;color:#d5e7e9}.hud a:focus-visible,.hud a:hover{color:var(--gold);outline-offset:4px}.world{position:relative;min-height:100svh;isolation:isolate;overflow:hidden;display:flex;align-items:center;padding:8rem max(5vw,1rem) 5rem;background:radial-gradient(ellipse at 70% 50%,#163c50,#0a1630 42%,#040817 83%)}.sky,.aurora,.stars{position:absolute;inset:0;pointer-events:none}.sky{background:radial-gradient(ellipse at 50% 100%,#672d46aa,transparent 40%),linear-gradient(110deg,#0b1735,#030913 65%)}.aurora{background:conic-gradient(from 100deg at 70% 40%,transparent,#2b8e8977,transparent,#7349a855,transparent);filter:blur(70px);opacity:.6;animation:breathe 12s ease-in-out infinite alternate}.stars{opacity:.55;background-image:radial-gradient(circle,#fff 1px,transparent 1.5px),radial-gradient(circle,#80ffdf 1px,transparent 1.5px);background-size:93px 101px,157px 139px;background-position:0 0,45px 30px}.intro{position:relative;z-index:2;max-width:600px;width:54%;text-shadow:0 3px 20px #000}.eyebrow{font-size:.72rem;letter-spacing:.22em;color:#89eed4;font-weight:750}.intro h1{font:clamp(2.9rem,6.5vw,6.8rem)/1.04 Georgia,serif;letter-spacing:-.035em;margin:1.1rem 0}.intro h1 em{font-style:normal;background:linear-gradient(110deg,#ff9a83,#f6d997,#7ff5c5,#8fbfff);background-clip:text;color:transparent}.intro>p:not(.eyebrow){max-width:44ch;color:#e1e9ec;font-size:clamp(1rem,1.7vw,1.28rem)}.enter,.actions a{display:inline-flex;align-items:center;justify-content:center;gap:1rem;border:1px solid #f4d18a;border-radius:99px;padding:.85rem 1.5rem;text-decoration:none;font-weight:750;background:linear-gradient(110deg,#973d65,#176e66,#285ea4);box-shadow:0 10px 45px #4bd7b533}.enter:hover,.actions a:hover{filter:brightness(1.2)}.tree{position:absolute;z-index:1;width:min(73vw,900px);height:auto;right:-5%;bottom:-16%;filter:drop-shadow(0 0 55px #4dffc033);animation:float 9s ease-in-out infinite alternate}.geometry{opacity:.3;transform-origin:500px 430px;animation:rotate 100s linear infinite}.fireflies{filter:drop-shadow(0 0 9px #bbffe0);animation:breathe 4s ease-in-out infinite alternate}.world-note{position:absolute;bottom:1.2rem;left:5%;z-index:2;font-size:.75rem;color:#c0cbd3}.journey{padding:clamp(3rem,7vw,7rem) max(5vw,1rem);background:radial-gradient(ellipse at 20% 0%,#1a3b47,#081323 55%,#080b1a)}.journey h2{font:clamp(2.1rem,5vw,4.5rem)/1.1 Georgia,serif;color:var(--gold);margin:.5rem 0}.explain{max-width:70ch;color:var(--muted)}.stages{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:.6rem;margin:2rem 0}.stages button{min-height:96px;cursor:pointer;text-align:left;background:#14253b;color:#dbe8ef;border:1px solid #7894a0;border-top:5px solid var(--accent,#f9cc85);border-radius:12px;padding:.85rem;font:inherit}.stages button:nth-child(1){--accent:#fa7582}.stages button:nth-child(2){--accent:#f4ca7c}.stages button:nth-child(3){--accent:#64e6b4}.stages button:nth-child(4){--accent:#6cbcff}.stages button:nth-child(5){--accent:#b392fa}.stages button:nth-child(6){--accent:#ffab72}.stages button b{display:block;font-size:1.12rem}.stages button[aria-pressed=true]{background:#2a4057;outline:2px solid #f5dfae;outline-offset:2px}.stages button:focus-visible{outline:3px solid white}.inspector{padding:clamp(1.5rem,4vw,3rem);border:1px solid #8cbaae;border-radius:24px;background:radial-gradient(ellipse at 100% 0%,#194a5480,transparent 65%),linear-gradient(125deg,#14283b,#11172c);max-width:950px;box-shadow:0 20px 60px #0005}.inspector>span{font-size:.8rem;color:#9ef0d6;letter-spacing:.15em}.inspector h3{font:clamp(1.8rem,4vw,3rem) Georgia,serif;color:#f6d89d;margin:.7rem 0}.inspector p{max-width:66ch;color:#d0e1e9}.actions,.secondary{display:flex;flex-wrap:wrap;gap:1rem;margin-top:1.5rem}.actions a{font-size:.95rem}.actions a+ a{background:#162a42;border-color:#8ac8de}.secondary a{color:#9debd8}footer{padding:2rem 5%;background:#050b15;color:#aebfc7;font-size:.83rem}footer span{display:block}@keyframes float{to{transform:translateY(-22px)}}@keyframes breathe{to{opacity:.95}}@keyframes rotate{to{transform:rotate(360deg)}}@media(max-width:800px){.hud{position:absolute;align-items:flex-start}.hud-title{display:none}.hud nav{justify-content:flex-end;gap:.55rem}.world{min-height:100svh;align-items:flex-start;padding-top:7rem}.intro{width:100%;max-width:600px}.intro h1{font-size:clamp(2.6rem,10vw,4.5rem)}.intro>p:not(.eyebrow){max-width:32ch}.tree{width:110vw;right:-30%;bottom:-12%;opacity:.8}.world-note{max-width:28ch}.stages{grid-template-columns:repeat(3,minmax(0,1fr))}.stages button{min-height:78px}}@media(max-width:440px){.hud nav{font-size:.72rem}.intro{margin-top:0}.tree{width:135vw;right:-45%;bottom:-12%;opacity:.68}.intro h1{font-size:clamp(2.7rem,11vw,4rem)}.intro>p:not(.eyebrow){font-size:1rem}.stages{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.aurora,.tree,.geometry,.fireflies{animation:none!important}}
+/* Living Universe 3.0: integrated source-backed exploration surface */
+.evidence-world{position:relative;padding:clamp(2rem,5vw,5rem) max(4vw,1rem);background:radial-gradient(ellipse at 70% 0%,#18475588,transparent 65%),linear-gradient(140deg,#06101f,#111b32 65%,#070d1b);border-top:6px solid transparent;border-image:linear-gradient(90deg,var(--red),var(--gold),var(--green),var(--blue)) 1}
+.evidence-world h2{font:clamp(2.2rem,5vw,4.5rem)/1.1 Georgia,serif;color:var(--gold);margin:.4rem 0}.evidence-lead{max-width:72ch;color:#d0e1ea}
+.evidence-toolbar{display:flex;flex-wrap:wrap;gap:.75rem;align-items:end;margin:1.5rem 0}.evidence-toolbar label{display:grid;gap:.25rem;flex:1 1 180px;font-size:.85rem;color:#a6eed9}.evidence-toolbar input,.evidence-toolbar select,.evidence-camera-buttons button,.evidence-list button,.evidence-trail button{min-height:44px;border:1px solid #7497ae;border-radius:11px;background:#12283b;color:#f5f7fc;font:inherit;padding:.65rem .8rem}.evidence-toolbar input,.evidence-toolbar select{width:100%;min-width:0}.evidence-camera-buttons{display:flex;gap:.4rem;flex-wrap:wrap}.evidence-camera-buttons button{cursor:pointer}.evidence-camera-buttons button:disabled{opacity:.45}
+.evidence-layout{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(260px,.9fr);gap:1rem}.evidence-viewport,.evidence-aside{min-width:0;border:1px solid #507d91;border-radius:22px;background:#071528b8;box-shadow:0 25px 70px #0006}.evidence-viewport{overflow:hidden;background:radial-gradient(ellipse at 50% 48%,#23555a77,transparent 65%),repeating-radial-gradient(circle at 50% 50%,transparent 0 60px,#e8ce8820 61px 62px),#071528}.evidence-viewport svg{display:block;width:100%;height:auto;max-height:650px;touch-action:none;cursor:grab}.evidence-viewport svg:active{cursor:grabbing}.world-node{cursor:pointer}.world-node text{fill:#fff;font:600 14px system-ui,sans-serif;paint-order:stroke;stroke:#061223;stroke-width:4px;stroke-linejoin:round;pointer-events:none}.world-node:focus-visible circle{stroke:#fff;stroke-width:6}.world-node.world-dim{opacity:.18}.world-edge{stroke-width:2.5;filter:drop-shadow(0 0 3px #8df7dd66)}.evidence-minimap,.evidence-count{margin:.4rem 1rem;color:#c4dce5;font-size:.82rem}.evidence-aside{padding:clamp(.85rem,2vw,1.5rem)}.evidence-trail{display:flex;gap:.35rem;flex-wrap:wrap}.evidence-trail button{cursor:pointer;font-size:.76rem;min-height:38px}.evidence-info{border-left:4px solid var(--gold);padding:.8rem 1rem;margin:1rem 0;background:#173146;border-radius:12px;overflow-wrap:anywhere}.evidence-info h3{font:clamp(1.4rem,3vw,2rem) Georgia,serif;color:var(--gold);margin:.25rem 0}.evidence-info p{color:#d4e1ea}.evidence-info .evidence-type{color:#93e9cb;font-size:.72rem;letter-spacing:.1em}.evidence-info a{color:#a8f4dd}.evidence-list{display:grid;gap:.4rem;max-height:330px;overflow:auto}.evidence-list button{text-align:left;cursor:pointer;overflow-wrap:anywhere}.evidence-list button[aria-current=true]{border-color:var(--gold);background:#35455b}.evidence-disclaimer{color:#b8cbd5;font-size:.85rem;max-width:85ch}.evidence-world :focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+@media(max-width:850px){.evidence-layout{grid-template-columns:1fr}.evidence-viewport svg{max-height:none}.evidence-toolbar{align-items:stretch}.evidence-aside{max-height:none}.hud{flex-wrap:wrap}.hud nav{max-width:100%;overflow-wrap:anywhere}}
+@media(max-width:440px){.evidence-world{padding-inline:.8rem}.evidence-toolbar label{flex-basis:100%}.evidence-camera-buttons{width:100%}.evidence-camera-buttons button{flex:1}.evidence-viewport svg{min-height:310px}.hud nav{font-size:.7rem;gap:.4rem}.hud nav a{padding:.25rem}}
+@media(prefers-reduced-motion:reduce){.evidence-world *{animation:none!important;transition:none!important}}
+
+/* Source-backed spatial overview: compact, legible and touch-friendly at every breakpoint. */
+.evidence-minimap{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;min-width:0}.world-overview{width:min(210px,48vw);height:auto;aspect-ratio:5/4;border-radius:10px;flex:none;overflow:visible}.world-overview [role=button]{cursor:pointer;outline:none}.world-overview [role=button]:focus-visible{stroke:white;stroke-width:9}.world-overview-status{font-size:.85rem;color:#e6e4d8}@media(max-width:440px){.world-overview{width:min(160px,45vw)}.evidence-minimap{gap:.5rem}}
+
+
+/* Source-backed journey cards, not gamified health claims. */
+.evidence-journey{margin-block:1.25rem;padding:1rem;border:1px solid rgba(145,219,206,.35);border-radius:1.1rem;background:linear-gradient(135deg,rgba(21,67,78,.64),rgba(18,24,58,.6))}
+.evidence-journey h4{margin:0 0 .45rem;color:#f4dfad}
+.evidence-journey-hint{font-size:.9rem;line-height:1.5;color:#c8e3e7}
+.evidence-journey-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,12rem),1fr));gap:.65rem}
+.evidence-journey-step{display:flex;flex-direction:column;align-items:flex-start;gap:.35rem;text-align:left;min-height:3.2rem;padding:.8rem;border:1px solid rgba(115,212,193,.5);border-radius:.75rem;color:#f5fafb;background:#0d3040;overflow-wrap:anywhere;cursor:pointer}
+.evidence-journey-step small{color:#a9e6d9}
+.evidence-journey-step:hover,.evidence-journey-step:focus-visible{outline:2px solid #e5d09b;outline-offset:2px;background:#1c4758}
+.evidence-journey-steps>a{color:#f7d18a;align-self:center}
+@media(max-width:440px){.evidence-journey{padding:.75rem}.evidence-journey-steps{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.evidence-journey-step{transition:none}}
+
+/* Immersive entrance milestone: real destinations, depth and mobile-first visual hierarchy. */
+.world{perspective:1200px;background:radial-gradient(ellipse at 72% 54%,#174e55 0%,#091b31 44%,#030713 88%)}
+.world:before{content:"";position:absolute;inset:-25%;z-index:0;pointer-events:none;background:conic-gradient(from 20deg at 69% 56%,transparent 0 18%,#3adfa11c 24%,transparent 31% 49%,#f26d7919 56%,transparent 65% 78%,#688dff22 85%,transparent);filter:blur(35px);animation:world-pulse 18s ease-in-out infinite alternate}
+.world:after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(0deg,#020811c9 0%,transparent 35%),repeating-linear-gradient(90deg,transparent 0 115px,#c3fff708 116px 117px);mask-image:linear-gradient(0deg,#000,transparent 65%)}
+.world .tree{filter:drop-shadow(0 0 35px #44d7b566) drop-shadow(0 0 110px #496cff44);transform-origin:55% 55%}
+.world-gates{position:absolute;z-index:3;right:clamp(1rem,5vw,5rem);bottom:clamp(3.8rem,8vh,7rem);display:grid;gap:.8rem;width:min(330px,35vw)}
+.world-gate{display:grid;grid-template-columns:2.5rem 1fr;column-gap:.7rem;align-items:center;padding:1rem 1.1rem;border:1px solid #9fe9d766;border-radius:18px;text-decoration:none;color:#f7f8fb;background:linear-gradient(110deg,#12334bde,#091626e8);box-shadow:0 15px 55px #0008,inset 0 1px #d9fff02c;backdrop-filter:blur(14px);transition:transform .25s ease,border-color .25s ease,background .25s ease}
+.world-gate>span{grid-row:span 2;font-size:2rem;color:#f8d68c;text-shadow:0 0 20px #e7d28b99}
+.world-gate strong{font-size:.94rem;line-height:1.25}.world-gate small{font-size:.73rem;color:#b9e5de}
+.world-gate:hover,.world-gate:focus-visible{transform:translateY(-4px);border-color:#f7d18a;background:#1b4455;outline-offset:4px}
+.world-gate-canopy{border-color:#99a9f777}
+@keyframes world-pulse{to{opacity:.52;transform:scale(1.08) rotate(6deg)}}
+@media(max-width:800px){.world{min-height:100svh;padding-bottom:15rem}.world .tree{width:125vw;right:-48%;bottom:5%;opacity:.85}.world-gates{left:1rem;right:1rem;bottom:3.2rem;width:auto;grid-template-columns:repeat(2,minmax(0,1fr))}.world-gate{grid-template-columns:1fr;padding:.7rem;gap:.25rem}.world-gate>span{grid-row:auto;font-size:1.4rem}.world-gate strong{font-size:.83rem}.world-gate small{font-size:.68rem}.world-note{bottom:.7rem}}
+@media(max-width:440px){.world{padding-top:6.5rem;padding-bottom:13rem}.world .tree{width:145vw;right:-62%;bottom:8%;opacity:.75}.intro h1{font-size:clamp(2.4rem,10vw,3.5rem)}.world-gates{bottom:3rem}.world-gate{min-height:94px}.world-gate small{line-height:1.3}}
+@media(prefers-reduced-motion:reduce){.world:before{animation:none}.world-gate{transition:none}.world-gate:hover{transform:none}}
+
+
+/* Guided voyage: cinematic stage rail backed by actual lineage nodes. */
+.evidence-voyage{padding:clamp(1rem,2.4vw,1.6rem);margin:0 0 1.2rem;border:1px solid #a1d8e64d;border-radius:24px;background:radial-gradient(ellipse at 100% 0%,#3b537a55,transparent 55%),linear-gradient(145deg,#0c2237f2,#07111ef5);box-shadow:0 18px 65px #0005,inset 0 1px #e0ffed1e}
+.evidence-voyage h3{margin:0 0 .3rem;color:#f7d18a;letter-spacing:.035em}
+.evidence-voyage p{margin:.35rem 0 1rem;color:#d4e7ed;font-size:.9rem;line-height:1.55}
+.evidence-voyage [role=status]{color:#a7f0d9;font-weight:700;font-variant-numeric:tabular-nums}
+.evidence-voyage-stops{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:.5rem}
+.evidence-voyage-stops li{flex:1 1 115px;min-width:0}
+.evidence-voyage-stop{width:100%;height:100%;min-height:66px;padding:.55rem .65rem;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:.1rem;text-align:left;border:1px solid #9dc9d455;border-radius:13px;background:#112c41;color:#f6f7fa;cursor:pointer;transition:transform .2s ease,background .2s ease}
+.evidence-voyage-stop small{text-transform:uppercase;letter-spacing:.13em;color:#9debd8;font-size:.65rem}
+.evidence-voyage-stop strong{font-size:.8rem;line-height:1.3;overflow-wrap:anywhere}
+.evidence-voyage-stop[aria-current=step]{border-color:#f7d18a;background:linear-gradient(135deg,#334c59,#19443e);box-shadow:inset 0 0 0 1px #f7d18a55,0 0 22px #64e6b422}
+.evidence-voyage-stop:hover{transform:translateY(-2px);background:#25485d}
+.evidence-voyage-gap{color:#ffd5ae;font-size:.82rem;padding:.6rem}
+.evidence-voyage-buttons{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.85rem}
+.evidence-voyage-buttons button{min-height:44px;padding:.5rem .8rem;border:1px solid #9adfcd70;border-radius:12px;background:#163c4a;color:#f6f7fa;cursor:pointer}
+.evidence-voyage-buttons button:disabled{opacity:.45;cursor:not-allowed}
+.evidence-voyage button:focus-visible{outline:3px solid #f7d18a;outline-offset:3px}
+@media(max-width:600px){.evidence-voyage{padding:1rem;border-radius:18px}.evidence-voyage-stops{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.evidence-voyage-buttons button{flex:1 1 90px}}
+@media(prefers-reduced-motion:reduce){.evidence-voyage-stop{transition:none}.evidence-voyage-stop:hover{transform:none}}
+
+/* Cinematic stage constellation: real published lineage counts, not XP or live status. */
+.world-beacons{position:absolute;z-index:5;inset:14% 2% 20%;pointer-events:none}
+.world-beacon{position:absolute;pointer-events:auto;display:flex;flex-direction:column;gap:0;min-width:108px;min-height:52px;padding:.55rem .8rem;border:1px solid #b7c8d266;border-radius:16px;background:linear-gradient(140deg,#091727e8,#173146d9);box-shadow:0 0 24px #6cbcff33,0 12px 28px #0008;color:#fff;text-align:left;cursor:pointer;backdrop-filter:blur(9px);transition:transform .25s,border-color .25s,box-shadow .25s}
+.world-beacon strong{font-size:.88rem;letter-spacing:.03em}.world-beacon small{font-size:.67rem;color:#d1e5e9}
+.world-beacon[aria-pressed=true]{border-color:#f7d18a;box-shadow:0 0 0 2px #f7d18a55,0 0 28px #f7d18a66}
+.world-beacon:hover{transform:translateY(-4px)}.world-beacon:focus-visible{outline:3px solid #fff;outline-offset:4px}
+.world-beacon-root{left:8%;bottom:0;border-color:#fa758288}.world-beacon-trunk{left:43%;bottom:18%;border-color:#f7d18a88}
+.world-beacon-branch{right:9%;top:40%;border-color:#64e6b488}.world-beacon-leaf{left:7%;top:26%;border-color:#6cbcff88}
+.world-beacon-flower{left:39%;top:2%;border-color:#b392fa88}.world-beacon-fruit{right:8%;top:10%;border-color:#ffcf8288}
+.tree{translate:var(--look-x,0px) var(--look-y,0px);transition:translate .3s ease-out}
+.world-stage-panel{position:absolute;z-index:5;bottom:7rem;left:50%;transform:translateX(-50%);width:min(430px,86vw);text-align:center;color:#e4eef1;font-size:.78rem;pointer-events:none;text-shadow:0 2px 8px #000}
+.world-stage-panel p{margin:0}.world-stage-panel a{pointer-events:auto;color:#ffe0a1;text-decoration:underline}
+.world-stage-panel [hidden]{display:none}
+@media(max-width:700px){.world-beacons{inset:22% 1% 24%}.world-beacon{min-width:82px;min-height:48px;padding:.35rem .5rem;border-radius:12px}.world-beacon strong{font-size:.75rem}.world-beacon small{font-size:.58rem}.world-beacon-root{left:2%;bottom:0}.world-beacon-trunk{left:36%;bottom:16%}.world-beacon-branch{right:1%;top:42%}.world-beacon-leaf{left:1%;top:27%}.world-beacon-flower{left:36%;top:0}.world-beacon-fruit{right:1%;top:14%}.world-stage-panel{bottom:5.5rem;font-size:.68rem}}
+@media(prefers-reduced-motion:reduce){.tree{translate:none!important;transition:none}.world-beacon{transition:none}.world-beacon:hover{transform:none}}
+
+
+/* Documented lineage projection: spatial coordinates are presentation only; identities and destinations come from the published contract. */
+.living-source-layer{pointer-events:none}.living-source-lines{fill:none;stroke:#9ee9c74d;stroke-width:2;stroke-linecap:round}.living-source-edge{transition:stroke .3s ease,stroke-width .3s ease;filter:drop-shadow(0 0 4px #5de6be77)}.living-source-edge.living-source-active{stroke:#f7d18a;stroke-width:4;filter:drop-shadow(0 0 10px #f7d18a)}.living-source-node{pointer-events:auto;cursor:pointer;outline:none}.living-source-node circle:nth-child(2){stroke:#fff8;stroke-width:1.5;filter:drop-shadow(0 0 8px #d8ffef);transition:r .2s ease,stroke-width .2s ease}.living-source-node:hover circle:nth-child(2),.living-source-node:focus-visible circle:nth-child(2),.living-source-node.living-source-active circle:nth-child(2){r:12;stroke:#fff;stroke-width:3;filter:drop-shadow(0 0 15px #fff6c2)}.living-source-node:focus-visible circle:first-child{stroke:#f7d18a;stroke-width:3}.living-source-status{position:absolute;z-index:5;left:clamp(1rem,5vw,4rem);bottom:1.6rem;max-width:min(52ch,48vw);padding:.55rem .8rem;border:1px solid #a6dec35c;border-radius:10px;background:#061827d9;color:#e3f8f1;font-size:.78rem;pointer-events:none;overflow-wrap:anywhere}
+@media(max-width:800px){.living-source-status{bottom:1.25rem;left:1rem;max-width:calc(100% - 2rem);font-size:.7rem}.living-source-node circle:first-child{r:25}}
+@media(prefers-reduced-motion:reduce){.living-source-edge,.living-source-node circle:nth-child(2){transition:none!important}}
+
+/* Published provenance is secondary to the playable full-screen Tree. */
+.living-source-inspector{max-width:1080px;margin:1.5rem auto;padding:clamp(1rem,3vw,2rem);border:1px solid #9ad9c35e;border-radius:22px;background:linear-gradient(125deg,#0b2337,#102a35 55%,#1b263e);color:#eaf6f4;box-shadow:0 20px 55px #0005}
+.living-source-inspector h2{margin:0 0 .5rem;color:#f7d897;font-size:clamp(1.2rem,3vw,1.8rem)}
+.living-source-inspector p{line-height:1.55;max-width:70ch}
+.living-source-inspector ol{display:flex;flex-wrap:wrap;gap:.5rem;list-style:none;padding:0;margin:1rem 0}
+.living-source-inspector li{padding:.55rem .8rem;border:1px solid #9ce7cc60;border-radius:12px;background:#173b48;overflow-wrap:anywhere}
+.living-source-inspector a{display:inline-flex;align-items:center;min-height:44px;padding:.6rem 1rem;border:1px solid #f7d897;border-radius:12px;color:#fff0bc}
+.living-source-inspector a:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.living-source-inspector [hidden]{display:none}
+@media(max-width:600px){.living-source-inspector{margin:1rem .75rem;border-radius:16px}.living-source-inspector ol{flex-direction:column}.living-source-inspector li{width:100%}}
+
+/* Searchable source provenance: a complete accessible alternative to spatial SVG exploration. */
+.living-source-controls{display:flex;flex-wrap:wrap;gap:1rem;align-items:end;margin-top:1.5rem}
+.living-source-controls label{display:grid;gap:.35rem;flex:1 1 220px;font-weight:700;color:#e3f4ee}
+.living-source-controls input,.living-source-controls select{width:100%;min-height:48px;border:1px solid #9ce7cc88;border-radius:12px;padding:.65rem .8rem;background:#071a2c;color:#f6f4ed;font:inherit}
+.living-source-controls :is(input,select):focus-visible{outline:3px solid #f7d897;outline-offset:3px}
+.living-source-directory{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:.55rem;padding:0;margin:1rem 0 0;max-height:360px;overflow:auto}
+.living-source-directory button{width:100%;min-height:48px;text-align:left;padding:.65rem .85rem;border:1px solid #9ce7cc55;border-radius:12px;background:#143347;color:#f4f9f8;font:inherit;cursor:pointer;overflow-wrap:anywhere}
+.living-source-directory button[aria-pressed=true]{border-color:#f7d897;background:#28534e}
+.living-source-directory button:focus-visible{outline:3px solid #f7d897;outline-offset:2px}
+.living-source-node[aria-current=true] circle:nth-child(2){stroke:#f7d897;stroke-width:3}
+@media(max-width:600px){.living-source-controls{display:grid;gap:.8rem}.living-source-directory{grid-template-columns:1fr;max-height:320px}}
+
+
+/* Living Universe 3.0: source-backed hero voyage and reversible spatial camera. */
+.living-voyage{margin:1.25rem 0;padding:clamp(.85rem,2vw,1.5rem);border:1px solid #81e8ca75;border-radius:1.25rem;background:radial-gradient(ellipse at 100% 0%,#385d8066,transparent 65%),linear-gradient(140deg,#0c2435,#101b32);box-shadow:0 16px 42px #0005}
+.living-voyage h3{margin:0 0 .4rem;color:#f5d68c;letter-spacing:.025em}
+.living-voyage p{color:#cfe9e7;line-height:1.5}
+.living-voyage-trail{display:flex;flex-wrap:wrap;gap:.5rem;list-style:none;padding:0;margin:1rem 0}
+.living-voyage-trail li{min-width:0}
+.living-voyage button{min-height:44px;padding:.55rem .8rem;border:1px solid #9de6d277;border-radius:.8rem;background:#15384a;color:#f6fbfa;cursor:pointer;text-align:left;overflow-wrap:anywhere}
+.living-voyage button[aria-current=step]{background:#355047;border-color:#f5d68c;box-shadow:0 0 0 1px #f5d68c55}
+.living-voyage button:hover:not(:disabled){background:#275567}
+.living-voyage button:focus-visible{outline:3px solid #f5d68c;outline-offset:3px}
+.living-voyage button:disabled{opacity:.45;cursor:not-allowed}
+.living-voyage-next{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem}
+.living-voyage-next p{flex-basis:100%;margin:.25rem 0}
+.living-voyage-controls{display:flex;flex-wrap:wrap;gap:.5rem;margin:1rem 0}
+.living-voyage-map{display:block;width:min(130px,40vw);height:auto;aspect-ratio:1;margin-left:auto;border:1px solid #9de6d266;border-radius:50%;background:radial-gradient(circle,#316b6b55 0%,#0a1b30 75%);pointer-events:none}
+@media(max-width:600px){.living-voyage{border-radius:1rem}.living-voyage-trail{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.living-voyage-trail button,.living-voyage-controls button{width:100%}.living-voyage-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(prefers-reduced-motion:reduce){.living-voyage *{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+
+/* Spatial camera affordances; keep visual controls operable on touch and keyboard. */
+.living-voyage-map{cursor:pointer;touch-action:manipulation}
+.living-voyage-map:focus-visible{outline:3px solid var(--gold);outline-offset:4px}
+.living-voyage-window{pointer-events:none}
+@media(prefers-reduced-motion:reduce){.living-voyage-window{transition:none}}
+
+/* Accessible spatial camera: visible guidance without obscuring the playable hero. */
+.living-camera-help{max-width:65ch;margin:.8rem 0;color:#d4e6ec;font-size:.88rem;line-height:1.55}
+.living-camera-announcement:empty{display:none}
+.living-camera-announcement{font-size:.82rem;color:#f7d18a}
+.tree:focus-visible{outline:3px solid #f7d18a;outline-offset:5px;border-radius:16px}
+@media (max-width:600px){.living-camera-help{font-size:.82rem;line-height:1.5}.tree:focus-visible{outline-offset:2px}}
+@media (prefers-reduced-motion:reduce){.tree:focus-visible{animation:none;transition:none}}
+
+/* Source-backed discovery journeys: accessible, non-coercive and never a live CI indicator. */
+.living-evidence-missions{margin:1.5rem 0;padding:clamp(1rem,3vw,2rem);border:1px solid #a28c65;border-radius:1.3rem;background:radial-gradient(ellipse at 95% 0%,#276c6950,transparent 65%),linear-gradient(125deg,#101d34,#162b3c);box-shadow:0 14px 45px #0005}
+.living-evidence-missions h3{margin:0 0 .5rem;color:#f7d18a;font:clamp(1.5rem,3vw,2.2rem)/1.2 Georgia,serif}
+.living-evidence-missions p{color:#d7e5ec;max-width:72ch}
+.living-mission-picker{display:flex;gap:.65rem;overflow-x:auto;padding:.5rem 0 1rem;scrollbar-width:thin}
+.living-mission-picker button,.living-mission-trail button{min-height:44px;padding:.65rem 1rem;border:1px solid #7f9eac;border-radius:999px;background:#142e42;color:#f5f8fa;font:inherit;cursor:pointer}
+.living-mission-picker button{flex:0 0 auto;max-width:min(78vw,320px);white-space:normal;text-align:left}
+.living-mission-picker button[aria-pressed=true]{border-color:#f7d18a;background:linear-gradient(110deg,#653b50,#195e5c,#28518c)}
+.living-mission-trail{display:flex;flex-wrap:wrap;gap:.5rem;list-style:none;margin:.5rem 0;padding:0}
+.living-mission-trail li{display:flex;align-items:center;gap:.5rem;min-width:0}
+.living-mission-trail li:not(:last-child)::after{content:'›';color:#f7d18a;font-size:1.5rem}
+.living-mission-trail button{border-radius:.7rem;overflow-wrap:anywhere;text-align:left}
+.living-evidence-missions button:focus-visible{outline:3px solid #f7d18a;outline-offset:3px}
+.living-mission-note{border-left:3px solid #f7d18a;padding:.7rem 1rem;background:#07162788}
+@media(max-width:600px){.living-mission-trail{display:grid;grid-template-columns:1fr}.living-mission-trail li:not(:last-child)::after{content:'↓'}.living-mission-trail li{justify-content:space-between}.living-mission-trail button{flex:1}}
+@media(prefers-reduced-motion:reduce){.living-evidence-missions *{scroll-behavior:auto!important;transition:none!important}}
+
+
+/* Living Universe 3.0: cinematic lineage portal. The Tree remains the dominant first-screen surface. */
+.world{--stage-light:var(--red)}
+.world[data-cinematic-stage="trunk"]{--stage-light:var(--gold)}
+.world[data-cinematic-stage="branch"]{--stage-light:var(--green)}
+.world[data-cinematic-stage="leaf"]{--stage-light:var(--blue)}
+.world[data-cinematic-stage="flower"]{--stage-light:#c6a7ff}
+.world[data-cinematic-stage="fruit"]{--stage-light:#ffcf82}
+.cinematic-portal{position:absolute;z-index:3;right:clamp(1rem,3vw,3rem);top:clamp(6rem,14vh,10rem);width:min(320px,32vw);padding:1.15rem 1.25rem;border:1px solid color-mix(in srgb,var(--stage-light) 65%,transparent);border-radius:22px;background:linear-gradient(135deg,#061223dd,#0b2335aa);box-shadow:0 0 65px color-mix(in srgb,var(--stage-light) 22%,transparent),inset 0 1px #ffffff24;backdrop-filter:blur(16px);transition:border-color .3s,box-shadow .3s}
+.cinematic-portal-eyebrow{font-size:.62rem;letter-spacing:.17em;color:var(--stage-light);font-weight:800;margin:0 0 .5rem}
+.cinematic-portal-heading{font:clamp(1.3rem,2vw,2rem)/1.15 Georgia,serif;color:#fff;margin:.1rem 0 .65rem}
+.cinematic-portal-detail{font-size:.88rem;line-height:1.5;color:#d5e7eb;margin:0 0 1rem}
+.cinematic-portal-track{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:.3rem}
+.cinematic-portal-step{cursor:pointer;min-width:0;min-height:44px;padding:.4rem 0;border-radius:9px;border:1px solid #6d859c;background:#0b263a;color:#d9e8ee;font-weight:800}
+.cinematic-portal-step[aria-pressed=true]{background:var(--stage-light);color:#07101d;border-color:#fff;box-shadow:0 0 20px var(--stage-light)}
+.cinematic-portal-step:focus-visible,.cinematic-portal-inspect:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.cinematic-portal-evidence{font-size:.73rem;color:#d3e2e8;margin:.9rem 0}
+.cinematic-portal-inspect{display:inline-block;font-size:.85rem;font-weight:750;color:#fff;text-underline-offset:4px}
+.tree .cinematic-stage-lit{filter:drop-shadow(0 0 15px var(--stage-light))}
+.tree .cinematic-stage-muted{opacity:.36}
+@media(max-width:800px){.cinematic-portal{top:auto;bottom:4.5rem;right:1rem;width:min(340px,calc(100% - 2rem));padding:.7rem .9rem}.cinematic-portal-heading{font-size:1.25rem}.cinematic-portal-detail{font-size:.78rem;margin-bottom:.45rem}.cinematic-portal-evidence{margin:.4rem 0;font-size:.7rem}.cinematic-portal-eyebrow{font-size:.57rem}.world .tree{bottom:3%;right:-20%;width:120vw}.world .intro{max-width:32ch}.world .intro>p:not(.eyebrow){max-width:29ch}}
+@media(max-width:440px){.cinematic-portal{bottom:3.2rem}.world .tree{width:135vw;right:-35%;bottom:11%;opacity:.9}.world .intro h1{font-size:clamp(2.25rem,10vw,3.3rem)}}
+@media(prefers-reduced-motion:reduce){.cinematic-portal,.tree .cinematic-stage-lit{transition:none!important;animation:none!important}}
+
+
+/* Source-backed stage-to-node voyage. Keeps the first viewport cinematic and the
+   technical inspector below the world. All choices originate in lineage-data.js. */
+.cinematic-portal-sources{display:flex;gap:.5rem;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x proximity;padding:.35rem .2rem .7rem;max-width:100%;scrollbar-color:var(--gold) #0c1829}
+.cinematic-portal-source{flex:0 0 clamp(138px,25vw,230px);min-height:54px;scroll-snap-align:start;border:1px solid #91b9b8a8;border-radius:12px;background:linear-gradient(130deg,#172a42e8,#102a36e8);color:var(--text);font:inherit;text-align:left;padding:.55rem .7rem;cursor:pointer;overflow-wrap:anywhere}
+.cinematic-portal-source strong,.cinematic-portal-source small{display:block;line-height:1.25}
+.cinematic-portal-source strong{font-size:.82rem}
+.cinematic-portal-source small{font-size:.7rem;color:#cce2e3;margin-top:.25rem}
+.cinematic-portal-source:hover,.cinematic-portal-source:focus-visible{border-color:var(--gold);outline:2px solid var(--gold);outline-offset:2px;background:#26475b}
+.cinematic-portal-source-help{font-size:.72rem;line-height:1.35;color:#d1e3e4;margin:.35rem 0}
+@media(max-width:440px){.cinematic-portal-sources{gap:.4rem}.cinematic-portal-source{flex-basis:142px;min-height:50px;padding:.45rem .55rem}.cinematic-portal-source-help{font-size:.69rem}}
+@media(prefers-reduced-motion:reduce){.cinematic-portal-sources{scroll-behavior:auto}}
+
+
+/* Source-backed growth trail: legible at Android portrait widths. */
+.cinematic-portal-source-entry{display:flex;flex-wrap:wrap;align-items:stretch;gap:.5rem;min-width:0}
+.cinematic-portal-source-entry>.cinematic-portal-source{flex:1 1 12rem;min-width:0}
+.cinematic-portal-trace,.cinematic-portal-lineage button{min-height:44px;border:1px solid rgba(247,216,151,.55);border-radius:.75rem;background:rgba(7,21,34,.82);color:#f7d897;padding:.65rem .9rem;cursor:pointer;font:inherit}
+.cinematic-portal-lineage{margin-block:1rem;padding:1rem;border:1px solid rgba(105,239,188,.38);border-radius:1rem;background:rgba(4,17,29,.85);color:#e7f7f2;max-width:100%;overflow-wrap:anywhere}
+.cinematic-portal-lineage h3{font-size:clamp(1rem,3vw,1.35rem);margin:0 0 .75rem}
+.cinematic-portal-lineage-path{display:flex;flex-wrap:wrap;gap:.65rem;padding:0;list-style:none}
+.cinematic-portal-lineage-path li{min-width:0;max-width:100%}
+.cinematic-portal-lineage a{display:inline-flex;min-height:44px;align-items:center;color:#f7d897;text-decoration:underline}
+.cinematic-portal-trace:focus-visible,.cinematic-portal-lineage :focus-visible{outline:3px solid #7eeed0;outline-offset:3px}
+@media(max-width:480px){.cinematic-portal-source-entry{flex-direction:column}.cinematic-portal-lineage{padding:.75rem}.cinematic-portal-lineage-path{flex-direction:column}}
+@media(prefers-reduced-motion:reduce){.cinematic-portal-lineage *{scroll-behavior:auto!important;transition:none!important}}
+
+/* Growth theater: cinematic first-screen preservation. The source directory and
+   ancestry inspector remain fully available below the playable world. */
+.cinematic-portal{position:relative;inset:auto;width:min(1100px,calc(100% - 2rem));margin:clamp(1rem,3vw,2rem) auto;padding:clamp(1rem,3vw,2rem);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:clamp(1rem,3vw,3rem);align-items:start;scroll-margin-top:5rem}
+.cinematic-portal-eyebrow,.cinematic-portal-heading,.cinematic-portal-detail,.cinematic-portal-track,.cinematic-portal-evidence,.cinematic-portal-inspect{grid-column:1}
+.cinematic-portal-source-help,.cinematic-portal-sources,.cinematic-portal-lineage{grid-column:2}
+.cinematic-portal-source-help{grid-row:1 / span 2}
+.cinematic-portal-sources{grid-row:3 / span 4;max-height:330px;overflow:auto;display:grid;grid-template-columns:1fr;align-content:start;scroll-snap-type:none}
+.cinematic-portal-source-entry{min-width:0}
+.cinematic-portal-lineage{grid-row:7;min-height:0}
+.cinematic-theater-entry{position:absolute;z-index:6;left:50%;bottom:clamp(1rem,3vh,2rem);transform:translateX(-50%);display:inline-flex;align-items:center;justify-content:center;min-height:48px;max-width:calc(100% - 2rem);padding:.65rem 1rem;border:1px solid #f7d897;border-radius:999px;background:#071827e8;color:#ffe6ab;text-align:center;text-decoration:none;font-weight:700;box-shadow:0 0 28px #5ee9bd44}
+.cinematic-theater-entry:focus-visible{outline:3px solid #fff;outline-offset:3px}
+@media(max-width:800px){.cinematic-portal{position:relative;inset:auto;width:calc(100% - 1.5rem);margin:1rem auto;display:block;padding:1rem}.cinematic-portal-sources{display:flex;max-height:unset;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity}.cinematic-portal-source-entry{flex:0 0 min(80vw,280px)}.cinematic-portal-lineage{margin-top:1rem}.cinematic-theater-entry{bottom:1.25rem}.world-stage-panel{bottom:5rem}.world-gates{bottom:6.5rem}.world-note{bottom:.25rem}}
+@media(max-width:440px){.cinematic-portal-source-entry{flex-basis:min(83vw,260px)}.world-gates{bottom:6rem}.world-beacons{bottom:25%}.world-stage-panel{bottom:4.5rem}}
+@media(prefers-reduced-motion:reduce){.cinematic-theater-entry{scroll-behavior:auto}}
+
+/* Embedded cinematic entrance: retain the full standalone page and source contracts. */
+.embedded-world .hud{display:none}
+.embedded-world .world{min-height:100svh;min-height:100dvh;padding-top:clamp(1rem,3vh,2.5rem);padding-bottom:3.5rem}
+.embedded-world .world .intro{max-width:34ch;width:44%;align-self:flex-start;margin-top:clamp(1rem,7vh,5rem)}
+.embedded-world .world .intro h1{font-size:clamp(2.1rem,4.7vw,4.8rem)}
+.embedded-world .world .intro>p:not(.eyebrow){font-size:clamp(.86rem,1.25vw,1.05rem)}
+.embedded-world .world .tree{width:min(76vw,950px);right:-4%;bottom:-17%}
+.embedded-world .world .world-gates{z-index:3}
+@media(max-width:800px){.embedded-world .world{padding:1rem .75rem 3.5rem;min-height:100svh;min-height:100dvh}.embedded-world .world .intro{width:100%;max-width:27ch;margin-top:0}.embedded-world .world .intro .eyebrow{font-size:.62rem;letter-spacing:.12em}.embedded-world .world .intro h1{font-size:clamp(2rem,8vw,3rem);margin:.35rem 0}.embedded-world .world .intro>p:not(.eyebrow){max-width:23ch;font-size:.83rem;line-height:1.4}.embedded-world .world .tree{width:145vw;right:-48vw;bottom:-9vh;opacity:.98}.embedded-world .world .world-note{font-size:.66rem;max-width:25ch}.embedded-world .world .world-cinematic-controls{bottom:3rem}}
+@media(max-width:390px){.embedded-world .world .intro h1{font-size:2rem}.embedded-world .world .tree{width:155vw;right:-54vw;bottom:-7vh}}
+@media(prefers-reduced-motion:reduce){.embedded-world .world .tree{animation:none!important}}

@@ -1,0 +1,13 @@
+/* Light only documented ancestry; never imply live CI or finished outcomes. */
+.living-source-edge.lineage-energy-verified{stroke-linecap:round;transition:stroke .35s ease,opacity .35s ease}
+.lineage-energy-on .living-source-edge.lineage-energy-lit{stroke:#f5d68c;stroke-width:3.8;opacity:1;stroke-dasharray:11 19;animation:lineage-flow 3.4s linear infinite;filter:drop-shadow(0 0 6px #f5d68c)}
+.lineage-energy-on .living-source-node.living-source-active circle:nth-child(2){filter:drop-shadow(0 0 12px #a4ffe1);stroke:#fff6d7;stroke-width:2}
+@keyframes lineage-flow{to{stroke-dashoffset:-60}}
+.lineage-energy-controls{display:flex;align-items:center;flex-wrap:wrap;gap:.75rem;padding:1rem;margin-block:1rem;border:1px solid #a6cfc350;border-radius:1rem;background:linear-gradient(115deg,#15293c,#1c3b40)}
+.lineage-energy-controls button{min-height:44px;padding:.65rem 1rem;border:1px solid #f5d68c;border-radius:999px;background:#102838;color:#fff;font:600 .9rem system-ui;cursor:pointer}
+.lineage-energy-controls button:focus-visible{outline:3px solid #f5d68c;outline-offset:3px}
+.lineage-energy-controls button:disabled{opacity:.7;cursor:not-allowed}
+.lineage-energy-explanation{margin:0;flex:1 1 18rem;color:#d9ece8;font-size:.88rem;line-height:1.5}
+@media(max-width:480px){.lineage-energy-controls{padding:.75rem}.lineage-energy-controls button{width:100%}}
+@media(prefers-reduced-motion:reduce){.lineage-energy-on .living-source-edge.lineage-energy-lit{animation:none;stroke-dasharray:none;filter:none}}
+@media(prefers-contrast:more){.lineage-energy-controls{border:2px solid #fff;background:#071522}.lineage-energy-controls button{border:2px solid #fff}}

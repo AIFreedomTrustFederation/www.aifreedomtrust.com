@@ -1,0 +1,32 @@
+/* Living Universe 3.0 — cinematic stage: additive, reversible, no external assets. */
+.world{min-height:100svh;min-height:100dvh;contain:paint;perspective:1100px}
+.world::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 64% 57%,#3de2ad25,transparent 40%),radial-gradient(ellipse at 20% 88%,#ff5d7d20,transparent 45%),linear-gradient(180deg,transparent 45%,#020912b8 100%)}
+.world .tree{transform-origin:55% 62%;will-change:transform;transition:filter .6s ease;filter:drop-shadow(0 0 34px #43e9b555) drop-shadow(0 0 95px #4077dd33)}
+.world[data-cinematic-stage="root"]{--world-light:#ff867f}
+.world[data-cinematic-stage="trunk"]{--world-light:#eac68b}
+.world[data-cinematic-stage="branch"]{--world-light:#65efb5}
+.world[data-cinematic-stage="leaf"]{--world-light:#79c9fa}
+.world[data-cinematic-stage="flower"]{--world-light:#b6a0ff}
+.world[data-cinematic-stage="fruit"]{--world-light:#f6ad70}
+.world .tree{filter:drop-shadow(0 0 42px var(--world-light,#64e6b4))}
+.world-lightfield{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.world-lightfield .world-ray{position:absolute;width:1px;height:65vmax;top:6%;left:65%;transform-origin:top center;background:linear-gradient(180deg,#d6f8e840,transparent);box-shadow:0 0 32px 4px #89d9ff18;opacity:.35}
+.world-lightfield .world-ray:nth-child(1){transform:rotate(26deg)}
+.world-lightfield .world-ray:nth-child(2){transform:rotate(-28deg)}
+.world-lightfield .world-ray:nth-child(3){transform:rotate(58deg)}
+.world-lightfield .world-ray:nth-child(4){transform:rotate(-56deg)}
+.world-lightfield .world-ray:nth-child(5){transform:rotate(8deg)}
+.world-cinematic-controls{position:absolute;right:clamp(1rem,4vw,3rem);bottom:clamp(3.3rem,7vh,5rem);z-index:3;display:flex;align-items:center;gap:.55rem;max-width:calc(100% - 2rem)}
+.world-cinematic-controls button{min-height:44px;min-width:44px;border:1px solid #d6e9dd80;border-radius:999px;color:#fff;background:#0a233bd9;backdrop-filter:blur(12px);font:700 .84rem system-ui;cursor:pointer;padding:.55rem .85rem}
+.world-cinematic-controls button[aria-pressed=true]{border-color:var(--gold);background:#345363}
+.world-cinematic-controls button:focus-visible{outline:3px solid #f7d18a;outline-offset:3px}
+.world-cinematic-status{position:absolute;z-index:3;right:clamp(1rem,4vw,3rem);bottom:clamp(6.5rem,12vh,8rem);max-width:24ch;font-size:.75rem;color:#dcece8;text-align:right;text-shadow:0 2px 10px #000}
+.world .intro{pointer-events:none}.world .intro a{pointer-events:auto}
+@media(max-width:800px){.world{display:block;padding-top:5.8rem}.world .intro{max-width:100%;width:100%}.world .intro h1{font-size:clamp(2.2rem,8.8vw,3.5rem);max-width:12ch}.world .intro>p:not(.eyebrow){max-width:26ch;font-size:.92rem}.world .tree{width:120vw;right:-38vw;bottom:5vh;opacity:.95}.world-cinematic-controls{bottom:4rem;right:1rem}.world-cinematic-status{bottom:7.2rem;right:1rem}.world-note{bottom:1rem;max-width:38ch}}
+@media(max-width:390px){.world .intro h1{font-size:2.25rem}.world .tree{width:135vw;right:-44vw;bottom:8vh}.world .intro>p:not(.eyebrow){max-width:23ch}.world-cinematic-controls button{padding:.5rem .65rem}}
+@media(prefers-reduced-motion:reduce){.world .tree{animation:none!important;will-change:auto}.world-lightfield .world-ray{opacity:.18}.world-cinematic-controls button{backdrop-filter:none}}
+@media(prefers-contrast:more){.world-cinematic-controls button{border:2px solid #fff;background:#071522}.world-cinematic-status{background:#071522}}
+
+/* Independent CSS translation composes with the SVG camera's own transform. */
+.world .tree{translate:var(--atmosphere-x,0px) var(--atmosphere-y,0px)}
+@media(prefers-reduced-motion:reduce){.world .tree{translate:0 0}}

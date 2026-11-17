@@ -1,0 +1,37 @@
+/* Source-backed cinematic chapter journey: an accessible alternative to camera gestures. */
+.living-guided-voyage{--guided-gold:#f5d68c;position:relative;padding:clamp(1.25rem,4vw,3.5rem);background:radial-gradient(ellipse at 85% 0%,#234e5a88,transparent 65%),linear-gradient(145deg,#081527,#10283b);border-block:1px solid #c4b47c66;color:#edf8fa}
+.living-guided-voyage h2{font:clamp(1.8rem,4vw,3.4rem)/1.1 Georgia,serif;color:var(--guided-gold);margin:0 0 .5rem}
+.living-guided-voyage>p{max-width:70ch;line-height:1.55;color:#d2e8eb}
+.living-guided-progress{letter-spacing:.06em;color:#a5f2d8!important;font-weight:700}
+.living-guided-actions{display:flex;flex-wrap:wrap;gap:.65rem;margin:1.2rem 0}
+.living-guided-actions button{min-height:48px;min-width:120px;padding:.7rem 1rem;border:1px solid #a5d9d3;border-radius:13px;background:#173e50;color:#fff;font:inherit;cursor:pointer}
+.living-guided-actions button:disabled{opacity:.42;cursor:not-allowed}
+.living-guided-actions button[aria-pressed=true]{background:#365447;border-color:#f5d68c}
+.living-guided-evidence{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:.85rem;max-height:480px;overflow:auto}
+.living-guided-item{min-width:0;border:1px solid #8dbec15e;border-top:3px solid #f5d68c;border-radius:16px;background:#0c2339;padding:1rem;overflow-wrap:anywhere}
+.living-guided-item h3{margin:0 0 .4rem;color:#f8e0a9;font-size:1.05rem}
+.living-guided-item p{color:#d6e7ec;font-size:.88rem}
+.living-guided-item small{display:block;color:#a9d9d7;line-height:1.45}
+.living-guided-item a{display:inline-block;color:#9ef4d8;margin-top:.8rem;min-height:44px;padding-block:.5rem}
+.living-guided-voyage :focus-visible{outline:3px solid #f5d68c;outline-offset:3px}
+@media(max-width:480px){.living-guided-voyage{padding:1rem}.living-guided-actions button{flex:1 1 42%;min-width:0}.living-guided-evidence{max-height:400px}}
+@media(prefers-reduced-motion:reduce){.living-guided-voyage *{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+/* Chapter map is an actual journey control, not an achievement meter. */
+.living-guided-route{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:.5rem;margin:1rem 0;max-width:1100px}
+.living-guided-route button{min-height:52px;min-width:0;border:1px solid #7cabb2;border-radius:12px;background:#102f42;color:#d9f4f0;font:600 .82rem/1.3 inherit;padding:.6rem .3rem;cursor:pointer;overflow-wrap:anywhere}
+.living-guided-route button[aria-current=step]{border-color:#f5d68c;background:linear-gradient(145deg,#354b52,#234a48);box-shadow:inset 0 0 0 1px #f5d68c;color:#fff4ce}
+.living-guided-focus{display:block;margin-top:.7rem;padding:.65rem .8rem;min-height:48px;border:1px solid #a5e6ce;border-radius:10px;background:#1a4a4a;color:#fff;font:inherit;cursor:pointer;text-align:left}
+@media(max-width:650px){.living-guided-route{grid-template-columns:repeat(3,minmax(0,1fr))}.living-guided-route button{font-size:.75rem}}
+@media(max-width:360px){.living-guided-route{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Evidence-backed voyage discovery: source search and reversible ancestry. */
+.living-guided-discovery{display:grid;gap:.8rem;margin:1.2rem 0;padding:clamp(.8rem,2vw,1.5rem);border:1px solid #d8c48a65;border-radius:1rem;background:linear-gradient(145deg,#0b2037ed,#122d38e8);color:#f4f8f8}
+.living-guided-discovery label{display:grid;gap:.4rem;font-weight:650}
+.living-guided-discovery input{box-sizing:border-box;width:100%;max-width:42rem;min-height:44px;padding:.65rem .85rem;border:1px solid #8eafbd;border-radius:.65rem;background:#081826;color:#fff;font:inherit}
+.living-guided-results,.living-guided-path-nav{display:flex;flex-wrap:wrap;gap:.5rem;max-height:15rem;overflow:auto}
+.living-guided-results button,.living-guided-path-nav button{min-height:44px;max-width:100%;padding:.55rem .8rem;border:1px solid #9cbbbd;border-radius:.65rem;background:#15354a;color:#fff;font:inherit;text-align:left;overflow-wrap:anywhere;cursor:pointer}
+.living-guided-path-nav button[aria-current=true]{border-color:#f7d18a;box-shadow:0 0 0 1px #f7d18a}
+.living-guided-discovery :is(button,input):focus-visible,.living-guided-item button:focus-visible{outline:3px solid #f7d18a;outline-offset:3px}
+.living-guided-path{overflow-wrap:anywhere;line-height:1.6}
+@media(max-width:480px){.living-guided-results,.living-guided-path-nav{flex-direction:column;flex-wrap:nowrap}.living-guided-results button,.living-guided-path-nav button{width:100%}}
+@media(prefers-reduced-motion:reduce){.living-guided-discovery *{scroll-behavior:auto!important;transition:none!important}}

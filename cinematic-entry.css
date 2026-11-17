@@ -1,0 +1,9 @@
+/* Living Universe 3.0: the published HTML-first world is the opening experience. */
+.cinematic-entry{position:relative;isolation:isolate;background:#071522;color:#fff;min-height:100svh;min-height:100dvh;overflow:hidden}
+.cinematic-entry__frame{display:block;width:100%;height:calc(100svh - 4.5rem);height:calc(100dvh - 4.5rem);min-height:520px;border:0;background:#071522}
+.cinematic-entry__bar{position:relative;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;padding:.75rem clamp(1rem,3vw,2rem);border-top:1px solid #caa35b;background:linear-gradient(100deg,#3d243f,#153d3a,#17375a)}
+.cinematic-entry__bar p{margin:0;font-size:.875rem;line-height:1.4;color:#e5e9ef}
+.cinematic-entry__bar a{color:#fff;font-weight:700;text-underline-offset:.2em;min-height:44px;display:inline-flex;align-items:center}
+.cinematic-entry__bar a:focus-visible{outline:3px solid #f9d99b;outline-offset:3px}
+@media(max-width:600px){.cinematic-entry__frame{height:calc(100svh - 6.5rem);height:calc(100dvh - 6.5rem);min-height:420px}.cinematic-entry__bar{gap:.3rem;padding:.5rem 1rem}.cinematic-entry__bar p{font-size:.78rem}}
+@media(prefers-reduced-motion:reduce){.cinematic-entry *, .cinematic-entry *::before,.cinematic-entry *::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
