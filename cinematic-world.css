@@ -155,3 +155,27 @@
 .living-mission-note{border-left:3px solid #f7d18a;padding:.7rem 1rem;background:#07162788}
 @media(max-width:600px){.living-mission-trail{display:grid;grid-template-columns:1fr}.living-mission-trail li:not(:last-child)::after{content:'↓'}.living-mission-trail li{justify-content:space-between}.living-mission-trail button{flex:1}}
 @media(prefers-reduced-motion:reduce){.living-evidence-missions *{scroll-behavior:auto!important;transition:none!important}}
+
+
+/* Living Universe 3.0: cinematic lineage portal. The Tree remains the dominant first-screen surface. */
+.world{--stage-light:var(--red)}
+.world[data-cinematic-stage="trunk"]{--stage-light:var(--gold)}
+.world[data-cinematic-stage="branch"]{--stage-light:var(--green)}
+.world[data-cinematic-stage="leaf"]{--stage-light:var(--blue)}
+.world[data-cinematic-stage="flower"]{--stage-light:#c6a7ff}
+.world[data-cinematic-stage="fruit"]{--stage-light:#ffcf82}
+.cinematic-portal{position:absolute;z-index:3;right:clamp(1rem,3vw,3rem);top:clamp(6rem,14vh,10rem);width:min(320px,32vw);padding:1.15rem 1.25rem;border:1px solid color-mix(in srgb,var(--stage-light) 65%,transparent);border-radius:22px;background:linear-gradient(135deg,#061223dd,#0b2335aa);box-shadow:0 0 65px color-mix(in srgb,var(--stage-light) 22%,transparent),inset 0 1px #ffffff24;backdrop-filter:blur(16px);transition:border-color .3s,box-shadow .3s}
+.cinematic-portal-eyebrow{font-size:.62rem;letter-spacing:.17em;color:var(--stage-light);font-weight:800;margin:0 0 .5rem}
+.cinematic-portal-heading{font:clamp(1.3rem,2vw,2rem)/1.15 Georgia,serif;color:#fff;margin:.1rem 0 .65rem}
+.cinematic-portal-detail{font-size:.88rem;line-height:1.5;color:#d5e7eb;margin:0 0 1rem}
+.cinematic-portal-track{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:.3rem}
+.cinematic-portal-step{cursor:pointer;min-width:0;min-height:44px;padding:.4rem 0;border-radius:9px;border:1px solid #6d859c;background:#0b263a;color:#d9e8ee;font-weight:800}
+.cinematic-portal-step[aria-pressed=true]{background:var(--stage-light);color:#07101d;border-color:#fff;box-shadow:0 0 20px var(--stage-light)}
+.cinematic-portal-step:focus-visible,.cinematic-portal-inspect:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.cinematic-portal-evidence{font-size:.73rem;color:#d3e2e8;margin:.9rem 0}
+.cinematic-portal-inspect{display:inline-block;font-size:.85rem;font-weight:750;color:#fff;text-underline-offset:4px}
+.tree .cinematic-stage-lit{filter:drop-shadow(0 0 15px var(--stage-light))}
+.tree .cinematic-stage-muted{opacity:.36}
+@media(max-width:800px){.cinematic-portal{top:auto;bottom:4.5rem;right:1rem;width:min(340px,calc(100% - 2rem));padding:.7rem .9rem}.cinematic-portal-heading{font-size:1.25rem}.cinematic-portal-detail{font-size:.78rem;margin-bottom:.45rem}.cinematic-portal-evidence{margin:.4rem 0;font-size:.7rem}.cinematic-portal-eyebrow{font-size:.57rem}.world .tree{bottom:3%;right:-20%;width:120vw}.world .intro{max-width:32ch}.world .intro>p:not(.eyebrow){max-width:29ch}}
+@media(max-width:440px){.cinematic-portal{bottom:3.2rem}.world .tree{width:135vw;right:-35%;bottom:11%;opacity:.9}.world .intro h1{font-size:clamp(2.25rem,10vw,3.3rem)}}
+@media(prefers-reduced-motion:reduce){.cinematic-portal,.tree .cinematic-stage-lit{transition:none!important;animation:none!important}}
