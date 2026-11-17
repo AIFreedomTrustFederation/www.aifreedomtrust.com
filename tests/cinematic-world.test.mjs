@@ -188,3 +188,19 @@ test('hero camera maps wheel and drag gestures through SVG coordinates',()=>{
  assert.doesNotMatch(js,/dragStart\.view\.w\/Math\.min\(rect\.width,rect\.height\)/);
  assert.match(js,/e\.key==='Enter'\|\|e\.key===' '/);
 });
+
+
+test('cinematic lineage portal uses published records without fabricated outcomes',()=>{
+ const js=read('cinematic-lineage-portal.js');
+ const html=read('cinematic-world.html');
+ const css=read('cinematic-world.css');
+ assert.match(js,/window\.AIFT_LINEAGE_NODES/);
+ assert.match(js,/n\.kind!=='fruit'/);
+ assert.match(js,/u\.protocol==='https:'/);
+ assert.match(js,/aria-pressed/);
+ assert.match(js,/MutationObserver/);
+ assert.match(html,/cinematic-lineage-portal\.js/);
+ assert.match(css,/\.cinematic-portal-step:focus-visible/);
+ assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
+ assert.doesNotMatch(js,/fetch\(|sendBeacon|localStorage|Math\.random|reward_xp/);
+});
