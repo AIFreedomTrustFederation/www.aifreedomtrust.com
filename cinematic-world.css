@@ -221,3 +221,15 @@
 @media(max-width:800px){.cinematic-portal{position:relative;inset:auto;width:calc(100% - 1.5rem);margin:1rem auto;display:block;padding:1rem}.cinematic-portal-sources{display:flex;max-height:unset;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity}.cinematic-portal-source-entry{flex:0 0 min(80vw,280px)}.cinematic-portal-lineage{margin-top:1rem}.cinematic-theater-entry{bottom:1.25rem}.world-stage-panel{bottom:5rem}.world-gates{bottom:6.5rem}.world-note{bottom:.25rem}}
 @media(max-width:440px){.cinematic-portal-source-entry{flex-basis:min(83vw,260px)}.world-gates{bottom:6rem}.world-beacons{bottom:25%}.world-stage-panel{bottom:4.5rem}}
 @media(prefers-reduced-motion:reduce){.cinematic-theater-entry{scroll-behavior:auto}}
+
+/* Embedded cinematic entrance: retain the full standalone page and source contracts. */
+.embedded-world .hud{display:none}
+.embedded-world .world{min-height:100svh;min-height:100dvh;padding-top:clamp(1rem,3vh,2.5rem);padding-bottom:3.5rem}
+.embedded-world .world .intro{max-width:34ch;width:44%;align-self:flex-start;margin-top:clamp(1rem,7vh,5rem)}
+.embedded-world .world .intro h1{font-size:clamp(2.1rem,4.7vw,4.8rem)}
+.embedded-world .world .intro>p:not(.eyebrow){font-size:clamp(.86rem,1.25vw,1.05rem)}
+.embedded-world .world .tree{width:min(76vw,950px);right:-4%;bottom:-17%}
+.embedded-world .world .world-gates{z-index:3}
+@media(max-width:800px){.embedded-world .world{padding:1rem .75rem 3.5rem;min-height:100svh;min-height:100dvh}.embedded-world .world .intro{width:100%;max-width:27ch;margin-top:0}.embedded-world .world .intro .eyebrow{font-size:.62rem;letter-spacing:.12em}.embedded-world .world .intro h1{font-size:clamp(2rem,8vw,3rem);margin:.35rem 0}.embedded-world .world .intro>p:not(.eyebrow){max-width:23ch;font-size:.83rem;line-height:1.4}.embedded-world .world .tree{width:145vw;right:-48vw;bottom:-9vh;opacity:.98}.embedded-world .world .world-note{font-size:.66rem;max-width:25ch}.embedded-world .world .world-cinematic-controls{bottom:3rem}}
+@media(max-width:390px){.embedded-world .world .intro h1{font-size:2rem}.embedded-world .world .tree{width:155vw;right:-54vw;bottom:-7vh}}
+@media(prefers-reduced-motion:reduce){.embedded-world .world .tree{animation:none!important}}
