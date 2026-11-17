@@ -16,10 +16,24 @@ const footer=document.createElement('p');footer.className='cinematic-portal-evid
 const inspect=document.createElement('a');inspect.className='cinematic-portal-inspect';inspect.href='#evidence-world';inspect.textContent='Explore documented sources';
 const sourceList=document.createElement('div');sourceList.className='cinematic-portal-sources';sourceList.setAttribute('role','group');sourceList.setAttribute('aria-label','Published sources in selected growth stage');
 const sourceHelp=document.createElement('p');sourceHelp.className='cinematic-portal-source-help';sourceHelp.textContent='Choose a documented source to focus its luminous point on the Tree. Use the source inspector below for full provenance.';
-panel.append(eyebrow,heading,detail,track,footer,sourceHelp,sourceList,inspect);host.append(panel);
+const lineageDetail=document.createElement('section');lineageDetail.className='cinematic-portal-lineage';lineageDetail.setAttribute('aria-label','Selected source lineage');lineageDetail.setAttribute('aria-live','polite');
+panel.append(eyebrow,heading,detail,track,footer,sourceHelp,sourceList,lineageDetail,inspect);host.append(panel);
 let active='root';
 const safeDestination=n=>{try{if(n.kind!=='fruit'||!n.url)return null;const u=new URL(n.url,location.href);return u.protocol==='https:'||u.origin===location.origin?u.href:null}catch{return null}};
 const buttons=new Map();
+function traceSource(node){
+ lineageDetail.replaceChildren();
+ const title=document.createElement('h3');title.textContent='Trace: '+String(node.label||node.id);lineageDetail.append(title);
+ const ancestry=[],seen=new Set();let current=node;
+ while(current&&!seen.has(current.id)){seen.add(current.id);ancestry.unshift(current);current=byId.get(current.parent);}
+ if(current){const warning=document.createElement('p');warning.textContent='Cycle detected in published lineage; traversal stopped.';lineageDetail.append(warning);}
+ else if(ancestry.length&&ancestry[0].parent&&!byId.has(ancestry[0].parent)){const warning=document.createElement('p');warning.textContent='Parent evidence is missing from the published lineage.';lineageDetail.append(warning);}
+ const path=document.createElement('ol');path.className='cinematic-portal-lineage-path';
+ for(const step of ancestry){const item=document.createElement('li');const button=document.createElement('button');button.type='button';button.textContent=step.kind+': '+String(step.label||step.id);button.addEventListener('click',()=>{activate(step.kind);traceSource(step);});item.append(button);path.append(item);}
+ lineageDetail.append(path);
+ if(node.kind==='fruit'){const href=safeDestination(node);const outcome=document.createElement('p');outcome.textContent=href?'Published outcome destination:':'No safe published outcome destination is available.';lineageDetail.append(outcome);if(href){const link=document.createElement('a');link.href=href;link.textContent='Open documented experience';if(new URL(href).origin!==location.origin){link.target='_blank';link.rel='noopener noreferrer';}lineageDetail.append(link);}}
+ else {const note=document.createElement('p');note.textContent='This '+node.kind+' is documented lineage, not a completed visitor-facing fruit.';lineageDetail.append(note);}
+}
 function renderSources(kind){
  sourceList.replaceChildren();
  const matches=valid.filter(n=>n.kind===kind).sort((a,b)=>String(a.label).localeCompare(String(b.label)));
@@ -35,7 +49,7 @@ function renderSources(kind){
    const inspector=document.querySelector('.living-source-inspector');
    if(inspector)inspector.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});
   });
-  sourceList.append(button);
+  const trace=document.createElement('button');trace.type='button';trace.className='cinematic-portal-trace';trace.textContent='Trace lineage';trace.setAttribute('aria-label','Trace lineage for '+String(node.label||node.id));trace.addEventListener('click',()=>traceSource(node));const entry=document.createElement('div');entry.className='cinematic-portal-source-entry';entry.append(button,trace);sourceList.append(entry);
  }
 }
 function activate(kind){
@@ -44,6 +58,7 @@ function activate(kind){
  heading.textContent=titles[kind];detail.textContent=descriptions[kind];
  const matches=valid.filter(n=>n.kind===kind);
  renderSources(kind);
+ lineageDetail.replaceChildren();
  footer.textContent=matches.length+' documented '+kind+' '+(matches.length===1?'record':'records')+'. '+(kind==='fruit'?'Only records with safe published destinations can be opened.':'These are curated relationships, not live system health.');
  for(const [stage,button] of buttons)button.setAttribute('aria-pressed',String(stage===kind));
  const projected=scene.querySelectorAll('.living-source-node');
