@@ -1,0 +1,53 @@
+/* Guided cinematic voyage. All destinations and lineage are read from the published contract. */
+(()=>{'use strict';
+const world=document.querySelector('.world'),scene=world?.querySelector('.tree'),records=window.AIFT_LINEAGE_NODES;
+if(!world||!scene||!Array.isArray(records))return;
+const stages=['root','trunk','branch','leaf','flower','fruit'];
+const byId=new Map(records.filter(n=>n&&typeof n.id==='string'&&stages.includes(n.kind)).map(n=>[n.id,n]));
+const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+const container=document.createElement('section');container.className='living-guided-voyage';container.setAttribute('aria-label','Guided journey through documented growth');
+const heading=document.createElement('h2');heading.textContent='Journey through the living Tree';
+const intro=document.createElement('p');intro.textContent='Six chapters, one source-backed world. Explore at your own pace; this journey does not claim achievements or live readiness.';
+const progress=document.createElement('p');progress.className='living-guided-progress';progress.setAttribute('role','status');progress.setAttribute('aria-live','polite');
+const actions=document.createElement('div');actions.className='living-guided-actions';
+const prev=document.createElement('button'),next=document.createElement('button'),reset=document.createElement('button'),toggle=document.createElement('button');
+for(const b of [prev,next,reset,toggle])b.type='button';
+prev.textContent='← Previous';next.textContent='Next chapter →';reset.textContent='Return to roots';toggle.textContent='Play journey';
+actions.append(prev,next,reset,toggle);
+const entries=document.createElement('div');entries.className='living-guided-evidence';entries.setAttribute('aria-label','Documented sources in current chapter');
+container.append(heading,intro,progress,actions,entries);
+world.after(container);
+let current=0,playing=false,timer=null;
+function stop(){playing=false;if(timer!==null)clearTimeout(timer);timer=null;toggle.textContent='Play journey';toggle.setAttribute('aria-pressed','false')}
+function safeUrl(raw){if(typeof raw!=='string'||!raw.trim()||raw.startsWith('//'))return null;try{const u=new URL(raw,location.href);return ['http:','https:'].includes(u.protocol)?u:null}catch{return null}}
+function render(index){
+ current=Math.max(0,Math.min(stages.length-1,index));const stage=stages[current],matches=[...byId.values()].filter(n=>n.kind===stage);
+ world.dataset.guidedStage=stage;
+ progress.textContent='Chapter '+(current+1)+' of 6 · '+stage.toUpperCase()+' · '+matches.length+' published record'+(matches.length===1?'':'s');
+ entries.replaceChildren();
+ if(!matches.length){const empty=document.createElement('p');empty.textContent='No documented records at this stage. No outcome is inferred.';entries.append(empty)}
+ for(const n of matches){
+  const item=document.createElement('article');item.className='living-guided-item';
+  const name=document.createElement('h3');name.textContent=n.label;
+  const detail=document.createElement('p');detail.textContent=n.desc||'Published lineage record';
+  const lineage=document.createElement('small');const seen=new Set([n.id]);let cursor=n;const ancestors=[];
+  while(cursor.parent){if(seen.has(cursor.parent)){ancestors.push('Cycle detected');break}seen.add(cursor.parent);const parent=byId.get(cursor.parent);if(!parent){ancestors.push('Unresolved parent');break}ancestors.unshift(parent.label);cursor=parent}
+  lineage.textContent='Lineage: '+(ancestors.length?ancestors.join(' → ')+' → ':'')+n.label;
+  item.append(name,detail,lineage);
+  const url=safeUrl(n.url);
+  if(url){const link=document.createElement('a');link.href=url.href;link.textContent=n.kind==='fruit'?'Open documented experience':'Inspect published source';if(url.origin!==location.origin){link.target='_blank';link.rel='noopener noreferrer'}item.append(link)}
+  entries.append(item);
+ }
+ const canonical=document.querySelector('.stages [data-stage="'+stage+'"]');if(canonical)canonical.click();
+ const passage=document.querySelector('.world-passage-step[data-passage-stage="'+stage+'"]');if(passage)passage.click();
+ prev.disabled=current===0;next.disabled=current===stages.length-1;
+}
+function schedule(){if(!playing)return;if(current===stages.length-1){stop();return}timer=setTimeout(()=>{render(current+1);schedule()},4600)}
+prev.addEventListener('click',()=>{stop();render(current-1)});
+next.addEventListener('click',()=>{stop();render(current+1)});
+reset.addEventListener('click',()=>{stop();render(0);container.scrollIntoView({behavior:reduced.matches?'instant':'smooth',block:'start'})});
+toggle.addEventListener('click',()=>{if(playing){stop();return}if(reduced.matches){progress.textContent='Automatic movement is disabled by your reduced-motion preference. Use Next chapter.';return}if(current===5)render(0);playing=true;toggle.textContent='Pause journey';toggle.setAttribute('aria-pressed','true');schedule()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stop()});
+reduced.addEventListener?.('change',()=>{if(reduced.matches)stop()});
+render(0);
+})();
