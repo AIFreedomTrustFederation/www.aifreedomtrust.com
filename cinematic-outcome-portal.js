@@ -31,7 +31,7 @@ const resultCount=document.createElement('p');resultCount.className='outcome-res
 const cards=document.createElement('div');cards.className='outcome-cards';
 const detail=document.createElement('div');detail.className='outcome-detail';detail.setAttribute('aria-live','polite');
 const empty=document.createElement('p');empty.textContent='No published outcome is available. No fruit will be invented.';
-panel.append(head,intro,searchLabel,resultCount,cards,detail);world.append(open,panel);
+panel.append(head,intro,searchLabel,resultCount,cards,detail);world.append(open);document.body.append(panel);
 let lastFocus=null,previousOverflow='';
 const focusable=()=>[...panel.querySelectorAll('button:not([disabled]):not([hidden]),input:not([disabled]),select:not([disabled]),a[href],[tabindex]:not([tabindex="-1"])')].filter(el=>!el.closest('[hidden]')&&el.getClientRects().length);
 const setBackgroundInert=value=>{for(const child of document.body.children){if(child.contains(panel))continue;if(value){child.dataset.outcomeWasInert=String(child.inert);child.inert=true}else if(child.hasAttribute('data-outcome-was-inert')){child.inert=child.dataset.outcomeWasInert==='true';delete child.dataset.outcomeWasInert}}};
