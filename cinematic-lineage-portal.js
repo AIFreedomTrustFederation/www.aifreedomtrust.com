@@ -14,21 +14,42 @@ const detail=document.createElement('p');detail.className='cinematic-portal-deta
 const track=document.createElement('div');track.className='cinematic-portal-track';track.setAttribute('role','group');track.setAttribute('aria-label','Navigate growth layers');
 const footer=document.createElement('p');footer.className='cinematic-portal-evidence';footer.setAttribute('role','status');
 const inspect=document.createElement('a');inspect.className='cinematic-portal-inspect';inspect.href='#evidence-world';inspect.textContent='Explore documented sources';
-panel.append(eyebrow,heading,detail,track,footer,inspect);host.append(panel);
+const sourceList=document.createElement('div');sourceList.className='cinematic-portal-sources';sourceList.setAttribute('role','group');sourceList.setAttribute('aria-label','Published sources in selected growth stage');
+const sourceHelp=document.createElement('p');sourceHelp.className='cinematic-portal-source-help';sourceHelp.textContent='Choose a documented source to focus its luminous point on the Tree. Use the source inspector below for full provenance.';
+panel.append(eyebrow,heading,detail,track,footer,sourceHelp,sourceList,inspect);host.append(panel);
 let active='root';
 const safeDestination=n=>{try{if(n.kind!=='fruit'||!n.url)return null;const u=new URL(n.url,location.href);return u.protocol==='https:'||u.origin===location.origin?u.href:null}catch{return null}};
 const buttons=new Map();
+function renderSources(kind){
+ sourceList.replaceChildren();
+ const matches=valid.filter(n=>n.kind===kind).sort((a,b)=>String(a.label).localeCompare(String(b.label)));
+ if(!matches.length){const empty=document.createElement('p');empty.textContent=kind==='fruit'?'No documented visitor outcome is available at this stage. No fruit is invented.':'No published records are available for this stage.';sourceList.append(empty);return;}
+ for(const node of matches){
+  const button=document.createElement('button');button.type='button';button.className='cinematic-portal-source';
+  const name=document.createElement('strong');name.textContent=node.label||node.id;
+  const kindLabel=document.createElement('small');kindLabel.textContent=node.kind==='fruit'?(safeDestination(node)?'Documented experience':'Destination evidence missing'):'Published '+node.kind;
+  button.append(name,kindLabel);
+  button.addEventListener('click',()=>{
+   const point=[...scene.querySelectorAll('.living-source-node')].find(el=>el.dataset.node===node.id);
+   if(point){point.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true}));point.focus({preventScroll:true});}
+   const inspector=document.querySelector('.living-source-inspector');
+   if(inspector)inspector.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});
+  });
+  sourceList.append(button);
+ }
+}
 function activate(kind){
  if(!stages.includes(kind))return;
  active=kind;host.dataset.cinematicStage=kind;
  heading.textContent=titles[kind];detail.textContent=descriptions[kind];
  const matches=valid.filter(n=>n.kind===kind);
+ renderSources(kind);
  footer.textContent=matches.length+' documented '+kind+' '+(matches.length===1?'record':'records')+'. '+(kind==='fruit'?'Only records with safe published destinations can be opened.':'These are curated relationships, not live system health.');
  for(const [stage,button] of buttons)button.setAttribute('aria-pressed',String(stage===kind));
  const projected=scene.querySelectorAll('.living-source-node');
  for(const el of projected){const n=byId.get(el.dataset.node);el.classList.toggle('cinematic-stage-lit',!!n&&n.kind===kind);el.classList.toggle('cinematic-stage-muted',!!n&&n.kind!==kind)}
  const beacon=document.querySelector('[data-world-stage="'+kind+'"]');
- if(beacon)beacon.setAttribute('aria-pressed','true');
+ for(const item of document.querySelectorAll('[data-world-stage]'))item.setAttribute('aria-pressed',String(item.dataset.worldStage===kind));
  const first=matches.find(n=>kind!=='fruit'||safeDestination(n));
  inspect.href='#evidence-world';inspect.textContent=kind==='fruit'&&first?'Inspect documented experiences':'Explore '+kind+' in the source map';
 }
