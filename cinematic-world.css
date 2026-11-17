@@ -206,3 +206,18 @@
 .cinematic-portal-trace:focus-visible,.cinematic-portal-lineage :focus-visible{outline:3px solid #7eeed0;outline-offset:3px}
 @media(max-width:480px){.cinematic-portal-source-entry{flex-direction:column}.cinematic-portal-lineage{padding:.75rem}.cinematic-portal-lineage-path{flex-direction:column}}
 @media(prefers-reduced-motion:reduce){.cinematic-portal-lineage *{scroll-behavior:auto!important;transition:none!important}}
+
+/* Growth theater: cinematic first-screen preservation. The source directory and
+   ancestry inspector remain fully available below the playable world. */
+.cinematic-portal{position:relative;inset:auto;width:min(1100px,calc(100% - 2rem));margin:clamp(1rem,3vw,2rem) auto;padding:clamp(1rem,3vw,2rem);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:clamp(1rem,3vw,3rem);align-items:start;scroll-margin-top:5rem}
+.cinematic-portal-eyebrow,.cinematic-portal-heading,.cinematic-portal-detail,.cinematic-portal-track,.cinematic-portal-evidence,.cinematic-portal-inspect{grid-column:1}
+.cinematic-portal-source-help,.cinematic-portal-sources,.cinematic-portal-lineage{grid-column:2}
+.cinematic-portal-source-help{grid-row:1 / span 2}
+.cinematic-portal-sources{grid-row:3 / span 4;max-height:330px;overflow:auto;display:grid;grid-template-columns:1fr;align-content:start;scroll-snap-type:none}
+.cinematic-portal-source-entry{min-width:0}
+.cinematic-portal-lineage{grid-row:7;min-height:0}
+.cinematic-theater-entry{position:absolute;z-index:6;left:50%;bottom:clamp(1rem,3vh,2rem);transform:translateX(-50%);display:inline-flex;align-items:center;justify-content:center;min-height:48px;max-width:calc(100% - 2rem);padding:.65rem 1rem;border:1px solid #f7d897;border-radius:999px;background:#071827e8;color:#ffe6ab;text-align:center;text-decoration:none;font-weight:700;box-shadow:0 0 28px #5ee9bd44}
+.cinematic-theater-entry:focus-visible{outline:3px solid #fff;outline-offset:3px}
+@media(max-width:800px){.cinematic-portal{position:relative;inset:auto;width:calc(100% - 1.5rem);margin:1rem auto;display:block;padding:1rem}.cinematic-portal-sources{display:flex;max-height:unset;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity}.cinematic-portal-source-entry{flex:0 0 min(80vw,280px)}.cinematic-portal-lineage{margin-top:1rem}.cinematic-theater-entry{bottom:1.25rem}.world-stage-panel{bottom:5rem}.world-gates{bottom:6.5rem}.world-note{bottom:.25rem}}
+@media(max-width:440px){.cinematic-portal-source-entry{flex-basis:min(83vw,260px)}.world-gates{bottom:6rem}.world-beacons{bottom:25%}.world-stage-panel{bottom:4.5rem}}
+@media(prefers-reduced-motion:reduce){.cinematic-theater-entry{scroll-behavior:auto}}
