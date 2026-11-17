@@ -179,3 +179,16 @@
 @media(max-width:800px){.cinematic-portal{top:auto;bottom:4.5rem;right:1rem;width:min(340px,calc(100% - 2rem));padding:.7rem .9rem}.cinematic-portal-heading{font-size:1.25rem}.cinematic-portal-detail{font-size:.78rem;margin-bottom:.45rem}.cinematic-portal-evidence{margin:.4rem 0;font-size:.7rem}.cinematic-portal-eyebrow{font-size:.57rem}.world .tree{bottom:3%;right:-20%;width:120vw}.world .intro{max-width:32ch}.world .intro>p:not(.eyebrow){max-width:29ch}}
 @media(max-width:440px){.cinematic-portal{bottom:3.2rem}.world .tree{width:135vw;right:-35%;bottom:11%;opacity:.9}.world .intro h1{font-size:clamp(2.25rem,10vw,3.3rem)}}
 @media(prefers-reduced-motion:reduce){.cinematic-portal,.tree .cinematic-stage-lit{transition:none!important;animation:none!important}}
+
+
+/* Source-backed stage-to-node voyage. Keeps the first viewport cinematic and the
+   technical inspector below the world. All choices originate in lineage-data.js. */
+.cinematic-portal-sources{display:flex;gap:.5rem;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x proximity;padding:.35rem .2rem .7rem;max-width:100%;scrollbar-color:var(--gold) #0c1829}
+.cinematic-portal-source{flex:0 0 clamp(138px,25vw,230px);min-height:54px;scroll-snap-align:start;border:1px solid #91b9b8a8;border-radius:12px;background:linear-gradient(130deg,#172a42e8,#102a36e8);color:var(--text);font:inherit;text-align:left;padding:.55rem .7rem;cursor:pointer;overflow-wrap:anywhere}
+.cinematic-portal-source strong,.cinematic-portal-source small{display:block;line-height:1.25}
+.cinematic-portal-source strong{font-size:.82rem}
+.cinematic-portal-source small{font-size:.7rem;color:#cce2e3;margin-top:.25rem}
+.cinematic-portal-source:hover,.cinematic-portal-source:focus-visible{border-color:var(--gold);outline:2px solid var(--gold);outline-offset:2px;background:#26475b}
+.cinematic-portal-source-help{font-size:.72rem;line-height:1.35;color:#d1e3e4;margin:.35rem 0}
+@media(max-width:440px){.cinematic-portal-sources{gap:.4rem}.cinematic-portal-source{flex-basis:142px;min-height:50px;padding:.45rem .55rem}.cinematic-portal-source-help{font-size:.69rem}}
+@media(prefers-reduced-motion:reduce){.cinematic-portal-sources{scroll-behavior:auto}}
