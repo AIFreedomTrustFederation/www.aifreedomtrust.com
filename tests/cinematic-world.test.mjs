@@ -214,3 +214,15 @@ test('cinematic stage voyage exposes only published source choices and honest em
  assert.match(css,/\.cinematic-portal-source:focus-visible/);
  assert.doesNotMatch(js,/fetch\(|XMLHttpRequest|sendBeacon|localStorage|Math\.random|reward_xp/);
 });
+
+
+test('cinematic stage explorer traces real ancestry with safe outcome-only links',()=>{
+ const js=read('cinematic-lineage-portal.js'),css=read('cinematic-world.css');
+ for(const token of ['function traceSource(node)','seen.has(current.id)','byId.get(current.parent)','Parent evidence is missing','Cycle detected','lineageDetail.replaceChildren()','safeDestination(node)','noopener noreferrer','Trace lineage'])assert.ok(js.includes(token),token);
+ assert.match(js,/node\.kind==='fruit'/);
+ assert.match(js,/traceSource\(step\)/);
+ assert.match(css,/\.cinematic-portal-lineage-path/);
+ assert.match(css,/\.cinematic-portal-trace:focus-visible/);
+ assert.match(css,/@media\(max-width:480px\)/);
+ assert.doesNotMatch(js,/fetch\(|XMLHttpRequest|sendBeacon|localStorage|Math\.random|reward_xp/);
+});
