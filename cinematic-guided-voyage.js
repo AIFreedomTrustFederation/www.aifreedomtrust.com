@@ -14,8 +14,10 @@ const prev=document.createElement('button'),next=document.createElement('button'
 for(const b of [prev,next,reset,toggle])b.type='button';
 prev.textContent='← Previous';next.textContent='Next chapter →';reset.textContent='Return to roots';toggle.textContent='Play journey';
 actions.append(prev,next,reset,toggle);
+const route=document.createElement('nav');route.className='living-guided-route';route.setAttribute('aria-label','Journey chapter map');
+const routeButtons=stages.map((kind,i)=>{const b=document.createElement('button');b.type='button';b.dataset.chapter=kind;b.textContent=String(i+1).padStart(2,'0')+' · '+({root:'Roots',trunk:'Trunk',branch:'Systems',leaf:'Capabilities',flower:'Emergence',fruit:'Outcomes'}[kind]);b.addEventListener('click',()=>{stop();render(i)});route.append(b);return b});
 const entries=document.createElement('div');entries.className='living-guided-evidence';entries.setAttribute('aria-label','Documented sources in current chapter');
-container.append(heading,intro,progress,actions,entries);
+container.append(heading,intro,progress,route,actions,entries);
 world.after(container);
 let current=0,playing=false,timer=null;
 function stop(){playing=false;if(timer!==null)clearTimeout(timer);timer=null;toggle.textContent='Play journey';toggle.setAttribute('aria-pressed','false')}
@@ -23,6 +25,7 @@ function safeUrl(raw){if(typeof raw!=='string'||!raw.trim()||raw.startsWith('//'
 function render(index){
  current=Math.max(0,Math.min(stages.length-1,index));const stage=stages[current],matches=[...byId.values()].filter(n=>n.kind===stage);
  world.dataset.guidedStage=stage;
+ routeButtons.forEach((b,i)=>{b.setAttribute('aria-current',i===current?'step':'false');b.setAttribute('aria-label','Chapter '+(i+1)+' of six: '+b.textContent)});
  progress.textContent='Chapter '+(current+1)+' of 6 · '+stage.toUpperCase()+' · '+matches.length+' published record'+(matches.length===1?'':'s');
  entries.replaceChildren();
  if(!matches.length){const empty=document.createElement('p');empty.textContent='No documented records at this stage. No outcome is inferred.';entries.append(empty)}
@@ -34,6 +37,7 @@ function render(index){
   while(cursor.parent){if(seen.has(cursor.parent)){ancestors.push('Cycle detected');break}seen.add(cursor.parent);const parent=byId.get(cursor.parent);if(!parent){ancestors.push('Unresolved parent');break}ancestors.unshift(parent.label);cursor=parent}
   lineage.textContent='Lineage: '+(ancestors.length?ancestors.join(' → ')+' → ':'')+n.label;
   item.append(name,detail,lineage);
+  const focus=document.createElement('button');focus.type='button';focus.className='living-guided-focus';focus.textContent='Explore in the source constellation';focus.addEventListener('click',()=>{stop();const field=document.getElementById('evidence-search');const list=document.getElementById('evidence-list');if(!field||!list)return;const selector=[...list.querySelectorAll('button')].find(b=>b.textContent===n.label+' · '+n.kind);if(selector){selector.click()}else{field.value=n.label;field.dispatchEvent(new Event('input',{bubbles:true}));}document.getElementById('evidence-world')?.scrollIntoView({behavior:reduced.matches?'auto':'smooth',block:'start'});});item.append(focus);
   const url=safeUrl(n.url);
   if(url){const link=document.createElement('a');link.href=url.href;link.textContent=n.kind==='fruit'?'Open documented experience':'Inspect published source';if(url.origin!==location.origin){link.target='_blank';link.rel='noopener noreferrer'}item.append(link)}
   entries.append(item);
