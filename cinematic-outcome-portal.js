@@ -32,7 +32,9 @@ const cards=document.createElement('div');cards.className='outcome-cards';
 const detail=document.createElement('div');detail.className='outcome-detail';detail.setAttribute('aria-live','polite');
 const empty=document.createElement('p');empty.textContent='No published outcome is available. No fruit will be invented.';
 panel.append(head,intro,searchLabel,resultCount,cards,detail);world.append(open,panel);
-let lastFocus=null;
+let lastFocus=null,previousOverflow='';
+const focusable=()=>[...panel.querySelectorAll('button:not([disabled]):not([hidden]),input:not([disabled]),select:not([disabled]),a[href],[tabindex]:not([tabindex="-1"])')].filter(el=>!el.closest('[hidden]')&&el.getClientRects().length);
+const setBackgroundInert=value=>{for(const child of document.body.children){if(child.contains(panel))continue;if(value){child.dataset.outcomeWasInert=String(child.inert);child.inert=true}else if(child.hasAttribute('data-outcome-was-inert')){child.inert=child.dataset.outcomeWasInert==='true';delete child.dataset.outcomeWasInert}}};
 function select(node,button){
  for(const b of cards.querySelectorAll('button'))b.setAttribute('aria-pressed',String(b===button));
  detail.replaceChildren();
@@ -70,15 +72,15 @@ function filterOutcomes(){
 }
 search.addEventListener('input',filterOutcomes);
 filterOutcomes();
-function hide(){panel.hidden=true;open.setAttribute('aria-expanded','false');(lastFocus||open).focus()}
-function show(){lastFocus=document.activeElement;search.value='';filterOutcomes();panel.hidden=false;open.setAttribute('aria-expanded','true');const first=cards.querySelector('button');if(first){first.focus();first.click()}else close.focus()}
+function hide(){panel.hidden=true;document.documentElement.style.overflow=previousOverflow;setBackgroundInert(false);open.setAttribute('aria-expanded','false');(lastFocus?.isConnected?lastFocus:open).focus()}
+function show(){lastFocus=document.activeElement;previousOverflow=document.documentElement.style.overflow;search.value='';filterOutcomes();panel.hidden=false;document.documentElement.style.overflow='hidden';setBackgroundInert(true);open.setAttribute('aria-expanded','true');search.focus()}
 open.setAttribute('aria-expanded','false');open.addEventListener('click',show);close.addEventListener('click',hide);
 panel.addEventListener('keydown',e=>{
  if(e.key==='Escape'){e.preventDefault();hide();return}
  if(e.key!=='Tab')return;
- const focusable=[...panel.querySelectorAll('button:not([disabled]),a[href]')].filter(el=>el.getClientRects().length);
- if(!focusable.length)return;
- const first=focusable[0],last=focusable[focusable.length-1];
+ const controls=focusable();
+ if(!controls.length)return;
+ const first=controls[0],last=controls[controls.length-1];
  if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}
  else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
 });
