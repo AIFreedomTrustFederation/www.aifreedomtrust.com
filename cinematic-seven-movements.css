@@ -8,3 +8,13 @@
 @media(max-width:760px){.seven-grid{grid-template-columns:1fr}.seven-stage{order:0}.seven-stage svg{height:38svh;max-height:360px}.seven-inspector{order:1}.seven-rail{margin-inline:-1rem;padding-inline:1rem}.seven-content h2{font-size:clamp(2.4rem,11vw,4rem)}}
 @media(max-width:390px){.seven-controls{gap:.5rem}.seven-controls button{padding:.55rem}.seven-stage svg{height:31svh}.seven-inspector{padding:.85rem}}
 @media(prefers-reduced-motion:reduce){.seven-orbit,.seven-stage svg{animation:none!important}.seven-ribbon{filter:none;opacity:.35}.seven-rail{scroll-behavior:auto}}@media(prefers-reduced-data:reduce){.seven-ribbon{display:none}.seven-inspector{backdrop-filter:none}}
+
+/* Source-backed spatial overview and reversible ancestry controls */
+.seven-map{position:relative;display:flex;flex-wrap:wrap;justify-content:center;gap:.45rem;padding:.8rem;max-width:100%;border:1px solid #f7d18a55;border-radius:1rem;background:#07192ac9;backdrop-filter:blur(8px)}
+.seven-map button,.seven-detail nav button{font:inherit;font-size:.82rem;min-height:44px;min-width:44px;padding:.55rem .8rem;border:1px solid #64e6b477;border-radius:999px;background:#102c3c;color:#f5f6f5;cursor:pointer}
+.seven-map button[aria-pressed=true]{background:#326b65;border-color:#f7d18a;color:#fff}
+.seven-map button:focus-visible,.seven-detail nav button:focus-visible{outline:3px solid #f7d18a;outline-offset:3px}
+.seven-detail nav{display:flex;flex-wrap:wrap;gap:.45rem;margin-block:1rem}
+#seven-breadcrumb{overflow-wrap:anywhere;color:#f7d18a}
+@media(max-width:390px){.seven-map{gap:.25rem;padding:.4rem}.seven-map button{font-size:.72rem;padding:.4rem .5rem}}
+@media(prefers-reduced-motion:reduce){.seven-map,.seven-map button,.seven-detail nav button{transition:none!important}}
