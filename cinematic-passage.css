@@ -1,0 +1,19 @@
+/* Living Universe 3.0: cinematic passage, rooted in the published lineage contract. */
+.world{--passage-glow:#fa7582}
+.world::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 74% 53%,var(--passage-glow),transparent 44%);mix-blend-mode:screen;opacity:.11;transition:background-color .5s,opacity .5s}
+.world-passage{position:absolute;z-index:3;right:clamp(12px,3vw,42px);top:clamp(90px,15vh,170px);width:min(310px,29vw);padding:1rem;border:1px solid #d7c18a88;border-radius:22px;background:linear-gradient(145deg,#081b2ee8,#0a1027e8);box-shadow:0 20px 70px #0008,0 0 36px #5ee4c622;backdrop-filter:blur(12px);color:#f4f7f7}
+.world-passage-title{font:1.45rem/1.15 Georgia,serif;color:#f5d18a;margin:0}
+.world-passage-subtitle{font-size:.8rem;line-height:1.4;color:#d6e3e7;margin:.5rem 0}
+.world-passage-rail{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.35rem}
+.world-passage-step{min-height:44px;padding:.35rem .45rem;border:1px solid #7d9aa7;border-left:3px solid var(--passage-color);border-radius:9px;background:#0f2839;color:#fff;font:600 .72rem/1.3 system-ui,sans-serif;text-align:left;cursor:pointer}
+.world-passage-step[aria-pressed=true]{border-color:var(--passage-color);background:#294356;box-shadow:inset 0 0 0 1px var(--passage-color)}
+.world-passage-step:focus-visible,.world-passage-source:focus-visible,.world-passage-explore:focus-visible{outline:3px solid #f5d18a;outline-offset:3px}
+.world-passage-panel{margin-top:.7rem}
+.world-passage-details{font-size:.76rem;line-height:1.4;color:#d4e7e7;margin:.35rem 0}
+.world-passage-sources{display:flex;flex-wrap:wrap;gap:.3rem;max-height:116px;overflow:auto;overscroll-behavior:contain}
+.world-passage-source{display:inline-block;max-width:100%;padding:.3rem .5rem;border:1px solid #729eaa;border-radius:9px;color:#f4e3b4;background:#112b3c;font-size:.72rem;overflow-wrap:anywhere}
+.world-passage-explore{display:inline-block;margin-top:.6rem;font-size:.78rem;color:#9cead3;text-underline-offset:3px}
+@media(max-width:900px){.world-passage{top:auto;bottom:3.6rem;right:1rem;width:min(330px,45vw)}}
+@media(max-width:600px){.world-passage{left:.75rem;right:.75rem;bottom:2.5rem;top:auto;width:auto;max-width:none;padding:.65rem .75rem;border-radius:15px;backdrop-filter:none;background:#071626f2}.world-passage-title{font-size:1rem}.world-passage-subtitle{display:none}.world-passage-rail{grid-template-columns:repeat(3,minmax(0,1fr))}.world-passage-step{font-size:.66rem;min-height:44px}.world-passage-details{font-size:.72rem}.world-passage-sources{max-height:45px}.world-passage-source{font-size:.66rem}.world-passage-explore{margin-top:.3rem}.world .intro{padding-bottom:14rem}.world .tree{opacity:.86}}
+@media(max-width:360px){.world-passage{bottom:2rem}.world-passage-sources{max-height:38px}}
+@media(prefers-reduced-motion:reduce){.world::after{transition:none}.world-passage{backdrop-filter:none}}
