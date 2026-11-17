@@ -37,3 +37,14 @@ test('fruit gallery requires complete root provenance and supports ancestry disc
  assert.match(css,/\.outcome-card\[hidden\]/);
  assert.match(css,/\.outcome-search:focus-visible/);
 });
+
+test('modal keeps keyboard focus and background interaction inside the active experience',()=>{
+ assert.match(js,/document\.body\.append\(panel\)/);
+ assert.match(js,/child\.inert=true/);
+ assert.match(js,/child\.dataset\.outcomeWasInert/);
+ assert.match(js,/document\.documentElement\.style\.overflow='hidden'/);
+ assert.match(js,/document\.documentElement\.style\.overflow=previousOverflow/);
+ assert.match(js,/input:not\(\[disabled\]\)/);
+ assert.match(js,/search\.focus\(\)/);
+ assert.match(js,/lastFocus\?\.isConnected/);
+});
