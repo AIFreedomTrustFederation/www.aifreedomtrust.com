@@ -102,9 +102,10 @@ scene.setAttribute('aria-describedby','tree-desc');
 const zoomAt=(factor,x,y)=>{const next=view.w*factor;const ratio=Math.max(0,Math.min(1,(x-view.x)/view.w)),vertical=Math.max(0,Math.min(1,(y-view.y)/view.h));setView(x-next*ratio,y-next*vertical,next)};
 scene.addEventListener('wheel',e=>{
  if(!e.ctrlKey&&!e.metaKey)return; // preserve normal page scrolling
- e.preventDefault();const rect=scene.getBoundingClientRect();
- const u=Math.max(0,Math.min(1,(e.clientX-rect.left)/Math.max(1,rect.width))),v=Math.max(0,Math.min(1,(e.clientY-rect.top)/Math.max(1,rect.height)));
- zoomAt(e.deltaY>0?1.12:.89,view.x+u*view.w,view.y+v*view.h);
+ e.preventDefault();const point=scene.createSVGPoint();point.x=e.clientX;point.y=e.clientY;
+ const matrix=scene.getScreenCTM();if(!matrix)return;
+ const local=point.matrixTransform(matrix.inverse());
+ zoomAt(e.deltaY>0?1.12:.89,local.x,local.y);
 },{passive:false});
 scene.addEventListener('keydown',e=>{
  if(e.target!==scene)return;
@@ -130,7 +131,8 @@ scene.addEventListener('pointerdown',e=>{
 scene.addEventListener('pointermove',e=>{
  if(!pointers.has(e.pointerId))return;
  pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
- const rect=scene.getBoundingClientRect();if(!rect.width||!rect.height)return;
+ const matrix=scene.getScreenCTM();if(!matrix)return;
+ const localDelta=(dx,dy)=>{const inverse=matrix.inverse();return {x:dx*inverse.a+dy*inverse.c,y:dx*inverse.b+dy*inverse.d}};
  if(pointers.size===2&&pinchStart){
   const [a,b]=[...pointers.values()],size=pinchStart.view.w*pinchStart.distance/Math.max(1,distance(a,b));
   const cx=pinchStart.view.x+pinchStart.view.w/2,cy=pinchStart.view.y+pinchStart.view.h/2;
@@ -138,7 +140,7 @@ scene.addEventListener('pointermove',e=>{
  }else if(pointers.size===1&&dragStart){
   const dx=e.clientX-dragStart.x,dy=e.clientY-dragStart.y;
   if(Math.hypot(dx,dy)>5)gestureMoved=true;
-  if(gestureMoved){const factor=dragStart.view.w/Math.min(rect.width,rect.height);setView(dragStart.view.x-dx*factor,dragStart.view.y-dy*factor,dragStart.view.w)}
+  if(gestureMoved){const delta=localDelta(dx,dy);setView(dragStart.view.x-delta.x,dragStart.view.y-delta.y,dragStart.view.w)}
  }
 });
 const finishGesture=e=>{
@@ -207,7 +209,7 @@ for(const node of visible){
  anchor.addEventListener('pointerenter',()=>focus(node));
  anchor.addEventListener('focus',()=>selectNode(node));
  anchor.addEventListener('click',e=>{e.preventDefault();selectNode(node)});
- anchor.addEventListener('keydown',e=>{if(e.key===' '){e.preventDefault();selectNode(node)}});
+ anchor.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();selectNode(node)}});
  dots.append(anchor);anchors.set(node.id,anchor);
 }
 function focus(node){
