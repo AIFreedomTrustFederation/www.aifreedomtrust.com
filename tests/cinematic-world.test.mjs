@@ -175,3 +175,16 @@ test('evidence missions use only published ancestry and never fabricated rewards
  assert.match(css,/\.living-evidence-missions button:focus-visible/);
  assert.doesNotMatch(js,/fetch\(|sendBeacon|localStorage|Math\.random|reward_xp|window\.open/);
 });
+
+// Camera interaction must use the SVG's real screen transform, not its CSS box.
+// This matters on portrait Android where preserveAspectRatio introduces letterboxing.
+test('hero camera maps wheel and drag gestures through SVG coordinates',()=>{
+ const js=read('cinematic-source-projection.js');
+ assert.match(js,/scene\.createSVGPoint\(\)/);
+ assert.match(js,/scene\.getScreenCTM\(\)/);
+ assert.match(js,/point\.matrixTransform\(matrix\.inverse\(\)\)/);
+ assert.match(js,/const localDelta=\(dx,dy\)=>/);
+ assert.match(js,/dragStart\.view\.x-delta\.x/);
+ assert.doesNotMatch(js,/dragStart\.view\.w\/Math\.min\(rect\.width,rect\.height\)/);
+ assert.match(js,/e\.key==='Enter'\|\|e\.key===' '/);
+});
