@@ -16,6 +16,7 @@ const hasRootLineage=node=>{
  }
  return false;
 };
+
 const eligible=outcomes.filter(n=>safe(n.url)&&hasRootLineage(n));
 const open=document.createElement('button');open.type='button';open.className='outcome-open';open.textContent='Explore real-world destinations';open.setAttribute('aria-haspopup','dialog');
 const panel=document.createElement('section');panel.className='outcome-portal';panel.hidden=true;panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','true');panel.setAttribute('aria-label','Verified public experiences and their source lineage');
