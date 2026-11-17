@@ -26,3 +26,7 @@
 @media(max-width:390px){.world .intro h1{font-size:2.25rem}.world .tree{width:135vw;right:-44vw;bottom:8vh}.world .intro>p:not(.eyebrow){max-width:23ch}.world-cinematic-controls button{padding:.5rem .65rem}}
 @media(prefers-reduced-motion:reduce){.world .tree{animation:none!important;will-change:auto}.world-lightfield .world-ray{opacity:.18}.world-cinematic-controls button{backdrop-filter:none}}
 @media(prefers-contrast:more){.world-cinematic-controls button{border:2px solid #fff;background:#071522}.world-cinematic-status{background:#071522}}
+
+/* Independent CSS translation composes with the SVG camera's own transform. */
+.world .tree{translate:var(--atmosphere-x,0px) var(--atmosphere-y,0px)}
+@media(prefers-reduced-motion:reduce){.world .tree{translate:0 0}}
