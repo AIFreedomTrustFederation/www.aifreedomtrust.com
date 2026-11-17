@@ -24,3 +24,16 @@ test('safe links and keyboard-accessible modal',()=>{
  assert.match(css,/prefers-reduced-motion/);
  assert.match(css,/max-width:600px/);
 });
+
+test('fruit gallery requires complete root provenance and supports ancestry discovery',()=>{
+ assert.match(js,/hasRootLineage\(n\)/);
+ assert.match(js,/current\.kind==='root'/);
+ assert.match(js,/seen\.has\(current\.id\)/);
+ assert.match(js,/const eligible=outcomes\.filter/);
+ assert.match(js,/search\.type='search'/);
+ assert.match(js,/search\.addEventListener\('input',filterOutcomes\)/);
+ assert.match(js,/pathTo\(node\)\.map/);
+ assert.match(js,/button\.hidden=!haystack\.includes\(q\)/);
+ assert.match(css,/\.outcome-card\[hidden\]/);
+ assert.match(css,/\.outcome-search:focus-visible/);
+});
