@@ -34,3 +34,16 @@ test('journey chapter map and source constellation bridge are grounded and acces
  assert.match(css,/grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
  assert.match(css,/living-guided-focus/);
 });
+
+test('source search and ancestry navigation are grounded and reversible',()=>{
+ assert.match(js,/living-guided-discovery/);
+ assert.match(js,/searchInput\.addEventListener\('input',showSearch\)/);
+ assert.match(js,/byId\.get\(cursor\.parent\)/);
+ assert.match(js,/Circular lineage detected/);
+ assert.match(js,/Unresolved parent record/);
+ assert.match(js,/Trace documented ancestry/);
+ assert.match(js,/No published source matches/);
+ assert.match(js,/aria-current/);
+ assert.match(css,/living-guided-path-nav/);
+ assert.match(css,/min-height:44px/);
+});
