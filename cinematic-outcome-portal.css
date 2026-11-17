@@ -15,3 +15,11 @@
 @media(max-width:600px){.outcome-portal{padding:1rem;padding-bottom:env(safe-area-inset-bottom,1rem)}.outcome-head{align-items:flex-start}.outcome-head h2{max-width:70%}.outcome-cards{grid-template-columns:1fr 1fr;gap:.5rem}.outcome-card{padding:.7rem}.outcome-lineage li{flex:1 1 130px}}
 @media(max-width:360px){.outcome-cards{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){.outcome-portal *{animation:none!important;transition:none!important}}
+
+/* Outcome discovery: searchable ancestry without obstructing the cinematic world. */
+.outcome-search-label{display:grid;gap:.4rem;max-width:46rem;color:#c7f5e6;font-weight:650;margin:.9rem 0}
+.outcome-search{width:100%;min-height:48px;border:1px solid #8fb5c7;border-radius:12px;background:#071a2d;color:#fff;font:inherit;padding:.7rem 1rem}
+.outcome-search:focus-visible{outline:3px solid #f7d18a;outline-offset:3px}
+.outcome-results{color:#b9d9df;font-size:.9rem;margin:.3rem 0 1rem}
+.outcome-card[hidden]{display:none!important}
+@media(max-width:600px){.outcome-search-label{max-width:100%}.outcome-search{font-size:16px}}
