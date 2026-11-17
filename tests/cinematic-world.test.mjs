@@ -238,3 +238,20 @@ test('cinematic hero remains unobstructed by long source directories and provena
  assert.match(css,/@media\(max-width:800px\)\{\.cinematic-portal\{position:relative/);
  assert.match(css,/prefers-reduced-motion:reduce/);
 });
+
+test('cinematic energy follows only actual published ancestry and respects accessibility',()=>{
+ const html=read('cinematic-world.html'),js=read('cinematic-lineage-energy.js'),css=read('cinematic-lineage-energy.css');
+ assert.match(html,/cinematic-lineage-energy\\.css/);
+ assert.match(html,/cinematic-source-projection\\.js[^]*cinematic-lineage-energy\\.js/);
+ assert.match(js,/window\\.AIFT_LINEAGE_NODES/);
+ assert.match(js,/n\\.parent===edge\\.dataset\\.from/);
+ assert.match(js,/allowed\\.has\\(edge\\.dataset\\.to\\)/);
+ assert.match(js,/MutationObserver/);
+ assert.match(js,/prefers-reduced-motion: reduce/);
+ assert.match(js,/prefers-reduced-data: reduce/);
+ assert.match(js,/aria-pressed/);
+ assert.match(css,/lineage-energy-lit/);
+ assert.match(css,/@media\\(prefers-reduced-motion:reduce\\)/);
+ assert.match(css,/@media\\(max-width:480px\\)/);
+ assert.doesNotMatch(js,/fetch\\(|XMLHttpRequest|localStorage|sendBeacon|Math\\.random|reward_xp/);
+});
