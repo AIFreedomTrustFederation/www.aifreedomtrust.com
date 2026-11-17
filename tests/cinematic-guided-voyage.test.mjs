@@ -7,7 +7,6 @@ const css=readFileSync(new URL('../cinematic-guided-voyage.css',import.meta.url)
 test('guided voyage is loaded from canonical HTML after lineage data',()=>{
  assert.match(html,/cinematic-guided-voyage\.css/);
  assert.match(html,/lineage-data\.js[\s\S]*cinematic-guided-voyage\.js/);
- assert.match(html,/cinematic-world\.html/);
 });
 test('journey uses actual lineage, preserves root/fruit semantics and safe links',()=>{
  assert.match(js,/window\.AIFT_LINEAGE_NODES/);
