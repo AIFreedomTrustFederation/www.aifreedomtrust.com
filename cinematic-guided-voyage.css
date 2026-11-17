@@ -23,3 +23,15 @@
 .living-guided-focus{display:block;margin-top:.7rem;padding:.65rem .8rem;min-height:48px;border:1px solid #a5e6ce;border-radius:10px;background:#1a4a4a;color:#fff;font:inherit;cursor:pointer;text-align:left}
 @media(max-width:650px){.living-guided-route{grid-template-columns:repeat(3,minmax(0,1fr))}.living-guided-route button{font-size:.75rem}}
 @media(max-width:360px){.living-guided-route{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Evidence-backed voyage discovery: source search and reversible ancestry. */
+.living-guided-discovery{display:grid;gap:.8rem;margin:1.2rem 0;padding:clamp(.8rem,2vw,1.5rem);border:1px solid #d8c48a65;border-radius:1rem;background:linear-gradient(145deg,#0b2037ed,#122d38e8);color:#f4f8f8}
+.living-guided-discovery label{display:grid;gap:.4rem;font-weight:650}
+.living-guided-discovery input{box-sizing:border-box;width:100%;max-width:42rem;min-height:44px;padding:.65rem .85rem;border:1px solid #8eafbd;border-radius:.65rem;background:#081826;color:#fff;font:inherit}
+.living-guided-results,.living-guided-path-nav{display:flex;flex-wrap:wrap;gap:.5rem;max-height:15rem;overflow:auto}
+.living-guided-results button,.living-guided-path-nav button{min-height:44px;max-width:100%;padding:.55rem .8rem;border:1px solid #9cbbbd;border-radius:.65rem;background:#15354a;color:#fff;font:inherit;text-align:left;overflow-wrap:anywhere;cursor:pointer}
+.living-guided-path-nav button[aria-current=true]{border-color:#f7d18a;box-shadow:0 0 0 1px #f7d18a}
+.living-guided-discovery :is(button,input):focus-visible,.living-guided-item button:focus-visible{outline:3px solid #f7d18a;outline-offset:3px}
+.living-guided-path{overflow-wrap:anywhere;line-height:1.6}
+@media(max-width:480px){.living-guided-results,.living-guided-path-nav{flex-direction:column;flex-wrap:nowrap}.living-guided-results button,.living-guided-path-nav button{width:100%}}
+@media(prefers-reduced-motion:reduce){.living-guided-discovery *{scroll-behavior:auto!important;transition:none!important}}
