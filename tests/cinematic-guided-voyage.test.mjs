@@ -22,3 +22,15 @@ test('six chapter journey has reversible accessible controls and motion fallback
  assert.match(css, /max-width:480px/);
  assert.match(css, /prefers-reduced-motion:reduce/);
 });
+
+test('journey chapter map and source constellation bridge are grounded and accessible',()=>{
+ assert.match(js,/living-guided-route/);
+ assert.match(js,/aria-current/);
+ assert.match(js,/evidence-search/);
+ assert.match(js,/evidence-list/);
+ assert.match(js,/evidence-world/);
+ assert.match(js,/n\.label\+' · '\+n\.kind/);
+ assert.match(js,/new Event\('input'/);
+ assert.match(css,/grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
+ assert.match(css,/living-guided-focus/);
+});
