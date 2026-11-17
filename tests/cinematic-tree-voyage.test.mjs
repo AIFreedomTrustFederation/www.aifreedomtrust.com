@@ -29,3 +29,18 @@ test('mobile and reduced-motion fallbacks exist',()=>{
 assert.match(script,/@media\(max-width:800px\)/);
 assert.match(script,/@media\(prefers-reduced-motion:reduce\)/);
 });
+
+test('outcome destinations require HTTPS or same-origin and reject bare GitHub repositories',()=>{
+ assert.match(script,/u\.protocol!=='https:'&&u\.origin!==location\.origin/);
+ assert.match(script,/u\.hostname\.toLowerCase\(\)==='github\.com'/);
+ assert.match(script,/const eligible=n=>n\.kind!=='fruit'\|\|/);
+ assert.match(script,/ancestry\(n\)\.complete/);
+});
+test('source search supports descriptions and keyboard selection without stealing focus',()=>{
+ assert.match(script,/n\.description/);
+ assert.match(script,/e\.key==='Enter'/);
+ assert.match(script,/dock\.hidden\)existing\.focus/);
+});
+test('stage transitions clear stale destination links',()=>{
+ assert.ok((script.match(/destination\.removeAttribute\('href'\)/g)||[]).length>=2);
+});
