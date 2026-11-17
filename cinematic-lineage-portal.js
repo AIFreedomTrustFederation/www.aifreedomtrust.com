@@ -17,7 +17,11 @@ const inspect=document.createElement('a');inspect.className='cinematic-portal-in
 const sourceList=document.createElement('div');sourceList.className='cinematic-portal-sources';sourceList.setAttribute('role','group');sourceList.setAttribute('aria-label','Published sources in selected growth stage');
 const sourceHelp=document.createElement('p');sourceHelp.className='cinematic-portal-source-help';sourceHelp.textContent='Choose a documented source to focus its luminous point on the Tree. Use the source inspector below for full provenance.';
 const lineageDetail=document.createElement('section');lineageDetail.className='cinematic-portal-lineage';lineageDetail.setAttribute('aria-label','Selected source lineage');lineageDetail.setAttribute('aria-live','polite');
-panel.append(eyebrow,heading,detail,track,footer,sourceHelp,sourceList,lineageDetail,inspect);host.append(panel);
+panel.append(eyebrow,heading,detail,track,footer,sourceHelp,sourceList,lineageDetail,inspect);
+/* Keep the first viewport a playable Tree: source cards and long provenance trails
+   belong in a dedicated exploration theater below the hero, never over the camera. */
+panel.id='cinematic-growth-theater';host.after(panel);
+const theaterLink=document.createElement('a');theaterLink.className='cinematic-theater-entry';theaterLink.href='#cinematic-growth-theater';theaterLink.textContent='Explore the six growth stages';host.append(theaterLink);
 let active='root';
 const safeDestination=n=>{try{if(n.kind!=='fruit'||!n.url)return null;const u=new URL(n.url,location.href);return u.protocol==='https:'||u.origin===location.origin?u.href:null}catch{return null}};
 const buttons=new Map();
