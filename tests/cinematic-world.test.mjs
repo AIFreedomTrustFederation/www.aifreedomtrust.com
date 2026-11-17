@@ -226,3 +226,15 @@ test('cinematic stage explorer traces real ancestry with safe outcome-only links
  assert.match(css,/@media\(max-width:480px\)/);
  assert.doesNotMatch(js,/fetch\(|XMLHttpRequest|sendBeacon|localStorage|Math\.random|reward_xp/);
 });
+
+test('cinematic hero remains unobstructed by long source directories and provenance',()=>{
+ const js=read('cinematic-lineage-portal.js'),css=read('cinematic-world.css');
+ assert.match(js,/host\.after\(panel\)/);
+ assert.doesNotMatch(js,/host\.append\(panel\)/);
+ assert.match(js,/panel\.id='cinematic-growth-theater'/);
+ assert.match(js,/theaterLink\.href='#cinematic-growth-theater'/);
+ assert.match(css,/\.cinematic-portal\{position:relative;inset:auto/);
+ assert.match(css,/\.cinematic-theater-entry:focus-visible/);
+ assert.match(css,/@media\(max-width:800px\)\{\.cinematic-portal\{position:relative/);
+ assert.match(css,/prefers-reduced-motion:reduce/);
+});
