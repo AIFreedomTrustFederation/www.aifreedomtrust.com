@@ -204,3 +204,13 @@ test('cinematic lineage portal uses published records without fabricated outcome
  assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
  assert.doesNotMatch(js,/fetch\(|sendBeacon|localStorage|Math\.random|reward_xp/);
 });
+
+
+test('cinematic stage voyage exposes only published source choices and honest empty stages',()=>{
+ const js=read('cinematic-lineage-portal.js'),css=read('cinematic-world.css');
+ for(const token of ['function renderSources(kind)','valid.filter(n=>n.kind===kind)','sourceList.replaceChildren()','No documented visitor outcome','safeDestination(node)','living-source-node','point.dispatchEvent','prefers-reduced-motion','scrollIntoView'])assert.ok(js.includes(token),token);
+ assert.match(css,/\.cinematic-portal-sources\{/);
+ assert.match(css,/scroll-snap-type:x proximity/);
+ assert.match(css,/\.cinematic-portal-source:focus-visible/);
+ assert.doesNotMatch(js,/fetch\(|XMLHttpRequest|sendBeacon|localStorage|Math\.random|reward_xp/);
+});
