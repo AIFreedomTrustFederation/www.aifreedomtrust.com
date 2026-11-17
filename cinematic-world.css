@@ -192,3 +192,17 @@
 .cinematic-portal-source-help{font-size:.72rem;line-height:1.35;color:#d1e3e4;margin:.35rem 0}
 @media(max-width:440px){.cinematic-portal-sources{gap:.4rem}.cinematic-portal-source{flex-basis:142px;min-height:50px;padding:.45rem .55rem}.cinematic-portal-source-help{font-size:.69rem}}
 @media(prefers-reduced-motion:reduce){.cinematic-portal-sources{scroll-behavior:auto}}
+
+
+/* Source-backed growth trail: legible at Android portrait widths. */
+.cinematic-portal-source-entry{display:flex;flex-wrap:wrap;align-items:stretch;gap:.5rem;min-width:0}
+.cinematic-portal-source-entry>.cinematic-portal-source{flex:1 1 12rem;min-width:0}
+.cinematic-portal-trace,.cinematic-portal-lineage button{min-height:44px;border:1px solid rgba(247,216,151,.55);border-radius:.75rem;background:rgba(7,21,34,.82);color:#f7d897;padding:.65rem .9rem;cursor:pointer;font:inherit}
+.cinematic-portal-lineage{margin-block:1rem;padding:1rem;border:1px solid rgba(105,239,188,.38);border-radius:1rem;background:rgba(4,17,29,.85);color:#e7f7f2;max-width:100%;overflow-wrap:anywhere}
+.cinematic-portal-lineage h3{font-size:clamp(1rem,3vw,1.35rem);margin:0 0 .75rem}
+.cinematic-portal-lineage-path{display:flex;flex-wrap:wrap;gap:.65rem;padding:0;list-style:none}
+.cinematic-portal-lineage-path li{min-width:0;max-width:100%}
+.cinematic-portal-lineage a{display:inline-flex;min-height:44px;align-items:center;color:#f7d897;text-decoration:underline}
+.cinematic-portal-trace:focus-visible,.cinematic-portal-lineage :focus-visible{outline:3px solid #7eeed0;outline-offset:3px}
+@media(max-width:480px){.cinematic-portal-source-entry{flex-direction:column}.cinematic-portal-lineage{padding:.75rem}.cinematic-portal-lineage-path{flex-direction:column}}
+@media(prefers-reduced-motion:reduce){.cinematic-portal-lineage *{scroll-behavior:auto!important;transition:none!important}}
