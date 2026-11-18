@@ -18,7 +18,7 @@ test('spatial exploration offers accessible non-gesture camera controls',()=>{co
 
 test('evidence journey is derived from real ancestry and never awards synthetic achievements',()=>{
  const js=read('cinematic-seven-movements.js'),css=read('cinematic-seven-movements.css');
- for(const token of ['drawJourney(n)','lineage(n)','journeySteps.replaceChildren()','seven-journey-status','Clear journey','chapterFor(ancestor)','frame(p.x,p.y,230)','No completion is awarded'])assert.ok(js.includes(token),token);
+ for(const token of ['drawJourney(n)','lineage(n)','journeySteps.replaceChildren()','seven-journey-status','Clear journey','chapterFor(ancestor)','travelToNode(node)','No completion is awarded'])assert.ok(js.includes(token),token);
  assert.match(js,/const isOutcome=n.kind==='fruit'&&qualified\(n\)/);
  assert.match(js,/This is provenance, not a live CI claim/);
  assert.match(css,/\.seven-journey li button\[aria-current=true\]/);
