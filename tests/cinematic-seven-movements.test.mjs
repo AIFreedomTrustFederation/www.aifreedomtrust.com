@@ -70,3 +70,10 @@ test('spatial minimap is evidence-backed, camera-synchronized and keyboard acces
  assert.match(css,/@media\(max-width:390px\)/);
  assert.doesNotMatch(js,/Math\.random|sendBeacon|localStorage|reward_xp/);
 });
+
+test('constellation pages expose every published match without fabricated nodes',()=>{
+ const js=read('cinematic-seven-movements.js'),css=read('cinematic-seven-movements.css');
+ for(const token of ['const PAGE_SIZE=180','entries.slice(state.page*PAGE_SIZE,(state.page+1)*PAGE_SIZE)','Math.ceil(entries.length/PAGE_SIZE)','state.page=clamp(state.page,0,pages-1)','pagePrevious.addEventListener','pageNext.addEventListener','all matches remain available in the accessible list'])assert.ok(js.includes(token),token);
+ assert.match(css,/\.seven-page-controls button:focus-visible/);
+ assert.doesNotMatch(js,/Math\.random|sendBeacon|reward_xp/);
+});
