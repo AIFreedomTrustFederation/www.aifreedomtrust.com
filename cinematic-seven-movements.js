@@ -18,7 +18,31 @@ const camera={x:0,y:0,size:600};
 const cameraHome=()=>frame(300,300,600);
 const cameraStep=(direction)=>{const c={x:camera.x+camera.size/2,y:camera.y+camera.size/2};frame(c.x,c.y,camera.size*(direction>0?.8:1.25))};
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-function point(n){let h=2166136261;for(const c of String(n.id)){h=Math.imul(h^c.charCodeAt(0),16777619)>>>0}const stage=Math.max(0,kinds.indexOf(n.kind));const angle=((h%10007)/10007)*Math.PI*2;const radius=stage===0?220:stage===1?30:stage===2?110:stage===3?175:stage===4?215:245;return {x:300+Math.cos(angle)*radius,y:300+Math.sin(angle)*radius}}
+// Biological projection: source roots below the shared trunk; branches and verified
+// outcomes grow upward. Only published ancestry influences parent-relative placement.
+const stageHeight={root:548,trunk:402,branch:290,leaf:178,flower:112,fruit:58};
+const pointCache=new Map();
+function stableAngle(id){let h=2166136261;for(const c of String(id)){h=Math.imul(h^c.charCodeAt(0),16777619)>>>0}return (h%10007)/10007}
+function point(n){
+ if(pointCache.has(n.id))return pointCache.get(n.id);
+ const stage=n.kind;
+ const t=stableAngle(n.id);
+ const parent=n.parent?byId.get(n.parent):null;
+ // A missing/circular lineage must not create an inferred parent relationship.
+ const trail=lineage(n);
+ const anchored=!!(trail&&parent&&trail.includes(parent));
+ let x;
+ if(stage==='root')x=80+t*440;
+ else if(stage==='trunk')x=300+(t-.5)*36;
+ else if(anchored){
+   const p=point(parent);
+   const spread=stage==='branch'?190:stage==='leaf'?105:stage==='flower'?75:55;
+   x=p.x+(t-.5)*spread*2;
+ }else x=300+(t-.5)*440;
+ const result={x:clamp(x,24,576),y:stageHeight[stage]??300};
+ pointCache.set(n.id,result);
+ return result;
+}
 function frame(x=300,y=300,size=600){camera.size=clamp(size,120,600);camera.x=clamp(x-camera.size/2,0,600-camera.size);camera.y=clamp(y-camera.size/2,0,600-camera.size);scene.setAttribute('viewBox',[camera.x,camera.y,camera.size,camera.size].join(' '))}
 // Camera travel is purely visual: route eligibility comes from published ancestry.
 let voyageAnimation=0;
