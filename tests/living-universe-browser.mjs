@@ -17,6 +17,11 @@ for(const width of [360,390,768,1280]){
   const svg=page.locator('#seven-movements .seven-stage svg').first();
   await svg.waitFor({state:'visible'});
   assert.ok(await svg.locator('.seven-source-constellation circle').count()>0,'Published lineage nodes should render');
+  const key=page.locator('#seven-movements .seven-biological-key');
+  assert.equal(await key.locator('.seven-biological-key-item').count(),6,'All six biological layers have a visible source-derived key');
+  const keyText=await key.innerText();
+  for(const kind of ['root','trunk','branch','leaf','flower','fruit'])assert.match(keyText,new RegExp(kind+' \\u00b7 \\d+ published','i'));
+  assert.ok(await key.evaluate(el=>el.getBoundingClientRect().width<=innerWidth),'Spectral key fits mobile viewport');
   const bounds=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,viewport:innerWidth,stage:document.querySelector('#seven-movements .seven-stage')?.getBoundingClientRect().toJSON()}));
   assert.ok(bounds.scroll<=bounds.viewport+2,'Horizontal overflow '+JSON.stringify(bounds));
   assert.ok(bounds.stage.width>0&&bounds.stage.height>0,'Stage has positive dimensions');
