@@ -33,3 +33,11 @@ test('constellation connects only visible published parent-child records and hig
  assert.match(css,/\.seven-source-connections\{pointer-events:none\}/);
  assert.doesNotMatch(js,/Math\.random|reward_xp|sendBeacon/);
 });
+
+test('evidence voyage remains reversible and never fabricates nodes or rewards',()=>{
+ const js=read('cinematic-seven-movements.js'),css=read('cinematic-seven-movements.css');
+ for(const token of ['voyageTrail','voyageIndex','Begin lineage voyage','Earlier source','Next source','visitVoyage(index)','lineage(n)','byId.has(node.id)','state.history.push','voyagePrevious.disabled','voyageNext.disabled','syncVoyage(selected)'])assert.ok(js.includes(token),token);
+ assert.match(js,/voyageTrail=trail\|\|\[\]/);
+ assert.match(css,/\.seven-voyage-controls button:focus-visible/);
+ assert.doesNotMatch(js,/reward_xp|sendBeacon|localStorage|Math\.random/);
+});
