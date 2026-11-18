@@ -272,3 +272,35 @@
  .seven-stage .seven-source-constellation{filter:none}
  .seven-biological-key,.seven-scene-caption{box-shadow:none;backdrop-filter:none}
 }
+
+/* Living Universe 3.1 — source-illuminated biological architecture.
+   All glow primitives are generated from visible, documented lineage nodes;
+   no decorative source marker can be mistaken for a real selectable record. */
+.seven-growth-light{pointer-events:none}
+.seven-growth-root{fill:#fa75821c;stroke:#fa7582a0;stroke-width:1.5;filter:drop-shadow(0 0 13px #fa7582)}
+.seven-growth-trunk{fill:none;stroke:#f7d18a;stroke-width:20;stroke-linecap:round;opacity:.16;filter:drop-shadow(0 0 24px #f7d18a)}
+.seven-growth-canopy{fill:#64e6b41b;stroke:#64e6b44d;stroke-width:1;filter:drop-shadow(0 0 10px #64e6b4)}
+.seven-growth-leaf{fill:#6cbcff1b;stroke:#6cbcff77}
+.seven-growth-flower{fill:#b392fa1b;stroke:#b392fa88}
+.seven-growth-outcome{fill:none;stroke:#ffab72;stroke-width:2;stroke-opacity:.8;filter:drop-shadow(0 0 8px #ffab72)}
+.seven-stage{background-attachment:local}
+.seven-stage svg .seven-source-connections{filter:drop-shadow(0 0 4px #64e6b455)}
+.seven-movements[data-movement="1"] .seven-growth-root{opacity:1}
+.seven-movements[data-movement="2"] .seven-growth-trunk{opacity:.3}
+.seven-movements[data-movement="4"] .seven-growth-leaf{stroke-opacity:1}
+.seven-movements[data-movement="5"] .seven-growth-flower{stroke-opacity:1}
+.seven-movements[data-movement="6"] .seven-growth-outcome{stroke-width:3}
+@media(max-width:760px){
+ .seven-growth-trunk{stroke-width:15}
+ .seven-stage svg .seven-source-connections{filter:none}
+ .seven-growth-canopy{filter:none}
+ .seven-growth-root{filter:none}
+}
+@media(prefers-reduced-motion:reduce){
+ .seven-growth-light *{animation:none!important;transition:none!important;filter:none!important}
+}
+@media(prefers-reduced-data:reduce){
+ .seven-growth-light *{filter:none!important}
+ .seven-growth-trunk{opacity:.09}
+ .seven-growth-canopy{opacity:.45}
+}
