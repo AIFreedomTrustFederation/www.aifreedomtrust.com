@@ -153,6 +153,41 @@ function drawConstellation(entries){
    connections.append(path);
  }
  layer.append(connections);
+ // Source-backed cinematic growth: atmospheric depth is anchored only to
+ // records actually visible in this constellation page. Decorative light
+ // never creates an extra node, lineage edge, product, or achievement.
+ const growth=document.createElementNS(NS,'g');
+ growth.setAttribute('class','seven-growth-light');
+ growth.setAttribute('aria-hidden','true');
+ const liveRoots=visible.filter(n=>n.kind==='root');
+ const liveTrunks=visible.filter(n=>n.kind==='trunk');
+ const liveCanopy=visible.filter(n=>['branch','leaf','flower'].includes(n.kind));
+ const liveOutcomes=visible.filter(n=>n.kind==='fruit'&&qualified(n));
+ for(const n of liveRoots){
+   const p=visiblePoint(n),halo=document.createElementNS(NS,'ellipse');
+   halo.setAttribute('cx',String(p.x));halo.setAttribute('cy',String(p.y));
+   halo.setAttribute('rx','25');halo.setAttribute('ry','12');
+   halo.setAttribute('class','seven-growth-root');growth.append(halo);
+ }
+ for(const n of liveTrunks){
+   const p=visiblePoint(n),shaft=document.createElementNS(NS,'path');
+   shaft.setAttribute('d','M'+p.x+' '+Math.min(590,p.y+78)+' Q'+(p.x-16)+' '+p.y+' '+p.x+' '+Math.max(18,p.y-115));
+   shaft.setAttribute('class','seven-growth-trunk');growth.append(shaft);
+ }
+ for(const n of liveCanopy){
+   const p=visiblePoint(n),glow=document.createElementNS(NS,'circle');
+   glow.setAttribute('cx',String(p.x));glow.setAttribute('cy',String(p.y));
+   glow.setAttribute('r',n.kind==='branch'?'18':'13');
+   glow.setAttribute('class','seven-growth-canopy seven-growth-'+n.kind);
+   growth.append(glow);
+ }
+ for(const n of liveOutcomes){
+   const p=visiblePoint(n),ring=document.createElementNS(NS,'circle');
+   ring.setAttribute('cx',String(p.x));ring.setAttribute('cy',String(p.y));
+   ring.setAttribute('r','18');ring.setAttribute('class','seven-growth-outcome');
+   growth.append(ring);
+ }
+ layer.insertBefore(growth,connections);
  for(const n of visible){const pos=visiblePoint(n);const circle=document.createElementNS(NS,'circle');circle.setAttribute('cx',pos.x);circle.setAttribute('cy',pos.y);circle.setAttribute('r',n.id===state.selected?'11':String(biologicalRadius[n.kind]||6));circle.setAttribute('fill',biologicalPalette[n.kind]||'#a9c3d1');circle.setAttribute('stroke','#071727');circle.setAttribute('stroke-width','2');if(trail&&trail.some(p=>p.id===n.id))circle.setAttribute('class','seven-lineage-node');circle.setAttribute('role','button');circle.setAttribute('tabindex','0');circle.setAttribute('aria-label',n.label+' · '+n.kind);const title=document.createElementNS(NS,'title');title.textContent=n.label;circle.append(title);const activate=()=>{state.selected=n.id;render();travelToNode(n);detail.focus({preventScroll:true})};circle.addEventListener('click',activate);circle.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();activate()}});layer.append(circle)}}
 // Initialize only after the canonical stage markup exists. The prior initialization
 // ran before host.innerHTML and discarded the constellation and its event listeners.
