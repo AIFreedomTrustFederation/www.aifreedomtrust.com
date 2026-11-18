@@ -85,3 +85,6 @@ test('selected source automatically reveals its constellation page without overr
  assert.match(js,/if\(selectedIndex>=0&&state\.selected!==lastRevealedSelection\)state\.page=Math\.floor\(selectedIndex\/PAGE_SIZE\)/);
  assert.match(js,/pageNext\.addEventListener\('click',\(\)=>\{state\.page\+\+;render\(\)\}\)/);
 });
+
+
+test('all selection entry points reveal and focus published spatial nodes, and history restores camera',()=>{const js=read('cinematic-seven-movements.js');assert.match(js,/state\.selected=n\.id;render\(\);travelToNode\(n\);detail\.focus/);assert.match(js,/render\(\);travelToNode\(ancestor\)/);assert.match(js,/if\(prior\.selected&&byId\.has\(prior\.selected\)\)travelToNode/);assert.match(js,/const cameraHome=\(\)=>\{stopVoyageCamera\(\);frame/);assert.match(js,/const cameraStep=\(direction\)=>\{stopVoyageCamera\(\)/);});
