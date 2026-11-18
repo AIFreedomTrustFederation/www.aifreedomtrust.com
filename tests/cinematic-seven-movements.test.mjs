@@ -15,3 +15,13 @@ test('camera anchors zoom to gesture position and never invents missing ancestry
 test('mobile cinematic stage precedes secondary inspector without hiding controls',()=>{const css=read('cinematic-seven-movements.css');assert.match(css,/\.seven-stage\{order:3;min-height:42svh\}/);assert.match(css,/\.seven-inspector\{order:6\}/);assert.match(css,/\.seven-grid\{display:contents\}/)});
 
 test('spatial exploration offers accessible non-gesture camera controls',()=>{const js=read('cinematic-seven-movements.js'),css=read('cinematic-seven-movements.css');for(const token of ['seven-camera-controls','Zoom in','Zoom out','Reset view','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','cameraHome','cameraStep'])assert.ok(js.includes(token),token);assert.match(js,/scene\.setAttribute\('tabindex','0'\)/);assert.match(css,/\.seven-camera-controls button:focus-visible/);assert.match(css,/min-height:44px/);});
+
+test('evidence journey is derived from real ancestry and never awards synthetic achievements',()=>{
+ const js=read('cinematic-seven-movements.js'),css=read('cinematic-seven-movements.css');
+ for(const token of ['drawJourney(n)','lineage(n)','journeySteps.replaceChildren()','seven-journey-status','Clear journey','chapterFor(ancestor)','frame(p.x,p.y,230)','No completion is awarded'])assert.ok(js.includes(token),token);
+ assert.match(js,/const isOutcome=n.kind==='fruit'&&qualified\(n\)/);
+ assert.match(js,/This is provenance, not a live CI claim/);
+ assert.match(css,/\.seven-journey li button\[aria-current=true\]/);
+ assert.match(css,/\.seven-journey button:focus-visible/);
+ assert.doesNotMatch(js,/reward_xp|sendBeacon|localStorage|Math\.random/);
+});
