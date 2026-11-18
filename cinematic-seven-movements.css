@@ -35,3 +35,17 @@
 .seven-camera-controls button{min-height:44px;min-width:44px;padding:.5rem .75rem;border:1px solid #f7d18a88;border-radius:.7rem;background:#071727e8;color:#f5f6f5;font:inherit;cursor:pointer}
 .seven-camera-controls button:focus-visible{outline:3px solid #f7d18a;outline-offset:3px}
 @media(max-width:390px){.seven-camera-controls{gap:.25rem}.seven-camera-controls button{font-size:.8rem;padding:.4rem .5rem}}
+
+/* Published-evidence journey: distinct from gamified XP or live CI. */
+.seven-journey{margin-top:1.25rem;padding:clamp(.85rem,2vw,1.25rem);border:1px solid #f7d18a70;border-radius:1rem;background:linear-gradient(145deg,#112c3edc,#071727f0)}
+.seven-journey-head h3{font:1.35rem Georgia,serif;color:#f7d18a;margin:.1rem 0 .4rem}
+.seven-journey-head p{color:#d2e6e5;font-size:.9rem;line-height:1.55}
+.seven-journey ol{list-style:none;counter-reset:lineage;margin:1rem 0;padding:0;display:grid;gap:.5rem}
+.seven-journey li{counter-increment:lineage;display:flex;align-items:stretch;gap:.6rem;min-width:0}
+.seven-journey li::before{content:counter(lineage,decimal-leading-zero);color:#f7d18a;font-size:.8rem;align-self:center;min-width:2rem}
+.seven-journey li button{min-height:44px;flex:1;min-width:0;text-align:left;overflow-wrap:anywhere;border:1px solid #6cbcff88;border-radius:.65rem;padding:.65rem .8rem;background:#15374b;color:#f5f6f5;font:inherit;cursor:pointer}
+.seven-journey li button[aria-current=true]{border-color:#f7d18a;background:#285c58}
+#seven-journey-reset{min-height:44px;border:1px solid #f7d18a88;border-radius:.65rem;background:#142b40;color:#fff;padding:.65rem .9rem;cursor:pointer}
+.seven-journey button:focus-visible{outline:3px solid #f7d18a;outline-offset:3px}
+@media(max-width:760px){.seven-journey{margin-top:1rem}.seven-journey ol{gap:.4rem}}
+@media(prefers-reduced-motion:reduce){.seven-journey *{scroll-behavior:auto;transition:none!important}}
