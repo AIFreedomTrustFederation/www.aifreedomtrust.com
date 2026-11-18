@@ -182,7 +182,7 @@ voyageNext.addEventListener('click',()=>visitVoyage(voyageIndex+1));
 function syncVoyage(n){
  const trail=n?lineage(n):null;
  // Do not retain a stale route when its source selection changes.
- if(!trail||!trail.some(item=>item.id===voyageTrail[voyageTrail.length-1]?.id)){
+ if(!trail||!voyageTrail.some(item=>item.id===n.id)){
    voyageTrail=trail||[];voyageIndex=-1;
  }
  updateVoyageControls();
