@@ -1,0 +1,43 @@
+name: Living Universe Android browser acceptance
+on:
+  pull_request:
+    paths:
+      - 'cinematic-world.html'
+      - 'cinematic-seven-movements.*'
+      - 'tests/living-universe-browser.mjs'
+      - '.github/workflows/living-universe-browser.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Source and syntax contracts
+        run: |
+          node --check cinematic-seven-movements.js
+          node --test tests/cinematic-seven-movements.test.mjs tests/cinematic-world.test.mjs
+      - name: Install isolated browser test dependency
+        run: |
+          npm install --no-save --no-package-lock playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Serve canonical HTML locally
+        run: |
+          python3 -m http.server 4178 --bind 127.0.0.1 >/tmp/aift-browser-server.log 2>&1 &
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:4178/cinematic-world.html >/dev/null && exit 0; sleep 1; done
+          cat /tmp/aift-browser-server.log
+          exit 1
+      - name: Verify Android-sized and desktop browser journeys
+        run: node tests/living-universe-browser.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: living-universe-browser-evidence
+          path: artifacts/living-universe/
+          if-no-files-found: warn
+          retention-days: 14
