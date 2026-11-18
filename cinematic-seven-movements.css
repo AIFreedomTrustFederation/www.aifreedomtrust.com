@@ -217,3 +217,58 @@
 @media(max-width:390px){.seven-scene-caption{top:3.25rem;max-width:46%}}
 @media(prefers-reduced-motion:reduce){.seven-stage{transition:none!important}.seven-stage .seven-source-link-active{stroke-dasharray:none;filter:none}}
 @media(prefers-reduced-data:reduce){.seven-stage{background:linear-gradient(180deg,#061329,#092a33 57%,#220d22)}}
+
+
+/* Living Universe 3.1: legible cinematic cockpit.
+   The scene remains the dominant mobile surface; controls, provenance and
+   chapter context occupy distinct safe areas rather than overlapping. */
+.seven-stage{--hud-ink:#f7f2e6;--hud-glass:#061526ed;isolation:isolate;
+  box-shadow:inset 0 0 0 1px #f7d18a22,inset 0 -65px 95px #f36d5520,
+  inset 0 65px 110px #6cbcff18,0 18px 72px #0009}
+.seven-stage::before{opacity:.75}
+.seven-stage::after{opacity:.85}
+.seven-stage .seven-source-constellation{filter:drop-shadow(0 0 9px #64e6b43d)}
+.seven-immerse-toggle,.seven-scene-caption,.seven-biological-key,
+.seven-camera-controls,.seven-minimap-wrap{box-sizing:border-box}
+.seven-scene-caption{box-shadow:0 8px 28px #0007}
+.seven-biological-key{box-shadow:0 8px 28px #0007}
+.seven-camera-controls button{transition:background-color .18s ease,border-color .18s ease,transform .18s ease}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){
+ .seven-camera-controls button:hover{background:#24556a;border-color:#f7d18a;transform:translateY(-2px)}
+}
+@media(max-width:760px){
+ .seven-content{padding-top:.6rem}
+ .seven-content h2{font-size:clamp(1.85rem,8vw,3rem);line-height:1.05;margin:.3rem 0}
+ .seven-stage{min-height:62svh;height:62svh;overflow:hidden}
+ .seven-stage svg{height:100%;min-height:0;max-height:none}
+ .seven-immersive .seven-stage{min-height:76svh;height:76svh}
+ .seven-immersive .seven-stage svg{height:100%}
+ .seven-immerse-toggle{top:.5rem;left:.5rem;right:auto;max-width:calc(100% - 1rem);min-height:44px}
+ .seven-scene-caption{top:.55rem;right:.5rem;left:auto;max-width:45%;max-height:6.5rem;overflow:hidden}
+ /* The provenance key lives in its own band below the scene heading. */
+ .seven-biological-key{top:7.15rem;left:.5rem;right:.5rem;width:auto;max-width:none;
+   justify-content:center;gap:.2rem .65rem;padding:.35rem .5rem}
+ .seven-biological-key-item{font-size:.65rem}
+ .seven-stage .seven-camera-controls{bottom:.5rem;left:.5rem;max-width:calc(100% - 120px)}
+ .seven-stage .seven-minimap-wrap{bottom:.5rem;right:.5rem;width:105px}
+ .seven-stage .seven-source-constellation{filter:none}
+}
+@media(max-width:390px){
+ .seven-stage{height:60svh;min-height:60svh}
+ .seven-stage svg{height:100%}
+ .seven-immersive .seven-stage{height:74svh;min-height:74svh}
+ .seven-immersive .seven-stage svg{height:100%}
+ .seven-scene-caption{max-width:44%;font-size:.6rem}
+ .seven-biological-key{top:7.5rem;gap:.15rem .4rem}
+ .seven-biological-key-item{font-size:.59rem}
+ .seven-stage .seven-camera-controls{max-width:calc(100% - 112px)}
+}
+@media(prefers-reduced-motion:reduce){
+ .seven-stage .seven-source-constellation{filter:none}
+ .seven-camera-controls button{transition:none!important;transform:none!important}
+}
+@media(prefers-reduced-data:reduce){
+ .seven-stage{box-shadow:none}
+ .seven-stage .seven-source-constellation{filter:none}
+ .seven-biological-key,.seven-scene-caption{box-shadow:none;backdrop-filter:none}
+}
