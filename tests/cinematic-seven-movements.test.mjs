@@ -88,3 +88,13 @@ test('selected source automatically reveals its constellation page without overr
 
 
 test('all selection entry points reveal and focus published spatial nodes, and history restores camera',()=>{const js=read('cinematic-seven-movements.js');assert.match(js,/state\.selected=n\.id;render\(\);travelToNode\(n\);detail\.focus/);assert.match(js,/render\(\);travelToNode\(ancestor\)/);assert.match(js,/if\(prior\.selected&&byId\.has\(prior\.selected\)\)travelToNode/);assert.match(js,/const cameraHome=\(\)=>\{stopVoyageCamera\(\);frame/);assert.match(js,/const cameraStep=\(direction\)=>\{stopVoyageCamera\(\)/);});
+
+
+test('mobile cinematic cockpit reserves distinct caption, provenance and camera zones',()=>{
+ const css=read('cinematic-seven-movements.css');
+ for(const token of ['Living Universe 3.1: legible cinematic cockpit','height:62svh','height:60svh','top:7.15rem','top:7.5rem','max-width:calc(100% - 120px)','max-width:calc(100% - 112px)','prefers-reduced-data:reduce','prefers-reduced-motion:reduce'])assert.ok(css.includes(token),token);
+ assert.match(css,/\.seven-stage\{--hud-ink:/);
+ assert.match(css,/\.seven-biological-key\{top:7\.15rem/);
+ assert.match(css,/\.seven-scene-caption\{top:\.55rem/);
+ assert.match(css,/\.seven-stage \.seven-minimap-wrap\{bottom:\.5rem/);
+});
