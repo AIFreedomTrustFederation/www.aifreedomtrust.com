@@ -48,3 +48,10 @@ test('evidence voyage camera follows actual published nodes and respects reduced
  assert.match(css,/prefers-reduced-motion:reduce/);
  assert.doesNotMatch(js,/Math\\.random|reward_xp|sendBeacon|localStorage/);
 });
+
+test('biological constellation projects published roots below trunk and canopy, not random radial rings',()=>{
+ const js=read('cinematic-seven-movements.js'),css=read('cinematic-seven-movements.css');
+ for(const token of ['stageHeight={root:548,trunk:402,branch:290,leaf:178,flower:112,fruit:58}','pointCache=new Map()','const trail=lineage(n)','trail.includes(parent)','point(parent)','stageHeight[stage]','clamp(x,24,576)'])assert.ok(js.includes(token),token);
+ assert.doesNotMatch(js,/Math\\.random|reward_xp|sendBeacon/);
+ assert.match(css,/Vertical biological world/);
+});
