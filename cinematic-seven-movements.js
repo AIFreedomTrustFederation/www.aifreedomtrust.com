@@ -245,6 +245,23 @@ for(const kind of kinds){
  item.append(dot,label);biologicalKey.append(item);
 }
 scene.parentElement.append(biologicalKey);
+// The caption is a viewport-local guide, not a claim of live completion.
+// It follows the current source-backed chapter and selection.
+const sceneCaption=document.createElement('div');
+sceneCaption.className='seven-scene-caption';
+sceneCaption.setAttribute('role','status');
+sceneCaption.setAttribute('aria-live','polite');
+const sceneCaptionTitle=document.createElement('strong');
+const sceneCaptionDetail=document.createElement('small');
+sceneCaption.append(sceneCaptionTitle,sceneCaptionDetail);
+scene.parentElement.append(sceneCaption);
+function updateSceneCaption(chapter,selected,count){
+ sceneCaptionTitle.textContent=chapter.title;
+ sceneCaptionDetail.textContent=selected
+  ? selected.kind+' · '+selected.label
+  : count+' documented record'+(count===1?'':'s')+' in this viewpoint';
+}
+
 
 // An evidence journey is a guided reading of published ancestry, not an XP system.
 const journey=document.createElement('section');
@@ -366,7 +383,7 @@ function render(){const c=chapters[state.chapter],all=Array.isArray(source)?sour
 const selectedIndex=state.selected===null?-1:entries.findIndex(n=>n.id===state.selected);
 if(selectedIndex>=0&&state.selected!==lastRevealedSelection)state.page=Math.floor(selectedIndex/PAGE_SIZE);
 lastRevealedSelection=state.selected;
-state.page=clamp(state.page,0,pages-1);$('seven-evidence').textContent=entries.length+' documented '+(c.kind||'lineage')+' record'+(entries.length===1?'':'s')+' in this view'+(pages>1?' · Constellation page '+(state.page+1)+' of '+pages+'; all matches remain available in the accessible list.':'');pageStatus.textContent='Constellation '+(state.page+1)+' / '+pages;pagePrevious.disabled=state.page===0;pageNext.disabled=state.page>=pages-1;list.replaceChildren();const map=$('seven-map');map.replaceChildren();for(const kind of kinds){const count=all.filter(n=>n.kind===kind&&qualified(n)).length;const b=document.createElement('button');b.type='button';b.textContent=kind+' · '+count;b.setAttribute('aria-pressed',String(c.kind===kind));b.addEventListener('click',()=>move(kinds.indexOf(kind)+1,true));map.append(b)}if(!entries.length){const p=document.createElement('p');p.textContent='No published records match this view. No outcome is inferred.';list.append(p)}for(const n of entries){const b=document.createElement('button');b.type='button';b.textContent=n.label;b.setAttribute('aria-pressed',String(state.selected===n.id));b.addEventListener('click',()=>{state.selected=n.id;render();travelToNode(n);detail.focus({preventScroll:true})});list.append(b)}drawConstellation(entries);const selected=entries.find(n=>n.id===state.selected);if(selected){show(selected);drawJourney(selected);syncVoyage(selected)}else{drawJourney(null);syncVoyage(null);state.selected=null;detail.replaceChildren();const p=document.createElement('p');p.textContent='Select a documented record to inspect its ancestry and destination.';detail.append(p)}}
+state.page=clamp(state.page,0,pages-1);$('seven-evidence').textContent=entries.length+' documented '+(c.kind||'lineage')+' record'+(entries.length===1?'':'s')+' in this view'+(pages>1?' · Constellation page '+(state.page+1)+' of '+pages+'; all matches remain available in the accessible list.':'');pageStatus.textContent='Constellation '+(state.page+1)+' / '+pages;pagePrevious.disabled=state.page===0;pageNext.disabled=state.page>=pages-1;list.replaceChildren();const map=$('seven-map');map.replaceChildren();for(const kind of kinds){const count=all.filter(n=>n.kind===kind&&qualified(n)).length;const b=document.createElement('button');b.type='button';b.textContent=kind+' · '+count;b.setAttribute('aria-pressed',String(c.kind===kind));b.addEventListener('click',()=>move(kinds.indexOf(kind)+1,true));map.append(b)}if(!entries.length){const p=document.createElement('p');p.textContent='No published records match this view. No outcome is inferred.';list.append(p)}for(const n of entries){const b=document.createElement('button');b.type='button';b.textContent=n.label;b.setAttribute('aria-pressed',String(state.selected===n.id));b.addEventListener('click',()=>{state.selected=n.id;render();travelToNode(n);detail.focus({preventScroll:true})});list.append(b)}drawConstellation(entries);const selected=entries.find(n=>n.id===state.selected);updateSceneCaption(c,selected,entries.length);if(selected){show(selected);drawJourney(selected);syncVoyage(selected)}else{drawJourney(null);syncVoyage(null);state.selected=null;detail.replaceChildren();const p=document.createElement('p');p.textContent='Select a documented record to inspect its ancestry and destination.';detail.append(p)}}
 function move(i,focus=false){if(i<0||i>=chapters.length)return;stopVoyageCamera();frame();state.history.push({chapter:state.chapter,selected:state.selected});state.chapter=i;state.selected=null;state.page=0;search.value='';render();if(focus)$('seven-title').focus({preventScroll:true})}
 $('seven-back').addEventListener('click',()=>{const prior=state.history.pop();if(!prior)return;stopVoyageCamera();state.chapter=prior.chapter;state.selected=prior.selected;state.page=0;search.value='';render();if(prior.selected&&byId.has(prior.selected))travelToNode(byId.get(prior.selected));else cameraHome();$('seven-title').focus({preventScroll:true})});$('seven-prev').addEventListener('click',()=>move(state.chapter-1,true));$('seven-next').addEventListener('click',()=>move(state.chapter+1,true));search.addEventListener('input',()=>{state.page=0;render()});render();
 })();
