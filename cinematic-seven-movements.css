@@ -182,3 +182,12 @@
  .seven-stage::before,.seven-stage::after{display:none}
  .seven-stage{transform:none;box-shadow:none}
 }
+
+/* Evidence-grounded six-layer key: a compact HUD in the playable theatre.
+   Distinct spectral colors match source SVG and minimap, not invented products. */
+.seven-biological-key{position:absolute;z-index:4;top:4rem;left:.75rem;display:flex;flex-wrap:wrap;gap:.35rem .7rem;max-width:min(75%,430px);padding:.55rem .7rem;border:1px solid #d6b77d66;border-radius:12px;background:#071727dc;backdrop-filter:blur(8px);pointer-events:none}
+.seven-biological-key-item{display:inline-flex;align-items:center;gap:.35rem;font:600 .69rem/1.4 system-ui,sans-serif;color:#f5f6f5;text-transform:capitalize;white-space:nowrap}
+.seven-biological-key-item i{display:inline-block;width:.65rem;height:.65rem;border-radius:50%;box-shadow:0 0 8px currentColor;flex:none}
+@media(max-width:760px){.seven-biological-key{top:3.65rem;left:.45rem;max-width:calc(100% - .9rem);gap:.2rem .55rem;padding:.35rem .5rem}.seven-biological-key-item{font-size:.62rem}}
+@media(max-width:390px){.seven-biological-key{max-width:calc(100% - .9rem)}.seven-biological-key-item{font-size:.58rem}}
+@media(prefers-reduced-data:reduce){.seven-biological-key{backdrop-filter:none}.seven-biological-key-item i{box-shadow:none}}
