@@ -42,6 +42,20 @@ for(const width of [360,390,768,1280]){
   assert.ok(await svg.locator('.seven-source-constellation circle').count()>0,'Published nodes survive immersive transition');
   await page.keyboard.press('Escape');
   assert.equal(await immersive.getAttribute('aria-pressed'),'false','Escape exits immersive mode');
+  // Capture the playable world itself, not only the long document screenshot.
+  await page.locator('#seven-movements .seven-stage').screenshot({path:'artifacts/living-universe/stage-'+width+'.png'});
+  const minimap=page.locator('#seven-movements .seven-minimap');
+  assert.ok(await minimap.count(),'Spatial minimap must be present');
+  const before=await svg.getAttribute('viewBox');
+  const zoom=page.locator('#seven-movements .seven-camera-controls button');
+  assert.ok(await zoom.count()>0,'Camera controls must be operable');
+  await zoom.first().click();
+  const after=await svg.getAttribute('viewBox');
+  assert.notEqual(after,before,'Camera control must change the visible world');
+  const mapViewport=page.locator('#seven-movements .seven-minimap-viewport');
+  assert.ok(await mapViewport.count(),'Minimap viewport tracks camera');
+  const mapSize=Number(await mapViewport.getAttribute('width'));
+  assert.ok(Number.isFinite(mapSize)&&mapSize>0&&mapSize<=600,'Minimap viewport has bounded camera size');
   await page.screenshot({path:'artifacts/living-universe/tree-'+width+'.png',fullPage:true});
   assert.deepEqual(errors,[],'Browser JavaScript errors');
   console.log('PASS',width,'px',JSON.stringify(bounds));
