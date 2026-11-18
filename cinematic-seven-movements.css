@@ -49,3 +49,10 @@
 .seven-journey button:focus-visible{outline:3px solid #f7d18a;outline-offset:3px}
 @media(max-width:760px){.seven-journey{margin-top:1rem}.seven-journey ol{gap:.4rem}}
 @media(prefers-reduced-motion:reduce){.seven-journey *{scroll-behavior:auto;transition:none!important}}
+
+/* Published ancestry is rendered as actual parent-child light paths, never inferred edges. */
+.seven-source-connections{pointer-events:none}
+.seven-source-link{fill:none;stroke:#6cbcff;stroke-opacity:.25;stroke-width:1.5;vector-effect:non-scaling-stroke}
+.seven-source-link-active{stroke:#f7d18a;stroke-opacity:.95;stroke-width:3;filter:drop-shadow(0 0 5px #f7d18a)}
+.seven-lineage-node{stroke:#f7d18a!important;stroke-width:3!important;filter:drop-shadow(0 0 8px #f7d18a)}
+@media(prefers-reduced-motion:reduce){.seven-source-link-active,.seven-lineage-node{filter:none}}
