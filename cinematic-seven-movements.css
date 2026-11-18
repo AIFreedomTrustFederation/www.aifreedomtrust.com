@@ -56,3 +56,12 @@
 .seven-source-link-active{stroke:#f7d18a;stroke-opacity:.95;stroke-width:3;filter:drop-shadow(0 0 5px #f7d18a)}
 .seven-lineage-node{stroke:#f7d18a!important;stroke-width:3!important;filter:drop-shadow(0 0 8px #f7d18a)}
 @media(prefers-reduced-motion:reduce){.seven-source-link-active,.seven-lineage-node{filter:none}}
+
+/* Reversible evidence voyage: readable and operable above the cinematic stage. */
+.seven-voyage-controls{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;margin-block:1rem}
+.seven-voyage-controls button{font:inherit;min-height:44px;min-width:44px;padding:.6rem .8rem;border:1px solid #f7d18a99;border-radius:.7rem;background:#15394c;color:#f5f6f5;cursor:pointer}
+.seven-voyage-controls button:disabled{opacity:.48;cursor:default}
+.seven-voyage-controls span{font-size:.85rem;color:#d2e6e5;font-variant-numeric:tabular-nums}
+.seven-voyage-controls button:focus-visible{outline:3px solid #f7d18a;outline-offset:3px}
+@media(max-width:390px){.seven-voyage-controls button{flex:1 1 44%;font-size:.85rem}}
+@media(prefers-reduced-motion:reduce){.seven-voyage-controls *{transition:none!important}}
