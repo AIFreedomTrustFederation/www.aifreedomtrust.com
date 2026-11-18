@@ -25,3 +25,11 @@ test('evidence journey is derived from real ancestry and never awards synthetic 
  assert.match(css,/\.seven-journey button:focus-visible/);
  assert.doesNotMatch(js,/reward_xp|sendBeacon|localStorage|Math\.random/);
 });
+
+test('constellation connects only visible published parent-child records and highlights selected ancestry',()=>{
+ const js=read('cinematic-seven-movements.js'),css=read('cinematic-seven-movements.css');
+ for(const token of ['visibleById=new Map','child.parent?visibleById.get(child.parent):null','if(!parent)continue','lineageEdges.has','connections.setAttribute(\'aria-hidden\',\'true\')','layer.append(connections)','seven-lineage-node'])assert.ok(js.includes(token),token);
+ assert.match(css,/\.seven-source-link-active/);
+ assert.match(css,/\.seven-source-connections\{pointer-events:none\}/);
+ assert.doesNotMatch(js,/Math\.random|reward_xp|sendBeacon/);
+});
