@@ -70,3 +70,12 @@
 .seven-source-constellation{will-change:auto}
 .seven-stage:focus-within .seven-source-link-active{stroke-opacity:1}
 @media(prefers-reduced-motion:reduce){.seven-source-constellation,.seven-source-link-active{animation:none!important;transition:none!important}}
+
+/* Vertical biological world: root depths glow red, the integrated trunk glows gold,
+   and the canopy rises through green and blue. The coordinates are source-derived. */
+.seven-stage{background:radial-gradient(ellipse 42% 38% at 50% 65%,#f7d18a13,transparent 80%),linear-gradient(180deg,#6cbcff0b 0%,#64e6b40b 44%,#fa758215 100%);border-radius:24px}
+.seven-stage svg{filter:drop-shadow(0 0 18px #64e6b433)}
+.seven-source-link{stroke-opacity:.4;stroke-width:1.8}
+.seven-source-link-active{stroke-width:3.5}
+@media(prefers-reduced-motion:reduce){.seven-stage svg{filter:none}}
+@media(max-width:390px){.seven-stage{border-radius:14px}}
