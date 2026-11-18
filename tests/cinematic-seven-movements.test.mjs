@@ -55,3 +55,10 @@ test('biological constellation projects published roots below trunk and canopy, 
  assert.doesNotMatch(js,/Math\\.random|reward_xp|sendBeacon/);
  assert.match(css,/Vertical biological world/);
 });
+
+test('dense biological canopy separates visible source nodes without inventing records',()=>{
+ const js=read('cinematic-seven-movements.js');
+ for(const token of ['function separateVisibleNodes(visible)','visiblePositions.clear()','nodes.sort((a,b)=>a.x-b.x','occupied=[[],[],[]]','visiblePositions.set(n.id','separateVisibleNodes(visible)','visiblePoint(parent)','visiblePoint(child)','const pos=visiblePoint(n)','const target=visiblePoint(node)'])assert.ok(js.includes(token),token);
+ assert.match(js,/const visible=entries\.slice\(0,180\)/);
+ assert.doesNotMatch(js,/Math\.random|reward_xp|sendBeacon/);
+});
