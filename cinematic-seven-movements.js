@@ -49,7 +49,7 @@ let voyageAnimation=0;
 const motionPreference=window.matchMedia('(prefers-reduced-motion: reduce)');
 function stopVoyageCamera(){if(voyageAnimation){cancelAnimationFrame(voyageAnimation);voyageAnimation=0}}
 function travelToNode(node){
- const target=point(node);
+ const target=visiblePoint(node);
  stopVoyageCamera();
  if(motionPreference.matches||document.visibilityState==='hidden'){frame(target.x,target.y,230);return}
  const from={x:camera.x+camera.size/2,y:camera.y+camera.size/2,size:camera.size};
@@ -63,9 +63,42 @@ function travelToNode(node){
  };
  voyageAnimation=requestAnimationFrame(tick);
 }
+// Deterministic screen-space separation for dense published records. The layout
+// changes coordinates only: it never adds records, edges, products or evidence.
+const visiblePositions=new Map();
+function separateVisibleNodes(visible){
+ visiblePositions.clear();
+ const lanes=new Map();
+ for(const n of visible){
+   const p=point(n),lane=n.kind||'unknown';
+   if(!lanes.has(lane))lanes.set(lane,[]);
+   lanes.get(lane).push({id:n.id,x:p.x,y:p.y});
+ }
+ for(const nodes of lanes.values()){
+   nodes.sort((a,b)=>a.x-b.x||String(a.id).localeCompare(String(b.id)));
+   // Alternate vertical sublanes so dense canopy clusters remain selectable.
+   const occupied=[[],[],[]];
+   for(const n of nodes){
+     let best=null;
+     for(let lane=0;lane<3;lane++){
+       const offset=(lane-1)*18;
+       const x=clamp(n.x,18,582);
+       const distance=occupied[lane].length?x-occupied[lane][occupied[lane].length-1]:Infinity;
+       const candidate={x,y:clamp(n.y+offset,18,582),lane,distance};
+       if(!best||candidate.distance>best.distance)best=candidate;
+     }
+     // Spread within the same sublane only when required, bounded to the SVG.
+     best.x=clamp(Math.max(best.x,(occupied[best.lane].at(-1)??-100)+13),18,582);
+     occupied[best.lane].push(best.x);
+     visiblePositions.set(n.id,{x:best.x,y:best.y});
+   }
+ }
+}
+const visiblePoint=n=>visiblePositions.get(n.id)||point(n);
 function drawConstellation(entries){
  layer.replaceChildren();
  const visible=entries.slice(0,180);
+ separateVisibleNodes(visible);
  const visibleById=new Map(visible.map(n=>[n.id,n]));
  const selected=state.selected?byId.get(state.selected):null;
  const trail=selected?lineage(selected):null;
@@ -79,7 +112,7 @@ function drawConstellation(entries){
  for(const child of visible){
    const parent=child.parent?visibleById.get(child.parent):null;
    if(!parent)continue;
-   const from=point(parent),to=point(child);
+   const from=visiblePoint(parent),to=visiblePoint(child);
    const path=document.createElementNS(NS,'path');
    const midY=(from.y+to.y)/2;
    path.setAttribute('d','M'+from.x+' '+from.y+' C'+from.x+' '+midY+' '+to.x+' '+midY+' '+to.x+' '+to.y);
@@ -87,7 +120,7 @@ function drawConstellation(entries){
    connections.append(path);
  }
  layer.append(connections);
- for(const n of visible){const pos=point(n);const circle=document.createElementNS(NS,'circle');circle.setAttribute('cx',pos.x);circle.setAttribute('cy',pos.y);circle.setAttribute('r',n.id===state.selected?'10':'6');circle.setAttribute('fill',n.kind==='root'?'#fa7582':n.kind==='fruit'?'#f7d18a':'#64e6b4');circle.setAttribute('stroke','#071727');circle.setAttribute('stroke-width','2');if(trail&&trail.some(p=>p.id===n.id))circle.setAttribute('class','seven-lineage-node');circle.setAttribute('role','button');circle.setAttribute('tabindex','0');circle.setAttribute('aria-label',n.label+' · '+n.kind);const title=document.createElementNS(NS,'title');title.textContent=n.label;circle.append(title);const activate=()=>{state.selected=n.id;render();travelToNode(n);detail.focus({preventScroll:true})};circle.addEventListener('click',activate);circle.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();activate()}});layer.append(circle)}}
+ for(const n of visible){const pos=visiblePoint(n);const circle=document.createElementNS(NS,'circle');circle.setAttribute('cx',pos.x);circle.setAttribute('cy',pos.y);circle.setAttribute('r',n.id===state.selected?'10':'6');circle.setAttribute('fill',n.kind==='root'?'#fa7582':n.kind==='fruit'?'#f7d18a':'#64e6b4');circle.setAttribute('stroke','#071727');circle.setAttribute('stroke-width','2');if(trail&&trail.some(p=>p.id===n.id))circle.setAttribute('class','seven-lineage-node');circle.setAttribute('role','button');circle.setAttribute('tabindex','0');circle.setAttribute('aria-label',n.label+' · '+n.kind);const title=document.createElementNS(NS,'title');title.textContent=n.label;circle.append(title);const activate=()=>{state.selected=n.id;render();travelToNode(n);detail.focus({preventScroll:true})};circle.addEventListener('click',activate);circle.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();activate()}});layer.append(circle)}}
 // Initialize only after the canonical stage markup exists. The prior initialization
 // ran before host.innerHTML and discarded the constellation and its event listeners.
 function bindSpatialCamera(){
