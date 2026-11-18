@@ -20,7 +20,31 @@ const cameraStep=(direction)=>{const c={x:camera.x+camera.size/2,y:camera.y+came
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 function point(n){let h=2166136261;for(const c of String(n.id)){h=Math.imul(h^c.charCodeAt(0),16777619)>>>0}const stage=Math.max(0,kinds.indexOf(n.kind));const angle=((h%10007)/10007)*Math.PI*2;const radius=stage===0?220:stage===1?30:stage===2?110:stage===3?175:stage===4?215:245;return {x:300+Math.cos(angle)*radius,y:300+Math.sin(angle)*radius}}
 function frame(x=300,y=300,size=600){camera.size=clamp(size,120,600);camera.x=clamp(x-camera.size/2,0,600-camera.size);camera.y=clamp(y-camera.size/2,0,600-camera.size);scene.setAttribute('viewBox',[camera.x,camera.y,camera.size,camera.size].join(' '))}
-function drawConstellation(entries){layer.replaceChildren();const visible=entries.slice(0,180);for(const n of visible){const pos=point(n);const circle=document.createElementNS(NS,'circle');circle.setAttribute('cx',pos.x);circle.setAttribute('cy',pos.y);circle.setAttribute('r',n.id===state.selected?'10':'6');circle.setAttribute('fill',n.kind==='root'?'#fa7582':n.kind==='fruit'?'#f7d18a':'#64e6b4');circle.setAttribute('stroke','#071727');circle.setAttribute('stroke-width','2');circle.setAttribute('role','button');circle.setAttribute('tabindex','0');circle.setAttribute('aria-label',n.label+' · '+n.kind);const title=document.createElementNS(NS,'title');title.textContent=n.label;circle.append(title);const activate=()=>{state.selected=n.id;render();const p=point(n);frame(p.x,p.y,230);detail.focus({preventScroll:true})};circle.addEventListener('click',activate);circle.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();activate()}});layer.append(circle)}}
+function drawConstellation(entries){
+ layer.replaceChildren();
+ const visible=entries.slice(0,180);
+ const visibleById=new Map(visible.map(n=>[n.id,n]));
+ const selected=state.selected?byId.get(state.selected):null;
+ const trail=selected?lineage(selected):null;
+ const lineageEdges=new Set();
+ if(trail)for(let i=1;i<trail.length;i++)lineageEdges.add(trail[i-1].id+'>'+trail[i].id);
+ // Draw documented parent-child relationships before the interactive nodes.
+ // An absent parent is an evidence gap, not a fabricated connection.
+ const connections=document.createElementNS(NS,'g');
+ connections.setAttribute('class','seven-source-connections');
+ connections.setAttribute('aria-hidden','true');
+ for(const child of visible){
+   const parent=child.parent?visibleById.get(child.parent):null;
+   if(!parent)continue;
+   const from=point(parent),to=point(child);
+   const path=document.createElementNS(NS,'path');
+   const midY=(from.y+to.y)/2;
+   path.setAttribute('d','M'+from.x+' '+from.y+' C'+from.x+' '+midY+' '+to.x+' '+midY+' '+to.x+' '+to.y);
+   path.setAttribute('class',lineageEdges.has(parent.id+'>'+child.id)?'seven-source-link seven-source-link-active':'seven-source-link');
+   connections.append(path);
+ }
+ layer.append(connections);
+ for(const n of visible){const pos=point(n);const circle=document.createElementNS(NS,'circle');circle.setAttribute('cx',pos.x);circle.setAttribute('cy',pos.y);circle.setAttribute('r',n.id===state.selected?'10':'6');circle.setAttribute('fill',n.kind==='root'?'#fa7582':n.kind==='fruit'?'#f7d18a':'#64e6b4');circle.setAttribute('stroke','#071727');circle.setAttribute('stroke-width','2');if(trail&&trail.some(p=>p.id===n.id))circle.setAttribute('class','seven-lineage-node');circle.setAttribute('role','button');circle.setAttribute('tabindex','0');circle.setAttribute('aria-label',n.label+' · '+n.kind);const title=document.createElementNS(NS,'title');title.textContent=n.label;circle.append(title);const activate=()=>{state.selected=n.id;render();const p=point(n);frame(p.x,p.y,230);detail.focus({preventScroll:true})};circle.addEventListener('click',activate);circle.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();activate()}});layer.append(circle)}}
 // Initialize only after the canonical stage markup exists. The prior initialization
 // ran before host.innerHTML and discarded the constellation and its event listeners.
 function bindSpatialCamera(){
