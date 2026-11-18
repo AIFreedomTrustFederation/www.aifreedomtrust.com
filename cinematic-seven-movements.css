@@ -95,3 +95,47 @@
 .seven-page-controls button:focus-visible{outline:3px solid #f7d18a;outline-offset:3px}
 .seven-page-controls span{font:600 .8rem system-ui;font-variant-numeric:tabular-nums}
 @media(max-width:390px){.seven-page-controls{gap:.35rem;padding:.5rem}.seven-page-controls button{font-size:.76rem;padding:.5rem}}
+
+/* Living Universe 3.1: cinematic focus world. The source-backed SVG remains
+   interactive; all inspectors and the full accessible index remain in the DOM. */
+.seven-stage{isolation:isolate;overflow:hidden;min-height:clamp(380px,62svh,840px);
+  box-shadow:inset 0 0 0 1px #d5b87a33,inset 0 -90px 110px #ee5b5520,0 22px 85px #0008;
+  background:radial-gradient(ellipse 48% 40% at 50% 46%,#eac68b24,transparent 80%),
+    radial-gradient(ellipse 55% 40% at 50% 8%,#609ffb30,transparent 80%),
+    radial-gradient(ellipse 65% 32% at 50% 100%,#ef5c6340,transparent 80%),
+    linear-gradient(180deg,#061329,#092a33 57%,#220d22)}
+.seven-stage::before,.seven-stage::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:0}
+.seven-stage::before{background:repeating-radial-gradient(circle at 50% 48%,transparent 0 74px,#d9bc7c12 75px 76px,transparent 77px 125px);mask-image:linear-gradient(transparent,#000 20%,#000 80%,transparent)}
+.seven-stage::after{background:linear-gradient(105deg,transparent 24%,#6cbcff10 37%,transparent 49%,#64e6b410 62%,transparent 78%);mix-blend-mode:screen}
+.seven-stage svg{position:relative;z-index:1;min-height:inherit;max-height:80svh}
+.seven-camera-controls,.seven-minimap-wrap,.seven-immerse-toggle{z-index:5}
+.seven-immerse-toggle{position:absolute;top:.75rem;left:.75rem;min-height:44px;min-width:44px;padding:.55rem .85rem;background:#08192eea;color:#f9f0da;border:1px solid #f7d18a;border-radius:.75rem;font:600 .85rem system-ui;cursor:pointer;box-shadow:0 5px 20px #0009}
+.seven-immerse-toggle:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.seven-immersive .seven-content{max-width:none;padding-inline:clamp(.5rem,2vw,2rem)}
+.seven-immersive .seven-grid{grid-template-columns:minmax(0,1fr)}
+.seven-immersive .seven-stage{min-height:78svh}
+.seven-immersive .seven-stage svg{height:78svh;max-height:none}
+.seven-immersive .seven-inspector{max-width:900px;width:100%;margin-inline:auto}
+.seven-immersive .seven-rail{max-width:100%}
+@media(max-width:760px){
+ .seven-stage{min-height:49svh}
+ .seven-stage svg{height:49svh;max-height:none;min-height:0}
+ .seven-immersive .seven-stage{min-height:76svh}
+ .seven-immersive .seven-stage svg{height:76svh}
+ .seven-immerse-toggle{top:.45rem;left:.45rem;font-size:.76rem;padding:.45rem .65rem}
+ .seven-immersive .seven-content{padding-inline:.5rem}
+ .seven-immersive .seven-stage{order:3}
+ .seven-immersive .seven-inspector{order:6}
+}
+@media(max-width:390px){
+ .seven-stage{min-height:46svh}
+ .seven-stage svg{height:46svh}
+ .seven-immersive .seven-stage{min-height:74svh}
+ .seven-immersive .seven-stage svg{height:74svh}
+ .seven-immerse-toggle{max-width:52%;line-height:1.2}
+}
+@media(prefers-reduced-motion:reduce){
+ .seven-stage,.seven-stage svg,.seven-immerse-toggle{animation:none!important;transition:none!important}
+ .seven-stage::after{display:none}
+}
+@media(prefers-reduced-data:reduce){.seven-stage::before,.seven-stage::after{display:none}}
