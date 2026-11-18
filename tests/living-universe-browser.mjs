@@ -32,6 +32,14 @@ for(const width of [360,390,768,1280]){
     await page.keyboard.press('Enter');
     assert.ok((await page.locator('#seven-detail').innerText()).length>5,'Keyboard selection reveals source details');
   }
+
+  const immersive=page.locator('#seven-movements .seven-immerse-toggle');
+  await immersive.click();
+  assert.equal(await immersive.getAttribute('aria-pressed'),'true','Immersive mode is explicitly enabled');
+  assert.ok(await host.evaluate(el=>el.classList.contains('seven-immersive')),'World expands without losing source data');
+  assert.ok(await svg.locator('.seven-source-constellation circle').count()>0,'Published nodes survive immersive transition');
+  await page.keyboard.press('Escape');
+  assert.equal(await immersive.getAttribute('aria-pressed'),'false','Escape exits immersive mode');
   await page.screenshot({path:'artifacts/living-universe/tree-'+width+'.png',fullPage:true});
   assert.deepEqual(errors,[],'Browser JavaScript errors');
   console.log('PASS',width,'px',JSON.stringify(bounds));
