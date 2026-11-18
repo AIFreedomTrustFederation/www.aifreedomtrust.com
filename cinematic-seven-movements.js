@@ -292,6 +292,26 @@ function syncVoyage(n){
  }
  updateVoyageControls();
 }
+// Immersive world mode keeps the published inspector in the DOM and restores it on exit.
+// The user can always return with Escape; no evidence or camera state is fabricated.
+const focusButton=document.createElement('button');
+focusButton.type='button';focusButton.className='seven-immerse-toggle';
+focusButton.textContent='Enter immersive Tree';
+focusButton.setAttribute('aria-pressed','false');
+focusButton.setAttribute('aria-controls','seven-movements');
+const setImmersive=enabled=>{
+ host.classList.toggle('seven-immersive',enabled);
+ focusButton.setAttribute('aria-pressed',String(enabled));
+ focusButton.textContent=enabled?'Exit immersive Tree':'Enter immersive Tree';
+ if(!enabled)focusButton.focus({preventScroll:true});
+};
+focusButton.addEventListener('click',()=>setImmersive(!host.classList.contains('seven-immersive')));
+host.addEventListener('keydown',event=>{
+ if(event.key==='Escape'&&host.classList.contains('seven-immersive')){
+  event.preventDefault();setImmersive(false);
+ }
+});
+host.querySelector('.seven-stage').append(focusButton);
 const cameraControls=document.createElement('div');cameraControls.className='seven-camera-controls';cameraControls.setAttribute('role','group');cameraControls.setAttribute('aria-label','Constellation camera controls');
 for(const [label,action] of [['Zoom in',()=>cameraStep(1)],['Zoom out',()=>cameraStep(-1)],['Reset view',cameraHome]]){const b=document.createElement('button');b.type='button';b.textContent=label;b.addEventListener('click',action);cameraControls.append(b)}
 scene.parentElement.append(cameraControls);
