@@ -145,12 +145,54 @@ function drawJourney(n){
  }
 }
 $('seven-journey-reset').addEventListener('click',()=>{state.selected=null;state.history=[];search.value='';render();cameraHome();$('seven-title').focus({preventScroll:true})});
+// A source-to-outcome voyage follows only the complete, published ancestry chain.
+let voyageTrail=[],voyageIndex=-1;
+const voyageControls=document.createElement('div');
+voyageControls.className='seven-voyage-controls';
+voyageControls.setAttribute('role','group');
+voyageControls.setAttribute('aria-label','Travel through documented lineage');
+const voyageStart=document.createElement('button'),voyagePrevious=document.createElement('button'),voyageNext=document.createElement('button');
+voyageStart.type=voyagePrevious.type=voyageNext.type='button';
+voyageStart.textContent='Begin lineage voyage';
+voyagePrevious.textContent='← Earlier source';
+voyageNext.textContent='Next source →';
+const voyagePosition=document.createElement('span');voyagePosition.setAttribute('role','status');
+voyageControls.append(voyageStart,voyagePrevious,voyageNext,voyagePosition);
+journey.append(voyageControls);
+function updateVoyageControls(){
+ voyageStart.disabled=!voyageTrail.length;
+ voyagePrevious.disabled=voyageIndex<=0;
+ voyageNext.disabled=voyageIndex<0||voyageIndex>=voyageTrail.length-1;
+ voyagePosition.textContent=voyageTrail.length?(voyageIndex<0?'Ready · '+voyageTrail.length+' documented steps':(voyageIndex+1)+' of '+voyageTrail.length+' documented steps'):'No complete published ancestry';
+}
+function visitVoyage(index){
+ if(index<0||index>=voyageTrail.length)return;
+ const node=voyageTrail[index];if(!byId.has(node.id))return;
+ voyageIndex=index;
+ state.history.push({chapter:state.chapter,selected:state.selected});
+ state.chapter=chapterFor(node);state.selected=node.id;search.value='';
+ render();
+ const position=point(node);frame(position.x,position.y,230);
+ updateVoyageControls();
+ $('seven-title').focus({preventScroll:true});
+}
+voyageStart.addEventListener('click',()=>visitVoyage(0));
+voyagePrevious.addEventListener('click',()=>visitVoyage(voyageIndex-1));
+voyageNext.addEventListener('click',()=>visitVoyage(voyageIndex+1));
+function syncVoyage(n){
+ const trail=n?lineage(n):null;
+ // Do not retain a stale route when its source selection changes.
+ if(!trail||!trail.some(item=>item.id===voyageTrail[voyageTrail.length-1]?.id)){
+   voyageTrail=trail||[];voyageIndex=-1;
+ }
+ updateVoyageControls();
+}
 const cameraControls=document.createElement('div');cameraControls.className='seven-camera-controls';cameraControls.setAttribute('role','group');cameraControls.setAttribute('aria-label','Constellation camera controls');
 for(const [label,action] of [['Zoom in',()=>cameraStep(1)],['Zoom out',()=>cameraStep(-1)],['Reset view',cameraHome]]){const b=document.createElement('button');b.type='button';b.textContent=label;b.addEventListener('click',action);cameraControls.append(b)}
 scene.parentElement.append(cameraControls);detail.setAttribute('tabindex','-1');
 chapters.forEach((c,i)=>{const b=document.createElement('button');b.type='button';b.textContent=String(i+1).padStart(2,'0')+' · '+c.title;b.addEventListener('click',()=>move(i,true));rail.append(b)});
 function show(n){state.selected=n.id;detail.replaceChildren();const h=document.createElement('h3');h.textContent=n.label;const p=document.createElement('p');p.textContent=n.desc||'No description in the published lineage.';detail.append(h,p);const trail=lineage(n);const t=document.createElement('p');t.className='seven-trail';t.textContent=trail?trail.map(x=>x.label).join(' → '):'Ancestry is incomplete or circular; outcome cannot be verified.';detail.append(t);if(trail){const nav=document.createElement('nav');nav.setAttribute('aria-label','Trace source ancestry');for(const ancestor of trail){const button=document.createElement('button');button.type='button';button.textContent=ancestor.label;button.addEventListener('click',()=>{state.history.push({chapter:state.chapter,selected:state.selected});state.chapter=chapterFor(ancestor);state.selected=ancestor.id;search.value='';render();$('seven-title').focus({preventScroll:true})});nav.append(button)}detail.append(nav)}const url=qualified(n)?safe(n.url):null;if(url){const a=document.createElement('a');a.href=url;a.textContent=n.kind==='fruit'?'Open documented experience':'Inspect published source';a.rel='noopener noreferrer';if(new URL(url).origin!==location.origin)a.target='_blank';detail.append(a)}}
-function render(){const c=chapters[state.chapter],all=Array.isArray(source)?source:[];host.dataset.movement=String(state.chapter);$('seven-back').disabled=!state.history.length;$('seven-breadcrumb').textContent='Federation / '+c.title;$('seven-title').textContent=c.title;$('seven-subtitle').textContent=c.subtitle;$('seven-counter').textContent=(state.chapter+1)+' / 7';$('seven-prev').disabled=state.chapter===0;$('seven-next').disabled=state.chapter===6;[...rail.children].forEach((b,i)=>b.setAttribute('aria-pressed',String(i===state.chapter)));const q=search.value.trim().toLocaleLowerCase();const entries=all.filter(n=>(!c.kind||n.kind===c.kind)&&qualified(n)&&(!q||(n.label+' '+(n.desc||'')).toLocaleLowerCase().includes(q)));$('seven-evidence').textContent=entries.length+' documented '+(c.kind||'lineage')+' record'+(entries.length===1?'':'s')+' in this view'+(entries.length>180?' · First 180 shown on the constellation; search to locate other records.':'');list.replaceChildren();const map=$('seven-map');map.replaceChildren();for(const kind of kinds){const count=all.filter(n=>n.kind===kind&&qualified(n)).length;const b=document.createElement('button');b.type='button';b.textContent=kind+' · '+count;b.setAttribute('aria-pressed',String(c.kind===kind));b.addEventListener('click',()=>move(kinds.indexOf(kind)+1,true));map.append(b)}if(!entries.length){const p=document.createElement('p');p.textContent='No published records match this view. No outcome is inferred.';list.append(p)}for(const n of entries){const b=document.createElement('button');b.type='button';b.textContent=n.label;b.setAttribute('aria-pressed',String(state.selected===n.id));b.addEventListener('click',()=>{show(n);render()});list.append(b)}drawConstellation(entries);const selected=entries.find(n=>n.id===state.selected);if(selected){show(selected);drawJourney(selected)}else{drawJourney(null);state.selected=null;detail.replaceChildren();const p=document.createElement('p');p.textContent='Select a documented record to inspect its ancestry and destination.';detail.append(p)}}
+function render(){const c=chapters[state.chapter],all=Array.isArray(source)?source:[];host.dataset.movement=String(state.chapter);$('seven-back').disabled=!state.history.length;$('seven-breadcrumb').textContent='Federation / '+c.title;$('seven-title').textContent=c.title;$('seven-subtitle').textContent=c.subtitle;$('seven-counter').textContent=(state.chapter+1)+' / 7';$('seven-prev').disabled=state.chapter===0;$('seven-next').disabled=state.chapter===6;[...rail.children].forEach((b,i)=>b.setAttribute('aria-pressed',String(i===state.chapter)));const q=search.value.trim().toLocaleLowerCase();const entries=all.filter(n=>(!c.kind||n.kind===c.kind)&&qualified(n)&&(!q||(n.label+' '+(n.desc||'')).toLocaleLowerCase().includes(q)));$('seven-evidence').textContent=entries.length+' documented '+(c.kind||'lineage')+' record'+(entries.length===1?'':'s')+' in this view'+(entries.length>180?' · First 180 shown on the constellation; search to locate other records.':'');list.replaceChildren();const map=$('seven-map');map.replaceChildren();for(const kind of kinds){const count=all.filter(n=>n.kind===kind&&qualified(n)).length;const b=document.createElement('button');b.type='button';b.textContent=kind+' · '+count;b.setAttribute('aria-pressed',String(c.kind===kind));b.addEventListener('click',()=>move(kinds.indexOf(kind)+1,true));map.append(b)}if(!entries.length){const p=document.createElement('p');p.textContent='No published records match this view. No outcome is inferred.';list.append(p)}for(const n of entries){const b=document.createElement('button');b.type='button';b.textContent=n.label;b.setAttribute('aria-pressed',String(state.selected===n.id));b.addEventListener('click',()=>{show(n);render()});list.append(b)}drawConstellation(entries);const selected=entries.find(n=>n.id===state.selected);if(selected){show(selected);drawJourney(selected);syncVoyage(selected)}else{drawJourney(null);syncVoyage(null);state.selected=null;detail.replaceChildren();const p=document.createElement('p');p.textContent='Select a documented record to inspect its ancestry and destination.';detail.append(p)}}
 function move(i,focus=false){frame();if(i<0||i>=chapters.length)return;state.history.push({chapter:state.chapter,selected:state.selected});state.chapter=i;state.selected=null;search.value='';render();if(focus)$('seven-title').focus({preventScroll:true})}
 $('seven-back').addEventListener('click',()=>{const prior=state.history.pop();if(!prior)return;state.chapter=prior.chapter;state.selected=prior.selected;search.value='';render();$('seven-title').focus({preventScroll:true})});$('seven-prev').addEventListener('click',()=>move(state.chapter-1,true));$('seven-next').addEventListener('click',()=>move(state.chapter+1,true));search.addEventListener('input',render);render();
 })();
