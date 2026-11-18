@@ -77,3 +77,11 @@ test('constellation pages expose every published match without fabricated nodes'
  assert.match(css,/\.seven-page-controls button:focus-visible/);
  assert.doesNotMatch(js,/Math\.random|sendBeacon|reward_xp/);
 });
+
+
+test('selected source automatically reveals its constellation page without overriding manual paging',()=>{
+ const js=read('cinematic-seven-movements.js');
+ for(const token of ['let lastRevealedSelection=null','entries.findIndex(n=>n.id===state.selected)','state.selected!==lastRevealedSelection','Math.floor(selectedIndex/PAGE_SIZE)','lastRevealedSelection=state.selected'])assert.ok(js.includes(token),token);
+ assert.match(js,/if\(selectedIndex>=0&&state\.selected!==lastRevealedSelection\)state\.page=Math\.floor\(selectedIndex\/PAGE_SIZE\)/);
+ assert.match(js,/pageNext\.addEventListener\('click',\(\)=>\{state\.page\+\+;render\(\)\}\)/);
+});
