@@ -11,6 +11,7 @@ function lineage(n){const trail=[],seen=new Set();let p=n;while(p&&!seen.has(p.i
 function qualified(n){if(n.kind!=='fruit')return true;const path=lineage(n);return !!(path&&path.some(p=>p.kind==='root')&&safe(n.url)&&!/^https:\/\/github\.com\/[^/]+\/[^/]+\/?$/i.test(safe(n.url)))}
 const state={chapter:0,selected:null,history:[],journey:[],page:0};
 const PAGE_SIZE=180;
+let lastRevealedSelection=null;
 // Page the actual published records instead of silently hiding later source nodes.
 // Selection, evidence counts and ancestry remain based on the complete filtered set.
 // The spatial constellation uses only published records; coordinates are deterministic, never random.
@@ -324,7 +325,8 @@ function render(){const c=chapters[state.chapter],all=Array.isArray(source)?sour
 // accessible list, an ancestry trail, or a guided voyage on another page.
 // Do not synthesize records or alter the current search/filter to reveal it.
 const selectedIndex=state.selected===null?-1:entries.findIndex(n=>n.id===state.selected);
-if(selectedIndex>=0)state.page=Math.floor(selectedIndex/PAGE_SIZE);
+if(selectedIndex>=0&&state.selected!==lastRevealedSelection)state.page=Math.floor(selectedIndex/PAGE_SIZE);
+lastRevealedSelection=state.selected;
 state.page=clamp(state.page,0,pages-1);$('seven-evidence').textContent=entries.length+' documented '+(c.kind||'lineage')+' record'+(entries.length===1?'':'s')+' in this view'+(pages>1?' · Constellation page '+(state.page+1)+' of '+pages+'; all matches remain available in the accessible list.':'');pageStatus.textContent='Constellation '+(state.page+1)+' / '+pages;pagePrevious.disabled=state.page===0;pageNext.disabled=state.page>=pages-1;list.replaceChildren();const map=$('seven-map');map.replaceChildren();for(const kind of kinds){const count=all.filter(n=>n.kind===kind&&qualified(n)).length;const b=document.createElement('button');b.type='button';b.textContent=kind+' · '+count;b.setAttribute('aria-pressed',String(c.kind===kind));b.addEventListener('click',()=>move(kinds.indexOf(kind)+1,true));map.append(b)}if(!entries.length){const p=document.createElement('p');p.textContent='No published records match this view. No outcome is inferred.';list.append(p)}for(const n of entries){const b=document.createElement('button');b.type='button';b.textContent=n.label;b.setAttribute('aria-pressed',String(state.selected===n.id));b.addEventListener('click',()=>{show(n);render()});list.append(b)}drawConstellation(entries);const selected=entries.find(n=>n.id===state.selected);if(selected){show(selected);drawJourney(selected);syncVoyage(selected)}else{drawJourney(null);syncVoyage(null);state.selected=null;detail.replaceChildren();const p=document.createElement('p');p.textContent='Select a documented record to inspect its ancestry and destination.';detail.append(p)}}
 function move(i,focus=false){stopVoyageCamera();frame();if(i<0||i>=chapters.length)return;state.history.push({chapter:state.chapter,selected:state.selected});state.chapter=i;state.selected=null;state.page=0;search.value='';render();if(focus)$('seven-title').focus({preventScroll:true})}
 $('seven-back').addEventListener('click',()=>{const prior=state.history.pop();if(!prior)return;state.chapter=prior.chapter;state.selected=prior.selected;state.page=0;search.value='';render();$('seven-title').focus({preventScroll:true})});$('seven-prev').addEventListener('click',()=>move(state.chapter-1,true));$('seven-next').addEventListener('click',()=>move(state.chapter+1,true));search.addEventListener('input',()=>{state.page=0;render()});render();
