@@ -10,6 +10,10 @@ const byId=new Map((Array.isArray(source)?source:[]).map(n=>[n.id,n]));
 function lineage(n){const trail=[],seen=new Set();let p=n;while(p&&!seen.has(p.id)){trail.unshift(p);seen.add(p.id);p=p.parent?byId.get(p.parent):null}return p||(!trail.length)||(!trail[0]||trail[0].parent)?null:trail}
 function qualified(n){if(n.kind!=='fruit')return true;const path=lineage(n);return !!(path&&path.some(p=>p.kind==='root')&&safe(n.url)&&!/^https:\/\/github\.com\/[^/]+\/[^/]+\/?$/i.test(safe(n.url)))}
 const state={chapter:0,selected:null,history:[],journey:[],page:0};
+// The six biological layers have distinct, consistent spectral identities.
+// These are presentation tokens, never inferred source classifications.
+const biologicalPalette={root:'#fa7582',trunk:'#f7d18a',branch:'#64e6b4',leaf:'#6cbcff',flower:'#b392fa',fruit:'#ffab72'};
+const biologicalRadius={root:7,trunk:9,branch:7,leaf:6,flower:7,fruit:9};
 const PAGE_SIZE=180;
 let lastRevealedSelection=null;
 // Page the actual published records instead of silently hiding later source nodes.
@@ -113,8 +117,8 @@ function drawMinimap(visible){
  for(const n of visible){
    const p=visiblePoint(n),dot=document.createElementNS(NS,'circle');
    dot.setAttribute('cx',String(p.x));dot.setAttribute('cy',String(p.y));
-   dot.setAttribute('r',n.id===state.selected?'10':'4');
-   dot.setAttribute('fill',n.kind==='root'?'#fa7582':n.kind==='fruit'?'#f7d18a':'#64e6b4');
+   dot.setAttribute('r',n.id===state.selected?'11':String(Math.max(3,(biologicalRadius[n.kind]||6)-2)));
+   dot.setAttribute('fill',biologicalPalette[n.kind]||'#a9c3d1');
    dot.setAttribute('aria-hidden','true');minimap.append(dot);
  }
  const viewport=document.createElementNS(NS,'rect');
@@ -149,7 +153,7 @@ function drawConstellation(entries){
    connections.append(path);
  }
  layer.append(connections);
- for(const n of visible){const pos=visiblePoint(n);const circle=document.createElementNS(NS,'circle');circle.setAttribute('cx',pos.x);circle.setAttribute('cy',pos.y);circle.setAttribute('r',n.id===state.selected?'10':'6');circle.setAttribute('fill',n.kind==='root'?'#fa7582':n.kind==='fruit'?'#f7d18a':'#64e6b4');circle.setAttribute('stroke','#071727');circle.setAttribute('stroke-width','2');if(trail&&trail.some(p=>p.id===n.id))circle.setAttribute('class','seven-lineage-node');circle.setAttribute('role','button');circle.setAttribute('tabindex','0');circle.setAttribute('aria-label',n.label+' · '+n.kind);const title=document.createElementNS(NS,'title');title.textContent=n.label;circle.append(title);const activate=()=>{state.selected=n.id;render();travelToNode(n);detail.focus({preventScroll:true})};circle.addEventListener('click',activate);circle.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();activate()}});layer.append(circle)}}
+ for(const n of visible){const pos=visiblePoint(n);const circle=document.createElementNS(NS,'circle');circle.setAttribute('cx',pos.x);circle.setAttribute('cy',pos.y);circle.setAttribute('r',n.id===state.selected?'11':String(biologicalRadius[n.kind]||6));circle.setAttribute('fill',biologicalPalette[n.kind]||'#a9c3d1');circle.setAttribute('stroke','#071727');circle.setAttribute('stroke-width','2');if(trail&&trail.some(p=>p.id===n.id))circle.setAttribute('class','seven-lineage-node');circle.setAttribute('role','button');circle.setAttribute('tabindex','0');circle.setAttribute('aria-label',n.label+' · '+n.kind);const title=document.createElementNS(NS,'title');title.textContent=n.label;circle.append(title);const activate=()=>{state.selected=n.id;render();travelToNode(n);detail.focus({preventScroll:true})};circle.addEventListener('click',activate);circle.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();activate()}});layer.append(circle)}}
 // Initialize only after the canonical stage markup exists. The prior initialization
 // ran before host.innerHTML and discarded the constellation and its event listeners.
 function bindSpatialCamera(){
@@ -227,6 +231,21 @@ host.innerHTML='<div class="seven-sky" aria-hidden="true"><div class="seven-orbi
 const $=id=>host.querySelector('#'+id);
 bindSpatialCamera();
 const rail=$('seven-rail'),list=$('seven-list'),detail=$('seven-detail'),search=$('seven-search');
+// A grounded, non-interactive map key: counts are taken from published records,
+// not CI, invented products, XP, or simulated live telemetry.
+const biologicalKey=document.createElement('div');
+biologicalKey.className='seven-biological-key';
+biologicalKey.setAttribute('role','group');
+biologicalKey.setAttribute('aria-label','Published biological layers');
+for(const kind of kinds){
+ const count=[...byId.values()].filter(n=>n.kind===kind&&(kind!=='fruit'||qualified(n))).length;
+ const item=document.createElement('span');item.className='seven-biological-key-item';
+ const dot=document.createElement('i');dot.setAttribute('aria-hidden','true');dot.style.backgroundColor=biologicalPalette[kind];
+ const label=document.createElement('span');label.textContent=kind+' · '+count+' published';
+ item.append(dot,label);biologicalKey.append(item);
+}
+scene.parentElement.append(biologicalKey);
+
 // An evidence journey is a guided reading of published ancestry, not an XP system.
 const journey=document.createElement('section');
 journey.className='seven-journey';
