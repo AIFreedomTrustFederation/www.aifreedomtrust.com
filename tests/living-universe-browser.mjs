@@ -22,8 +22,10 @@ for(const width of [360,390,768,1280]){
   assert.ok(bounds.stage.width>0&&bounds.stage.height>0,'Stage has positive dimensions');
   const search=page.locator('#seven-search');
   await search.fill('___aift_no_matching_source___');
-  assert.match(await page.locator('#seven-evidence').innerText(),/No published records/i);
+  assert.match(await page.locator('#seven-evidence').innerText(),/(?:No published records|0 documented lineage records in this view)/i);
+  assert.equal(await svg.locator('.seven-source-constellation circle').count(),0,'No fabricated nodes for unmatched search');
   await search.fill('');
+  assert.ok(await svg.locator('.seven-source-constellation circle').count()>0,'Clearing search restores published nodes');
   const circles=svg.locator('.seven-source-constellation circle');
   if(await circles.count()){
     await circles.first().focus();
