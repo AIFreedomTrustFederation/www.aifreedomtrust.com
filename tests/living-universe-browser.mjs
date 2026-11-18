@@ -20,6 +20,8 @@ for(const width of [360,390,768,1280]){
   const bounds=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,viewport:innerWidth,stage:document.querySelector('#seven-movements .seven-stage')?.getBoundingClientRect().toJSON()}));
   assert.ok(bounds.scroll<=bounds.viewport+2,'Horizontal overflow '+JSON.stringify(bounds));
   assert.ok(bounds.stage.width>0&&bounds.stage.height>0,'Stage has positive dimensions');
+  if(width<=390)assert.ok(bounds.stage.height>=800*.58,'Mobile theatre must dominate its viewport');
+  assert.ok(bounds.stage.width<=bounds.viewport+2,'Theatre must not exceed viewport');
   const search=page.locator('#seven-search');
   await search.fill('___aift_no_matching_source___');
   assert.match(await page.locator('#seven-evidence').innerText(),/(?:No published records|0 documented lineage records in this view)/i);
