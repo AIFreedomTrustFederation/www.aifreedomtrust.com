@@ -191,3 +191,29 @@
 @media(max-width:760px){.seven-biological-key{top:3.65rem;left:.45rem;max-width:calc(100% - .9rem);gap:.2rem .55rem;padding:.35rem .5rem}.seven-biological-key-item{font-size:.62rem}}
 @media(max-width:390px){.seven-biological-key{max-width:calc(100% - .9rem)}.seven-biological-key-item{font-size:.58rem}}
 @media(prefers-reduced-data:reduce){.seven-biological-key{backdrop-filter:none}.seven-biological-key-item i{box-shadow:none}}
+
+
+/* Living Universe 3.1 — cinematic biological ascent.
+   Each atmosphere follows the selected *published* biological viewpoint;
+   these layers never depict invented records or outcomes. */
+.seven-stage{--scene-sky:#6cbcff25;--scene-mid:#64e6b425;--scene-earth:#fa758230;--scene-focus:50%;
+  background:radial-gradient(ellipse 35% 24% at var(--scene-focus) 48%,var(--seven-accent) 0%,transparent 82%),
+  radial-gradient(ellipse 68% 34% at 50% 5%,var(--scene-sky),transparent 80%),
+  radial-gradient(ellipse 65% 32% at 50% 53%,var(--scene-mid),transparent 80%),
+  radial-gradient(ellipse 75% 38% at 50% 100%,var(--scene-earth),transparent 85%),
+  linear-gradient(180deg,#061329,#092a33 57%,#220d22);
+  transition:background-color .45s ease,box-shadow .45s ease}
+.seven-movements[data-movement="1"] .seven-stage{--scene-earth:#fa758258;--scene-mid:#fa75821c;--scene-sky:#6cbcff12}
+.seven-movements[data-movement="2"] .seven-stage{--scene-earth:#fa758233;--scene-mid:#f7d18a3c;--scene-sky:#6cbcff19}
+.seven-movements[data-movement="3"] .seven-stage{--scene-earth:#fa75821b;--scene-mid:#64e6b44c;--scene-sky:#6cbcff24}
+.seven-movements[data-movement="4"] .seven-stage{--scene-earth:#fa75821a;--scene-mid:#64e6b430;--scene-sky:#6cbcff50}
+.seven-movements[data-movement="5"] .seven-stage{--scene-earth:#fa75821b;--scene-mid:#b392fa39;--scene-sky:#b392fa45}
+.seven-movements[data-movement="6"] .seven-stage{--scene-earth:#fa75821c;--scene-mid:#ffab7239;--scene-sky:#6cbcff32}
+.seven-scene-caption{position:absolute;z-index:4;top:.65rem;right:.65rem;max-width:min(49%,19rem);padding:.55rem .7rem;border:1px solid #d6b77d88;border-radius:.75rem;background:#071727ed;color:#f8ead1;font:600 .72rem/1.45 system-ui,sans-serif;overflow-wrap:anywhere;pointer-events:none;text-align:right}
+.seven-scene-caption strong{display:block;color:var(--seven-accent);font-size:.8rem}
+.seven-scene-caption small{display:block;font-size:.68rem;font-weight:400;color:#d4e6e8}
+.seven-stage .seven-source-link-active{stroke-dasharray:8 4;filter:drop-shadow(0 0 7px #f7d18a)}
+@media(max-width:760px){.seven-scene-caption{top:3.5rem;right:.45rem;max-width:48%;padding:.35rem .45rem;font-size:.64rem}.seven-scene-caption strong{font-size:.7rem}.seven-scene-caption small{font-size:.61rem}}
+@media(max-width:390px){.seven-scene-caption{top:3.25rem;max-width:46%}}
+@media(prefers-reduced-motion:reduce){.seven-stage{transition:none!important}.seven-stage .seven-source-link-active{stroke-dasharray:none;filter:none}}
+@media(prefers-reduced-data:reduce){.seven-stage{background:linear-gradient(180deg,#061329,#092a33 57%,#220d22)}}
