@@ -79,3 +79,11 @@
 .seven-source-link-active{stroke-width:3.5}
 @media(prefers-reduced-motion:reduce){.seven-stage svg{filter:none}}
 @media(max-width:390px){.seven-stage{border-radius:14px}}
+
+/* Source-backed spatial minimap: secondary to the playable world. */
+.seven-minimap-wrap{position:absolute;right:1rem;bottom:1rem;z-index:4;width:clamp(96px,20%,150px);padding:.55rem;background:#071727e8;border:1px solid #d6b77d;border-radius:14px;box-shadow:0 8px 30px #0008}
+.seven-minimap-wrap span{display:block;font:600 .65rem/1.3 system-ui;color:#e7d9b7;margin-bottom:.35rem}
+.seven-minimap{display:block;width:100%;aspect-ratio:1;cursor:crosshair;border:1px solid #446779;border-radius:8px;background:#09182a}
+.seven-minimap:focus-visible{outline:3px solid #f7d18a;outline-offset:3px}
+@media(max-width:390px){.seven-minimap-wrap{right:.5rem;bottom:.5rem;width:100px;padding:.35rem}.seven-minimap-wrap span{font-size:.58rem}}
+@media(prefers-reduced-motion:reduce){.seven-minimap{transition:none!important}}
