@@ -17,6 +17,13 @@ for(const width of [360,390,768,1280]){
   const svg=page.locator('#seven-movements .seven-stage svg').first();
   await svg.waitFor({state:'visible'});
   assert.ok(await svg.locator('.seven-source-constellation circle').count()>0,'Published lineage nodes should render');
+  // The cinematic growth field must be derived from the published constellation.
+  const light=svg.locator('.seven-growth-light');
+  assert.equal(await light.count(),1,'Source-backed growth lighting renders once');
+  const rendered=await svg.locator('.seven-source-constellation circle').count();
+  const illuminated=await light.locator('.seven-growth-root,.seven-growth-trunk,.seven-growth-canopy,.seven-growth-outcome').count();
+  assert.ok(illuminated>0&&illuminated<=rendered,'Only actual visible source records may illuminate the world');
+  assert.equal(await light.getAttribute('aria-hidden'),'true','Decorative lighting is excluded from accessible source navigation');
   const key=page.locator('#seven-movements .seven-biological-key');
   assert.equal(await key.locator('.seven-biological-key-item').count(),6,'All six biological layers have a visible source-derived key');
   const keyText=await key.innerText();
