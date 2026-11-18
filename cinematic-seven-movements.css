@@ -24,3 +24,8 @@
 .seven-source-constellation circle{cursor:pointer;filter:drop-shadow(0 0 5px #64e6b4);transition:r .2s ease}
 .seven-source-constellation circle:focus-visible{stroke:#fff;stroke-width:4;outline:none}
 @media(prefers-reduced-motion:reduce){.seven-source-constellation circle{transition:none;filter:none}}
+
+/* Keep the cinematic world dominant on the first Android viewport while retaining every control below. */
+@media(max-width:760px){.seven-content{display:flex;flex-direction:column;padding-top:1rem}.seven-eyebrow{order:0;margin:.25rem 0}.seven-content h2{order:1;font-size:clamp(2rem,9vw,3.5rem)}#seven-subtitle{order:2;margin:.25rem 0}.seven-grid{display:contents}.seven-stage{order:3;min-height:42svh}.seven-stage svg{height:43svh;max-height:none}.seven-controls{order:4;margin:.5rem 0}.seven-rail{order:5}.seven-inspector{order:6}.seven-disclaimer{order:7}.seven-map{margin-top:.25rem}}
+@media(max-width:390px){.seven-stage{min-height:40svh}.seven-stage svg{height:40svh}.seven-content h2{font-size:clamp(2rem,9vw,3rem)}}
+@media(prefers-reduced-motion:reduce){.seven-stage{filter:none}}
