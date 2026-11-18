@@ -41,3 +41,10 @@ test('evidence voyage remains reversible and never fabricates nodes or rewards',
  assert.match(css,/\.seven-voyage-controls button:focus-visible/);
  assert.doesNotMatch(js,/reward_xp|sendBeacon|localStorage|Math\.random/);
 });
+
+test('evidence voyage camera follows actual published nodes and respects reduced motion',()=>{
+ const js=read('cinematic-seven-movements.js'),css=read('cinematic-seven-movements.css');
+ for(const token of ['function travelToNode(node)','const target=point(node)','motionPreference.matches','document.visibilityState','requestAnimationFrame(tick)','cancelAnimationFrame(voyageAnimation)','travelToNode(node)','stopVoyageCamera();frame()'])assert.ok(js.includes(token),token);
+ assert.match(css,/prefers-reduced-motion:reduce/);
+ assert.doesNotMatch(js,/Math\\.random|reward_xp|sendBeacon|localStorage/);
+});

@@ -20,6 +20,25 @@ const cameraStep=(direction)=>{const c={x:camera.x+camera.size/2,y:camera.y+came
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 function point(n){let h=2166136261;for(const c of String(n.id)){h=Math.imul(h^c.charCodeAt(0),16777619)>>>0}const stage=Math.max(0,kinds.indexOf(n.kind));const angle=((h%10007)/10007)*Math.PI*2;const radius=stage===0?220:stage===1?30:stage===2?110:stage===3?175:stage===4?215:245;return {x:300+Math.cos(angle)*radius,y:300+Math.sin(angle)*radius}}
 function frame(x=300,y=300,size=600){camera.size=clamp(size,120,600);camera.x=clamp(x-camera.size/2,0,600-camera.size);camera.y=clamp(y-camera.size/2,0,600-camera.size);scene.setAttribute('viewBox',[camera.x,camera.y,camera.size,camera.size].join(' '))}
+// Camera travel is purely visual: route eligibility comes from published ancestry.
+let voyageAnimation=0;
+const motionPreference=window.matchMedia('(prefers-reduced-motion: reduce)');
+function stopVoyageCamera(){if(voyageAnimation){cancelAnimationFrame(voyageAnimation);voyageAnimation=0}}
+function travelToNode(node){
+ const target=point(node);
+ stopVoyageCamera();
+ if(motionPreference.matches||document.visibilityState==='hidden'){frame(target.x,target.y,230);return}
+ const from={x:camera.x+camera.size/2,y:camera.y+camera.size/2,size:camera.size};
+ const duration=520;let started=null;
+ const tick=now=>{
+   if(started===null)started=now;
+   const t=clamp((now-started)/duration,0,1);
+   const ease=t*t*(3-2*t);
+   frame(from.x+(target.x-from.x)*ease,from.y+(target.y-from.y)*ease,from.size+(230-from.size)*ease);
+   voyageAnimation=t<1?requestAnimationFrame(tick):0;
+ };
+ voyageAnimation=requestAnimationFrame(tick);
+}
 function drawConstellation(entries){
  layer.replaceChildren();
  const visible=entries.slice(0,180);
@@ -44,7 +63,7 @@ function drawConstellation(entries){
    connections.append(path);
  }
  layer.append(connections);
- for(const n of visible){const pos=point(n);const circle=document.createElementNS(NS,'circle');circle.setAttribute('cx',pos.x);circle.setAttribute('cy',pos.y);circle.setAttribute('r',n.id===state.selected?'10':'6');circle.setAttribute('fill',n.kind==='root'?'#fa7582':n.kind==='fruit'?'#f7d18a':'#64e6b4');circle.setAttribute('stroke','#071727');circle.setAttribute('stroke-width','2');if(trail&&trail.some(p=>p.id===n.id))circle.setAttribute('class','seven-lineage-node');circle.setAttribute('role','button');circle.setAttribute('tabindex','0');circle.setAttribute('aria-label',n.label+' · '+n.kind);const title=document.createElementNS(NS,'title');title.textContent=n.label;circle.append(title);const activate=()=>{state.selected=n.id;render();const p=point(n);frame(p.x,p.y,230);detail.focus({preventScroll:true})};circle.addEventListener('click',activate);circle.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();activate()}});layer.append(circle)}}
+ for(const n of visible){const pos=point(n);const circle=document.createElementNS(NS,'circle');circle.setAttribute('cx',pos.x);circle.setAttribute('cy',pos.y);circle.setAttribute('r',n.id===state.selected?'10':'6');circle.setAttribute('fill',n.kind==='root'?'#fa7582':n.kind==='fruit'?'#f7d18a':'#64e6b4');circle.setAttribute('stroke','#071727');circle.setAttribute('stroke-width','2');if(trail&&trail.some(p=>p.id===n.id))circle.setAttribute('class','seven-lineage-node');circle.setAttribute('role','button');circle.setAttribute('tabindex','0');circle.setAttribute('aria-label',n.label+' · '+n.kind);const title=document.createElementNS(NS,'title');title.textContent=n.label;circle.append(title);const activate=()=>{state.selected=n.id;render();travelToNode(n);detail.focus({preventScroll:true})};circle.addEventListener('click',activate);circle.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();activate()}});layer.append(circle)}}
 // Initialize only after the canonical stage markup exists. The prior initialization
 // ran before host.innerHTML and discarded the constellation and its event listeners.
 function bindSpatialCamera(){
@@ -60,8 +79,8 @@ function bindSpatialCamera(){
  let gesture=null;
  const center=()=>({x:camera.x+camera.size/2,y:camera.y+camera.size/2});
  const toWorld=(clientX,clientY)=>{const r=scene.getBoundingClientRect();return {x:camera.x+(clientX-r.left)*camera.size/(r.width||1),y:camera.y+(clientY-r.top)*camera.size/(r.height||1)}};
- const anchoredFrame=(anchor,clientX,clientY,size)=>{const r=scene.getBoundingClientRect();const next=clamp(size,120,600);camera.size=next;camera.x=clamp(anchor.x-(clientX-r.left)*next/(r.width||1),0,600-next);camera.y=clamp(anchor.y-(clientY-r.top)*next/(r.height||1),0,600-next);scene.setAttribute('viewBox',[camera.x,camera.y,next,next].join(' '))};
- const apply=(x,y,size)=>frame(x,y,size);
+ const anchoredFrame=(anchor,clientX,clientY,size)=>{stopVoyageCamera();const r=scene.getBoundingClientRect();const next=clamp(size,120,600);camera.size=next;camera.x=clamp(anchor.x-(clientX-r.left)*next/(r.width||1),0,600-next);camera.y=clamp(anchor.y-(clientY-r.top)*next/(r.height||1),0,600-next);scene.setAttribute('viewBox',[camera.x,camera.y,next,next].join(' '))};
+ const apply=(x,y,size)=>{stopVoyageCamera();frame(x,y,size)};
  const snapshot=()=>{
    const ps=[...pointers.values()];
    if(ps.length===1)return {mode:'pan',point:ps[0],center:center(),size:camera.size};
@@ -172,7 +191,7 @@ function visitVoyage(index){
  state.history.push({chapter:state.chapter,selected:state.selected});
  state.chapter=chapterFor(node);state.selected=node.id;search.value='';
  render();
- const position=point(node);frame(position.x,position.y,230);
+ travelToNode(node);
  updateVoyageControls();
  $('seven-title').focus({preventScroll:true});
 }
@@ -193,6 +212,6 @@ scene.parentElement.append(cameraControls);detail.setAttribute('tabindex','-1');
 chapters.forEach((c,i)=>{const b=document.createElement('button');b.type='button';b.textContent=String(i+1).padStart(2,'0')+' · '+c.title;b.addEventListener('click',()=>move(i,true));rail.append(b)});
 function show(n){state.selected=n.id;detail.replaceChildren();const h=document.createElement('h3');h.textContent=n.label;const p=document.createElement('p');p.textContent=n.desc||'No description in the published lineage.';detail.append(h,p);const trail=lineage(n);const t=document.createElement('p');t.className='seven-trail';t.textContent=trail?trail.map(x=>x.label).join(' → '):'Ancestry is incomplete or circular; outcome cannot be verified.';detail.append(t);if(trail){const nav=document.createElement('nav');nav.setAttribute('aria-label','Trace source ancestry');for(const ancestor of trail){const button=document.createElement('button');button.type='button';button.textContent=ancestor.label;button.addEventListener('click',()=>{state.history.push({chapter:state.chapter,selected:state.selected});state.chapter=chapterFor(ancestor);state.selected=ancestor.id;search.value='';render();$('seven-title').focus({preventScroll:true})});nav.append(button)}detail.append(nav)}const url=qualified(n)?safe(n.url):null;if(url){const a=document.createElement('a');a.href=url;a.textContent=n.kind==='fruit'?'Open documented experience':'Inspect published source';a.rel='noopener noreferrer';if(new URL(url).origin!==location.origin)a.target='_blank';detail.append(a)}}
 function render(){const c=chapters[state.chapter],all=Array.isArray(source)?source:[];host.dataset.movement=String(state.chapter);$('seven-back').disabled=!state.history.length;$('seven-breadcrumb').textContent='Federation / '+c.title;$('seven-title').textContent=c.title;$('seven-subtitle').textContent=c.subtitle;$('seven-counter').textContent=(state.chapter+1)+' / 7';$('seven-prev').disabled=state.chapter===0;$('seven-next').disabled=state.chapter===6;[...rail.children].forEach((b,i)=>b.setAttribute('aria-pressed',String(i===state.chapter)));const q=search.value.trim().toLocaleLowerCase();const entries=all.filter(n=>(!c.kind||n.kind===c.kind)&&qualified(n)&&(!q||(n.label+' '+(n.desc||'')).toLocaleLowerCase().includes(q)));$('seven-evidence').textContent=entries.length+' documented '+(c.kind||'lineage')+' record'+(entries.length===1?'':'s')+' in this view'+(entries.length>180?' · First 180 shown on the constellation; search to locate other records.':'');list.replaceChildren();const map=$('seven-map');map.replaceChildren();for(const kind of kinds){const count=all.filter(n=>n.kind===kind&&qualified(n)).length;const b=document.createElement('button');b.type='button';b.textContent=kind+' · '+count;b.setAttribute('aria-pressed',String(c.kind===kind));b.addEventListener('click',()=>move(kinds.indexOf(kind)+1,true));map.append(b)}if(!entries.length){const p=document.createElement('p');p.textContent='No published records match this view. No outcome is inferred.';list.append(p)}for(const n of entries){const b=document.createElement('button');b.type='button';b.textContent=n.label;b.setAttribute('aria-pressed',String(state.selected===n.id));b.addEventListener('click',()=>{show(n);render()});list.append(b)}drawConstellation(entries);const selected=entries.find(n=>n.id===state.selected);if(selected){show(selected);drawJourney(selected);syncVoyage(selected)}else{drawJourney(null);syncVoyage(null);state.selected=null;detail.replaceChildren();const p=document.createElement('p');p.textContent='Select a documented record to inspect its ancestry and destination.';detail.append(p)}}
-function move(i,focus=false){frame();if(i<0||i>=chapters.length)return;state.history.push({chapter:state.chapter,selected:state.selected});state.chapter=i;state.selected=null;search.value='';render();if(focus)$('seven-title').focus({preventScroll:true})}
+function move(i,focus=false){stopVoyageCamera();frame();if(i<0||i>=chapters.length)return;state.history.push({chapter:state.chapter,selected:state.selected});state.chapter=i;state.selected=null;search.value='';render();if(focus)$('seven-title').focus({preventScroll:true})}
 $('seven-back').addEventListener('click',()=>{const prior=state.history.pop();if(!prior)return;state.chapter=prior.chapter;state.selected=prior.selected;search.value='';render();$('seven-title').focus({preventScroll:true})});$('seven-prev').addEventListener('click',()=>move(state.chapter-1,true));$('seven-next').addEventListener('click',()=>move(state.chapter+1,true));search.addEventListener('input',render);render();
 })();
