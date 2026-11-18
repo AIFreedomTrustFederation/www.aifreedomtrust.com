@@ -29,3 +29,9 @@
 @media(max-width:760px){.seven-content{display:flex;flex-direction:column;padding-top:1rem}.seven-eyebrow{order:0;margin:.25rem 0}.seven-content h2{order:1;font-size:clamp(2rem,9vw,3.5rem)}#seven-subtitle{order:2;margin:.25rem 0}.seven-grid{display:contents}.seven-stage{order:3;min-height:42svh}.seven-stage svg{height:43svh;max-height:none}.seven-controls{order:4;margin:.5rem 0}.seven-rail{order:5}.seven-inspector{order:6}.seven-disclaimer{order:7}.seven-map{margin-top:.25rem}}
 @media(max-width:390px){.seven-stage{min-height:40svh}.seven-stage svg{height:40svh}.seven-content h2{font-size:clamp(2rem,9vw,3rem)}}
 @media(prefers-reduced-motion:reduce){.seven-stage{filter:none}}
+
+/* Spatial camera controls: usable without pinch, mouse wheel, or precision pointing. */
+.seven-camera-controls{position:absolute;left:clamp(.5rem,2vw,1rem);bottom:clamp(.5rem,2vw,1rem);z-index:3;display:flex;flex-wrap:wrap;gap:.5rem;max-width:calc(100% - 1rem)}
+.seven-camera-controls button{min-height:44px;min-width:44px;padding:.5rem .75rem;border:1px solid #f7d18a88;border-radius:.7rem;background:#071727e8;color:#f5f6f5;font:inherit;cursor:pointer}
+.seven-camera-controls button:focus-visible{outline:3px solid #f7d18a;outline-offset:3px}
+@media(max-width:390px){.seven-camera-controls{gap:.25rem}.seven-camera-controls button{font-size:.8rem;padding:.4rem .5rem}}
