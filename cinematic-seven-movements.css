@@ -20,7 +20,7 @@
 @media(prefers-reduced-motion:reduce){.seven-map,.seven-map button,.seven-detail nav button{transition:none!important}}
 
 /* Source-derived spatial camera: visible selection, touch-safe pan, readable focus. */
-.seven-stage svg{touch-action:pan-y;overflow:visible}
+.seven-stage svg{touch-action:none;overflow:visible}
 .seven-source-constellation circle{cursor:pointer;filter:drop-shadow(0 0 5px #64e6b4);transition:r .2s ease}
 .seven-source-constellation circle:focus-visible{stroke:#fff;stroke-width:4;outline:none}
 @media(prefers-reduced-motion:reduce){.seven-source-constellation circle{transition:none;filter:none}}
