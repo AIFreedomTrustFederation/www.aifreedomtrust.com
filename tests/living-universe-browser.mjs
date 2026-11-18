@@ -27,6 +27,15 @@ for(const width of [360,390,768,1280]){
   assert.ok(bounds.stage.width>0&&bounds.stage.height>0,'Stage has positive dimensions');
   if(width<=390)assert.ok(bounds.stage.height>=800*.58,'Mobile theatre must dominate its viewport');
   assert.ok(bounds.stage.width<=bounds.viewport+2,'Theatre must not exceed viewport');
+  // Atmospheric chapter navigation must reflect the real published viewpoint.
+  const caption=page.locator('#seven-movements .seven-scene-caption');
+  assert.match(await caption.innerText(),/The Living Whole/);
+  await page.locator('#seven-next').click();
+  assert.equal(await host.getAttribute('data-movement'),'1','Root chapter drives the stage atmosphere');
+  assert.match(await caption.innerText(),/The Roots/);
+  await page.locator('#seven-prev').click();
+  assert.equal(await host.getAttribute('data-movement'),'0','Return restores the federation viewpoint');
+  assert.match(await caption.innerText(),/The Living Whole/);
   const search=page.locator('#seven-search');
   await search.fill('___aift_no_matching_source___');
   assert.match(await page.locator('#seven-evidence').innerText(),/(?:No published records|0 documented lineage records in this view)/i);
