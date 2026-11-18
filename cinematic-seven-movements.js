@@ -43,7 +43,7 @@ function point(n){
  pointCache.set(n.id,result);
  return result;
 }
-function frame(x=300,y=300,size=600){camera.size=clamp(size,120,600);camera.x=clamp(x-camera.size/2,0,600-camera.size);camera.y=clamp(y-camera.size/2,0,600-camera.size);scene.setAttribute('viewBox',[camera.x,camera.y,camera.size,camera.size].join(' '))}
+function frame(x=300,y=300,size=600){camera.size=clamp(size,120,600);camera.x=clamp(x-camera.size/2,0,600-camera.size);camera.y=clamp(y-camera.size/2,0,600-camera.size);scene.setAttribute('viewBox',[camera.x,camera.y,camera.size,camera.size].join(' '));updateMinimapCamera()}
 // Camera travel is purely visual: route eligibility comes from published ancestry.
 let voyageAnimation=0;
 const motionPreference=window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -95,10 +95,35 @@ function separateVisibleNodes(visible){
  }
 }
 const visiblePoint=n=>visiblePositions.get(n.id)||point(n);
+// Spatial minimap shares the same published coordinates and camera bounds.
+// It is an overview, never a second source of truth or a synthetic status feed.
+let minimap;
+function updateMinimapCamera(){
+ if(!minimap)return;
+ const viewport=minimap.querySelector('.seven-minimap-viewport');
+ if(viewport){viewport.setAttribute('x',String(camera.x));viewport.setAttribute('y',String(camera.y));viewport.setAttribute('width',String(camera.size));viewport.setAttribute('height',String(camera.size))}
+}
+function drawMinimap(visible){
+ if(!minimap)return;
+ minimap.replaceChildren();
+ for(const n of visible){
+   const p=visiblePoint(n),dot=document.createElementNS(NS,'circle');
+   dot.setAttribute('cx',String(p.x));dot.setAttribute('cy',String(p.y));
+   dot.setAttribute('r',n.id===state.selected?'10':'4');
+   dot.setAttribute('fill',n.kind==='root'?'#fa7582':n.kind==='fruit'?'#f7d18a':'#64e6b4');
+   dot.setAttribute('aria-hidden','true');minimap.append(dot);
+ }
+ const viewport=document.createElementNS(NS,'rect');
+ viewport.setAttribute('class','seven-minimap-viewport');
+ viewport.setAttribute('fill','none');viewport.setAttribute('stroke','#f7d18a');
+ viewport.setAttribute('stroke-width','5');viewport.setAttribute('pointer-events','none');
+ minimap.append(viewport);updateMinimapCamera();
+}
 function drawConstellation(entries){
  layer.replaceChildren();
  const visible=entries.slice(0,180);
  separateVisibleNodes(visible);
+ drawMinimap(visible);
  const visibleById=new Map(visible.map(n=>[n.id,n]));
  const selected=state.selected?byId.get(state.selected):null;
  const trail=selected?lineage(selected):null;
@@ -136,7 +161,7 @@ function bindSpatialCamera(){
  let gesture=null;
  const center=()=>({x:camera.x+camera.size/2,y:camera.y+camera.size/2});
  const toWorld=(clientX,clientY)=>{const r=scene.getBoundingClientRect();return {x:camera.x+(clientX-r.left)*camera.size/(r.width||1),y:camera.y+(clientY-r.top)*camera.size/(r.height||1)}};
- const anchoredFrame=(anchor,clientX,clientY,size)=>{stopVoyageCamera();const r=scene.getBoundingClientRect();const next=clamp(size,120,600);camera.size=next;camera.x=clamp(anchor.x-(clientX-r.left)*next/(r.width||1),0,600-next);camera.y=clamp(anchor.y-(clientY-r.top)*next/(r.height||1),0,600-next);scene.setAttribute('viewBox',[camera.x,camera.y,next,next].join(' '))};
+ const anchoredFrame=(anchor,clientX,clientY,size)=>{stopVoyageCamera();const r=scene.getBoundingClientRect();const next=clamp(size,120,600);camera.size=next;camera.x=clamp(anchor.x-(clientX-r.left)*next/(r.width||1),0,600-next);camera.y=clamp(anchor.y-(clientY-r.top)*next/(r.height||1),0,600-next);scene.setAttribute('viewBox',[camera.x,camera.y,next,next].join(' '));updateMinimapCamera()};
  const apply=(x,y,size)=>{stopVoyageCamera();frame(x,y,size)};
  const snapshot=()=>{
    const ps=[...pointers.values()];
@@ -265,7 +290,23 @@ function syncVoyage(n){
 }
 const cameraControls=document.createElement('div');cameraControls.className='seven-camera-controls';cameraControls.setAttribute('role','group');cameraControls.setAttribute('aria-label','Constellation camera controls');
 for(const [label,action] of [['Zoom in',()=>cameraStep(1)],['Zoom out',()=>cameraStep(-1)],['Reset view',cameraHome]]){const b=document.createElement('button');b.type='button';b.textContent=label;b.addEventListener('click',action);cameraControls.append(b)}
-scene.parentElement.append(cameraControls);detail.setAttribute('tabindex','-1');
+scene.parentElement.append(cameraControls);
+const miniWrap=document.createElement('div');miniWrap.className='seven-minimap-wrap';
+const miniLabel=document.createElement('span');miniLabel.textContent='Spatial overview · select to recenter';
+miniWrap.append(miniLabel);
+minimap=document.createElementNS(NS,'svg');
+minimap.setAttribute('viewBox','0 0 600 600');
+minimap.setAttribute('role','button');minimap.setAttribute('tabindex','0');
+minimap.setAttribute('aria-label','Spatial minimap; click or press Enter to recenter the camera');
+minimap.classList.add('seven-minimap');
+minimap.addEventListener('click',e=>{
+ const r=minimap.getBoundingClientRect();
+ if(!r.width||!r.height)return;
+ frame((e.clientX-r.left)*600/r.width,(e.clientY-r.top)*600/r.height,camera.size);
+});
+minimap.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();cameraHome()}});
+miniWrap.append(minimap);scene.parentElement.append(miniWrap);
+detail.setAttribute('tabindex','-1');
 chapters.forEach((c,i)=>{const b=document.createElement('button');b.type='button';b.textContent=String(i+1).padStart(2,'0')+' · '+c.title;b.addEventListener('click',()=>move(i,true));rail.append(b)});
 function show(n){state.selected=n.id;detail.replaceChildren();const h=document.createElement('h3');h.textContent=n.label;const p=document.createElement('p');p.textContent=n.desc||'No description in the published lineage.';detail.append(h,p);const trail=lineage(n);const t=document.createElement('p');t.className='seven-trail';t.textContent=trail?trail.map(x=>x.label).join(' → '):'Ancestry is incomplete or circular; outcome cannot be verified.';detail.append(t);if(trail){const nav=document.createElement('nav');nav.setAttribute('aria-label','Trace source ancestry');for(const ancestor of trail){const button=document.createElement('button');button.type='button';button.textContent=ancestor.label;button.addEventListener('click',()=>{state.history.push({chapter:state.chapter,selected:state.selected});state.chapter=chapterFor(ancestor);state.selected=ancestor.id;search.value='';render();$('seven-title').focus({preventScroll:true})});nav.append(button)}detail.append(nav)}const url=qualified(n)?safe(n.url):null;if(url){const a=document.createElement('a');a.href=url;a.textContent=n.kind==='fruit'?'Open documented experience':'Inspect published source';a.rel='noopener noreferrer';if(new URL(url).origin!==location.origin)a.target='_blank';detail.append(a)}}
 function render(){const c=chapters[state.chapter],all=Array.isArray(source)?source:[];host.dataset.movement=String(state.chapter);$('seven-back').disabled=!state.history.length;$('seven-breadcrumb').textContent='Federation / '+c.title;$('seven-title').textContent=c.title;$('seven-subtitle').textContent=c.subtitle;$('seven-counter').textContent=(state.chapter+1)+' / 7';$('seven-prev').disabled=state.chapter===0;$('seven-next').disabled=state.chapter===6;[...rail.children].forEach((b,i)=>b.setAttribute('aria-pressed',String(i===state.chapter)));const q=search.value.trim().toLocaleLowerCase();const entries=all.filter(n=>(!c.kind||n.kind===c.kind)&&qualified(n)&&(!q||(n.label+' '+(n.desc||'')).toLocaleLowerCase().includes(q)));$('seven-evidence').textContent=entries.length+' documented '+(c.kind||'lineage')+' record'+(entries.length===1?'':'s')+' in this view'+(entries.length>180?' · First 180 shown on the constellation; search to locate other records.':'');list.replaceChildren();const map=$('seven-map');map.replaceChildren();for(const kind of kinds){const count=all.filter(n=>n.kind===kind&&qualified(n)).length;const b=document.createElement('button');b.type='button';b.textContent=kind+' · '+count;b.setAttribute('aria-pressed',String(c.kind===kind));b.addEventListener('click',()=>move(kinds.indexOf(kind)+1,true));map.append(b)}if(!entries.length){const p=document.createElement('p');p.textContent='No published records match this view. No outcome is inferred.';list.append(p)}for(const n of entries){const b=document.createElement('button');b.type='button';b.textContent=n.label;b.setAttribute('aria-pressed',String(state.selected===n.id));b.addEventListener('click',()=>{show(n);render()});list.append(b)}drawConstellation(entries);const selected=entries.find(n=>n.id===state.selected);if(selected){show(selected);drawJourney(selected);syncVoyage(selected)}else{drawJourney(null);syncVoyage(null);state.selected=null;detail.replaceChildren();const p=document.createElement('p');p.textContent='Select a documented record to inspect its ancestry and destination.';detail.append(p)}}
