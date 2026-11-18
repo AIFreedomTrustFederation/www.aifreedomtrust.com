@@ -43,7 +43,7 @@ test('stage dropdown and stage buttons share semantic focus behavior',()=>{
 test('touch gestures do not accidentally activate lineage nodes and search remains reversible',()=>{
  const js=read('cinematic-explorer.js');
  assert.match(js,/gestureMoved=true/);
- assert.match(js,/if\(gestureMoved\)\{e\.preventDefault\(\);return;/);
+ assert.match(js,/if\(gestureMoved\|\|pinchUsed\)\{e\.preventDefault\(\);return;/);
  assert.match(js,/if\(match\.id!==selected\)history\.push\(selected\)/);
  assert.match(js,/e\.pointerType==='mouse'/);
 });
