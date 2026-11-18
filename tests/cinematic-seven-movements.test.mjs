@@ -44,7 +44,7 @@ test('evidence voyage remains reversible and never fabricates nodes or rewards',
 
 test('evidence voyage camera follows actual published nodes and respects reduced motion',()=>{
  const js=read('cinematic-seven-movements.js'),css=read('cinematic-seven-movements.css');
- for(const token of ['function travelToNode(node)','const target=point(node)','motionPreference.matches','document.visibilityState','requestAnimationFrame(tick)','cancelAnimationFrame(voyageAnimation)','travelToNode(node)','stopVoyageCamera();frame()'])assert.ok(js.includes(token),token);
+ for(const token of ['function travelToNode(node)','const target=visiblePoint(node)','motionPreference.matches','document.visibilityState','requestAnimationFrame(tick)','cancelAnimationFrame(voyageAnimation)','travelToNode(node)','stopVoyageCamera();frame()'])assert.ok(js.includes(token),token);
  assert.match(css,/prefers-reduced-motion:reduce/);
  assert.doesNotMatch(js,/Math\\.random|reward_xp|sendBeacon|localStorage/);
 });
@@ -61,4 +61,12 @@ test('dense biological canopy separates visible source nodes without inventing r
  for(const token of ['function separateVisibleNodes(visible)','visiblePositions.clear()','nodes.sort((a,b)=>a.x-b.x','occupied=[[],[],[]]','visiblePositions.set(n.id','separateVisibleNodes(visible)','visiblePoint(parent)','visiblePoint(child)','const pos=visiblePoint(n)','const target=visiblePoint(node)'])assert.ok(js.includes(token),token);
  assert.match(js,/const visible=entries\.slice\(0,180\)/);
  assert.doesNotMatch(js,/Math\.random|reward_xp|sendBeacon/);
+});
+
+test('spatial minimap is evidence-backed, camera-synchronized and keyboard accessible',()=>{
+ const js=read('cinematic-seven-movements.js'),css=read('cinematic-seven-movements.css');
+ for(const token of ['function drawMinimap(visible)','visiblePoint(n)','seven-minimap-viewport','updateMinimapCamera()','minimap.addEventListener(\'click\'','minimap.addEventListener(\'keydown\'','cameraHome()'])assert.ok(js.includes(token),token);
+ assert.match(css,/\.seven-minimap:focus-visible/);
+ assert.match(css,/@media\(max-width:390px\)/);
+ assert.doesNotMatch(js,/Math\.random|sendBeacon|localStorage|reward_xp/);
 });
