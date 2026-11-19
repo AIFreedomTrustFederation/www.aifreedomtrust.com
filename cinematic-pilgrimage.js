@@ -143,6 +143,43 @@ function render(){
   for(const record of trail){const item=document.createElement('li'),button=document.createElement('button');button.type='button';button.textContent=record.kind+' · '+record.label;button.setAttribute('aria-current',String(record.id===chosen.id));
    button.addEventListener('click',()=>navigateTo(record));item.append(button);line.append(item)}
   detail.append(line);
+  // A playable, evidence-only root-to-selected-source flight. Each waypoint is
+  // a real ancestor, never a fabricated unlock, score or completion claim.
+  if(trail.length>1){
+   const flight=document.createElement('section');flight.className='pilgrimage-flight';
+   flight.setAttribute('aria-label','Follow the documented lineage through the Tree');
+   const heading=document.createElement('h3');heading.textContent='Follow this living lineage';
+   const help=document.createElement('p');help.textContent='Travel from its documented root toward this source. Each stop focuses an actual published node.';
+   const controls=document.createElement('div');controls.className='pilgrimage-flight-controls';
+   const begin=document.createElement('button');begin.type='button';begin.textContent='Start at the root';
+   const prev=document.createElement('button');prev.type='button';prev.textContent='Previous source';
+   const next=document.createElement('button');next.type='button';next.textContent='Next source';
+   const status=document.createElement('p');status.className='pilgrimage-flight-status';status.setAttribute('role','status');
+   const breadcrumb=document.createElement('ol');breadcrumb.className='pilgrimage-flight-trail';
+   let step=trail.findIndex(n=>n.id===chosen.id);
+   function showStep(nextStep){
+    step=Math.max(0,Math.min(trail.length-1,nextStep));
+    const record=trail[step];
+    status.textContent='Published waypoint '+(step+1)+' of '+trail.length+': '+record.label+' ('+record.kind+')';
+    prev.disabled=step===0;next.disabled=step===trail.length-1;
+    breadcrumb.replaceChildren();
+    trail.forEach((point,i)=>{const item=document.createElement('li');
+     const button=document.createElement('button');button.type='button';button.textContent=point.label;
+     button.setAttribute('aria-current',String(i===step));button.addEventListener('click',()=>showStep(i));
+     item.append(button);breadcrumb.append(item)});
+    const anchor=tree.querySelector('.living-source-node[data-node="'+CSS.escape(record.id)+'"]');
+    if(anchor){anchor.dispatchEvent(new Event('focus'));anchor.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true}))}
+    drawRoute(record);renderSpatial();
+   }
+   begin.addEventListener('click',()=>showStep(0));
+   prev.addEventListener('click',()=>showStep(step-1));
+   next.addEventListener('click',()=>showStep(step+1));
+   controls.append(begin,prev,next);flight.append(heading,help,controls,status,breadcrumb);
+   detail.append(flight);
+   // Do not hijack the current camera until the visitor explicitly starts.
+   status.textContent='Ready: '+trail.length+' documented waypoints. No achievement is awarded.';
+   prev.disabled=step===0;next.disabled=step===trail.length-1;
+  }
   const children=records.filter(n=>n.parent===chosen.id&&chapters.some(c=>c.kind===n.kind&&c.items.some(item=>item.id===n.id)));
   if(children.length){const nextTitle=document.createElement('h3');nextTitle.textContent='Documented paths growing from here';const nextList=document.createElement('div');nextList.className='pilgrimage-children';nextList.setAttribute('role','group');nextList.setAttribute('aria-label','Published direct descendants');
    children.forEach(child=>{const button=document.createElement('button');button.type='button';button.textContent=child.kind+' · '+child.label;button.addEventListener('click',()=>navigateTo(child));nextList.append(button)});
