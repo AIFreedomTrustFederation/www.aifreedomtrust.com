@@ -40,3 +40,10 @@ test('playable lineage flight uses only actual ancestry and projected SVG nodes'
  assert.match(css,/min-height:44px/);
  assert.doesNotMatch(js,/Math\.random|localStorage|sessionStorage|fetch\(/);
 });
+
+test('flight waypoint and spatial camera stay synchronized with the real SVG viewBox',()=>{
+ for(const token of ['activeWaypoint=record','activeWaypoint||chosen','MutationObserver','attributeFilter:[\'viewBox\']','renderSpatial()'])assert.ok(js.includes(token),token);
+ assert.match(js,/cameraObserver\.observe\(tree/);
+ assert.match(js,/change\.attributeName===\'viewBox\'/);
+ assert.doesNotMatch(js,/Math\.random|localStorage|sessionStorage/);
+});
