@@ -437,10 +437,20 @@ routeHome.textContent='Whole Tree';
 routeDeck.append(routeTitle,routeStatus,routePrevious,routeNext,routeHome);
 const routeState={trail:[],index:-1};
 function routeSelect(index){
- const n=routeState.trail[index];if(!n)return;
+ const trail=routeState.trail.slice();
+ const n=trail[index];if(!n)return;
  state.history.push({chapter:state.chapter,selected:state.selected});
  state.chapter=chapterFor(n);state.selected=n.id;state.page=0;
  search.value='';render();travelToNode(n);
+ // Keep the verified journey available when visiting its root. A root's own
+ // ancestry contains only itself, but the selected route still has descendants.
+ // This state is navigation context, never an invented source relationship.
+ routeState.trail=trail;
+ routeState.index=index;
+ routeDeck.hidden=trail.length<2;
+ routePrevious.disabled=index<=0;
+ routeNext.disabled=index>=trail.length-1;
+ routeStatus.textContent='Published lineage '+(index+1)+' of '+trail.length+' · '+n.label;
  routeStatus.focus({preventScroll:true});
 }
 routePrevious.addEventListener('click',()=>routeSelect(routeState.index-1));
