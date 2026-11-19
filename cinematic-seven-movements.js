@@ -208,8 +208,31 @@ function bindSpatialCamera(){
  const pointers=new Map();
  let gesture=null;
  const center=()=>({x:camera.x+camera.size/2,y:camera.y+camera.size/2});
- const toWorld=(clientX,clientY)=>{const r=scene.getBoundingClientRect();return {x:camera.x+(clientX-r.left)*camera.size/(r.width||1),y:camera.y+(clientY-r.top)*camera.size/(r.height||1)}};
- const anchoredFrame=(anchor,clientX,clientY,size)=>{stopVoyageCamera();const r=scene.getBoundingClientRect();const next=clamp(size,120,600);camera.size=next;camera.x=clamp(anchor.x-(clientX-r.left)*next/(r.width||1),0,600-next);camera.y=clamp(anchor.y-(clientY-r.top)*next/(r.height||1),0,600-next);scene.setAttribute('viewBox',[camera.x,camera.y,next,next].join(' '));updateMinimapCamera()};
+ // SVG preserveAspectRatio can letterbox the world on narrow Android screens.
+ // Use the actual screen transformation rather than assuming CSS pixels map
+ // directly onto the 600-unit viewBox. This also respects browser zoom.
+ const toWorld=(clientX,clientY)=>{
+   const matrix=scene.getScreenCTM();
+   if(matrix&&typeof DOMPoint==='function'){
+     const p=new DOMPoint(clientX,clientY).matrixTransform(matrix.inverse());
+     if(Number.isFinite(p.x)&&Number.isFinite(p.y))return {x:p.x,y:p.y};
+   }
+   const r=scene.getBoundingClientRect();
+   const scale=Math.min(r.width,r.height)/(camera.size||1)||1;
+   const left=r.left+(r.width-camera.size*scale)/2;
+   const top=r.top+(r.height-camera.size*scale)/2;
+   return {x:camera.x+(clientX-left)/scale,y:camera.y+(clientY-top)/scale};
+ };
+ const anchoredFrame=(anchor,clientX,clientY,size)=>{
+   stopVoyageCamera();
+   const r=scene.getBoundingClientRect(),next=clamp(size,120,600);
+   const scale=Math.min(r.width,r.height)/(next||1)||1;
+   const left=r.left+(r.width-next*scale)/2,top=r.top+(r.height-next*scale)/2;
+   camera.size=next;
+   camera.x=clamp(anchor.x-(clientX-left)/scale,0,600-next);
+   camera.y=clamp(anchor.y-(clientY-top)/scale,0,600-next);
+   scene.setAttribute('viewBox',[camera.x,camera.y,next,next].join(' '));updateMinimapCamera();
+ };
  const apply=(x,y,size)=>{stopVoyageCamera();frame(x,y,size)};
  const snapshot=()=>{
    const ps=[...pointers.values()];
