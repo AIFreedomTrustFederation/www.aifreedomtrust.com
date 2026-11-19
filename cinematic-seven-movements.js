@@ -513,7 +513,7 @@ const atlasNext=document.createElement('button');atlasNext.type='button';atlasNe
 const atlasSource=document.createElement('button');atlasSource.type='button';atlasSource.textContent='Explore a documented source';
 atlasActions.append(atlasPrevious,atlasNext,atlasSource);
 atlas.append(atlasHeading,atlasIntro,atlasSteps,atlasStatus,atlasActions);
-host.querySelector('.seven-content').insertBefore(atlas,host.querySelector('.seven-grid'));
+host.querySelector('.seven-grid').after(atlas);
 const atlasButtons=chapters.map((chapter,index)=>{
  const button=document.createElement('button');button.type='button';
  button.textContent=(index+1)+' · '+chapter.title;
