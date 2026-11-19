@@ -333,3 +333,22 @@
 @media(max-width:390px){.seven-route-deck{gap:.25rem;padding:.4rem}.seven-route-deck button{font-size:.72rem;padding:.35rem .4rem}}
 @media(prefers-reduced-motion:reduce){.seven-route-deck{backdrop-filter:none}.seven-route-deck *{transition:none!important}}
 @media(prefers-reduced-data:reduce){.seven-route-deck{backdrop-filter:none}}
+
+
+/* Living Universe discovery atlas: source-backed stage journey, never simulated rewards. */
+.seven-discovery-atlas{position:relative;z-index:2;margin:clamp(.7rem,2vw,1.4rem) auto;padding:clamp(.8rem,2vw,1.35rem);max-width:1100px;border:1px solid #f7d18a55;border-radius:1.25rem;background:linear-gradient(115deg,#08172ae8,#12414a9c 55%,#261735c9);box-shadow:0 16px 44px #02081577;color:#f6f6f2}
+.seven-discovery-atlas h3{font:600 clamp(1.1rem,2.5vw,1.6rem) Georgia,serif;color:#f7d18a;margin:0 0 .35rem}
+.seven-discovery-atlas p{font-size:.9rem;line-height:1.5;margin:.35rem 0 .8rem}
+.seven-atlas-steps{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:.35rem}
+.seven-atlas-steps button{min-height:52px;padding:.5rem .25rem;border:1px solid #a9d5cc66;border-radius:.65rem;background:#0b2536;color:#f6f6f2;font:600 .76rem/1.25 system-ui,sans-serif;overflow-wrap:anywhere;cursor:pointer}
+.seven-atlas-steps button:nth-child(2){border-color:#fa7582}.seven-atlas-steps button:nth-child(3){border-color:#f7d18a}.seven-atlas-steps button:nth-child(4){border-color:#64e6b4}.seven-atlas-steps button:nth-child(5){border-color:#6cbcff}.seven-atlas-steps button:nth-child(6){border-color:#b392fa}.seven-atlas-steps button:nth-child(7){border-color:#ffab72}
+.seven-atlas-steps button[aria-current=step]{background:#f7d18a;color:#081523;box-shadow:0 0 18px #f7d18a55}
+.seven-atlas-actions{display:flex;flex-wrap:wrap;gap:.5rem}
+.seven-atlas-actions button{min-height:44px;padding:.55rem .8rem;border:1px solid #64e6b4aa;border-radius:.65rem;background:#16394b;color:#fff;cursor:pointer}
+.seven-atlas-actions button:disabled{opacity:.4;cursor:default}
+.seven-discovery-atlas button:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.seven-atlas-status{color:#dcebe7}
+@media(max-width:700px){.seven-atlas-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.seven-discovery-atlas{margin:.6rem .5rem}.seven-atlas-steps button{font-size:.78rem;text-align:left;padding:.55rem}.seven-atlas-actions button{flex:1 1 135px}}
+@media(max-width:390px){.seven-atlas-steps{gap:.3rem}.seven-discovery-atlas{padding:.65rem}}
+@media(prefers-reduced-motion:reduce){.seven-discovery-atlas *{transition:none!important;animation:none!important}}
+@media(prefers-reduced-data:reduce){.seven-discovery-atlas{box-shadow:none;background:#0b2434}.seven-atlas-steps button[aria-current=step]{box-shadow:none}}
