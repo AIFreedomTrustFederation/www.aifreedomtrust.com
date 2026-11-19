@@ -144,3 +144,14 @@ test('source-to-outcome pathways never turn repositories into fruits or fabricat
  assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
  assert.doesNotMatch(js,/reward_xp|sendBeacon|localStorage|Math\.random/);
 });
+
+test('biological chapter transitions frame only published qualified records with accessible fallback',()=>{
+ const js=read('cinematic-seven-movements.js');
+ assert.match(js,/function focusChapterRecords\(\)/);
+ assert.match(js,/filter\(n=>\(!kind\|\|n\.kind===kind\)&&qualified\(n\)\)/);
+ assert.match(js,/const page=records\.slice\(state\.page\*PAGE_SIZE/);
+ assert.match(js,/if\(!records\.length\)\{cameraHome\(\);return\}/);
+ assert.match(js,/motionPreference\.matches\|\|document\.visibilityState==='hidden'/);
+ assert.match(js,/render\(\);focusChapterRecords\(\);if\(focus\)/);
+ assert.doesNotMatch(js,/reward_xp|sendBeacon|localStorage|Math\.random/);
+});
