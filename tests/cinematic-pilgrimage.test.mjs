@@ -14,3 +14,11 @@ test('voyage filters only published records and exposes real descendant paths',(
  assert.match(css,/pilgrimage-children/);
  assert.doesNotMatch(js,/Math\.random|localStorage|sessionStorage/);
 });
+
+test('interactive atlas renders only qualified published biological records',()=>{
+ for(const token of ['pilgrimage-atlas-map','renderAtlas','chapter.items','record.id','navigateTo(record)','No published evidence','aria-current'])assert.ok(js.includes(token),token);
+ assert.match(js,/renderAtlas\(\)/);
+ assert.match(css,/grid-template-columns:repeat\(6/);
+ assert.match(css,/pilgrimage-atlas-column\[data-kind=fruit\]/);
+ assert.doesNotMatch(js,/Math\.random|localStorage|sessionStorage/);
+});
