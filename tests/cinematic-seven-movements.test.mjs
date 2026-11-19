@@ -98,3 +98,11 @@ test('mobile cinematic cockpit reserves distinct caption, provenance and camera 
  assert.match(css,/\.seven-scene-caption\{top:\.55rem/);
  assert.match(css,/\.seven-stage \.seven-minimap-wrap\{bottom:\.5rem/);
 });
+
+test('cinematic evidence voyage highlights only published ancestry while retaining accessible context',()=>{
+ const js=read('cinematic-seven-movements.js'),css=read('cinematic-seven-movements.css');
+ for(const token of ["lineageEdges.has(parent.id+'>'+child.id)","data-evidence-route","seven-context-node","seven-lineage-node","seven-source-link[data-evidence-route=\"true\"]","prefers-reduced-motion:reduce","prefers-reduced-data:reduce"])assert.ok((js+'\n'+css).includes(token),token);
+ assert.match(js,/else if\(trail\)circle\.setAttribute\('class','seven-context-node'\)/);
+ assert.match(css,/\.seven-context-node:is\(:hover,:focus-visible\)/);
+ assert.doesNotMatch(js,/Math\.random|reward_xp|sendBeacon/);
+});
