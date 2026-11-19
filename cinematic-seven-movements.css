@@ -352,3 +352,19 @@
 @media(max-width:390px){.seven-atlas-steps{gap:.3rem}.seven-discovery-atlas{padding:.65rem}}
 @media(prefers-reduced-motion:reduce){.seven-discovery-atlas *{transition:none!important;animation:none!important}}
 @media(prefers-reduced-data:reduce){.seven-discovery-atlas{box-shadow:none;background:#0b2434}.seven-atlas-steps button[aria-current=step]{box-shadow:none}}
+
+/* Living Universe source-to-outcome pathways, derived only from qualified manifest fruits. */
+.seven-outcome-pathways{position:relative;z-index:2;max-width:1100px;margin:1.2rem auto;padding:clamp(1rem,3vw,1.6rem);border:1px solid #64e6b477;border-radius:1.25rem;background:linear-gradient(135deg,#071827,#103c44 60%,#271a3b);color:#f4f8f5}
+.seven-outcome-pathways h3{font:600 clamp(1.35rem,3vw,2rem) Georgia,serif;color:#f7d18a;margin:0 0 .5rem}
+.seven-outcome-pathways>p{max-width:75ch;line-height:1.5}
+.seven-outcome-pathways select{width:100%;max-width:420px;min-height:48px;border:1px solid #b6d6c9;border-radius:.7rem;background:#112c3b;color:#fff;padding:.7rem;font:inherit}
+.seven-pathway-results{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:1rem;margin-top:1rem}
+.seven-pathway-card{min-width:0;padding:1rem;border:1px solid #6cbcff66;border-radius:1rem;background:#071827e8;box-shadow:0 10px 28px #02071355}
+.seven-pathway-card h4{color:#f7d18a;font:600 1.2rem Georgia,serif;margin:0 0 .5rem}
+.seven-pathway-ancestry{overflow-wrap:anywhere;color:#c8e5df;line-height:1.55;font-size:.9rem}
+.seven-pathway-actions{display:flex;flex-wrap:wrap;gap:.6rem}
+.seven-pathway-actions button,.seven-pathway-actions a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:.55rem .75rem;border:1px solid #64e6b4;border-radius:.7rem;background:#164356;color:#fff;font:inherit;text-decoration:none;cursor:pointer}
+.seven-outcome-pathways :focus-visible{outline:3px solid #f7d18a;outline-offset:3px}
+@media(max-width:700px){.seven-outcome-pathways{margin:1rem .5rem}.seven-pathway-results{grid-template-columns:1fr}.seven-pathway-actions>*{flex:1 1 160px}}
+@media(prefers-reduced-motion:reduce){.seven-outcome-pathways *{animation:none!important;transition:none!important}}
+@media(prefers-reduced-data:reduce){.seven-outcome-pathways{background:#0b2434}.seven-pathway-card{box-shadow:none}}
