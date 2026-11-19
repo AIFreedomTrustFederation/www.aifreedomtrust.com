@@ -9,6 +9,30 @@ function ancestry(n){const path=[],seen=new Set();while(n&&!seen.has(n.id)){path
 function safe(url){try{const u=new URL(url,location.href);return u.protocol==='https:'||(u.protocol==='http:'&&u.origin===location.origin)?u.href:null}catch{return null}}
 function qualifies(n){if(n.kind!=='fruit')return true;const path=ancestry(n);return path.some(p=>p.kind==='root')&&!!safe(n.url)&&!/^https:\/\/github\.com\/[^/]+\/[^/]+\/?$/i.test(safe(n.url))}
 const chapters=kinds.map(kind=>({kind,items:records.filter(n=>n.kind===kind&&qualifies(n))}));
+// Evidence-only cinematic route: actual published ancestry, never decorative nodes.
+const routeLayer=document.createElementNS('http://www.w3.org/2000/svg','g');
+routeLayer.classList.add('pilgrimage-route-layer');
+routeLayer.setAttribute('aria-hidden','true');
+tree.append(routeLayer);
+const sourceAnchors=()=>new Map([...tree.querySelectorAll('.living-source-node[data-node]')].map(el=>[el.dataset.node,el]));
+const positionOf=id=>{const el=sourceAnchors().get(id),dot=el?.querySelector('circle[cx][cy]');if(!dot)return null;const x=Number(dot.getAttribute('cx')),y=Number(dot.getAttribute('cy'));return Number.isFinite(x)&&Number.isFinite(y)?{x,y}:null};
+function drawRoute(node){
+ routeLayer.replaceChildren();
+ if(!node)return;
+ const trail=ancestry(node);
+ for(let i=1;i<trail.length;i++){
+  const a=positionOf(trail[i-1].id),b=positionOf(trail[i].id);
+  if(!a||!b)continue; // No projected source means no invented connection.
+  const edge=document.createElementNS('http://www.w3.org/2000/svg','path');
+  edge.setAttribute('d','M'+a.x+' '+a.y+' Q'+((a.x+b.x)/2)+' '+(Math.min(a.y,b.y)-36)+' '+b.x+' '+b.y);
+  edge.setAttribute('class','pilgrimage-route-edge');routeLayer.append(edge);
+ }
+ for(const record of trail){const p=positionOf(record.id);if(!p)continue;
+  const ring=document.createElementNS('http://www.w3.org/2000/svg','circle');
+  ring.setAttribute('cx',String(p.x));ring.setAttribute('cy',String(p.y));ring.setAttribute('r',record.id===node.id?'20':'13');
+  ring.setAttribute('class','pilgrimage-route-ring');routeLayer.append(ring);
+ }
+}
 const nav=document.createElement('section');nav.className='pilgrimage';nav.setAttribute('aria-label','Cinematic source-to-outcome journey');
 nav.innerHTML='<div class="pilgrimage-top"><span class="pilgrimage-kicker">THE LIVING PATH · SIX DOCUMENTED LAYERS</span><button class="pilgrimage-toggle" type="button" aria-expanded="false" aria-controls="pilgrimage-body">Begin the voyage</button></div><div class="pilgrimage-body" id="pilgrimage-body" hidden><div class="pilgrimage-track" role="group" aria-label="Biological journey stages"></div><div class="pilgrimage-detail" aria-live="polite"></div><div class="pilgrimage-actions"><button type="button" data-action="previous">← Previous</button><button type="button" data-action="next">Continue →</button><a class="pilgrimage-destination" hidden>Open documented destination</a></div><p class="pilgrimage-disclaimer">A guided exploration of published lineage, not live CI or completion status. Missing evidence never creates a fruit.</p></div>';
 world.append(nav);
@@ -23,7 +47,7 @@ function focusTree(kind){
  tree.setAttribute('viewBox',[Math.max(0,x-size/2),Math.max(0,y-size/2),size,size].join(' '));
 }
 function render(){
- const current=chapters[index];nav.dataset.stage=current.kind;
+ const current=chapters[index];nav.dataset.stage=current.kind;drawRoute(chosen);
  track.replaceChildren();
  chapters.forEach((chapter,i)=>{const b=document.createElement('button');b.type='button';b.textContent=(i+1)+' · '+chapter.kind;b.setAttribute('aria-current',String(i===index));b.addEventListener('click',()=>{index=i;chosen=null;render()});track.append(b)});
  const title=document.createElement('h2');title.textContent=names[current.kind];
@@ -41,6 +65,10 @@ function render(){
   const provenance=document.createElement('p');provenance.className='pilgrimage-provenance';provenance.textContent='Published lineage: '+ancestry(chosen).map(n=>n.label+' ('+n.kind+')').join(' → ');
   const explanation=document.createElement('p');explanation.textContent=chosen.desc||'No additional published description.';
   detail.append(provenance,explanation);
+  const trail=ancestry(chosen),line=document.createElement('ol');line.className='pilgrimage-lineage';line.setAttribute('aria-label','Reversible source ancestry');
+  for(const record of trail){const item=document.createElement('li'),button=document.createElement('button');button.type='button';button.textContent=record.kind+' · '+record.label;button.setAttribute('aria-current',String(record.id===chosen.id));
+   button.addEventListener('click',()=>{const target=chapters.findIndex(c=>c.kind===record.kind);if(target<0||!chapters[target].items.some(n=>n.id===record.id))return;index=target;chosen=record;render()});item.append(button);line.append(item)}
+  detail.append(line);
  }
  const link=chosen&&safe(chosen.url);destination.hidden=!link;
  if(link){destination.href=link;destination.textContent=chosen.kind==='fruit'?'Enter verified public experience':'Inspect published source';destination.rel='noopener noreferrer';if(new URL(link).origin!==location.origin)destination.target='_blank';else destination.removeAttribute('target')}
@@ -52,8 +80,8 @@ function render(){
  focusTree(current.kind);
  if(!reduced.matches)requestAnimationFrame(()=>nav.classList.add('pilgrimage-arrived'));
 }
-toggle.addEventListener('click',()=>{const opening=body.hidden;body.hidden=!opening;toggle.setAttribute('aria-expanded',String(opening));toggle.textContent=opening?'Close voyage':'Begin the voyage';if(opening)render();else tree.setAttribute('viewBox','0 0 1000 1000')});
+toggle.addEventListener('click',()=>{const opening=body.hidden;body.hidden=!opening;toggle.setAttribute('aria-expanded',String(opening));toggle.textContent=opening?'Close voyage':'Begin the voyage';if(opening)render();else {drawRoute(null);tree.setAttribute('viewBox','0 0 1000 1000')}});
 nav.querySelector('[data-action="previous"]').addEventListener('click',()=>{if(index>0){index--;chosen=null;render()}});
 nav.querySelector('[data-action="next"]').addEventListener('click',()=>{if(index<chapters.length-1){index++;chosen=null;render()}});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!body.hidden){body.hidden=true;toggle.setAttribute('aria-expanded','false');toggle.textContent='Begin the voyage';toggle.focus();tree.setAttribute('viewBox','0 0 1000 1000')}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!body.hidden){body.hidden=true;toggle.setAttribute('aria-expanded','false');toggle.textContent='Begin the voyage';toggle.focus();drawRoute(null);tree.setAttribute('viewBox','0 0 1000 1000')}});
 })();
