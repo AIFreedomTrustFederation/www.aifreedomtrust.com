@@ -37,16 +37,16 @@ const nav=document.createElement('section');nav.className='pilgrimage';nav.setAt
 nav.innerHTML='<div class="pilgrimage-top"><span class="pilgrimage-kicker">THE LIVING PATH · SIX DOCUMENTED LAYERS</span><button class="pilgrimage-toggle" type="button" aria-expanded="false" aria-controls="pilgrimage-body">Begin the voyage</button></div><div class="pilgrimage-body" id="pilgrimage-body" hidden><div class="pilgrimage-track" role="group" aria-label="Biological journey stages"></div><div class="pilgrimage-detail" aria-live="polite"></div><div class="pilgrimage-actions"><button type="button" data-action="previous">← Previous</button><button type="button" data-action="next">Continue →</button><a class="pilgrimage-destination" hidden>Open documented destination</a></div><p class="pilgrimage-disclaimer">A guided exploration of published lineage, not live CI or completion status. Missing evidence never creates a fruit.</p></div>';
 world.append(nav);
 const toggle=nav.querySelector('.pilgrimage-toggle'),body=nav.querySelector('.pilgrimage-body'),track=nav.querySelector('.pilgrimage-track'),detail=nav.querySelector('.pilgrimage-detail'),destination=nav.querySelector('.pilgrimage-destination');
-let index=0,chosen=null;
+let index=0,chosen=null,activeWaypoint=null;
 const visited=new Set(),history=[],future=[],searchByKind=new Map();
 function snapshot(){return {index,id:chosen?.id||null}}
-function restore(state){index=state.index;chosen=state.id?byId.get(state.id)||null:null;render()}
+function restore(state){index=state.index;chosen=state.id?byId.get(state.id)||null:null;activeWaypoint=null;render()}
 function travel(nextIndex,record=null){
  if(nextIndex<0||nextIndex>=chapters.length)return;
  const before=snapshot(),after={index:nextIndex,id:record?.id||null};
  if(before.index===after.index&&before.id===after.id)return;
  history.push(before);if(history.length>60)history.shift();future.length=0;
- index=nextIndex;chosen=record;render();
+ index=nextIndex;chosen=record;activeWaypoint=null;render();
 }
 function travelBack(){if(!history.length)return;future.push(snapshot());restore(history.pop())}
 function travelForward(){if(!future.length)return;history.push(snapshot());restore(future.pop())}
@@ -96,12 +96,19 @@ function renderSpatial(){
   marker.className='pilgrimage-spatial-marker';marker.dataset.kind=record.kind;
   marker.style.left=pct(point.x,ox,w)+'%';marker.style.top=pct(point.y,oy,h)+'%';
   marker.setAttribute('aria-label',record.kind+' source: '+record.label);
-  marker.setAttribute('aria-pressed',String(record.id===chosen?.id));
+  marker.setAttribute('aria-pressed',String(record.id===(activeWaypoint||chosen)?.id));
   marker.title=record.label;marker.addEventListener('click',()=>navigateTo(record));
   spatialMap.append(marker);
  }
 }
 
+// Keep the viewport frame synchronized with the canonical SVG camera, including
+// touch pan, pinch zoom, keyboard navigation and source projection selection.
+// Only viewBox changes are observed; marker rendering never writes that attribute.
+const cameraObserver=new MutationObserver(changes=>{
+ if(!body.hidden&&changes.some(change=>change.attributeName==='viewBox'))renderSpatial();
+});
+cameraObserver.observe(tree,{attributes:true,attributeFilter:['viewBox']});
 const positions={root:[500,900],trunk:[500,650],branch:[500,350],leaf:[500,190],flower:[500,140],fruit:[500,125]};
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 function focusTree(kind){
@@ -111,7 +118,7 @@ function focusTree(kind){
  tree.setAttribute('viewBox',[Math.max(0,x-size/2),Math.max(0,y-size/2),size,size].join(' '));
 }
 function render(){
- const current=chapters[index];nav.dataset.stage=current.kind;drawRoute(chosen);renderAtlas();
+ const current=chapters[index];activeWaypoint=null;nav.dataset.stage=current.kind;drawRoute(chosen);renderAtlas();
  visited.add(current.kind);
  timeline.querySelector('[data-history="back"]').disabled=!history.length;
  timeline.querySelector('[data-history="forward"]').disabled=!future.length;
@@ -159,7 +166,7 @@ function render(){
    let step=trail.findIndex(n=>n.id===chosen.id);
    function showStep(nextStep){
     step=Math.max(0,Math.min(trail.length-1,nextStep));
-    const record=trail[step];
+    const record=trail[step];activeWaypoint=record;
     status.textContent='Published waypoint '+(step+1)+' of '+trail.length+': '+record.label+' ('+record.kind+')';
     prev.disabled=step===0;next.disabled=step===trail.length-1;
     breadcrumb.replaceChildren();
