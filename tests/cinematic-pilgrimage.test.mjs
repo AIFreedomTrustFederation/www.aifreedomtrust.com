@@ -7,3 +7,10 @@ test('javascript syntax',()=>{execFileSync(process.execPath,['--check','cinemati
 
 test('cinematic route uses only projected published ancestry',()=>{for(const token of ['sourceAnchors','positionOf','drawRoute','ancestry(node)','if(!a||!b)continue','if(!p)continue','pilgrimage-route-layer'])assert.ok(js.includes(token),token);assert.doesNotMatch(js,/Math\\.random|localStorage|fetch\\(/)});
 test('lineage buttons reverse the journey without inventing missing records',()=>{for(const token of ['pilgrimage-lineage','Reversible source ancestry','chapters.findIndex','items.some','aria-current'])assert.ok(js.includes(token),token);assert.match(css,/pilgrimage-route-edge/);assert.match(css,/prefers-reduced-data/);});
+
+test('voyage filters only published records and exposes real descendant paths',()=>{
+ for(const token of ['pilgrimage-search','filterRecords','current.items.filter','search.addEventListener','records.filter(n=>n.parent===chosen.id','chapters.some','Published direct descendants','pilgrimage-evidence-progress'])assert.ok(js.includes(token),token);
+ assert.match(css,/pilgrimage-search:focus-visible/);
+ assert.match(css,/pilgrimage-children/);
+ assert.doesNotMatch(js,/Math\.random|localStorage|sessionStorage/);
+});
