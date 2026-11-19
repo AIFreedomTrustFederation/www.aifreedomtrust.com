@@ -80,12 +80,17 @@ for(const width of [360,390,768,1280]){
   const pilgrimage=page.locator('.pilgrimage');
   assert.equal(await pilgrimage.count(),1,'Source-bound pilgrimage mounts once');
   const voyageToggle=pilgrimage.locator('.pilgrimage-toggle');
-  // Real pointer hit-test: prevent the guided-voyage action rail from blocking the entrance.
+  // The seven-movement journey above can leave the document scrolled far below
+  // the canonical Tree. Scroll the entrance into view before testing hit geometry:
+  // elementFromPoint only accepts viewport coordinates, not offscreen elements.
+  await voyageToggle.scrollIntoViewIfNeeded();
   if(width<=390){
     const hit=await voyageToggle.evaluate(el=>{
-      const r=el.getBoundingClientRect();const x=r.left+r.width/2,y=r.top+r.height/2;
-      return {x,y,hit:document.elementFromPoint(x,y)?.closest('.pilgrimage-toggle')===el};
+      const r=el.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2;
+      const within=x>=0&&y>=0&&x<innerWidth&&y<innerHeight;
+      return {x,y,within,hit:within&&document.elementFromPoint(x,y)?.closest('.pilgrimage-toggle')===el};
     });
+    assert.ok(hit.within,'Mobile entrance must be in viewport before pointer testing: '+JSON.stringify(hit));
     assert.ok(hit.hit,'Mobile pilgrimage entrance must receive pointer input: '+JSON.stringify(hit));
   }
   await voyageToggle.click();
