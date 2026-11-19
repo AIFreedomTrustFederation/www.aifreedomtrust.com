@@ -233,3 +233,54 @@
 @media(max-width:800px){.embedded-world .world{padding:1rem .75rem 3.5rem;min-height:100svh;min-height:100dvh}.embedded-world .world .intro{width:100%;max-width:27ch;margin-top:0}.embedded-world .world .intro .eyebrow{font-size:.62rem;letter-spacing:.12em}.embedded-world .world .intro h1{font-size:clamp(2rem,8vw,3rem);margin:.35rem 0}.embedded-world .world .intro>p:not(.eyebrow){max-width:23ch;font-size:.83rem;line-height:1.4}.embedded-world .world .tree{width:145vw;right:-48vw;bottom:-9vh;opacity:.98}.embedded-world .world .world-note{font-size:.66rem;max-width:25ch}.embedded-world .world .world-cinematic-controls{bottom:3rem}}
 @media(max-width:390px){.embedded-world .world .intro h1{font-size:2rem}.embedded-world .world .tree{width:155vw;right:-54vw;bottom:-7vh}}
 @media(prefers-reduced-motion:reduce){.embedded-world .world .tree{animation:none!important}}
+
+
+/* Living Universe 3.1: cinematic first-screen composition.
+   Presentation-only; published lineage, links and semantics are unchanged.
+   The actual SVG Tree remains the centerpiece, never a repository-as-fruit map. */
+.world{--world-depth:clamp(20px,4vw,68px);background:
+ radial-gradient(ellipse 70% 65% at 55% 58%,#1a695f38,transparent 74%),
+ radial-gradient(ellipse 65% 55% at 90% 12%,#244e8c55,transparent 78%),
+ linear-gradient(160deg,#020714,#0b1c32 54%,#120e28);perspective:1100px}
+.world::before,.world::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:0}
+.world::before{background:
+ radial-gradient(ellipse 55% 50% at 58% 48%,#6ce9bc24,transparent 78%),
+ radial-gradient(ellipse 32% 36% at 85% 80%,#fa75821c,transparent 85%),
+ repeating-linear-gradient(105deg,transparent 0 96px,#f7d18a09 97px 98px,transparent 99px 194px);
+ mask-image:linear-gradient(to bottom,transparent,#000 18%,#000 85%,transparent)}
+.world::after{inset:auto -10% -24% -10%;height:57%;border-radius:50%;background:
+ radial-gradient(ellipse at 50% 25%,#e9c88721,transparent 64%),
+ radial-gradient(ellipse at 50% 65%,#e7787430,transparent 70%);
+ filter:blur(42px)}
+.world .tree{transform-origin:50% 74%;filter:drop-shadow(0 0 24px #64e6b477) drop-shadow(0 0 90px #6cbcff44);will-change:transform}
+.world .tree .roots{filter:drop-shadow(0 0 12px #fa758288)}
+.world .tree .branches{filter:drop-shadow(0 0 10px #64e6b477)}
+.world .tree .canopy{filter:drop-shadow(0 0 18px #6cbcff77)}
+.world .intro{isolation:isolate}
+.world .intro::before{content:"";position:absolute;z-index:-1;inset:-2rem -2rem -2rem -3rem;pointer-events:none;background:radial-gradient(ellipse at 35% 50%,#020916c9,transparent 75%)}
+.world .world-gates a,.world .enter{transition:transform .25s ease,box-shadow .25s ease,background-color .25s ease}
+.world .world-gates a:hover,.world .enter:hover{transform:translateY(-3px);box-shadow:0 12px 34px #64e6b433}
+.world .world-gates a:focus-visible,.world .enter:focus-visible{outline:3px solid #f7d18a;outline-offset:4px}
+@media(max-width:800px){
+ .world{display:flex;flex-direction:column;justify-content:flex-start;min-height:100svh;padding:clamp(5.3rem,13svh,7.5rem) 1rem 2rem}
+ .world .intro{width:100%;max-width:34rem}
+ .world .intro h1{max-width:13ch;font-size:clamp(2.45rem,9vw,4.3rem);line-height:1.02;margin:.55rem 0}
+ .world .intro>p:not(.eyebrow){font-size:clamp(.9rem,2.7vw,1.05rem);line-height:1.4;max-width:33ch}
+ .world .tree{width:min(115vw,760px);right:-18vw;bottom:1%;opacity:.98;max-height:72svh}
+ .world .world-note{bottom:.6rem;left:1rem;font-size:.67rem;max-width:36ch}
+}
+@media(max-width:440px){
+ .world{padding-top:5.2rem}
+ .world .intro h1{font-size:clamp(2.3rem,10.2vw,3.1rem)}
+ .world .tree{width:126vw;right:-26vw;bottom:2%;opacity:.95;max-height:68svh}
+ .world .intro::before{inset:-1rem -1rem -1rem -2rem}
+ .world .world-note{max-width:26ch}
+}
+@media(prefers-reduced-motion:reduce){
+ .world .tree{will-change:auto;animation:none!important}
+ .world .world-gates a,.world .enter{transition:none!important}
+}
+@media(prefers-reduced-data:reduce){
+ .world::before,.world::after,.world .intro::before{display:none}
+ .world .tree,.world .tree .roots,.world .tree .branches,.world .tree .canopy{filter:none}
+}
