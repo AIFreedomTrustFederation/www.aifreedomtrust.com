@@ -106,7 +106,16 @@ function renderSpatial(){
 // touch pan, pinch zoom, keyboard navigation and source projection selection.
 // Only viewBox changes are observed; marker rendering never writes that attribute.
 const cameraObserver=new MutationObserver(changes=>{
- if(!body.hidden&&changes.some(change=>change.attributeName==='viewBox'))renderSpatial();
+ if(body.hidden||!changes.some(change=>change.attributeName==='viewBox'))return;
+ // Camera movement can update every frame: move only the viewport rectangle,
+ // never rebuild all source markers during a pinch or drag.
+ const view=tree.viewBox.baseVal;
+ const full=[0,0,1000,1000];
+ const pct=(value,start,size)=>Math.max(0,Math.min(100,(value-start)/size*100));
+ spatialViewport.style.left=pct(view.x,full[0],full[2])+'%';
+ spatialViewport.style.top=pct(view.y,full[1],full[3])+'%';
+ spatialViewport.style.width=Math.max(1,Math.min(100,view.width/full[2]*100))+'%';
+ spatialViewport.style.height=Math.max(1,Math.min(100,view.height/full[3]*100))+'%';
 });
 cameraObserver.observe(tree,{attributes:true,attributeFilter:['viewBox']});
 const positions={root:[500,900],trunk:[500,650],branch:[500,350],leaf:[500,190],flower:[500,140],fruit:[500,125]};
