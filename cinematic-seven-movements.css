@@ -320,3 +320,16 @@
  .seven-source-link[data-evidence-route="true"],.seven-lineage-node{filter:none}
  .seven-context-node{opacity:.72!important}
 }
+
+
+/* Source-only voyage deck: floats inside the world, never over the map controls. */
+.seven-route-deck{position:absolute;z-index:5;top:clamp(.5rem,2vw,1rem);left:clamp(.5rem,2vw,1rem);right:clamp(.5rem,2vw,1rem);display:flex;flex-wrap:wrap;align-items:center;gap:.45rem;padding:.65rem;border:1px solid #f7d18a88;border-radius:1rem;background:linear-gradient(120deg,#071727ed,#14364be8);box-shadow:0 10px 30px #02091499;max-width:min(100% - 1rem,600px);backdrop-filter:blur(8px)}
+.seven-route-deck[hidden]{display:none!important}
+.seven-route-deck strong{color:#f7d18a;font:600 .9rem Georgia,serif}
+.seven-route-status{flex:1 1 100%;font-size:.78rem;color:#e5f3f1;overflow-wrap:anywhere}
+.seven-route-deck button{font:inherit;font-size:.8rem;min-height:44px;min-width:44px;padding:.45rem .65rem;border:1px solid #64e6b499;border-radius:.65rem;color:#fff;background:#15374b;cursor:pointer}
+.seven-route-deck button:disabled{opacity:.42;cursor:default}
+.seven-route-deck button:focus-visible{outline:3px solid #f7d18a;outline-offset:2px}
+@media(max-width:390px){.seven-route-deck{gap:.25rem;padding:.4rem}.seven-route-deck button{font-size:.72rem;padding:.35rem .4rem}}
+@media(prefers-reduced-motion:reduce){.seven-route-deck{backdrop-filter:none}.seven-route-deck *{transition:none!important}}
+@media(prefers-reduced-data:reduce){.seven-route-deck{backdrop-filter:none}}
