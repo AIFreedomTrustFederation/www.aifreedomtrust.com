@@ -76,6 +76,25 @@ for(const width of [360,390,768,1280]){
     assert.equal(await host.getAttribute('data-movement'),'0');
     await page.locator('#seven-search').fill('');
   }
+  // The HTML-first pilgrimage must be playable, not just statically present.
+  const pilgrimage=page.locator('.pilgrimage');
+  assert.equal(await pilgrimage.count(),1,'Source-bound pilgrimage mounts once');
+  const voyageToggle=pilgrimage.locator('.pilgrimage-toggle');
+  await voyageToggle.click();
+  assert.equal(await voyageToggle.getAttribute('aria-expanded'),'true','Voyage opens accessibly');
+  const spatial=pilgrimage.locator('.pilgrimage-spatial-map');
+  assert.equal(await spatial.count(),1,'Source-projected spatial chart exists');
+  const markers=spatial.locator('.pilgrimage-spatial-marker');
+  const published=await page.evaluate(()=>Array.isArray(window.AIFT_LINEAGE_NODES)?window.AIFT_LINEAGE_NODES.length:0);
+  assert.ok(await markers.count()>0,'Published source locations appear on spatial chart');
+  assert.ok(await markers.count()<=published,'Map cannot invent source markers');
+  assert.equal(await pilgrimage.locator('.pilgrimage-spatial-viewport').count(),1,'Camera footprint is visible');
+  await markers.first().click();
+  assert.equal(await spatial.locator('[aria-pressed="true"]').count(),1,'Selected source is highlighted');
+  assert.match(await pilgrimage.locator('.pilgrimage-provenance').innerText(),/Published lineage:/);
+  await pilgrimage.locator('[data-history="back"]').click();
+  await voyageToggle.click();
+  assert.equal(await voyageToggle.getAttribute('aria-expanded'),'false','Voyage closes without replacing published page');
   const immersive=page.locator('#seven-movements .seven-immerse-toggle');
   await immersive.click();
   assert.equal(await immersive.getAttribute('aria-pressed'),'true','Immersive mode is explicitly enabled');
