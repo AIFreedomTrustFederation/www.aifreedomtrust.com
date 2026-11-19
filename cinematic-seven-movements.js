@@ -103,6 +103,36 @@ function separateVisibleNodes(visible){
  }
 }
 const visiblePoint=n=>visiblePositions.get(n.id)||point(n);
+/* Camera-aware biological passage: focus the actual published records in each
+ * viewpoint. No invented coordinates, evidence or destination nodes. */
+function focusChapterRecords(){
+ const kind=chapters[state.chapter].kind;
+ const records=(Array.isArray(source)?source:[]).filter(n=>(!kind||n.kind===kind)&&qualified(n));
+ if(!records.length){cameraHome();return}
+ // Frame the visible chapter's published source positions; a large collection
+ // remains explorable with the existing paging and accessible directory.
+ const page=records.slice(state.page*PAGE_SIZE,(state.page+1)*PAGE_SIZE);
+ if(!page.length){cameraHome();return}
+ const positions=page.map(n=>visiblePoint(n));
+ const bounds={left:Math.min(...positions.map(p=>p.x)),right:Math.max(...positions.map(p=>p.x)),
+ top:Math.min(...positions.map(p=>p.y)),bottom:Math.max(...positions.map(p=>p.y))};
+ const size=clamp(Math.max(bounds.right-bounds.left,bounds.bottom-bounds.top)+110,210,600);
+ const target={x:(bounds.left+bounds.right)/2,y:(bounds.top+bounds.bottom)/2,size};
+ stopVoyageCamera();
+ if(motionPreference.matches||document.visibilityState==='hidden'){
+   frame(target.x,target.y,target.size);return;
+ }
+ const from={x:camera.x+camera.size/2,y:camera.y+camera.size/2,size:camera.size};
+ let started=null;
+ const tick=now=>{
+   if(started===null)started=now;
+   const t=clamp((now-started)/680,0,1),ease=t*t*(3-2*t);
+   frame(from.x+(target.x-from.x)*ease,from.y+(target.y-from.y)*ease,from.size+(target.size-from.size)*ease);
+   voyageAnimation=t<1?requestAnimationFrame(tick):0;
+ };
+ voyageAnimation=requestAnimationFrame(tick);
+}
+
 // Spatial minimap shares the same published coordinates and camera bounds.
 // It is an overview, never a second source of truth or a synthetic status feed.
 let minimap;
@@ -609,6 +639,6 @@ const selectedIndex=state.selected===null?-1:entries.findIndex(n=>n.id===state.s
 if(selectedIndex>=0&&state.selected!==lastRevealedSelection)state.page=Math.floor(selectedIndex/PAGE_SIZE);
 lastRevealedSelection=state.selected;
 state.page=clamp(state.page,0,pages-1);$('seven-evidence').textContent=entries.length+' documented '+(c.kind||'lineage')+' record'+(entries.length===1?'':'s')+' in this view'+(pages>1?' · Constellation page '+(state.page+1)+' of '+pages+'; all matches remain available in the accessible list.':'');pageStatus.textContent='Constellation '+(state.page+1)+' / '+pages;pagePrevious.disabled=state.page===0;pageNext.disabled=state.page>=pages-1;list.replaceChildren();const map=$('seven-map');map.replaceChildren();for(const kind of kinds){const count=all.filter(n=>n.kind===kind&&qualified(n)).length;const b=document.createElement('button');b.type='button';b.textContent=kind+' · '+count;b.setAttribute('aria-pressed',String(c.kind===kind));b.addEventListener('click',()=>move(kinds.indexOf(kind)+1,true));map.append(b)}if(!entries.length){const p=document.createElement('p');p.textContent='No published records match this view. No outcome is inferred.';list.append(p)}for(const n of entries){const b=document.createElement('button');b.type='button';b.textContent=n.label;b.setAttribute('aria-pressed',String(state.selected===n.id));b.addEventListener('click',()=>{state.selected=n.id;render();travelToNode(n);detail.focus({preventScroll:true})});list.append(b)}drawConstellation(entries);const selected=entries.find(n=>n.id===state.selected);updateSceneCaption(c,selected,entries.length);updateRouteDeck(selected);if(selected){show(selected);drawJourney(selected);syncVoyage(selected)}else{drawJourney(null);syncVoyage(null);state.selected=null;detail.replaceChildren();const p=document.createElement('p');p.textContent='Select a documented record to inspect its ancestry and destination.';detail.append(p)}}
-function move(i,focus=false){if(i<0||i>=chapters.length)return;stopVoyageCamera();frame();state.history.push({chapter:state.chapter,selected:state.selected});state.chapter=i;state.selected=null;state.page=0;search.value='';render();if(focus)$('seven-title').focus({preventScroll:true})}
+function move(i,focus=false){if(i<0||i>=chapters.length)return;stopVoyageCamera();frame();state.history.push({chapter:state.chapter,selected:state.selected});state.chapter=i;state.selected=null;state.page=0;search.value='';render();focusChapterRecords();if(focus)$('seven-title').focus({preventScroll:true})}
 $('seven-back').addEventListener('click',()=>{const prior=state.history.pop();if(!prior)return;stopVoyageCamera();state.chapter=prior.chapter;state.selected=prior.selected;state.page=0;search.value='';render();if(prior.selected&&byId.has(prior.selected))travelToNode(byId.get(prior.selected));else cameraHome();$('seven-title').focus({preventScroll:true})});$('seven-prev').addEventListener('click',()=>move(state.chapter-1,true));$('seven-next').addEventListener('click',()=>move(state.chapter+1,true));search.addEventListener('input',()=>{state.page=0;render()});render();
 })();
