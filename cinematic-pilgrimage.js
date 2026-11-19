@@ -65,6 +65,43 @@ const atlasMap=document.createElement('div');atlasMap.className='pilgrimage-atla
 atlas.append(atlasHeading,atlasHint,atlasMap);body.insertBefore(atlas,detail);
 function navigateTo(record){const nextIndex=chapters.findIndex(c=>c.kind===record.kind&&c.items.some(n=>n.id===record.id));if(nextIndex<0)return;travel(nextIndex,record)}
 function renderAtlas(){atlasMap.replaceChildren();for(const chapter of chapters){const column=document.createElement('div');column.className='pilgrimage-atlas-column';column.dataset.kind=chapter.kind;const heading=document.createElement('h4');heading.textContent=chapter.kind+' · '+chapter.items.length;column.append(heading);if(!chapter.items.length){const empty=document.createElement('p');empty.textContent='No published evidence';column.append(empty)}else{for(const record of chapter.items){const button=document.createElement('button');button.type='button';button.textContent=record.label;button.title=record.desc||record.label;button.dataset.source=record.id;button.setAttribute('aria-current',String(record.id===chosen?.id));button.addEventListener('click',()=>navigateTo(record));column.append(button)}}atlasMap.append(column)}}
+
+// A source-only spatial chart: each marker is projected from an existing SVG source node.
+// This is an orientation aid, not a second invented federation dataset.
+const spatial=document.createElement('section');spatial.className='pilgrimage-spatial';
+spatial.setAttribute('aria-label','Interactive source spatial map');
+const spatialHeading=document.createElement('h3');spatialHeading.textContent='Where you are in the Tree';
+const spatialHint=document.createElement('p');spatialHint.textContent='Select a documented source marker. The highlighted frame follows the real Tree camera.';
+const spatialMap=document.createElement('div');spatialMap.className='pilgrimage-spatial-map';
+spatialMap.setAttribute('role','group');spatialMap.setAttribute('aria-label','Source locations in the Tree');
+const spatialViewport=document.createElement('div');spatialViewport.className='pilgrimage-spatial-viewport';
+spatialViewport.setAttribute('aria-hidden','true');
+spatialMap.append(spatialViewport);spatial.append(spatialHeading,spatialHint,spatialMap);
+body.insertBefore(spatial,atlas);
+function renderSpatial(){
+ spatialMap.querySelectorAll('button').forEach(b=>b.remove());
+ const view=tree.viewBox.baseVal;
+ const base=tree.getAttribute('data-full-viewbox')||'0 0 1000 1000';
+ const nums=base.split(/[\\s,]+/).map(Number);
+ const full=nums.length===4&&nums.every(Number.isFinite)&&nums[2]>0&&nums[3]>0?nums:[0,0,1000,1000];
+ const [ox,oy,w,h]=full;
+ const pct=(value,start,size)=>Math.max(0,Math.min(100,(value-start)/size*100));
+ spatialViewport.style.left=pct(view.x,ox,w)+'%';
+ spatialViewport.style.top=pct(view.y,oy,h)+'%';
+ spatialViewport.style.width=Math.max(1,Math.min(100,view.width/w*100))+'%';
+ spatialViewport.style.height=Math.max(1,Math.min(100,view.height/h*100))+'%';
+ for(const chapter of chapters)for(const record of chapter.items){
+  const point=positionOf(record.id);if(!point)continue;
+  const marker=document.createElement('button');marker.type='button';
+  marker.className='pilgrimage-spatial-marker';marker.dataset.kind=record.kind;
+  marker.style.left=pct(point.x,ox,w)+'%';marker.style.top=pct(point.y,oy,h)+'%';
+  marker.setAttribute('aria-label',record.kind+' source: '+record.label);
+  marker.setAttribute('aria-pressed',String(record.id===chosen?.id));
+  marker.title=record.label;marker.addEventListener('click',()=>navigateTo(record));
+  spatialMap.append(marker);
+ }
+}
+
 const positions={root:[500,900],trunk:[500,650],branch:[500,350],leaf:[500,190],flower:[500,140],fruit:[500,125]};
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 function focusTree(kind){
@@ -121,6 +158,7 @@ function render(){
  nav.querySelector('[data-action="next"]').textContent=index===chapters.length-1?'Journey complete':'Continue →';
  if(!reduced.matches)nav.classList.remove('pilgrimage-arrived');
  focusTree(current.kind);
+ renderSpatial();
  if(!reduced.matches)requestAnimationFrame(()=>nav.classList.add('pilgrimage-arrived'));
 }
 toggle.addEventListener('click',()=>{const opening=body.hidden;body.hidden=!opening;nav.classList.toggle('pilgrimage-open',opening);toggle.setAttribute('aria-expanded',String(opening));toggle.textContent=opening?'Close voyage':'Begin the voyage';if(opening)render();else {drawRoute(null);tree.setAttribute('viewBox','0 0 1000 1000')}});
