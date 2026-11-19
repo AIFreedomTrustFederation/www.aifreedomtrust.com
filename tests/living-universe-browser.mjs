@@ -56,6 +56,26 @@ for(const width of [360,390,768,1280]){
     assert.ok((await page.locator('#seven-detail').innerText()).length>5,'Keyboard selection reveals source details');
   }
 
+  // A documented ancestry route must be reversible and source-only.
+  const route=page.locator('#seven-movements .seven-route-deck');
+  assert.equal(await route.count(),1,'In-world lineage navigation is mounted');
+  const rooted=await page.evaluate(()=>Array.isArray(window.AIFT_LINEAGE_NODES)
+    ?window.AIFT_LINEAGE_NODES.find(n=>n.parent&&window.AIFT_LINEAGE_NODES.some(p=>p.id===n.parent&&p.kind==='root'))
+    :null);
+  if(rooted){
+    await page.locator('#seven-search').fill(rooted.label);
+    await page.locator('#seven-movements .seven-list button').first().click();
+    assert.equal(await route.isVisible(),true,'Published ancestry reveals the voyage deck');
+    const towardRoots=route.getByRole('button',{name:'Toward roots'});
+    assert.equal(await towardRoots.isDisabled(),false);
+    await towardRoots.click();
+    assert.match(await route.locator('.seven-route-status').innerText(),/Published lineage 1 of/);
+    await route.getByRole('button',{name:'Toward outcome'}).click();
+    assert.match(await route.locator('.seven-route-status').innerText(),/Published lineage 2 of/);
+    await route.getByRole('button',{name:'Whole Tree'}).click();
+    assert.equal(await host.getAttribute('data-movement'),'0');
+    await page.locator('#seven-search').fill('');
+  }
   const immersive=page.locator('#seven-movements .seven-immerse-toggle');
   await immersive.click();
   assert.equal(await immersive.getAttribute('aria-pressed'),'true','Immersive mode is explicitly enabled');
