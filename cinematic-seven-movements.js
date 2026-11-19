@@ -236,7 +236,7 @@ function bindSpatialCamera(){
  const apply=(x,y,size)=>{stopVoyageCamera();frame(x,y,size)};
  const snapshot=()=>{
    const ps=[...pointers.values()];
-   if(ps.length===1)return {mode:'pan',point:ps[0],center:center(),size:camera.size};
+   if(ps.length===1)return {mode:'pan',point:ps[0],anchor:toWorld(ps[0].x,ps[0].y),center:center(),size:camera.size};
    if(ps.length>=2){
      const a=ps[0],b=ps[1];
      const mid={x:(a.x+b.x)/2,y:(a.y+b.y)/2};return {mode:'pinch',mid,distance:Math.hypot(a.x-b.x,a.y-b.y)||1,anchor:toWorld(mid.x,mid.y),size:camera.size};
@@ -256,8 +256,13 @@ function bindSpatialCamera(){
    if(!rect.width||!rect.height||!gesture)return;
    const ps=[...pointers.values()];
    if(ps.length===1&&gesture.mode==='pan'){
-     apply(gesture.center.x-(ps[0].x-gesture.point.x)*gesture.size/rect.width,
-       gesture.center.y-(ps[0].y-gesture.point.y)*gesture.size/rect.height,gesture.size);
+     // Match the same letterboxed SVG coordinate transform used for pinch zoom.
+     // A pointer moving 20 CSS pixels must move the camera by 20 rendered-world
+     // pixels regardless of the stage's aspect ratio or browser zoom.
+     const scale=Math.min(rect.width,rect.height)/(gesture.size||1)||1;
+     const dx=(ps[0].x-gesture.point.x)/scale;
+     const dy=(ps[0].y-gesture.point.y)/scale;
+     apply(gesture.center.x-dx,gesture.center.y-dy,gesture.size);
    }else if(ps.length>=2&&gesture.mode==='pinch'){
      const a=ps[0],b=ps[1],mid={x:(a.x+b.x)/2,y:(a.y+b.y)/2};
      const distance=Math.hypot(a.x-b.x,a.y-b.y)||1;
