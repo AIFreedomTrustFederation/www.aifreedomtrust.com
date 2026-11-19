@@ -53,14 +53,19 @@ function render(){
  const title=document.createElement('h2');title.textContent=names[current.kind];
  const description=document.createElement('p');
  description.textContent=current.items.length?current.items.length+' documented '+current.kind+' record'+(current.items.length===1?'':'s')+' available. Select one to reveal its provenance.':'No qualifying '+current.kind+' record is published. This layer remains visible without invented evidence.';
+ const searchLabel=document.createElement('label');searchLabel.className='pilgrimage-search-label';searchLabel.textContent='Find a published record in this layer';
+ const search=document.createElement('input');search.type='search';search.className='pilgrimage-search';search.placeholder='Search documented names and descriptions';search.setAttribute('aria-label','Filter published '+current.kind+' records');
+ searchLabel.append(search);
+ const results=document.createElement('p');results.className='pilgrimage-search-results';results.setAttribute('role','status');
  const selectLabel=document.createElement('label');selectLabel.textContent='Explore a documented '+current.kind+' ';
  const select=document.createElement('select');select.setAttribute('aria-label','Choose a documented '+current.kind);
  const empty=document.createElement('option');empty.value='';empty.textContent='Choose a published record';select.append(empty);
  current.items.forEach(n=>{const option=document.createElement('option');option.value=n.id;option.textContent=n.label;select.append(option)});
- select.value=chosen?.id||'';select.disabled=!current.items.length;
+ const filterRecords=()=>{const query=search.value.trim().toLocaleLowerCase();const matches=current.items.filter(n=>(n.label+' '+(n.desc||'')).toLocaleLowerCase().includes(query));select.replaceChildren(empty);matches.forEach(n=>{const option=document.createElement('option');option.value=n.id;option.textContent=n.label;select.append(option)});select.value=matches.some(n=>n.id===chosen?.id)?chosen.id:'';results.textContent=matches.length+' of '+current.items.length+' published records match';select.disabled=!matches.length;};
+ search.addEventListener('input',filterRecords);filterRecords();
  select.addEventListener('change',()=>{chosen=byId.get(select.value)||null;render()});
  selectLabel.append(select);
- detail.replaceChildren(title,description,selectLabel);
+ detail.replaceChildren(title,description,searchLabel,results,selectLabel);
  if(chosen){
   const provenance=document.createElement('p');provenance.className='pilgrimage-provenance';provenance.textContent='Published lineage: '+ancestry(chosen).map(n=>n.label+' ('+n.kind+')').join(' → ');
   const explanation=document.createElement('p');explanation.textContent=chosen.desc||'No additional published description.';
@@ -69,7 +74,13 @@ function render(){
   for(const record of trail){const item=document.createElement('li'),button=document.createElement('button');button.type='button';button.textContent=record.kind+' · '+record.label;button.setAttribute('aria-current',String(record.id===chosen.id));
    button.addEventListener('click',()=>{const target=chapters.findIndex(c=>c.kind===record.kind);if(target<0||!chapters[target].items.some(n=>n.id===record.id))return;index=target;chosen=record;render()});item.append(button);line.append(item)}
   detail.append(line);
+  const children=records.filter(n=>n.parent===chosen.id&&chapters.some(c=>c.kind===n.kind&&c.items.some(item=>item.id===n.id)));
+  if(children.length){const nextTitle=document.createElement('h3');nextTitle.textContent='Documented paths growing from here';const nextList=document.createElement('div');nextList.className='pilgrimage-children';nextList.setAttribute('role','group');nextList.setAttribute('aria-label','Published direct descendants');
+   children.forEach(child=>{const button=document.createElement('button');button.type='button';button.textContent=child.kind+' · '+child.label;button.addEventListener('click',()=>{const nextIndex=chapters.findIndex(c=>c.kind===child.kind);if(nextIndex<0)return;index=nextIndex;chosen=child;render()});nextList.append(button)});
+   detail.append(nextTitle,nextList);
+  }
  }
+ const progress=document.createElement('p');progress.className='pilgrimage-evidence-progress';progress.textContent='Published evidence · '+current.items.length+' qualified '+current.kind+' records · Chapter '+(index+1)+' of '+chapters.length+'. This is not a live deployment or CI indicator.';detail.append(progress);
  const link=chosen&&safe(chosen.url);destination.hidden=!link;
  if(link){destination.href=link;destination.textContent=chosen.kind==='fruit'?'Enter verified public experience':'Inspect published source';destination.rel='noopener noreferrer';if(new URL(link).origin!==location.origin)destination.target='_blank';else destination.removeAttribute('target')}
  else {destination.removeAttribute('href');destination.removeAttribute('target')}
