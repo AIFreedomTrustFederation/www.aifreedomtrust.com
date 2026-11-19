@@ -497,7 +497,59 @@ function updateRouteDeck(n){
 }
 host.querySelector('.seven-stage').append(routeDeck);
 
-function render(){const c=chapters[state.chapter],all=Array.isArray(source)?source:[];host.dataset.movement=String(state.chapter);$('seven-back').disabled=!state.history.length;$('seven-breadcrumb').textContent='Federation / '+c.title;$('seven-title').textContent=c.title;$('seven-subtitle').textContent=c.subtitle;$('seven-counter').textContent=(state.chapter+1)+' / 7';$('seven-prev').disabled=state.chapter===0;$('seven-next').disabled=state.chapter===6;[...rail.children].forEach((b,i)=>b.setAttribute('aria-pressed',String(i===state.chapter)));const q=search.value.trim().toLocaleLowerCase();const entries=all.filter(n=>(!c.kind||n.kind===c.kind)&&qualified(n)&&(!q||(n.label+' '+(n.desc||'')).toLocaleLowerCase().includes(q)));const pages=Math.max(1,Math.ceil(entries.length/PAGE_SIZE));
+
+// Source-grounded discovery atlas: an optional, reversible seven-viewpoint journey.
+// This is a visitor exploration aid, not a quest reward, CI assertion or completion claim.
+const atlas=document.createElement('section');
+atlas.className='seven-discovery-atlas';
+atlas.setAttribute('aria-label','Explore the Tree from sources to outcomes');
+const atlasHeading=document.createElement('h3');atlasHeading.textContent='Journey through the Living Tree';
+const atlasIntro=document.createElement('p');atlasIntro.textContent='Explore the federation and six biological layers. Every destination comes from published lineage; missing evidence remains visible.';
+const atlasSteps=document.createElement('div');atlasSteps.className='seven-atlas-steps';atlasSteps.setAttribute('role','group');atlasSteps.setAttribute('aria-label','Seven documented viewpoints');
+const atlasStatus=document.createElement('p');atlasStatus.className='seven-atlas-status';atlasStatus.setAttribute('role','status');atlasStatus.setAttribute('aria-live','polite');
+const atlasActions=document.createElement('div');atlasActions.className='seven-atlas-actions';
+const atlasPrevious=document.createElement('button');atlasPrevious.type='button';atlasPrevious.textContent='← Previous world';
+const atlasNext=document.createElement('button');atlasNext.type='button';atlasNext.textContent='Next world →';
+const atlasSource=document.createElement('button');atlasSource.type='button';atlasSource.textContent='Explore a documented source';
+atlasActions.append(atlasPrevious,atlasNext,atlasSource);
+atlas.append(atlasHeading,atlasIntro,atlasSteps,atlasStatus,atlasActions);
+host.querySelector('.seven-content').insertBefore(atlas,host.querySelector('.seven-grid'));
+const atlasButtons=chapters.map((chapter,index)=>{
+ const button=document.createElement('button');button.type='button';
+ button.textContent=(index+1)+' · '+chapter.title;
+ button.addEventListener('click',()=>move(index,true));
+ atlasSteps.append(button);return button;
+});
+function atlasRecords(index){
+ const kind=chapters[index].kind;
+ return (Array.isArray(source)?source:[]).filter(n=>(!kind||n.kind===kind)&&qualified(n))
+ .sort((a,b)=>String(a.label).localeCompare(String(b.label))||String(a.id).localeCompare(String(b.id)));
+}
+function updateAtlas(){
+ atlasButtons.forEach((button,index)=>{
+  const count=atlasRecords(index).length;
+  button.setAttribute('aria-current',index===state.chapter?'step':'false');
+  button.setAttribute('aria-label',chapters[index].title+': '+count+' published records');
+  button.title=count+' published records';
+ });
+ const records=atlasRecords(state.chapter);
+ atlasStatus.textContent=chapters[state.chapter].title+' · '+records.length+' published '+(records.length===1?'record':'records')+
+  (records.length?' · Select a documented source to explore its actual ancestry.':' · No verified record is available in this viewpoint; no outcome is inferred.');
+ atlasPrevious.disabled=state.chapter===0;
+ atlasNext.disabled=state.chapter===chapters.length-1;
+ atlasSource.disabled=!records.length;
+}
+atlasPrevious.addEventListener('click',()=>move(state.chapter-1,true));
+atlasNext.addEventListener('click',()=>move(state.chapter+1,true));
+atlasSource.addEventListener('click',()=>{
+ const records=atlasRecords(state.chapter);if(!records.length)return;
+ const node=records[0];
+ state.history.push({chapter:state.chapter,selected:state.selected});
+ state.selected=node.id;state.page=0;search.value='';
+ render();travelToNode(node);detail.focus({preventScroll:true});
+});
+
+function render(){updateAtlas();const c=chapters[state.chapter],all=Array.isArray(source)?source:[];host.dataset.movement=String(state.chapter);$('seven-back').disabled=!state.history.length;$('seven-breadcrumb').textContent='Federation / '+c.title;$('seven-title').textContent=c.title;$('seven-subtitle').textContent=c.subtitle;$('seven-counter').textContent=(state.chapter+1)+' / 7';$('seven-prev').disabled=state.chapter===0;$('seven-next').disabled=state.chapter===6;[...rail.children].forEach((b,i)=>b.setAttribute('aria-pressed',String(i===state.chapter)));const q=search.value.trim().toLocaleLowerCase();const entries=all.filter(n=>(!c.kind||n.kind===c.kind)&&qualified(n)&&(!q||(n.label+' '+(n.desc||'')).toLocaleLowerCase().includes(q)));const pages=Math.max(1,Math.ceil(entries.length/PAGE_SIZE));
 // Keep a selected published source visible when it is chosen from the full
 // accessible list, an ancestry trail, or a guided voyage on another page.
 // Do not synthesize records or alter the current search/filter to reveal it.
