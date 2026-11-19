@@ -150,6 +150,10 @@ function drawConstellation(entries){
    const midY=(from.y+to.y)/2;
    path.setAttribute('d','M'+from.x+' '+from.y+' C'+from.x+' '+midY+' '+to.x+' '+midY+' '+to.x+' '+to.y);
    path.setAttribute('class',lineageEdges.has(parent.id+'>'+child.id)?'seven-source-link seven-source-link-active':'seven-source-link');
+   if(trail&&lineageEdges.has(parent.id+'>'+child.id)){
+     path.setAttribute('data-evidence-route','true');
+     path.setAttribute('stroke-dasharray','8 5');
+   }
    connections.append(path);
  }
  layer.append(connections);
@@ -188,7 +192,8 @@ function drawConstellation(entries){
    growth.append(ring);
  }
  layer.insertBefore(growth,connections);
- for(const n of visible){const pos=visiblePoint(n);const circle=document.createElementNS(NS,'circle');circle.setAttribute('cx',pos.x);circle.setAttribute('cy',pos.y);circle.setAttribute('r',n.id===state.selected?'11':String(biologicalRadius[n.kind]||6));circle.setAttribute('fill',biologicalPalette[n.kind]||'#a9c3d1');circle.setAttribute('stroke','#071727');circle.setAttribute('stroke-width','2');if(trail&&trail.some(p=>p.id===n.id))circle.setAttribute('class','seven-lineage-node');circle.setAttribute('role','button');circle.setAttribute('tabindex','0');circle.setAttribute('aria-label',n.label+' · '+n.kind);const title=document.createElementNS(NS,'title');title.textContent=n.label;circle.append(title);const activate=()=>{state.selected=n.id;render();travelToNode(n);detail.focus({preventScroll:true})};circle.addEventListener('click',activate);circle.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();activate()}});layer.append(circle)}}
+ for(const n of visible){const pos=visiblePoint(n);const circle=document.createElementNS(NS,'circle');circle.setAttribute('cx',pos.x);circle.setAttribute('cy',pos.y);circle.setAttribute('r',n.id===state.selected?'11':String(biologicalRadius[n.kind]||6));circle.setAttribute('fill',biologicalPalette[n.kind]||'#a9c3d1');circle.setAttribute('stroke','#071727');circle.setAttribute('stroke-width','2');if(trail&&trail.some(p=>p.id===n.id))circle.setAttribute('class','seven-lineage-node');
+ else if(trail)circle.setAttribute('class','seven-context-node');circle.setAttribute('role','button');circle.setAttribute('tabindex','0');circle.setAttribute('aria-label',n.label+' · '+n.kind);const title=document.createElementNS(NS,'title');title.textContent=n.label;circle.append(title);const activate=()=>{state.selected=n.id;render();travelToNode(n);detail.focus({preventScroll:true})};circle.addEventListener('click',activate);circle.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();activate()}});layer.append(circle)}}
 // Initialize only after the canonical stage markup exists. The prior initialization
 // ran before host.innerHTML and discarded the constellation and its event listeners.
 function bindSpatialCamera(){
