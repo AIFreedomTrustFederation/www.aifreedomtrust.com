@@ -38,6 +38,14 @@ nav.innerHTML='<div class="pilgrimage-top"><span class="pilgrimage-kicker">THE L
 world.append(nav);
 const toggle=nav.querySelector('.pilgrimage-toggle'),body=nav.querySelector('.pilgrimage-body'),track=nav.querySelector('.pilgrimage-track'),detail=nav.querySelector('.pilgrimage-detail'),destination=nav.querySelector('.pilgrimage-destination');
 let index=0,chosen=null;
+// The route atlas is derived only from qualified published records and parent IDs.
+const atlas=document.createElement('section');atlas.className='pilgrimage-atlas';atlas.setAttribute('aria-label','Interactive evidence-backed growth map');
+const atlasHeading=document.createElement('h3');atlasHeading.textContent='The living lineage map';
+const atlasHint=document.createElement('p');atlasHint.textContent='Choose a published source to travel through its actual ancestry. A layer with no evidence has no invented destination.';
+const atlasMap=document.createElement('div');atlasMap.className='pilgrimage-atlas-map';atlasMap.setAttribute('role','group');atlasMap.setAttribute('aria-label','Published biological layers');
+atlas.append(atlasHeading,atlasHint,atlasMap);body.insertBefore(atlas,detail);
+function navigateTo(record){const nextIndex=chapters.findIndex(c=>c.kind===record.kind&&c.items.some(n=>n.id===record.id));if(nextIndex<0)return;index=nextIndex;chosen=record;render()}
+function renderAtlas(){atlasMap.replaceChildren();for(const chapter of chapters){const column=document.createElement('div');column.className='pilgrimage-atlas-column';column.dataset.kind=chapter.kind;const heading=document.createElement('h4');heading.textContent=chapter.kind+' · '+chapter.items.length;column.append(heading);if(!chapter.items.length){const empty=document.createElement('p');empty.textContent='No published evidence';column.append(empty)}else{for(const record of chapter.items){const button=document.createElement('button');button.type='button';button.textContent=record.label;button.title=record.desc||record.label;button.dataset.source=record.id;button.setAttribute('aria-current',String(record.id===chosen?.id));button.addEventListener('click',()=>navigateTo(record));column.append(button)}}atlasMap.append(column)}}
 const positions={root:[500,900],trunk:[500,650],branch:[500,350],leaf:[500,190],flower:[500,140],fruit:[500,125]};
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 function focusTree(kind){
@@ -47,7 +55,7 @@ function focusTree(kind){
  tree.setAttribute('viewBox',[Math.max(0,x-size/2),Math.max(0,y-size/2),size,size].join(' '));
 }
 function render(){
- const current=chapters[index];nav.dataset.stage=current.kind;drawRoute(chosen);
+ const current=chapters[index];nav.dataset.stage=current.kind;drawRoute(chosen);renderAtlas();
  track.replaceChildren();
  chapters.forEach((chapter,i)=>{const b=document.createElement('button');b.type='button';b.textContent=(i+1)+' · '+chapter.kind;b.setAttribute('aria-current',String(i===index));b.addEventListener('click',()=>{index=i;chosen=null;render()});track.append(b)});
  const title=document.createElement('h2');title.textContent=names[current.kind];
@@ -72,11 +80,11 @@ function render(){
   detail.append(provenance,explanation);
   const trail=ancestry(chosen),line=document.createElement('ol');line.className='pilgrimage-lineage';line.setAttribute('aria-label','Reversible source ancestry');
   for(const record of trail){const item=document.createElement('li'),button=document.createElement('button');button.type='button';button.textContent=record.kind+' · '+record.label;button.setAttribute('aria-current',String(record.id===chosen.id));
-   button.addEventListener('click',()=>{const target=chapters.findIndex(c=>c.kind===record.kind);if(target<0||!chapters[target].items.some(n=>n.id===record.id))return;index=target;chosen=record;render()});item.append(button);line.append(item)}
+   button.addEventListener('click',()=>navigateTo(record));item.append(button);line.append(item)}
   detail.append(line);
   const children=records.filter(n=>n.parent===chosen.id&&chapters.some(c=>c.kind===n.kind&&c.items.some(item=>item.id===n.id)));
   if(children.length){const nextTitle=document.createElement('h3');nextTitle.textContent='Documented paths growing from here';const nextList=document.createElement('div');nextList.className='pilgrimage-children';nextList.setAttribute('role','group');nextList.setAttribute('aria-label','Published direct descendants');
-   children.forEach(child=>{const button=document.createElement('button');button.type='button';button.textContent=child.kind+' · '+child.label;button.addEventListener('click',()=>{const nextIndex=chapters.findIndex(c=>c.kind===child.kind);if(nextIndex<0)return;index=nextIndex;chosen=child;render()});nextList.append(button)});
+   children.forEach(child=>{const button=document.createElement('button');button.type='button';button.textContent=child.kind+' · '+child.label;button.addEventListener('click',()=>navigateTo(child));nextList.append(button)});
    detail.append(nextTitle,nextList);
   }
  }
