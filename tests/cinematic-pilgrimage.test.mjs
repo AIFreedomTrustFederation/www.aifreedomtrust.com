@@ -29,3 +29,14 @@ test('cinematic pilgrimage retains reversible source history and session-only ex
  assert.match(css,/safe-area-inset-bottom/);
  assert.doesNotMatch(js,/localStorage|sessionStorage|Math\.random/);
 });
+
+test('playable lineage flight uses only actual ancestry and projected SVG nodes',()=>{
+ for(const token of ['pilgrimage-flight','trail.length>1','Start at the root','Previous source','Next source','Published waypoint','trail[step]','drawRoute(record)','sourceAnchors','CSS.escape(record.id)','No achievement is awarded'])assert.ok(js.includes(token),token);
+ assert.match(js,/begin\.addEventListener\('click',\(\)=>showStep\(0\)\)/);
+ assert.match(js,/prev\.addEventListener\('click',\(\)=>showStep\(step-1\)\)/);
+ assert.match(js,/next\.addEventListener\('click',\(\)=>showStep\(step\+1\)\)/);
+ assert.match(css,/pilgrimage-flight-controls/);
+ assert.match(css,/pilgrimage-flight-trail button\[aria-current=true\]/);
+ assert.match(css,/min-height:44px/);
+ assert.doesNotMatch(js,/Math\.random|localStorage|sessionStorage|fetch\(/);
+});
