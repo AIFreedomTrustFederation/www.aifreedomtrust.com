@@ -113,3 +113,11 @@ test('camera gestures use SVG screen geometry instead of stretched CSS coordinat
  for(const token of ['scene.getScreenCTM()','matrix.inverse()','Math.min(r.width,r.height)','(r.width-camera.size*scale)/2','(r.height-camera.size*scale)/2','(r.width-next*scale)/2','(r.height-next*scale)/2'])assert.ok(js.includes(token),token);
  assert.doesNotMatch(js,/camera.x+\(clientX-r.left\)\*camera.size\/\(r.width\|\|1\)/);
 });
+
+// Pan and pinch must share the same preserveAspectRatio-aware CSS-to-world scale.
+test('Android letterboxed pan uses the rendered SVG scale, not the full CSS width',()=>{
+ const js=read('cinematic-seven-movements.js');
+ assert.match(js,/const scale=Math\.min\(rect\.width,rect\.height\)\/\(gesture\.size\|\|1\)/);
+ assert.match(js,/apply\(gesture\.center\.x-dx,gesture\.center\.y-dy,gesture\.size\)/);
+ assert.doesNotMatch(js,/gesture\.size\/rect\.width/);
+});
