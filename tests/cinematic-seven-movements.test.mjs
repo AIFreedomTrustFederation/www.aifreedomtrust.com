@@ -134,3 +134,13 @@ test('seven-world discovery atlas is source-backed, reversible and mobile-world-
  assert.match(css,/@media\(prefers-reduced-data:reduce\)/);
  assert.doesNotMatch(js,/reward_xp|localStorage|sendBeacon|Math\.random/);
 });
+
+test('source-to-outcome pathways never turn repositories into fruits or fabricate destinations',()=>{
+ const js=read('cinematic-seven-movements.js'),css=read('cinematic-seven-movements.css');
+ for(const token of ['seven-outcome-pathways','atlasRecords(6)','lineage(n)','part.kind===\'root\'','safe(route.node.url)','No qualifying user-facing outcome','Travel this lineage','state.chapter=6','state.history.push','pathwayFilter.addEventListener(\'change\',renderPathways)','noopener noreferrer'])assert.ok(js.includes(token),token);
+ assert.match(js,/outcomeRoutes\.filter\(route=>!selectedRoot\|\|route\.trail\.some/);
+ assert.match(css,/\.seven-pathway-results\{display:grid/);
+ assert.match(css,/@media\(max-width:700px\)/);
+ assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
+ assert.doesNotMatch(js,/reward_xp|sendBeacon|localStorage|Math\.random/);
+});
