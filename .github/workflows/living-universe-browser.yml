@@ -25,7 +25,9 @@ jobs:
       - name: Install isolated browser test dependency
         run: |
           npm install --no-save --no-package-lock playwright@1.56.1
-          # Hosted Ubuntu already provides Chromium's core shared libraries. Avoid\n          # apt font downloads here: upstream mirrors intermittently return 503,\n          # blocking browser acceptance before any actual browser test executes.\n          npx playwright install chromium
+          # Hosted Ubuntu provides core Chromium libraries; avoid intermittent apt mirror 503s.
+          # Install the Playwright-pinned browser executable before launching acceptance.
+          npx playwright install chromium
       - name: Serve canonical HTML locally
         run: |
           python3 -m http.server 4178 --bind 127.0.0.1 >/tmp/aift-browser-server.log 2>&1 &
