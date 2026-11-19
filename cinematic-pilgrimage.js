@@ -38,13 +38,32 @@ nav.innerHTML='<div class="pilgrimage-top"><span class="pilgrimage-kicker">THE L
 world.append(nav);
 const toggle=nav.querySelector('.pilgrimage-toggle'),body=nav.querySelector('.pilgrimage-body'),track=nav.querySelector('.pilgrimage-track'),detail=nav.querySelector('.pilgrimage-detail'),destination=nav.querySelector('.pilgrimage-destination');
 let index=0,chosen=null;
+const visited=new Set(),history=[],future=[],searchByKind=new Map();
+function snapshot(){return {index,id:chosen?.id||null}}
+function restore(state){index=state.index;chosen=state.id?byId.get(state.id)||null:null;render()}
+function travel(nextIndex,record=null){
+ if(nextIndex<0||nextIndex>=chapters.length)return;
+ const before=snapshot(),after={index:nextIndex,id:record?.id||null};
+ if(before.index===after.index&&before.id===after.id)return;
+ history.push(before);if(history.length>60)history.shift();future.length=0;
+ index=nextIndex;chosen=record;render();
+}
+function travelBack(){if(!history.length)return;future.push(snapshot());restore(history.pop())}
+function travelForward(){if(!future.length)return;history.push(snapshot());restore(future.pop())}
+const timeline=document.createElement('div');timeline.className='pilgrimage-timeline';timeline.setAttribute('role','group');timeline.setAttribute('aria-label','Reversible exploration history');
+timeline.innerHTML='<button type="button" data-history="back" aria-label="Return to previous visited source">↶ Back</button><button type="button" data-history="forward" aria-label="Move forward through visited sources">Forward ↷</button><button type="button" data-history="overview">Whole Tree</button><span class="pilgrimage-timeline-status" role="status"></span>';
+body.insertBefore(timeline,track);
+timeline.querySelector('[data-history="back"]').addEventListener('click',travelBack);
+timeline.querySelector('[data-history="forward"]').addEventListener('click',travelForward);
+timeline.querySelector('[data-history="overview"]').addEventListener('click',()=>{travel(0,null);tree.setAttribute('viewBox','0 0 1000 1000')});
+
 // The route atlas is derived only from qualified published records and parent IDs.
 const atlas=document.createElement('section');atlas.className='pilgrimage-atlas';atlas.setAttribute('aria-label','Interactive evidence-backed growth map');
 const atlasHeading=document.createElement('h3');atlasHeading.textContent='The living lineage map';
 const atlasHint=document.createElement('p');atlasHint.textContent='Choose a published source to travel through its actual ancestry. A layer with no evidence has no invented destination.';
 const atlasMap=document.createElement('div');atlasMap.className='pilgrimage-atlas-map';atlasMap.setAttribute('role','group');atlasMap.setAttribute('aria-label','Published biological layers');
 atlas.append(atlasHeading,atlasHint,atlasMap);body.insertBefore(atlas,detail);
-function navigateTo(record){const nextIndex=chapters.findIndex(c=>c.kind===record.kind&&c.items.some(n=>n.id===record.id));if(nextIndex<0)return;index=nextIndex;chosen=record;render()}
+function navigateTo(record){const nextIndex=chapters.findIndex(c=>c.kind===record.kind&&c.items.some(n=>n.id===record.id));if(nextIndex<0)return;travel(nextIndex,record)}
 function renderAtlas(){atlasMap.replaceChildren();for(const chapter of chapters){const column=document.createElement('div');column.className='pilgrimage-atlas-column';column.dataset.kind=chapter.kind;const heading=document.createElement('h4');heading.textContent=chapter.kind+' · '+chapter.items.length;column.append(heading);if(!chapter.items.length){const empty=document.createElement('p');empty.textContent='No published evidence';column.append(empty)}else{for(const record of chapter.items){const button=document.createElement('button');button.type='button';button.textContent=record.label;button.title=record.desc||record.label;button.dataset.source=record.id;button.setAttribute('aria-current',String(record.id===chosen?.id));button.addEventListener('click',()=>navigateTo(record));column.append(button)}}atlasMap.append(column)}}
 const positions={root:[500,900],trunk:[500,650],branch:[500,350],leaf:[500,190],flower:[500,140],fruit:[500,125]};
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
@@ -56,22 +75,27 @@ function focusTree(kind){
 }
 function render(){
  const current=chapters[index];nav.dataset.stage=current.kind;drawRoute(chosen);renderAtlas();
+ visited.add(current.kind);
+ timeline.querySelector('[data-history="back"]').disabled=!history.length;
+ timeline.querySelector('[data-history="forward"]').disabled=!future.length;
+ timeline.querySelector('.pilgrimage-timeline-status').textContent=visited.size+' of '+chapters.length+' layers explored in this session (not a verified achievement)';
+
  track.replaceChildren();
- chapters.forEach((chapter,i)=>{const b=document.createElement('button');b.type='button';b.textContent=(i+1)+' · '+chapter.kind;b.setAttribute('aria-current',String(i===index));b.addEventListener('click',()=>{index=i;chosen=null;render()});track.append(b)});
+ chapters.forEach((chapter,i)=>{const b=document.createElement('button');b.type='button';b.textContent=(i+1)+' · '+chapter.kind;b.setAttribute('aria-current',String(i===index));b.addEventListener('click',()=>{travel(i,null)});track.append(b)});
  const title=document.createElement('h2');title.textContent=names[current.kind];
  const description=document.createElement('p');
  description.textContent=current.items.length?current.items.length+' documented '+current.kind+' record'+(current.items.length===1?'':'s')+' available. Select one to reveal its provenance.':'No qualifying '+current.kind+' record is published. This layer remains visible without invented evidence.';
  const searchLabel=document.createElement('label');searchLabel.className='pilgrimage-search-label';searchLabel.textContent='Find a published record in this layer';
  const search=document.createElement('input');search.type='search';search.className='pilgrimage-search';search.placeholder='Search documented names and descriptions';search.setAttribute('aria-label','Filter published '+current.kind+' records');
- searchLabel.append(search);
+ search.value=searchByKind.get(current.kind)||'';searchLabel.append(search);
  const results=document.createElement('p');results.className='pilgrimage-search-results';results.setAttribute('role','status');
  const selectLabel=document.createElement('label');selectLabel.textContent='Explore a documented '+current.kind+' ';
  const select=document.createElement('select');select.setAttribute('aria-label','Choose a documented '+current.kind);
  const empty=document.createElement('option');empty.value='';empty.textContent='Choose a published record';select.append(empty);
  current.items.forEach(n=>{const option=document.createElement('option');option.value=n.id;option.textContent=n.label;select.append(option)});
  const filterRecords=()=>{const query=search.value.trim().toLocaleLowerCase();const matches=current.items.filter(n=>(n.label+' '+(n.desc||'')).toLocaleLowerCase().includes(query));select.replaceChildren(empty);matches.forEach(n=>{const option=document.createElement('option');option.value=n.id;option.textContent=n.label;select.append(option)});select.value=matches.some(n=>n.id===chosen?.id)?chosen.id:'';results.textContent=matches.length+' of '+current.items.length+' published records match';select.disabled=!matches.length;};
- search.addEventListener('input',filterRecords);filterRecords();
- select.addEventListener('change',()=>{chosen=byId.get(select.value)||null;render()});
+ search.addEventListener('input',()=>{searchByKind.set(current.kind,search.value);filterRecords()});filterRecords();
+ select.addEventListener('change',()=>{travel(index,byId.get(select.value)||null)});
  selectLabel.append(select);
  detail.replaceChildren(title,description,searchLabel,results,selectLabel);
  if(chosen){
@@ -99,8 +123,8 @@ function render(){
  focusTree(current.kind);
  if(!reduced.matches)requestAnimationFrame(()=>nav.classList.add('pilgrimage-arrived'));
 }
-toggle.addEventListener('click',()=>{const opening=body.hidden;body.hidden=!opening;toggle.setAttribute('aria-expanded',String(opening));toggle.textContent=opening?'Close voyage':'Begin the voyage';if(opening)render();else {drawRoute(null);tree.setAttribute('viewBox','0 0 1000 1000')}});
-nav.querySelector('[data-action="previous"]').addEventListener('click',()=>{if(index>0){index--;chosen=null;render()}});
-nav.querySelector('[data-action="next"]').addEventListener('click',()=>{if(index<chapters.length-1){index++;chosen=null;render()}});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!body.hidden){body.hidden=true;toggle.setAttribute('aria-expanded','false');toggle.textContent='Begin the voyage';toggle.focus();drawRoute(null);tree.setAttribute('viewBox','0 0 1000 1000')}});
+toggle.addEventListener('click',()=>{const opening=body.hidden;body.hidden=!opening;nav.classList.toggle('pilgrimage-open',opening);toggle.setAttribute('aria-expanded',String(opening));toggle.textContent=opening?'Close voyage':'Begin the voyage';if(opening)render();else {drawRoute(null);tree.setAttribute('viewBox','0 0 1000 1000')}});
+nav.querySelector('[data-action="previous"]').addEventListener('click',()=>{if(index>0)travel(index-1,null)});
+nav.querySelector('[data-action="next"]').addEventListener('click',()=>{if(index<chapters.length-1)travel(index+1,null)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!body.hidden){body.hidden=true;nav.classList.remove('pilgrimage-open');toggle.setAttribute('aria-expanded','false');toggle.textContent='Begin the voyage';toggle.focus();drawRoute(null);tree.setAttribute('viewBox','0 0 1000 1000')}});
 })();
