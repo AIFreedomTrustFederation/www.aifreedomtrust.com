@@ -1,0 +1,18 @@
+/* Source-bound cinematic pilgrimage: overlays the world, never replaces published content. */
+.pilgrimage{--pilgrim:#f17b83;position:absolute;z-index:6;left:clamp(.75rem,3vw,2rem);right:clamp(.75rem,3vw,2rem);bottom:clamp(1rem,3svh,2rem);max-width:660px;color:#f5f7fa;border:1px solid #d4b87e8a;border-radius:22px;background:linear-gradient(145deg,#071526ef,#11243ce8);box-shadow:0 20px 70px #0009,0 0 50px #48d7ba18;backdrop-filter:blur(16px);font:inherit}
+.pilgrimage[data-stage=trunk]{--pilgrim:#f7d18a}.pilgrimage[data-stage=branch]{--pilgrim:#64e6b4}.pilgrimage[data-stage=leaf]{--pilgrim:#6cbcff}.pilgrimage[data-stage=flower]{--pilgrim:#b392fa}.pilgrimage[data-stage=fruit]{--pilgrim:#ffab72}
+.pilgrimage-top{display:flex;align-items:center;justify-content:space-between;gap:.7rem;padding:.65rem .8rem}.pilgrimage-kicker{font-size:.67rem;letter-spacing:.13em;color:#b7eadd;font-weight:750}
+.pilgrimage button,.pilgrimage select,.pilgrimage-destination{min-height:44px;border:1px solid #9cb5bf;border-radius:12px;background:#15344b;color:#fff;font:inherit;padding:.55rem .8rem}
+.pilgrimage button{cursor:pointer}.pilgrimage button:disabled{opacity:.48;cursor:default}.pilgrimage button:focus-visible,.pilgrimage select:focus-visible,.pilgrimage a:focus-visible{outline:3px solid #f9d995;outline-offset:3px}
+.pilgrimage-toggle{background:linear-gradient(110deg,#6b344e,#176e66,#285ea4)!important;border-color:#e5d19e!important;font-weight:750}
+.pilgrimage-body{padding:0 .85rem .8rem;max-height:min(65svh,590px);overflow-y:auto;overscroll-behavior:contain}
+.pilgrimage-body[hidden]{display:none}.pilgrimage-track{display:flex;gap:.35rem;overflow-x:auto;padding:.35rem 0 .8rem;scrollbar-width:thin}
+.pilgrimage-track button{flex:0 0 auto;white-space:nowrap;font-size:.77rem}.pilgrimage-track button[aria-current=true]{border-color:var(--pilgrim);box-shadow:inset 0 3px var(--pilgrim),0 0 15px #ffffff22}
+.pilgrimage-detail h2{font:clamp(1.35rem,3vw,2rem)/1.2 Georgia,serif;color:var(--pilgrim);margin:.15rem 0 .4rem}.pilgrimage-detail p{font-size:.84rem;line-height:1.5;color:#dbe8ee}
+.pilgrimage-detail label{display:grid;gap:.3rem;font-size:.8rem;color:#bdebdc}.pilgrimage-detail select{width:100%;min-width:0}.pilgrimage-provenance{overflow-wrap:anywhere;border-left:3px solid var(--pilgrim);padding-left:.7rem}
+.pilgrimage-actions{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.7rem}.pilgrimage-destination{display:inline-flex;align-items:center;text-decoration:none;background:#315a4d;border-color:#bfe9ce}.pilgrimage-destination[hidden]{display:none}
+.pilgrimage-disclaimer{font-size:.69rem;color:#bed0da;line-height:1.4;margin:.7rem 0 0}
+.pilgrimage-arrived .pilgrimage-detail{animation:pilgrimage-reveal .5s ease both}@keyframes pilgrimage-reveal{from{opacity:.4;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media(max-width:600px){.pilgrimage{max-width:none;left:.6rem;right:.6rem;bottom:.6rem}.pilgrimage-top{padding:.5rem}.pilgrimage-kicker{font-size:.58rem;max-width:17ch}.pilgrimage-body{max-height:56svh}.pilgrimage-track button{font-size:.72rem}.pilgrimage-detail h2{font-size:1.45rem}}
+@media(prefers-reduced-motion:reduce){.pilgrimage *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media(prefers-reduced-data:reduce){.pilgrimage{backdrop-filter:none;box-shadow:none;background:#071526}}

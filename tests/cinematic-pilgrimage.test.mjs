@@ -1,0 +1,6 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {readFileSync} from 'node:fs';import {execFileSync} from 'node:child_process';
+const html=readFileSync('cinematic-world.html','utf8'),js=readFileSync('cinematic-pilgrimage.js','utf8'),css=readFileSync('cinematic-pilgrimage.css','utf8');
+test('cinematic pilgrimage is integrated after published lineage and source projection',()=>{assert.match(html,/cinematic-pilgrimage\.css/);assert.match(html,/cinematic-pilgrimage\.js/);assert.ok(html.indexOf('cinematic-source-projection.js')<html.indexOf('cinematic-pilgrimage.js'));});
+test('six source-backed biological kinds and evidence-only fruit qualification',()=>{assert.match(js,/\['root','trunk','branch','leaf','flower','fruit'\]/);assert.match(js,/AIFT_LINEAGE_NODES/);assert.match(js,/qualifies\(n\)/);assert.match(js,/github/);assert.match(js,/ancestry\(chosen\)/);});
+test('accessible, reversible, mobile and reduced-motion experience',()=>{for(const term of ['aria-expanded','aria-live','aria-current','Escape','previous','next','prefers-reduced-motion','prefers-reduced-data'])assert.ok((js+css).includes(term),term);});
+test('javascript syntax',()=>{execFileSync(process.execPath,['--check','cinematic-pilgrimage.js'])});
