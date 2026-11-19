@@ -549,6 +549,58 @@ atlasSource.addEventListener('click',()=>{
  render();travelToNode(node);detail.focus({preventScroll:true});
 });
 
+
+// Verified outcome pathways: roots remain provenance, never products.
+// No eligible destination means an explicit evidence gap rather than a synthetic fruit.
+const pathway=document.createElement('section');
+pathway.className='seven-outcome-pathways';
+pathway.setAttribute('aria-label','Verified source-to-outcome pathways');
+const pathwayTitle=document.createElement('h3');pathwayTitle.textContent='From roots to real experiences';
+const pathwayIntro=document.createElement('p');pathwayIntro.textContent='Follow published ancestry from a source root to a documented experience. Repository links remain in the roots; only eligible user-facing destinations appear here.';
+const pathwayFilter=document.createElement('select');pathwayFilter.setAttribute('aria-label','Filter outcome pathways by source root');
+const pathwayResults=document.createElement('div');pathwayResults.className='seven-pathway-results';
+const pathwayStatus=document.createElement('p');pathwayStatus.className='seven-pathway-status';pathwayStatus.setAttribute('role','status');pathwayStatus.setAttribute('aria-live','polite');
+pathway.append(pathwayTitle,pathwayIntro,pathwayFilter,pathwayStatus,pathwayResults);
+atlas.after(pathway);
+const outcomeRoutes=atlasRecords(6).map(n=>({node:n,trail:lineage(n)}))
+ .filter(route=>route.trail&&route.trail.some(part=>part.kind==='root')&&safe(route.node.url));
+const outcomeRoots=[...new Map(outcomeRoutes.flatMap(route=>route.trail.filter(part=>part.kind==='root').map(root=>[root.id,root]))).values()]
+ .sort((a,b)=>String(a.label).localeCompare(String(b.label)));
+function refreshPathwayFilters(){
+ const previous=pathwayFilter.value;pathwayFilter.replaceChildren();
+ const all=document.createElement('option');all.value='';all.textContent='All documented source roots';pathwayFilter.append(all);
+ for(const root of outcomeRoots){const option=document.createElement('option');option.value=root.id;option.textContent=root.label;pathwayFilter.append(option)}
+ if(outcomeRoots.some(root=>root.id===previous))pathwayFilter.value=previous;
+}
+function showOutcomeRoute(node){
+ state.history.push({chapter:state.chapter,selected:state.selected});
+ state.chapter=6;state.selected=node.id;state.page=0;search.value='';
+ render();travelToNode(node);
+ host.querySelector('.seven-stage').scrollIntoView({block:'center',behavior:motionPreference.matches?'instant':'smooth'});
+ detail.focus({preventScroll:true});
+}
+function renderPathways(){
+ pathwayResults.replaceChildren();
+ const selectedRoot=pathwayFilter.value;
+ const matches=outcomeRoutes.filter(route=>!selectedRoot||route.trail.some(part=>part.id===selectedRoot));
+ pathwayStatus.textContent=matches.length+' source-backed outcome '+(matches.length===1?'pathway':'pathways')+
+ (matches.length?' · Open a journey to inspect its published lineage.':' · No qualifying user-facing outcome is documented for this source.');
+ for(const route of matches){
+  const card=document.createElement('article');card.className='seven-pathway-card';
+  const heading=document.createElement('h4');heading.textContent=route.node.label;
+  const ancestry=document.createElement('p');ancestry.className='seven-pathway-ancestry';
+  ancestry.textContent=route.trail.map(part=>part.label).join(' → ');
+  const actions=document.createElement('div');actions.className='seven-pathway-actions';
+  const explore=document.createElement('button');explore.type='button';explore.textContent='Travel this lineage';
+  explore.addEventListener('click',()=>showOutcomeRoute(route.node));
+  const destination=document.createElement('a');destination.href=safe(route.node.url);
+  destination.textContent='Open documented experience';destination.rel='noopener noreferrer';
+  if(new URL(destination.href).origin!==location.origin)destination.target='_blank';
+  actions.append(explore,destination);card.append(heading,ancestry,actions);pathwayResults.append(card);
+ }
+}
+refreshPathwayFilters();pathwayFilter.addEventListener('change',renderPathways);renderPathways();
+
 function render(){updateAtlas();const c=chapters[state.chapter],all=Array.isArray(source)?source:[];host.dataset.movement=String(state.chapter);$('seven-back').disabled=!state.history.length;$('seven-breadcrumb').textContent='Federation / '+c.title;$('seven-title').textContent=c.title;$('seven-subtitle').textContent=c.subtitle;$('seven-counter').textContent=(state.chapter+1)+' / 7';$('seven-prev').disabled=state.chapter===0;$('seven-next').disabled=state.chapter===6;[...rail.children].forEach((b,i)=>b.setAttribute('aria-pressed',String(i===state.chapter)));const q=search.value.trim().toLocaleLowerCase();const entries=all.filter(n=>(!c.kind||n.kind===c.kind)&&qualified(n)&&(!q||(n.label+' '+(n.desc||'')).toLocaleLowerCase().includes(q)));const pages=Math.max(1,Math.ceil(entries.length/PAGE_SIZE));
 // Keep a selected published source visible when it is chosen from the full
 // accessible list, an ancestry trail, or a guided voyage on another page.
