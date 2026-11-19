@@ -105,6 +105,17 @@ for(const width of [360,390,768,1280]){
   await markers.first().click();
   assert.equal(await spatial.locator('[aria-pressed="true"]').count(),1,'Selected source is highlighted');
   assert.match(await pilgrimage.locator('.pilgrimage-provenance').innerText(),/Published lineage:/);
+  // The source-to-record flight must be genuinely playable on touch and desktop.
+  if(rooted){
+    await pilgrimage.locator('.pilgrimage-atlas-map button[data-source="'+rooted.id+'"]').click();
+    const flight=pilgrimage.locator('.pilgrimage-flight');
+    assert.equal(await flight.count(),1,'A published parent/child chain offers a lineage flight');
+    await flight.getByRole('button',{name:'Start at the root'}).click();
+    assert.match(await flight.locator('.pilgrimage-flight-status').innerText(),/Published waypoint 1 of/);
+    await flight.getByRole('button',{name:'Next source'}).click();
+    assert.match(await flight.locator('.pilgrimage-flight-status').innerText(),/Published waypoint 2 of/);
+    assert.equal(await flight.locator('[aria-current="true"]').count(),1,'One real waypoint is active');
+  }
   await pilgrimage.locator('[data-history="back"]').click();
   await voyageToggle.click();
   assert.equal(await voyageToggle.getAttribute('aria-expanded'),'false','Voyage closes without replacing published page');
