@@ -106,3 +106,10 @@ test('cinematic evidence voyage highlights only published ancestry while retaini
  assert.match(css,/\.seven-context-node:is\(:hover,:focus-visible\)/);
  assert.doesNotMatch(js,/Math\.random|reward_xp|sendBeacon/);
 });
+
+// Camera mapping must account for SVG preserveAspectRatio letterboxing on mobile.
+test('camera gestures use SVG screen geometry instead of stretched CSS coordinates',()=>{
+ const js=read('cinematic-seven-movements.js');
+ for(const token of ['scene.getScreenCTM()','matrix.inverse()','Math.min(r.width,r.height)','(r.width-camera.size*scale)/2','(r.height-camera.size*scale)/2','(r.width-next*scale)/2','(r.height-next*scale)/2'])assert.ok(js.includes(token),token);
+ assert.doesNotMatch(js,/camera.x+\(clientX-r.left\)\*camera.size\/\(r.width\|\|1\)/);
+});
