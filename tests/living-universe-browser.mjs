@@ -80,6 +80,14 @@ for(const width of [360,390,768,1280]){
   const pilgrimage=page.locator('.pilgrimage');
   assert.equal(await pilgrimage.count(),1,'Source-bound pilgrimage mounts once');
   const voyageToggle=pilgrimage.locator('.pilgrimage-toggle');
+  // Real pointer hit-test: prevent the guided-voyage action rail from blocking the entrance.
+  if(width<=390){
+    const hit=await voyageToggle.evaluate(el=>{
+      const r=el.getBoundingClientRect();const x=r.left+r.width/2,y=r.top+r.height/2;
+      return {x,y,hit:document.elementFromPoint(x,y)?.closest('.pilgrimage-toggle')===el};
+    });
+    assert.ok(hit.hit,'Mobile pilgrimage entrance must receive pointer input: '+JSON.stringify(hit));
+  }
   await voyageToggle.click();
   assert.equal(await voyageToggle.getAttribute('aria-expanded'),'true','Voyage opens accessibly');
   const spatial=pilgrimage.locator('.pilgrimage-spatial-map');
