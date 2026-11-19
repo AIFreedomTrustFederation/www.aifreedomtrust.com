@@ -121,3 +121,16 @@ test('Android letterboxed pan uses the rendered SVG scale, not the full CSS widt
  assert.match(js,/apply\(gesture\.center\.x-dx,gesture\.center\.y-dy,gesture\.size\)/);
  assert.doesNotMatch(js,/gesture\.size\/rect\.width/);
 });
+
+
+test('seven-world discovery atlas is source-backed, reversible and mobile-world-first',()=>{
+ const js=read('cinematic-seven-movements.js'),css=read('cinematic-seven-movements.css');
+ for(const token of ['seven-discovery-atlas','atlasRecords(state.chapter)','qualified(n)','state.history.push({chapter:state.chapter,selected:state.selected})','travelToNode(node)','No verified record is available','updateAtlas();'])assert.ok(js.includes(token),token);
+ assert.match(js,/host\.querySelector\('\.seven-grid'\)\.after\(atlas\)/);
+ assert.match(js,/atlasSource\.disabled=!records\.length/);
+ assert.match(css,/\.seven-atlas-steps\{display:grid/);
+ assert.match(css,/@media\(max-width:700px\)/);
+ assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
+ assert.match(css,/@media\(prefers-reduced-data:reduce\)/);
+ assert.doesNotMatch(js,/reward_xp|localStorage|sendBeacon|Math\.random/);
+});
