@@ -22,3 +22,10 @@ test('interactive atlas renders only qualified published biological records',()=
  assert.match(css,/pilgrimage-atlas-column\[data-kind=fruit\]/);
  assert.doesNotMatch(js,/Math\.random|localStorage|sessionStorage/);
 });
+
+test('cinematic pilgrimage retains reversible source history and session-only exploration',()=>{
+ for(const token of ['function snapshot()','function travelBack()','function travelForward()','history.push(before)','future.length=0','visited.add(current.kind)','not a verified achievement','searchByKind.set','pilgrimage-timeline','pilgrimage-open'])assert.ok(js.includes(token),token);
+ assert.match(css,/pilgrimage-open/);
+ assert.match(css,/safe-area-inset-bottom/);
+ assert.doesNotMatch(js,/localStorage|sessionStorage|Math\.random/);
+});
