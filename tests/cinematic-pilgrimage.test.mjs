@@ -4,3 +4,6 @@ test('cinematic pilgrimage is integrated after published lineage and source proj
 test('six source-backed biological kinds and evidence-only fruit qualification',()=>{assert.match(js,/\['root','trunk','branch','leaf','flower','fruit'\]/);assert.match(js,/AIFT_LINEAGE_NODES/);assert.match(js,/qualifies\(n\)/);assert.match(js,/github/);assert.match(js,/ancestry\(chosen\)/);});
 test('accessible, reversible, mobile and reduced-motion experience',()=>{for(const term of ['aria-expanded','aria-live','aria-current','Escape','previous','next','prefers-reduced-motion','prefers-reduced-data'])assert.ok((js+css).includes(term),term);});
 test('javascript syntax',()=>{execFileSync(process.execPath,['--check','cinematic-pilgrimage.js'])});
+
+test('cinematic route uses only projected published ancestry',()=>{for(const token of ['sourceAnchors','positionOf','drawRoute','ancestry(node)','if(!a||!b)continue','if(!p)continue','pilgrimage-route-layer'])assert.ok(js.includes(token),token);assert.doesNotMatch(js,/Math\\.random|localStorage|fetch\\(/)});
+test('lineage buttons reverse the journey without inventing missing records',()=>{for(const token of ['pilgrimage-lineage','Reversible source ancestry','chapters.findIndex','items.some','aria-current'])assert.ok(js.includes(token),token);assert.match(css,/pilgrimage-route-edge/);assert.match(css,/prefers-reduced-data/);});
