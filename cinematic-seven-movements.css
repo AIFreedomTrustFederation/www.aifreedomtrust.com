@@ -304,3 +304,19 @@
  .seven-growth-trunk{opacity:.09}
  .seven-growth-canopy{opacity:.45}
 }
+
+/* Evidence voyage: the selected published ancestry becomes a luminous route.
+   Context stays selectable, and the static/reduced-power presentation stays legible. */
+.seven-source-constellation:has(.seven-lineage-node) .seven-context-node{opacity:.48;transition:opacity .24s ease}
+.seven-source-constellation:has(.seven-lineage-node) .seven-context-node:is(:hover,:focus-visible){opacity:1;stroke:#f7d18a;stroke-width:3}
+.seven-source-link[data-evidence-route="true"]{stroke:#f7d18a;stroke-width:3.5;stroke-opacity:1;filter:drop-shadow(0 0 8px #f7d18a)}
+.seven-lineage-node{filter:drop-shadow(0 0 10px #f7d18a);cursor:pointer}
+.seven-source-constellation circle[role="button"]:focus-visible{outline:none;stroke:#fff;stroke-width:4}
+@media(prefers-reduced-motion:reduce){
+ .seven-context-node{transition:none!important}
+ .seven-source-link[data-evidence-route="true"],.seven-lineage-node{filter:none}
+}
+@media(prefers-reduced-data:reduce){
+ .seven-source-link[data-evidence-route="true"],.seven-lineage-node{filter:none}
+ .seven-context-node{opacity:.72!important}
+}
