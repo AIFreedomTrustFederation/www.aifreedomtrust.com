@@ -53,3 +53,11 @@
 .pilgrimage-atlas-column[data-kind=root]{border-top:3px solid #f17b83}.pilgrimage-atlas-column[data-kind=trunk]{border-top:3px solid #f7d18a}.pilgrimage-atlas-column[data-kind=branch]{border-top:3px solid #64e6b4}.pilgrimage-atlas-column[data-kind=leaf]{border-top:3px solid #6cbcff}.pilgrimage-atlas-column[data-kind=flower]{border-top:3px solid #b392fa}.pilgrimage-atlas-column[data-kind=fruit]{border-top:3px solid #ffab72}
 @media(max-width:600px){.pilgrimage-atlas-map{grid-template-columns:repeat(6,minmax(8rem,1fr))}.pilgrimage-atlas{padding:.5rem}}
 @media(prefers-reduced-data:reduce){.pilgrimage-atlas{background:#071a2b}}
+
+/* Journey history and mobile-first immersive exploration sheet. */
+.pilgrimage-timeline{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;margin:.35rem 0 .65rem;padding-bottom:.55rem;border-bottom:1px solid #d4b87e55}
+.pilgrimage-timeline button{font-size:.76rem;min-height:44px}
+.pilgrimage-timeline-status{font-size:.72rem;line-height:1.4;color:#bdebdc;flex:1 1 180px}
+@media(max-width:600px){.pilgrimage.pilgrimage-open{position:fixed;z-index:30;inset:auto .4rem max(.4rem,env(safe-area-inset-bottom));max-width:none;border-radius:20px}.pilgrimage.pilgrimage-open .pilgrimage-body{max-height:min(74dvh,720px);overflow-y:auto}.pilgrimage.pilgrimage-open .pilgrimage-top{position:sticky;top:0;z-index:1;background:#071526;border-radius:18px}.pilgrimage-atlas-map{scroll-snap-type:x proximity}.pilgrimage-atlas-column{scroll-snap-align:start}}
+@media(max-height:580px){.pilgrimage.pilgrimage-open .pilgrimage-body{max-height:58dvh}}
+@media(prefers-reduced-motion:reduce){.pilgrimage-atlas-map{scroll-snap-type:none}}
