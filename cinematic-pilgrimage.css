@@ -75,3 +75,14 @@
 .pilgrimage-spatial .pilgrimage-spatial-marker:focus-visible{outline:3px solid #fff;outline-offset:3px}
 @media(prefers-reduced-motion:reduce){.pilgrimage-spatial-viewport,.pilgrimage-spatial-marker{transition:none!important}}
 @media(prefers-reduced-data:reduce){.pilgrimage-spatial-map{background:#071a2b}.pilgrimage-spatial .pilgrimage-spatial-marker{box-shadow:none}}
+
+/* Mobile collision repair: the pre-existing guided-voyage launch control occupies
+   the bottom action rail. Keep the closed pilgrimage entrance above that rail;
+   the expanded sheet takes the foreground only when explicitly opened. */
+@media (max-width:600px){
+ .world .pilgrimage:not(.pilgrimage-open){
+  bottom:calc(7.5rem + env(safe-area-inset-bottom,0px));
+  z-index:16;
+ }
+ .world .pilgrimage.pilgrimage-open{z-index:40}
+}
