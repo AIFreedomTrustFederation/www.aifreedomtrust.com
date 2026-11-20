@@ -28,3 +28,17 @@
 @media(prefers-reduced-motion:reduce){.passage-parallax{transition:none!important}}
 @media(prefers-reduced-data:reduce){.passage-depth{filter:none}.passage-depth-2{display:none}}
 .passage-static .passage-parallax{transition:none!important}
+
+/* Source-bound luminous currents. Only verified parent edges receive light. */
+.passage-currents{pointer-events:none;mix-blend-mode:screen}
+.passage-current-edge{fill:none;stroke:url(#passage-spectrum);stroke-width:2;stroke-linecap:round;opacity:.32;vector-effect:non-scaling-stroke;filter:drop-shadow(0 0 7px #68e9cc);stroke-dasharray:12 22;animation:passage-current-flow 11s linear infinite}
+.passage-source-glimmer{fill:#e9d5a4;opacity:.78;filter:drop-shadow(0 0 10px #a9f6db);animation:passage-source-breathe 5s ease-in-out infinite}
+.world[data-passage-stage=root] .passage-current-edge{stroke:#f18a80}
+.world[data-passage-stage=leaf] .passage-current-edge{stroke:#72e8b4}
+.world[data-passage-stage=fruit] .passage-current-edge{stroke:#eac38b}
+@keyframes passage-current-flow{to{stroke-dashoffset:-136}}
+@keyframes passage-source-breathe{50%{opacity:.36}}
+@media(prefers-reduced-motion:reduce){.passage-current-edge,.passage-source-glimmer{animation:none!important;stroke-dasharray:none}}
+@media(prefers-reduced-data:reduce){.passage-current-edge{filter:none;animation:none;stroke-dasharray:none}.passage-source-glimmer{filter:none;animation:none}}
+.passage-static .passage-current-edge,.passage-static .passage-source-glimmer{animation:none!important}
+@media(max-width:600px){.passage-current-edge{stroke-width:1.5;opacity:.25}.passage-source-glimmer{opacity:.6}}
