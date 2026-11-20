@@ -32,6 +32,52 @@ for(let i=0;i<3;i++){
  parallax.append(depth);
 }
 environment.append(parallax);
+// Provenance currents use only published parent relationships and projected SVG source positions.
+// Missing parents, unprojected nodes, and repository-as-fruit claims produce no decorative edge.
+const lineage=Array.isArray(window.AIFT_LINEAGE_NODES)?window.AIFT_LINEAGE_NODES:[];
+const indexed=new Map(lineage.filter(n=>n&&typeof n.id==='string').map(n=>[n.id,n]));
+const currents=make('g',{'class':'passage-currents','aria-hidden':'true','pointer-events':'none'});
+const currentEdges=make('g',{'class':'passage-current-edges'});
+const currentNodes=make('g',{'class':'passage-current-nodes'});
+currents.append(currentEdges,currentNodes);
+environment.append(currents);
+function projectedPositions(){
+ const positions=new Map();
+ for(const node of tree.querySelectorAll('.living-source-node[data-node]')){
+  const dot=node.querySelector('circle[cx][cy]');
+  if(!dot)continue;
+  const x=Number(dot.getAttribute('cx')),y=Number(dot.getAttribute('cy'));
+  if(Number.isFinite(x)&&Number.isFinite(y))positions.set(node.dataset.node,{x,y});
+ }
+ return positions;
+}
+let currentSignature='';
+function updateCurrents(stage){
+ const positions=projectedPositions();
+ const ids=[...positions.keys()].filter(id=>indexed.has(id)).sort();
+ const signature=stage+'|'+ids.join('|');
+ if(signature===currentSignature)return;
+ currentSignature=signature;
+ currentEdges.replaceChildren();currentNodes.replaceChildren();
+ const maxEdges=96,maxNodes=48;
+ let edges=0,nodes=0;
+ for(const id of ids){
+  const record=indexed.get(id),point=positions.get(id);
+  if(!record||!point)continue;
+  if(nodes<maxNodes&&record.kind===stage){
+   currentNodes.append(make('circle',{'class':'passage-source-glimmer',cx:point.x,cy:point.y,r:Math.max(2,Math.min(fullW,fullH)*.004)}));
+   nodes++;
+  }
+  if(edges>=maxEdges||!record.parent)continue;
+  const parent=indexed.get(record.parent),start=positions.get(record.parent);
+  if(!parent||!start)continue;
+  // Roots are source systems; an outcome is never inferred from a repository URL.
+  const d=`M ${start.x} ${start.y} Q ${(start.x+point.x)/2} ${(start.y+point.y)/2-Math.min(fullW,fullH)*.025} ${point.x} ${point.y}`;
+  currentEdges.append(make('path',{'class':'passage-current-edge',d,'data-growth':record.kind||''}));
+  edges++;
+ }
+ currents.dataset.activeStage=stage;
+}
 const firstArt=[...tree.children].find(el=>!['title','desc','defs'].includes(el.tagName.toLowerCase()));
 tree.insertBefore(environment,firstArt||null);
 const lens=document.createElement('div');lens.className='passage-lens';lens.setAttribute('aria-hidden','true');
@@ -47,6 +93,7 @@ function refresh(){
  queued=false;
  const stage=stages.includes(voyage.dataset.stage)?voyage.dataset.stage:'root';
  world.dataset.passageStage=stage;
+ updateCurrents(stage);
  const raw=tree.getAttribute('viewBox')||'0 0 1000 1000';
  const [x,y,w,h]=raw.trim().split(/[\s,]+/).map(Number);
  if([x,y,w,h].every(Number.isFinite)&&w>0&&h>0){
