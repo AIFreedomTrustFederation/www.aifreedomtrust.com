@@ -6,3 +6,9 @@ test('accessible low-power presentation',()=>{assert.match(js,/aria-hidden/);ass
 test('syntax',()=>execFileSync(process.execPath,['--check','cinematic-passage-environment.js']));
 test('depth geometry derives from the published SVG viewBox instead of hardcoded camera dimensions',()=>{for(const token of ['initialBox','fullW','fullH','originX','originY','passage-parallax','passage-depth','--passage-scale'])assert.ok(js.includes(token),token);assert.doesNotMatch(js,/centerX-500|centerY-500|1-w\/1000/)});
 test('depth planes are decorative and low-power safe',()=>{assert.match(js,/aria-hidden.*true/);assert.match(css,/passage-depth/);assert.match(css,/passage-static \.passage-parallax/);assert.match(css,/prefers-reduced-motion:reduce/);assert.match(css,/prefers-reduced-data:reduce/)});
+
+test('all atmospheric primitives derive from the actual published SVG geometry',()=>{
+ for(const token of ['originX+fullW*.5','originY+fullH*.48','originX+fullW*.32','originY+fullH*.755','originX+fullW*(.09','originY+fullH*(.1','tree.querySelector(\'defs\')||make'])assert.ok(js.includes(token),token);
+ assert.doesNotMatch(js,/cx:500|cy:480|rx:320|ry:330|M 0 755 Q 500 665 1000 755/);
+ assert.match(js,/if\(!defs\.parentNode\)tree\.insertBefore/);
+});
