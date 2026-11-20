@@ -144,6 +144,30 @@ for(const width of [360,390,768,1280]){
   assert.ok(await svg.locator('.seven-source-constellation circle').count()>0,'Published nodes survive immersive transition');
   await page.keyboard.press('Escape');
   assert.equal(await immersive.getAttribute('aria-pressed'),'false','Escape exits immersive mode');
+  // Provenance compass: verify real source navigation, reversible disclosure,
+  // and that the mobile HUD does not swallow pointer input.
+  const compass=host.locator('.seven-provenance-compass');
+  assert.equal(await compass.count(),1,'One provenance compass is mounted');
+  const compassToggle=compass.locator('.seven-compass-toggle');
+  assert.equal(await compassToggle.getAttribute('aria-expanded'),'false');
+  await compassToggle.scrollIntoViewIfNeeded();
+  if(width<=390){
+    const hit=await compassToggle.evaluate(el=>{
+      const r=el.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2;
+      return {within:x>=0&&x<innerWidth&&y>=0&&y<innerHeight,
+        receives:el===document.elementFromPoint(x,y)||el.contains(document.elementFromPoint(x,y))};
+    });
+    assert.ok(hit.within&&hit.receives,'Compass toggle must be touch reachable: '+JSON.stringify(hit));
+  }
+  await compassToggle.click();
+  assert.equal(await compassToggle.getAttribute('aria-expanded'),'true','Compass opens');
+  assert.equal(await compass.locator('.seven-compass-panel').isVisible(),true);
+  assert.equal(await compass.getAttribute('aria-label'),'In-world source provenance compass');
+  await page.screenshot({path:'artifacts/living-universe/compass-'+width+'.png'});
+  await compassToggle.click();
+  assert.equal(await compassToggle.getAttribute('aria-expanded'),'false','Compass closes reversibly');
+  assert.equal(await compass.locator('.seven-compass-panel').isVisible(),false);
+
   // Capture the playable world itself, not only the long document screenshot.
   await page.locator('#seven-movements .seven-stage').screenshot({path:'artifacts/living-universe/stage-'+width+'.png'});
   const minimap=page.locator('#seven-movements .seven-minimap');
