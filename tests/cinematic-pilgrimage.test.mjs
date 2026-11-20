@@ -47,3 +47,14 @@ test('flight waypoint and spatial camera stay synchronized with the real SVG vie
  assert.match(js,/change\.attributeName===\'viewBox\'/);
  assert.doesNotMatch(js,/Math\.random|localStorage|sessionStorage/);
 });
+
+test('guided lineage autoplay remains source-bound, reversible, and explicitly pausable',()=>{
+ for(const token of ['Play documented journey','Pause journey','timer=setTimeout(advance,2100)','stopFlight()','flight.isConnected','clearTimeout(timer)','aria-pressed','showStep(step+1)','trail.length-1'])assert.ok(js.includes(token),token);
+ assert.match(css,/pilgrimage-flight-controls button\\[aria-pressed=true\\]/);
+ assert.doesNotMatch(js,/Math\\.random|localStorage|sessionStorage|fetch\\(/);
+});
+test('spatial camera normalization honors the published full SVG viewBox',()=>{
+ assert.match(js,/data-full-viewbox/);
+ assert.match(js,/const raw=/);
+ assert.match(js,/raw.every\\(Number.isFinite\\)/);
+});
