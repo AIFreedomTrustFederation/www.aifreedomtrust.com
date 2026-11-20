@@ -41,7 +41,7 @@ test('source currents remain accessible and low-power safe',()=>{
 });
 
 test('source-bound currents refresh when projected positions or ancestry change',()=>{
- assert.match(js,/const signature=stage\+'\\|'\+ids\.map/);
+ assert.ok(js.includes("const signature=stage+'|'+ids.map"));
  assert.match(js,/p\.x\+','\+p\.y/);
  assert.match(js,/sourceObserver\.observe\(tree,\{subtree:true,childList:true,attributes:true/);
  assert.match(js,/attributeFilter:\['cx','cy','data-node'\]/);
