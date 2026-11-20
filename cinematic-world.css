@@ -401,3 +401,49 @@
   .world .tree {filter: none}
   .world .world-gate {backdrop-filter: none}
 }
+
+
+/* Living Universe 3.1 · Android theatre collision-safe composition.
+   The source Tree remains the dominant playable region; overlays never
+   obscure the source beacons or the documented destination gates. */
+@media (max-width:700px) {
+  .world { isolation:isolate; grid-template-rows:auto minmax(40svh,1fr) auto auto auto; }
+  .world .tree { z-index:1; pointer-events:auto; }
+  .world .world-beacons { z-index:7; position:relative; }
+  .world .world-gates { z-index:7; position:relative; }
+  .world .world-note { z-index:3; }
+  .world .pilgrimage:not(.pilgrimage-open) {
+    position:relative; grid-row:6; inset:auto; width:100%;
+    max-width:none; margin:.35rem 0 0; z-index:8;
+    transform:none; backdrop-filter:none;
+  }
+  .world .pilgrimage:not(.pilgrimage-open) .pilgrimage-top {
+    flex-wrap:wrap; min-width:0;
+  }
+  .world .pilgrimage:not(.pilgrimage-open) .pilgrimage-kicker {
+    flex:1 1 10rem; max-width:none;
+  }
+  .world .pilgrimage:not(.pilgrimage-open) .pilgrimage-toggle {
+    flex:0 0 auto; min-height:48px;
+  }
+  .world .world-stage-panel {
+    position:relative; grid-row:7; inset:auto; width:100%;
+    max-width:none; margin:.25rem 0; z-index:8;
+  }
+  .world .world-gates a { min-height:56px; }
+  .world .world-beacon { min-height:48px; }
+}
+@media (max-width:390px) {
+  .world .pilgrimage:not(.pilgrimage-open) .pilgrimage-top {
+    align-items:stretch;
+  }
+  .world .pilgrimage:not(.pilgrimage-open) .pilgrimage-toggle {
+    width:100%;
+  }
+}
+@media (prefers-reduced-motion:reduce) {
+  .world .pilgrimage, .world .world-beacons { scroll-behavior:auto; }
+}
+@media (prefers-reduced-data:reduce) {
+  .world .pilgrimage:not(.pilgrimage-open) { box-shadow:none; }
+}
