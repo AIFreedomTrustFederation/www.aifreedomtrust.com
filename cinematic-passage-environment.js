@@ -55,7 +55,9 @@ let currentSignature='';
 function updateCurrents(stage){
  const positions=projectedPositions();
  const ids=[...positions.keys()].filter(id=>indexed.has(id)).sort();
- const signature=stage+'|'+ids.join('|');
+ // Recompute when a projected source moves, not merely when its ID appears.
+ // Coordinates are part of the source projection contract and may change during responsive reflow.
+ const signature=stage+'|'+ids.map(id=>{const p=positions.get(id);const r=indexed.get(id);return id+':'+p.x+','+p.y+':'+(r?.parent||'')}).join('|');
  if(signature===currentSignature)return;
  currentSignature=signature;
  currentEdges.replaceChildren();currentNodes.replaceChildren();
@@ -109,7 +111,19 @@ function refresh(){
  world.classList.toggle('passage-static',motion.matches||data.matches);
 }
 function schedule(){if(!queued){queued=true;requestAnimationFrame(refresh)}}
-const observer=new MutationObserver(schedule);
+// Source projection may finish after this module initializes or move its coordinates.
+ // Observe only source-node changes; mutations to our own decorative SVG are ignored.
+ const sourceObserver=new MutationObserver(changes=>{
+  for(const change of changes){
+   const target=change.target;
+   if(target.nodeType===1&&(target.closest?.('.passage-environment')||target.closest?.('.pilgrimage-route-layer')))continue;
+   if(target.nodeType===1&&target.closest?.('.living-source-node')){schedule();return}
+   if(change.type==='childList'&&[...change.addedNodes,...change.removedNodes].some(node=>
+    node.nodeType===1&&(node.matches?.('.living-source-node')||node.querySelector?.('.living-source-node')))){schedule();return}
+  }
+ });
+ sourceObserver.observe(tree,{subtree:true,childList:true,attributes:true,attributeFilter:['cx','cy','data-node']});
+ const observer=new MutationObserver(schedule);
 observer.observe(tree,{attributes:true,attributeFilter:['viewBox']});
 observer.observe(voyage,{attributes:true,attributeFilter:['data-stage']});
 motion.addEventListener?.('change',schedule);data.addEventListener?.('change',schedule);
