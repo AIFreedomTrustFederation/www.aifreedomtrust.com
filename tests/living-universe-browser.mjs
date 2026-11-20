@@ -164,6 +164,14 @@ for(const width of [360,390,768,1280]){
   assert.equal(await compass.locator('.seven-compass-panel').isVisible(),true);
   assert.equal(await compass.getAttribute('aria-label'),'In-world source provenance compass');
   await page.screenshot({path:'artifacts/living-universe/compass-'+width+'.png'});
+  // Keyboard users must be able to dismiss the overlay and return to its trigger.
+  await compass.locator('.seven-compass-panel').focus();
+  await page.keyboard.press('Escape');
+  assert.equal(await compassToggle.getAttribute('aria-expanded'),'false','Escape closes compass');
+  assert.equal(await compass.locator('.seven-compass-panel').isVisible(),false);
+  assert.equal(await compassToggle.evaluate(el=>document.activeElement===el),true,'Focus returns to the compass trigger');
+  await compassToggle.click();
+  assert.equal(await compassToggle.getAttribute('aria-expanded'),'true','Compass reopens after keyboard dismissal');
   await compassToggle.click();
   assert.equal(await compassToggle.getAttribute('aria-expanded'),'false','Compass closes reversibly');
   assert.equal(await compass.locator('.seven-compass-panel').isVisible(),false);
