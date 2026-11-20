@@ -7,9 +7,24 @@ const chapters=[{kind:null,title:'The Living Whole',subtitle:'A single federatio
 ...kinds.map(kind=>({kind,title:({root:'The Roots',trunk:'The Shared Trunk',branch:'The Branches',leaf:'The Leaves',flower:'The Flowers',fruit:'The Fruits'})[kind],subtitle:({root:'The verifiable source systems',trunk:'The documented federation',branch:'The systems and subsystems',leaf:'The documented capabilities',flower:'The emerging, evidenced work',fruit:'The demonstrable visitor experiences'})[kind]}))];
 const safe=url=>{try{const u=new URL(url,location.href);return u.protocol==='https:'||(u.protocol==='http:'&&u.origin===location.origin)?u.href:null}catch{return null}};
 const byId=new Map((Array.isArray(source)?source:[]).map(n=>[n.id,n]));
-function lineage(n){const trail=[],seen=new Set();let p=n;while(p&&!seen.has(p.id)){trail.unshift(p);seen.add(p.id);p=p.parent?byId.get(p.parent):null}// A complete route must terminate at a published root; cycles and missing parents are evidence gaps.
- if(!trail.length||p||trail[0].parent||trail[0].kind!=='root')return null;
- return trail}
+function lineage(n){
+ // The published contract places repository roots beneath the shared trunk.
+ // The visitor route starts at the repository root; the trunk is verified
+ // separately, not treated as a repository or an outcome.
+ const trail=[],seen=new Set();let p=n;
+ while(p&&!seen.has(p.id)){
+  if(p.kind==='root'){
+   const trunk=p.parent?byId.get(p.parent):null;
+   if(!trunk||trunk.kind!=='trunk'||trunk.parent)return null;
+   trail.unshift(p);
+   return trail;
+  }
+  if(p.kind==='trunk')return null; // A trunk is not an outcome ancestry root.
+  trail.unshift(p);seen.add(p.id);
+  p=p.parent?byId.get(p.parent):null;
+ }
+ return null; // Missing parents and cycles are evidence gaps.
+}
 function qualified(n){if(n.kind!=='fruit')return true;const path=lineage(n);return !!(path&&path.some(p=>p.kind==='root')&&safe(n.url)&&!/^https:\/\/github\.com\/[^/]+\/[^/]+\/?$/i.test(safe(n.url)))}
 const state={chapter:0,selected:null,history:[],journey:[],page:0};
 // The six biological layers have distinct, consistent spectral identities.
