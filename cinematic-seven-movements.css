@@ -368,3 +368,19 @@
 @media(max-width:700px){.seven-outcome-pathways{margin:1rem .5rem}.seven-pathway-results{grid-template-columns:1fr}.seven-pathway-actions>*{flex:1 1 160px}}
 @media(prefers-reduced-motion:reduce){.seven-outcome-pathways *{animation:none!important;transition:none!important}}
 @media(prefers-reduced-data:reduce){.seven-outcome-pathways{background:#0b2434}.seven-pathway-card{box-shadow:none}}
+
+
+/* Source-backed in-world compass: compact until explicitly opened. */
+.seven-provenance-compass{position:absolute;z-index:9;right:clamp(.5rem,2vw,1.5rem);bottom:clamp(.5rem,2vw,1.5rem);width:min(340px,calc(100% - 1rem));color:#f2faf6;font:inherit}
+.seven-compass-toggle{display:block;margin-left:auto;min-height:48px;padding:.65rem 1rem;border:1px solid #f7d18a;border-radius:999px;background:#092536f2;color:#fff4ce;font:700 .9rem/1.3 system-ui;box-shadow:0 0 22px #64e6b43b;cursor:pointer}
+.seven-compass-panel{max-height:min(52svh,430px);overflow:auto;overscroll-behavior:contain;margin-top:.5rem;padding:1rem;border:1px solid #64e6b4a0;border-radius:1rem;background:linear-gradient(140deg,#071827f7,#143744f7);box-shadow:0 18px 50px #000a}
+.seven-compass-panel[hidden]{display:none}
+.seven-compass-panel strong{display:block;font:600 1.2rem Georgia,serif;color:#f7d18a;overflow-wrap:anywhere}
+.seven-compass-panel p{font-size:.85rem;line-height:1.5;color:#d7e8e4}
+.seven-compass-panel nav,.seven-compass-children{display:grid;gap:.45rem;margin:.6rem 0}
+.seven-compass-children span{font-size:.8rem;font-weight:700;color:#8ee6cf}
+.seven-compass-panel button,.seven-compass-panel a{display:block;width:100%;min-height:44px;padding:.65rem .75rem;border:1px solid #8ddbc0;border-radius:.65rem;background:#164255;color:#fff;text-align:left;text-decoration:none;font:inherit;cursor:pointer;overflow-wrap:anywhere}
+.seven-provenance-compass :focus-visible{outline:3px solid #fff0a8;outline-offset:3px}
+@media(max-width:700px){.seven-provenance-compass{left:.5rem;right:.5rem;bottom:.5rem;width:auto}.seven-compass-toggle{font-size:.8rem;padding:.55rem .8rem}.seven-compass-panel{max-height:44svh}}
+@media(prefers-reduced-motion:reduce){.seven-provenance-compass *{animation:none!important;transition:none!important}}
+@media(prefers-reduced-data:reduce){.seven-compass-toggle{box-shadow:none}.seven-compass-panel{background:#0b2434}}
