@@ -8,7 +8,7 @@ const stages=['root','trunk','branch','leaf','flower','fruit'];
 const make=(tag,attrs)=>{const e=document.createElementNS(NS,tag);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,String(v));return e};
 const environment=make('g',{'class':'passage-environment','aria-hidden':'true','pointer-events':'none'});
 // The environment uses the source SVG's real coordinate system, including nonzero origins.
-const initialBox=(tree.getAttribute('viewBox')||'0 0 1000 1000').trim().split(/[\\s,]+/).map(Number);
+const initialBox=(tree.getAttribute('viewBox')||'0 0 1000 1000').trim().split(/[\s,]+/).map(Number);
 const bounds=initialBox.length===4&&initialBox.every(Number.isFinite)&&initialBox[2]>0&&initialBox[3]>0?initialBox:[0,0,1000,1000];
 const [originX,originY,fullW,fullH]=bounds;
 const halo=make('ellipse',{'class':'passage-halo',cx:originX+fullW*.5,cy:originY+fullH*.48,rx:fullW*.32,ry:fullH*.33});
@@ -20,10 +20,12 @@ for(let i=0;i<16;i++){const x=originX+fullW*(.09+((i*137)%820)/1000),y=originY+f
 environment.append(halo,horizon,motes);
 const defs=tree.querySelector('defs')||make('defs',{});
 if(!defs.parentNode)tree.insertBefore(defs,tree.firstChild);
-const gradient=make('linearGradient',{id:'passage-spectrum',x1:'0',y1:'1',x2:'1',y2:'0'});
-for(const [offset,color] of [['0%','#e87674'],['48%','#67dfb2'],['100%','#74a8fa']])
- gradient.append(make('stop',{offset,'stop-color':color}));
-defs.append(gradient);
+const gradient=tree.querySelector('#passage-spectrum')||make('linearGradient',{id:'passage-spectrum',x1:'0',y1:'1',x2:'1',y2:'0'});
+if(!gradient.parentNode){
+ for(const [offset,color] of [['0%','#e87674'],['48%','#67dfb2'],['100%','#74a8fa']])
+  gradient.append(make('stop',{offset,'stop-color':color}));
+ defs.append(gradient);
+}
 const parallax=make('g',{'class':'passage-parallax','aria-hidden':'true'});
 for(let i=0;i<3;i++){
  const depth=make('path',{'class':'passage-depth passage-depth-'+i,d:`M ${originX} ${originY+fullH*(.66+i*.1)} Q ${originX+fullW*.5} ${originY+fullH*(.51+i*.09)} ${originX+fullW} ${originY+fullH*(.66+i*.1)}`});
@@ -38,7 +40,8 @@ world.append(lens);
 const caption=document.createElement('div');caption.className='passage-caption';caption.setAttribute('role','status');
 caption.setAttribute('aria-live','off');caption.textContent='THE LIVING TREE · DOCUMENTED LINEAGE';
 world.append(caption);
-const motion=matchMedia('(prefers-reduced-motion: reduce)'),data=matchMedia('(prefers-reduced-data: reduce)');
+const query=typeof matchMedia==='function'?matchMedia.bind(window):()=>({matches:false,addEventListener(){}});
+const motion=query('(prefers-reduced-motion: reduce)'),data=query('(prefers-reduced-data: reduce)');
 let queued=false;
 function refresh(){
  queued=false;
