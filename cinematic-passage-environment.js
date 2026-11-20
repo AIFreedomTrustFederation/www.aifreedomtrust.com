@@ -19,6 +19,15 @@ const gradient=make('linearGradient',{id:'passage-spectrum',x1:'0',y1:'1',x2:'1'
 for(const [offset,color] of [['0%','#e87674'],['48%','#67dfb2'],['100%','#74a8fa']])
  gradient.append(make('stop',{offset,'stop-color':color}));
 defs?.append(gradient);
+const initialBox=(tree.getAttribute('viewBox')||'0 0 1000 1000').trim().split(/[\s,]+/).map(Number);
+const bounds=initialBox.length===4&&initialBox.every(Number.isFinite)&&initialBox[2]>0&&initialBox[3]>0?initialBox:[0,0,1000,1000];
+const [originX,originY,fullW,fullH]=bounds;
+const parallax=make('g',{'class':'passage-parallax','aria-hidden':'true'});
+for(let i=0;i<3;i++){
+ const depth=make('path',{'class':'passage-depth passage-depth-'+i,d:`M ${originX} ${originY+fullH*(.66+i*.1)} Q ${originX+fullW*.5} ${originY+fullH*(.51+i*.09)} ${originX+fullW} ${originY+fullH*(.66+i*.1)}`});
+ parallax.append(depth);
+}
+environment.append(parallax);
 const firstArt=[...tree.children].find(el=>!['title','desc','defs'].includes(el.tagName.toLowerCase()));
 tree.insertBefore(environment,firstArt||null);
 const lens=document.createElement('div');lens.className='passage-lens';lens.setAttribute('aria-hidden','true');
@@ -37,11 +46,12 @@ function refresh(){
  const [x,y,w,h]=raw.trim().split(/[\s,]+/).map(Number);
  if([x,y,w,h].every(Number.isFinite)&&w>0&&h>0){
   const centerX=x+w/2,centerY=y+h/2;
-  const shiftX=Math.max(-1,Math.min(1,(centerX-500)/500));
-  const shiftY=Math.max(-1,Math.min(1,(centerY-500)/500));
+  const shiftX=Math.max(-1,Math.min(1,(centerX-(originX+fullW/2))/(fullW/2)));
+  const shiftY=Math.max(-1,Math.min(1,(centerY-(originY+fullH/2))/(fullH/2)));
   world.style.setProperty('--passage-x',String(shiftX));
   world.style.setProperty('--passage-y',String(shiftY));
-  world.style.setProperty('--passage-focus',String(Math.max(0,Math.min(1,1-w/1000))));
+  world.style.setProperty('--passage-scale',String(Math.max(.4,Math.min(2.5,fullW/w))));
+  world.style.setProperty('--passage-focus',String(Math.max(0,Math.min(1,1-w/fullW))));
  }
  caption.textContent='THE LIVING TREE · '+stage.toUpperCase()+' · PUBLISHED LINEAGE';
  world.classList.toggle('passage-static',motion.matches||data.matches);
