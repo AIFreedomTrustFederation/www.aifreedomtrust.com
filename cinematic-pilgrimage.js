@@ -37,11 +37,13 @@ const nav=document.createElement('section');nav.className='pilgrimage';nav.setAt
 nav.innerHTML='<div class="pilgrimage-top"><span class="pilgrimage-kicker">THE LIVING PATH · SIX DOCUMENTED LAYERS</span><button class="pilgrimage-toggle" type="button" aria-expanded="false" aria-controls="pilgrimage-body">Begin the voyage</button></div><div class="pilgrimage-body" id="pilgrimage-body" hidden><div class="pilgrimage-track" role="group" aria-label="Biological journey stages"></div><div class="pilgrimage-detail" aria-live="polite"></div><div class="pilgrimage-actions"><button type="button" data-action="previous">← Previous</button><button type="button" data-action="next">Continue →</button><a class="pilgrimage-destination" hidden>Open documented destination</a></div><p class="pilgrimage-disclaimer">A guided exploration of published lineage, not live CI or completion status. Missing evidence never creates a fruit.</p></div>';
 world.append(nav);
 const toggle=nav.querySelector('.pilgrimage-toggle'),body=nav.querySelector('.pilgrimage-body'),track=nav.querySelector('.pilgrimage-track'),detail=nav.querySelector('.pilgrimage-detail'),destination=nav.querySelector('.pilgrimage-destination');
-let index=0,chosen=null,activeWaypoint=null;
+let index=0,chosen=null,activeWaypoint=null,flightStop=null;
+function stopFlight(){if(flightStop){flightStop();flightStop=null}}
 const visited=new Set(),history=[],future=[],searchByKind=new Map();
 function snapshot(){return {index,id:chosen?.id||null}}
-function restore(state){index=state.index;chosen=state.id?byId.get(state.id)||null:null;activeWaypoint=null;render()}
+function restore(state){stopFlight();index=state.index;chosen=state.id?byId.get(state.id)||null:null;activeWaypoint=null;render()}
 function travel(nextIndex,record=null){
+ stopFlight();
  if(nextIndex<0||nextIndex>=chapters.length)return;
  const before=snapshot(),after={index:nextIndex,id:record?.id||null};
  if(before.index===after.index&&before.id===after.id)return;
@@ -82,7 +84,7 @@ function renderSpatial(){
  spatialMap.querySelectorAll('button').forEach(b=>b.remove());
  const view=tree.viewBox.baseVal;
  const base=tree.getAttribute('data-full-viewbox')||'0 0 1000 1000';
- const nums=base.split(/[\\s,]+/).map(Number);
+ const nums=base.trim().split(/\s+|,/).map(Number);
  const full=nums.length===4&&nums.every(Number.isFinite)&&nums[2]>0&&nums[3]>0?nums:[0,0,1000,1000];
  const [ox,oy,w,h]=full;
  const pct=(value,start,size)=>Math.max(0,Math.min(100,(value-start)/size*100));
@@ -110,7 +112,8 @@ const cameraObserver=new MutationObserver(changes=>{
  // Camera movement can update every frame: move only the viewport rectangle,
  // never rebuild all source markers during a pinch or drag.
  const view=tree.viewBox.baseVal;
- const full=[0,0,1000,1000];
+ const raw=(tree.getAttribute('data-full-viewbox')||'0 0 1000 1000').trim().split(/\s+|,/).map(Number);
+ const full=raw.length===4&&raw.every(Number.isFinite)&&raw[2]>0&&raw[3]>0?raw:[0,0,1000,1000];
  const pct=(value,start,size)=>Math.max(0,Math.min(100,(value-start)/size*100));
  spatialViewport.style.left=pct(view.x,full[0],full[2])+'%';
  spatialViewport.style.top=pct(view.y,full[1],full[3])+'%';
@@ -167,6 +170,9 @@ function render(){
    const heading=document.createElement('h3');heading.textContent='Follow this living lineage';
    const help=document.createElement('p');help.textContent='Travel from its documented root toward this source. Each stop focuses an actual published node.';
    const controls=document.createElement('div');controls.className='pilgrimage-flight-controls';
+   const play=document.createElement('button');play.type='button';play.textContent='Play documented journey';play.setAttribute('aria-pressed','false');
+   let timer=null;const pause=()=>{if(timer!==null){clearTimeout(timer);timer=null}play.textContent='Play documented journey';play.setAttribute('aria-pressed','false');if(flightStop===pause)flightStop=null};
+   flightStop=pause;
    const begin=document.createElement('button');begin.type='button';begin.textContent='Start at the root';
    const prev=document.createElement('button');prev.type='button';prev.textContent='Previous source';
    const next=document.createElement('button');next.type='button';next.textContent='Next source';
@@ -181,16 +187,23 @@ function render(){
     breadcrumb.replaceChildren();
     trail.forEach((point,i)=>{const item=document.createElement('li');
      const button=document.createElement('button');button.type='button';button.textContent=point.label;
-     button.setAttribute('aria-current',String(i===step));button.addEventListener('click',()=>showStep(i));
+     button.setAttribute('aria-current',String(i===step));button.addEventListener('click',()=>{pause();showStep(i)});
      item.append(button);breadcrumb.append(item)});
     const anchor=tree.querySelector('.living-source-node[data-node="'+CSS.escape(record.id)+'"]');
     if(anchor){anchor.dispatchEvent(new Event('focus'));anchor.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true}))}
     drawRoute(record);renderSpatial();
    }
-   begin.addEventListener('click',()=>showStep(0));
-   prev.addEventListener('click',()=>showStep(step-1));
-   next.addEventListener('click',()=>showStep(step+1));
-   controls.append(begin,prev,next);flight.append(heading,help,controls,status,breadcrumb);
+   play.addEventListener('click',()=>{
+    if(timer!==null){pause();return}
+    if(step===trail.length-1)showStep(0);
+    play.textContent='Pause journey';play.setAttribute('aria-pressed','true');
+    const advance=()=>{if(body.hidden||!flight.isConnected){pause();return}if(step>=trail.length-1){pause();return}showStep(step+1);timer=setTimeout(advance,2100)};
+    timer=setTimeout(advance,2100);
+   });
+   begin.addEventListener('click',()=>{pause();showStep(0)});
+   prev.addEventListener('click',()=>{pause();showStep(step-1)});
+   next.addEventListener('click',()=>{pause();showStep(step+1)});
+   controls.append(begin,prev,next,play);flight.append(heading,help,controls,status,breadcrumb);
    detail.append(flight);
    // Do not hijack the current camera until the visitor explicitly starts.
    status.textContent='Ready: '+trail.length+' documented waypoints. No achievement is awarded.';
@@ -214,8 +227,8 @@ function render(){
  renderSpatial();
  if(!reduced.matches)requestAnimationFrame(()=>nav.classList.add('pilgrimage-arrived'));
 }
-toggle.addEventListener('click',()=>{const opening=body.hidden;body.hidden=!opening;nav.classList.toggle('pilgrimage-open',opening);toggle.setAttribute('aria-expanded',String(opening));toggle.textContent=opening?'Close voyage':'Begin the voyage';if(opening)render();else {drawRoute(null);tree.setAttribute('viewBox','0 0 1000 1000')}});
+toggle.addEventListener('click',()=>{const opening=body.hidden;body.hidden=!opening;nav.classList.toggle('pilgrimage-open',opening);toggle.setAttribute('aria-expanded',String(opening));toggle.textContent=opening?'Close voyage':'Begin the voyage';if(opening)render();else {stopFlight();drawRoute(null);tree.setAttribute('viewBox','0 0 1000 1000')}});
 nav.querySelector('[data-action="previous"]').addEventListener('click',()=>{if(index>0)travel(index-1,null)});
 nav.querySelector('[data-action="next"]').addEventListener('click',()=>{if(index<chapters.length-1)travel(index+1,null)});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!body.hidden){body.hidden=true;nav.classList.remove('pilgrimage-open');toggle.setAttribute('aria-expanded','false');toggle.textContent='Begin the voyage';toggle.focus();drawRoute(null);tree.setAttribute('viewBox','0 0 1000 1000')}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!body.hidden){stopFlight();body.hidden=true;nav.classList.remove('pilgrimage-open');toggle.setAttribute('aria-expanded','false');toggle.textContent='Begin the voyage';toggle.focus();drawRoute(null);tree.setAttribute('viewBox','0 0 1000 1000')}});
 })();
