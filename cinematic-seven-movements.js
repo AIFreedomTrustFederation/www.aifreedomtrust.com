@@ -674,11 +674,17 @@ compassDestination.className='seven-compass-destination';
 compassPanel.append(compassHeading,compassStatus,compassAncestors,compassChildren,compassDestination);
 compass.append(compassToggle,compassPanel);
 host.querySelector('.seven-stage').append(compass);
-compassToggle.addEventListener('click',()=>{
- const expanded=compassToggle.getAttribute('aria-expanded')==='true';
- compassToggle.setAttribute('aria-expanded',String(!expanded));
- compassPanel.hidden=expanded;
- if(!expanded)compassHeading.focus({preventScroll:true});
+function setCompassOpen(open,restoreFocus=false){
+ compassToggle.setAttribute('aria-expanded',String(open));
+ compassPanel.hidden=!open;
+ if(open)compassHeading.focus({preventScroll:true});
+ else if(restoreFocus)compassToggle.focus({preventScroll:true});
+}
+compassToggle.addEventListener('click',()=>setCompassOpen(compassPanel.hidden));
+compass.addEventListener('keydown',event=>{
+ if(event.key==='Escape'&&!compassPanel.hidden){
+  event.preventDefault();event.stopPropagation();setCompassOpen(false,true);
+ }
 });
 function compassSelect(node){
  state.history.push({chapter:state.chapter,selected:state.selected});
