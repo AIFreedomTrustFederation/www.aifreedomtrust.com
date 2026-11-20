@@ -107,7 +107,8 @@ for(const width of [360,390,768,1280]){
         const r=el.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2;
         const top=document.elementFromPoint(x,y);
         return {selector:el.className,x,y,visible:x>=0&&x<innerWidth&&y>=0&&y<innerHeight,
-          receivesInput:top===el||el.contains(top)};
+          receivesInput:top===el||el.contains(top),
+          interceptedBy:top===el||el.contains(top)?null:{tag:top?.tagName||null,className:typeof top?.className==='string'?top.className:null}};
       });
       assert.ok(hit.visible&&hit.receivesInput,'Android theatre control must be reachable: '+JSON.stringify(hit));
     }
