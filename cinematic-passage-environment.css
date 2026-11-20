@@ -42,3 +42,15 @@
 @media(prefers-reduced-data:reduce){.passage-current-edge{filter:none;animation:none;stroke-dasharray:none}.passage-source-glimmer{filter:none;animation:none}}
 .passage-static .passage-current-edge,.passage-static .passage-source-glimmer{animation:none!important}
 @media(max-width:600px){.passage-current-edge{stroke-width:1.5;opacity:.25}.passage-source-glimmer{opacity:.6}}
+
+/* Dimensional architecture is strictly anchored to real projected lineage. */
+.passage-architecture{pointer-events:none;mix-blend-mode:screen}
+.passage-growth-branch{fill:none;stroke-width:clamp(2px,0.35vw,5px);stroke-linecap:round;opacity:.48;vector-effect:non-scaling-stroke;filter:drop-shadow(0 0 9px currentColor)}
+.passage-growth-crown{fill:none;stroke-width:2;opacity:.56;vector-effect:non-scaling-stroke;filter:drop-shadow(0 0 12px #9be6d0)}
+.world[data-passage-stage=branch] .passage-growth-branch[data-kind=branch],
+.world[data-passage-stage=leaf] .passage-growth-crown[data-kind=leaf],
+.world[data-passage-stage=flower] .passage-growth-crown[data-kind=flower],
+.world[data-passage-stage=fruit] .passage-growth-crown[data-kind=fruit]{opacity:.95;stroke-width:3}
+@media(max-width:600px){.passage-growth-branch{opacity:.27;stroke-width:1.5}.passage-growth-crown{opacity:.4}}
+@media(prefers-reduced-motion:reduce){.passage-growth-branch,.passage-growth-crown{transition:none!important}}
+@media(prefers-reduced-data:reduce){.passage-growth-branch,.passage-growth-crown{filter:none}.passage-growth-crown{opacity:.3}}
