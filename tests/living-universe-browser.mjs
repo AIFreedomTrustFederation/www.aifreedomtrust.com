@@ -93,6 +93,24 @@ for(const width of [360,390,768,1280]){
     assert.ok(hit.within,'Mobile entrance must be in viewport before pointer testing: '+JSON.stringify(hit));
     assert.ok(hit.hit,'Mobile pilgrimage entrance must receive pointer input: '+JSON.stringify(hit));
   }
+  // The Android voyage entrance must not cover the source rail or destination gates.
+  // Capture actual hit-testing after scrolling each interactive element into view.
+  if(width<=390){
+    const targets=['.world .world-beacon','.world .world-gate','.pilgrimage-toggle'];
+    for(const selector of targets){
+      const target=page.locator(selector).first();
+      if(!(await target.count()))continue;
+      await target.scrollIntoViewIfNeeded();
+      const hit=await target.evaluate(el=>{
+        const r=el.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2;
+        const top=document.elementFromPoint(x,y);
+        return {selector:el.className,x,y,visible:x>=0&&x<innerWidth&&y>=0&&y<innerHeight,
+          receivesInput:top===el||el.contains(top)};
+      });
+      assert.ok(hit.visible&&hit.receivesInput,'Android theatre control must be reachable: '+JSON.stringify(hit));
+    }
+    await voyageToggle.scrollIntoViewIfNeeded();
+  }
   await voyageToggle.click();
   assert.equal(await voyageToggle.getAttribute('aria-expanded'),'true','Voyage opens accessibly');
   const spatial=pilgrimage.locator('.pilgrimage-spatial-map');
