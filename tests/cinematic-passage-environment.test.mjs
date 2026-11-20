@@ -12,3 +12,17 @@ test('all atmospheric primitives derive from the actual published SVG geometry',
  assert.doesNotMatch(js,/cx:500|cy:480|rx:320|ry:330|M 0 755 Q 500 665 1000 755/);
  assert.match(js,/if\(!defs\.parentNode\)tree\.insertBefore/);
 });
+
+test('initial SVG viewBox accepts whitespace, comma and nonzero origin',()=>{
+ const parse=raw=>raw.trim().split(/[\s,]+/).map(Number);
+ assert.deepEqual(parse('20 40 1200 800'),[20,40,1200,800]);
+ assert.deepEqual(parse('20,40,1200,800'),[20,40,1200,800]);
+ assert.match(js,/initialBox/);
+ assert.match(js,/split\(\/\[\\s,\]\+\/\)/);
+ assert.doesNotMatch(js,/split\(\/\[\\\\s,\]\+\/\)/);
+});
+test('atmosphere avoids duplicate SVG gradients and survives missing matchMedia',()=>{
+ assert.match(js,/tree\.querySelector\('#passage-spectrum'\)/);
+ assert.match(js,/if\(!gradient\.parentNode\)/);
+ assert.match(js,/typeof matchMedia==='function'/);
+});
