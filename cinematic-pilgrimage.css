@@ -104,3 +104,9 @@
 @media(max-width:390px){.pilgrimage-flight-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.pilgrimage-flight-controls button:first-child{grid-column:1/-1}.pilgrimage-flight-controls button{padding:.55rem .35rem}}
 @media(prefers-reduced-motion:reduce){.pilgrimage-flight *{transition:none!important;animation:none!important}}
 @media(prefers-reduced-data:reduce){.pilgrimage-flight{box-shadow:none;background:#0a2130}.pilgrimage-flight-trail button[aria-current=true]{box-shadow:none}}
+
+/* Guided source flight: a calm, explicitly controlled journey through real ancestry. */
+.pilgrimage-flight-controls button[aria-pressed=true]{border-color:#f7d18a;background:linear-gradient(110deg,#59384b,#176e66,#244d84);box-shadow:0 0 0 2px #f7d18a55}
+.pilgrimage-flight-controls button[aria-pressed=true]:focus-visible{outline:3px solid #f9d995;outline-offset:3px}
+@media(max-width:600px){.pilgrimage-flight-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.pilgrimage-flight-controls button{min-width:0;white-space:normal}}
+@media(prefers-reduced-motion:reduce){.pilgrimage-flight-controls button[aria-pressed=true]{box-shadow:none}}
