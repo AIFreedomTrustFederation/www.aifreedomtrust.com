@@ -631,6 +631,85 @@ function renderPathways(){
 }
 refreshPathwayFilters();pathwayFilter.addEventListener('change',renderPathways);renderPathways();
 
+
+// In-world provenance compass: a single source-backed interaction surface.
+// It never promotes repository roots into outcomes or infers missing edges.
+const compass=document.createElement('aside');
+compass.className='seven-provenance-compass';
+compass.setAttribute('aria-label','In-world source provenance compass');
+const compassToggle=document.createElement('button');
+compassToggle.type='button';
+compassToggle.className='seven-compass-toggle';
+compassToggle.textContent='Explore source pathways';
+compassToggle.setAttribute('aria-expanded','false');
+const compassPanel=document.createElement('div');
+compassPanel.className='seven-compass-panel';
+compassPanel.hidden=true;
+const compassHeading=document.createElement('strong');
+const compassStatus=document.createElement('p');
+compassStatus.setAttribute('role','status');
+const compassAncestors=document.createElement('nav');
+compassAncestors.setAttribute('aria-label','Documented ancestors');
+const compassChildren=document.createElement('div');
+compassChildren.className='seven-compass-children';
+const compassDestination=document.createElement('div');
+compassDestination.className='seven-compass-destination';
+compassPanel.append(compassHeading,compassStatus,compassAncestors,compassChildren,compassDestination);
+compass.append(compassToggle,compassPanel);
+host.querySelector('.seven-stage').append(compass);
+compassToggle.addEventListener('click',()=>{
+ const expanded=compassToggle.getAttribute('aria-expanded')==='true';
+ compassToggle.setAttribute('aria-expanded',String(!expanded));
+ compassPanel.hidden=expanded;
+ if(!expanded)compassHeading.focus({preventScroll:true});
+});
+function compassSelect(node){
+ state.history.push({chapter:state.chapter,selected:state.selected});
+ state.chapter=chapterFor(node);state.selected=node.id;state.page=0;
+ search.value='';render();travelToNode(node);
+}
+function updateCompass(selected){
+ compassAncestors.replaceChildren();compassChildren.replaceChildren();compassDestination.replaceChildren();
+ compassHeading.textContent=selected?selected.label:'The Living Federation';
+ compassHeading.setAttribute('tabindex','-1');
+ if(!selected){
+  compassStatus.textContent='Select a published source in the Tree or accessible directory to reveal its documented lineage.';
+  return;
+ }
+ const trail=lineage(selected);
+ compassStatus.textContent=selected.kind+' · '+(trail?'Verified ancestry in the published manifest':'Ancestry incomplete; no relationship is inferred');
+ if(trail){
+  for(const ancestor of trail.slice(0,-1)){
+   const b=document.createElement('button');b.type='button';b.textContent='↑ '+ancestor.label;
+   b.addEventListener('click',()=>compassSelect(ancestor));compassAncestors.append(b);
+  }
+ }
+ const children=(Array.isArray(source)?source:[]).filter(n=>n.parent===selected.id&&qualified(n)&&lineage(n));
+ if(children.length){
+  const heading=document.createElement('span');heading.textContent='Documented next branches ('+children.length+')';
+  compassChildren.append(heading);
+  for(const child of children.slice(0,24)){
+   const b=document.createElement('button');b.type='button';b.textContent='↗ '+child.label;
+   b.addEventListener('click',()=>compassSelect(child));compassChildren.append(b);
+  }
+  if(children.length>24){
+   const note=document.createElement('p');note.textContent=(children.length-24)+' additional documented children remain available in the source directory.';
+   compassChildren.append(note);
+  }
+ }else{
+  const note=document.createElement('p');note.textContent='No documented child relationship. This is an evidence boundary, not a completed outcome.';
+  compassChildren.append(note);
+ }
+ const destination=qualified(selected)?safe(selected.url):null;
+ if(destination){
+  const link=document.createElement('a');link.href=destination;
+  link.textContent=selected.kind==='fruit'?'Enter documented experience':'Inspect source evidence';
+  link.rel='noopener noreferrer';
+  if(new URL(destination).origin!==location.origin)link.target='_blank';
+  compassDestination.append(link);
+ }
+}
+
 function render(){updateAtlas();const c=chapters[state.chapter],all=Array.isArray(source)?source:[];host.dataset.movement=String(state.chapter);$('seven-back').disabled=!state.history.length;$('seven-breadcrumb').textContent='Federation / '+c.title;$('seven-title').textContent=c.title;$('seven-subtitle').textContent=c.subtitle;$('seven-counter').textContent=(state.chapter+1)+' / 7';$('seven-prev').disabled=state.chapter===0;$('seven-next').disabled=state.chapter===6;[...rail.children].forEach((b,i)=>b.setAttribute('aria-pressed',String(i===state.chapter)));const q=search.value.trim().toLocaleLowerCase();const entries=all.filter(n=>(!c.kind||n.kind===c.kind)&&qualified(n)&&(!q||(n.label+' '+(n.desc||'')).toLocaleLowerCase().includes(q)));const pages=Math.max(1,Math.ceil(entries.length/PAGE_SIZE));
 // Keep a selected published source visible when it is chosen from the full
 // accessible list, an ancestry trail, or a guided voyage on another page.
@@ -638,7 +717,7 @@ function render(){updateAtlas();const c=chapters[state.chapter],all=Array.isArra
 const selectedIndex=state.selected===null?-1:entries.findIndex(n=>n.id===state.selected);
 if(selectedIndex>=0&&state.selected!==lastRevealedSelection)state.page=Math.floor(selectedIndex/PAGE_SIZE);
 lastRevealedSelection=state.selected;
-state.page=clamp(state.page,0,pages-1);$('seven-evidence').textContent=entries.length+' documented '+(c.kind||'lineage')+' record'+(entries.length===1?'':'s')+' in this view'+(pages>1?' · Constellation page '+(state.page+1)+' of '+pages+'; all matches remain available in the accessible list.':'');pageStatus.textContent='Constellation '+(state.page+1)+' / '+pages;pagePrevious.disabled=state.page===0;pageNext.disabled=state.page>=pages-1;list.replaceChildren();const map=$('seven-map');map.replaceChildren();for(const kind of kinds){const count=all.filter(n=>n.kind===kind&&qualified(n)).length;const b=document.createElement('button');b.type='button';b.textContent=kind+' · '+count;b.setAttribute('aria-pressed',String(c.kind===kind));b.addEventListener('click',()=>move(kinds.indexOf(kind)+1,true));map.append(b)}if(!entries.length){const p=document.createElement('p');p.textContent='No published records match this view. No outcome is inferred.';list.append(p)}for(const n of entries){const b=document.createElement('button');b.type='button';b.textContent=n.label;b.setAttribute('aria-pressed',String(state.selected===n.id));b.addEventListener('click',()=>{state.selected=n.id;render();travelToNode(n);detail.focus({preventScroll:true})});list.append(b)}drawConstellation(entries);const selected=entries.find(n=>n.id===state.selected);updateSceneCaption(c,selected,entries.length);updateRouteDeck(selected);if(selected){show(selected);drawJourney(selected);syncVoyage(selected)}else{drawJourney(null);syncVoyage(null);state.selected=null;detail.replaceChildren();const p=document.createElement('p');p.textContent='Select a documented record to inspect its ancestry and destination.';detail.append(p)}}
+state.page=clamp(state.page,0,pages-1);$('seven-evidence').textContent=entries.length+' documented '+(c.kind||'lineage')+' record'+(entries.length===1?'':'s')+' in this view'+(pages>1?' · Constellation page '+(state.page+1)+' of '+pages+'; all matches remain available in the accessible list.':'');pageStatus.textContent='Constellation '+(state.page+1)+' / '+pages;pagePrevious.disabled=state.page===0;pageNext.disabled=state.page>=pages-1;list.replaceChildren();const map=$('seven-map');map.replaceChildren();for(const kind of kinds){const count=all.filter(n=>n.kind===kind&&qualified(n)).length;const b=document.createElement('button');b.type='button';b.textContent=kind+' · '+count;b.setAttribute('aria-pressed',String(c.kind===kind));b.addEventListener('click',()=>move(kinds.indexOf(kind)+1,true));map.append(b)}if(!entries.length){const p=document.createElement('p');p.textContent='No published records match this view. No outcome is inferred.';list.append(p)}for(const n of entries){const b=document.createElement('button');b.type='button';b.textContent=n.label;b.setAttribute('aria-pressed',String(state.selected===n.id));b.addEventListener('click',()=>{state.selected=n.id;render();travelToNode(n);detail.focus({preventScroll:true})});list.append(b)}drawConstellation(entries);const selected=entries.find(n=>n.id===state.selected);updateSceneCaption(c,selected,entries.length);updateRouteDeck(selected);updateCompass(selected);if(selected){show(selected);drawJourney(selected);syncVoyage(selected)}else{drawJourney(null);syncVoyage(null);state.selected=null;detail.replaceChildren();const p=document.createElement('p');p.textContent='Select a documented record to inspect its ancestry and destination.';detail.append(p)}}
 function move(i,focus=false){if(i<0||i>=chapters.length)return;stopVoyageCamera();frame();state.history.push({chapter:state.chapter,selected:state.selected});state.chapter=i;state.selected=null;state.page=0;search.value='';render();focusChapterRecords();if(focus)$('seven-title').focus({preventScroll:true})}
 $('seven-back').addEventListener('click',()=>{const prior=state.history.pop();if(!prior)return;stopVoyageCamera();state.chapter=prior.chapter;state.selected=prior.selected;state.page=0;search.value='';render();if(prior.selected&&byId.has(prior.selected))travelToNode(byId.get(prior.selected));else cameraHome();$('seven-title').focus({preventScroll:true})});$('seven-prev').addEventListener('click',()=>move(state.chapter-1,true));$('seven-next').addEventListener('click',()=>move(state.chapter+1,true));search.addEventListener('input',()=>{state.page=0;render()});render();
 })();
