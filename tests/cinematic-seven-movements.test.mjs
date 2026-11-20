@@ -200,3 +200,13 @@ test('canonical shared-trunk ancestry qualifies published outcomes without inven
  assert.equal(inspect.qualified(records[10]),false,'root must have a real trunk');
  assert.equal(inspect.lineage(records[12]),null,'nested trunks cannot qualify a root');
 });
+
+test('evidence flight provides source-bound camera focus and accessible step controls',()=>{
+ const js=read('cinematic-evidence-flight.js'),css=read('cinematic-evidence-flight.css');
+ new vm.Script(js);
+ for(const token of ['const camera={x:0,y:0,w:720,h:420}','function focusStep()','cancelAnimationFrame(animation)','requestAnimationFrame(tick)','motion.matches','document.visibilityState','function selectStep(i,restoreFocus=false)','aria-current','role:\'button\'','focusStep();'])assert.ok(js.includes(token),token);
+ assert.match(js,/routes=nodes\.filter\(n=>n\.kind==='fruit'/);
+ assert.match(js,/if\(n\.kind==='root'\)/);
+ assert.match(css,/\.seven-flight-node\[role="button"\]:focus-visible/);
+ assert.doesNotMatch(js,/Math\.random|reward_xp|sendBeacon|localStorage|fetch\(/);
+});
