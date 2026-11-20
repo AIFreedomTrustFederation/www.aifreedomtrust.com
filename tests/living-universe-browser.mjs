@@ -64,7 +64,9 @@ for(const width of [360,390,768,1280]){
     :null);
   if(rooted){
     await page.locator('#seven-search').fill(rooted.label);
-    await page.locator('#seven-movements .seven-list button').first().click();
+    const matchingRecord=page.locator('#seven-movements .seven-list button').filter({hasText:rooted.label}).first();
+    assert.ok(await matchingRecord.count(),'Published child record must appear in the accessible directory');
+    await matchingRecord.click();
     assert.equal(await route.isVisible(),true,'Published ancestry reveals the voyage deck');
     const towardRoots=route.getByRole('button',{name:'Toward roots'});
     assert.equal(await towardRoots.isDisabled(),false);
