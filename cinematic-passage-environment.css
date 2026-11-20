@@ -15,3 +15,16 @@
 @media(prefers-reduced-motion:reduce){.passage-lens,.passage-halo{transition:none!important}.passage-mote{filter:none}}
 @media(prefers-reduced-data:reduce){.passage-lens{display:none}.passage-mote{filter:none}}
 .passage-static .passage-lens,.passage-static .passage-halo{transition:none!important}
+/* Layered, camera-coupled depth planes; entirely decorative, never source records. */
+.world{--passage-scale:1}
+.passage-parallax{pointer-events:none;transform:translate(calc(var(--passage-x) * -12px),calc(var(--passage-y) * -8px));transition:transform .65s ease}
+.passage-depth{fill:none;stroke:url(#passage-spectrum);stroke-linecap:round;vector-effect:non-scaling-stroke;opacity:.2;filter:drop-shadow(0 0 12px #7cdad5)}
+.passage-depth-0{stroke-width:1.5;opacity:.3}
+.passage-depth-1{stroke-width:3;opacity:.18}
+.passage-depth-2{stroke-width:5;opacity:.1}
+.world[data-passage-stage=root] .passage-depth{stroke:#e87674}
+.world[data-passage-stage=leaf] .passage-depth{stroke:#67dfb2}
+.world[data-passage-stage=fruit] .passage-depth{stroke:#f6bd8a}
+@media(prefers-reduced-motion:reduce){.passage-parallax{transition:none!important}}
+@media(prefers-reduced-data:reduce){.passage-depth{filter:none}.passage-depth-2{display:none}}
+.passage-static .passage-parallax{transition:none!important}
