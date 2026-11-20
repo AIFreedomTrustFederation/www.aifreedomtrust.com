@@ -159,7 +159,7 @@ test('biological chapter transitions frame only published qualified records with
 
 test('in-world provenance compass navigates only published ancestry and children',()=>{
  const js=read('cinematic-seven-movements.js'),css=read('cinematic-seven-movements.css');
- for(const token of ['seven-provenance-compass','function updateCompass(selected)','function compassSelect(node)','lineage(selected)','n.parent===selected.id&&qualified(n)&&lineage(n)','compassPanel.hidden=expanded','updateCompass(selected)','state.history.push','travelToNode(node)','No documented child relationship','noopener noreferrer'])assert.ok(js.includes(token),token);
+ for(const token of ['seven-provenance-compass','function updateCompass(selected)','function compassSelect(node)','lineage(selected)','n.parent===selected.id&&qualified(n)&&lineage(n)','compassPanel.hidden=!open','compassToggle.setAttribute(\'aria-expanded\',String(open))','updateCompass(selected)','state.history.push','travelToNode(node)','No documented child relationship','noopener noreferrer'])assert.ok(js.includes(token),token);
  assert.match(css,/\.seven-compass-panel\[hidden\]\{display:none\}/);
  assert.match(css,/@media\(max-width:700px\)/);
  assert.match(css,/:focus-visible/);
