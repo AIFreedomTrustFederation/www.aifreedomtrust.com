@@ -1,0 +1,6 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {readFileSync} from 'node:fs';import {execFileSync} from 'node:child_process';
+const html=readFileSync('cinematic-world.html','utf8'),js=readFileSync('cinematic-passage-environment.js','utf8'),css=readFileSync('cinematic-passage-environment.css','utf8');
+test('camera-coupled environment loads after published source projection',()=>{assert.match(html,/cinematic-passage-environment\.js/);assert.match(html,/cinematic-passage-environment\.css/);assert.ok(html.indexOf('cinematic-pilgrimage.js')<html.indexOf('cinematic-passage-environment.js'))});
+test('environment follows actual viewBox and stage, not synthetic records',()=>{for(const token of ['MutationObserver','viewBox','data-stage','requestAnimationFrame','--passage-focus','published'])assert.ok(js.toLowerCase().includes(token.toLowerCase()),token);assert.doesNotMatch(js,/Math\.random|fetch\(|localStorage|sessionStorage|AIFT_LINEAGE_NODES/)});
+test('accessible low-power presentation',()=>{assert.match(js,/aria-hidden/);assert.match(css,/prefers-reduced-motion/);assert.match(css,/prefers-reduced-data/);assert.match(css,/max-width:600px/)});
+test('syntax',()=>execFileSync(process.execPath,['--check','cinematic-passage-environment.js']));
