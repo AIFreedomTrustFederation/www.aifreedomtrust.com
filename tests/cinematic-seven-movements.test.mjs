@@ -166,30 +166,37 @@ test('in-world provenance compass navigates only published ancestry and children
  assert.doesNotMatch(js,/reward_xp|sendBeacon|localStorage|Math\.random/);
 });
 
-test('published root ancestry qualifies genuine outcomes and rejects cycles or missing parents',()=>{
+test('canonical shared-trunk ancestry qualifies published outcomes without inventing fruit',()=>{
  const js=read('cinematic-seven-movements.js');
  const start=js.indexOf('function lineage(n){'),end=js.indexOf('const state=',start);
- assert.ok(start>=0&&end>start,'source lineage functions are present');
- const sourceFunctions=js.slice(start,end);
+ assert.ok(start>=0&&end>start);
  const records=[
-  {id:'root',kind:'root',label:'Published repository',url:'https://github.com/example/source'},
-  {id:'trunk',kind:'trunk',parent:'root'},
-  {id:'fruit',kind:'fruit',parent:'trunk',url:'https://example.org/experience'},
-  {id:'repo-fruit',kind:'fruit',parent:'trunk',url:'https://github.com/example/source'},
+  {id:'federation',kind:'trunk'},
+  {id:'root',kind:'root',parent:'federation',url:'https://github.com/example/source'},
+  {id:'branch',kind:'branch',parent:'root'},
+  {id:'fruit',kind:'fruit',parent:'branch',url:'https://example.org/experience'},
+  {id:'repo-fruit',kind:'fruit',parent:'branch',url:'https://github.com/example/source'},
   {id:'missing',kind:'fruit',parent:'absent',url:'https://example.org/missing'},
   {id:'cycle-a',kind:'branch',parent:'cycle-b'},
   {id:'cycle-b',kind:'branch',parent:'cycle-a'},
-  {id:'orphan',kind:'branch'}
+  {id:'orphan',kind:'branch'},
+  {id:'bad-root',kind:'root',parent:'missing-trunk'},
+  {id:'bad-outcome',kind:'fruit',parent:'bad-root',url:'https://example.org/bad'},
+  {id:'bad-trunk',kind:'trunk',parent:'federation'},
+  {id:'bad-root-2',kind:'root',parent:'bad-trunk'}
  ];
  const context={URL,location:{href:'https://example.org/',origin:'https://example.org'},
   byId:new Map(records.map(n=>[n.id,n])),
   safe:url=>{try{const u=new URL(url,'https://example.org/');return u.protocol==='https:'?u.href:null}catch{return null}}};
- const inspect=vm.runInNewContext(sourceFunctions+';({lineage,qualified})',context);
- assert.deepEqual(Array.from(inspect.lineage(records[2]),n=>n.id),['root','trunk','fruit']);
- assert.deepEqual(Array.from(inspect.lineage(records[0]),n=>n.id),['root']);
- assert.equal(inspect.qualified(records[2]),true,'verified experience can appear as fruit');
- assert.equal(inspect.qualified(records[3]),false,'repository landing page is never a fruit');
- assert.equal(inspect.qualified(records[4]),false,'missing ancestry never qualifies');
- assert.equal(inspect.lineage(records[5]),null,'cycles are not evidence');
- assert.equal(inspect.lineage(records[7]),null,'orphan branches are not rooted evidence');
+ const inspect=vm.runInNewContext(js.slice(start,end)+';({lineage,qualified})',context);
+ assert.deepEqual(Array.from(inspect.lineage(records[3]),n=>n.id),['root','branch','fruit']);
+ assert.deepEqual(Array.from(inspect.lineage(records[1]),n=>n.id),['root']);
+ assert.equal(inspect.lineage(records[0]),null,'trunk is not a repository root');
+ assert.equal(inspect.qualified(records[3]),true,'published destination can be a fruit');
+ assert.equal(inspect.qualified(records[4]),false,'repository landing page is never fruit');
+ assert.equal(inspect.qualified(records[5]),false,'missing ancestry is not evidence');
+ assert.equal(inspect.lineage(records[6]),null,'cycles are not evidence');
+ assert.equal(inspect.lineage(records[8]),null,'orphan branches are not rooted evidence');
+ assert.equal(inspect.qualified(records[10]),false,'root must have a real trunk');
+ assert.equal(inspect.lineage(records[12]),null,'nested trunks cannot qualify a root');
 });
