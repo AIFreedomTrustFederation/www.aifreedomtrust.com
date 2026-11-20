@@ -48,3 +48,17 @@ test('source-bound currents refresh when projected positions or ancestry change'
  assert.match(js,/closest\?\.\('\.passage-environment'\)/);
  assert.match(js,/querySelector\?\.\('\.living-source-node'\)/);
 });
+
+test('dimensional branches and crowns are bound only to published projected records',()=>{
+ for(const token of ['function drawArchitecture(positions,ids,stage)','indexed.has(id)','positions.has(id)','indexed.get(record.parent)','positions.get(parent.id)','maxBranches=96,maxCrowns=64','passage-growth-branch','passage-growth-crown','drawArchitecture(positions,ids,stage)'])assert.ok(js.includes(token),token);
+ assert.match(js,/\['leaf','flower','fruit'\]\.includes\(record\.kind\)/);
+ assert.match(js,/if\(from&&branches<maxBranches\)/);
+ assert.doesNotMatch(js,/Math\.random|fetch\(/);
+});
+test('growth architecture preserves reduced-data and small Android viewport fallbacks',()=>{
+ assert.match(css,/passage-architecture/);
+ assert.match(css,/passage-growth-crown/);
+ assert.match(css,/@media\(max-width:600px\)/);
+ assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
+ assert.match(css,/@media\(prefers-reduced-data:reduce\)/);
+});
