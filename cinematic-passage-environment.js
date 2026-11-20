@@ -61,6 +61,7 @@ function updateCurrents(stage){
  if(signature===currentSignature)return;
  currentSignature=signature;
  currentEdges.replaceChildren();currentNodes.replaceChildren();
+ drawArchitecture(positions,ids,stage);
  const maxEdges=96,maxNodes=48;
  let edges=0,nodes=0;
  for(const id of ids){
@@ -80,6 +81,43 @@ function updateCurrents(stage){
  }
  currents.dataset.activeStage=stage;
 }
+
+// Dimensional growth architecture: the visual canopy is grown exclusively from
+// projected, published source relationships. No synthetic leaves or outcomes.
+const architecture=make('g',{'class':'passage-architecture','aria-hidden':'true','pointer-events':'none'});
+const architectureBranches=make('g',{'class':'passage-architecture-branches'});
+const architectureCrowns=make('g',{'class':'passage-architecture-crowns'});
+architecture.append(architectureBranches,architectureCrowns);
+environment.append(architecture);
+const growthPalette={root:'#ef8175',trunk:'#e5c48e',branch:'#69d9b7',leaf:'#74dfb0',flower:'#bb9af5',fruit:'#f4bf88'};
+function drawArchitecture(positions,ids,stage){
+ architectureBranches.replaceChildren();architectureCrowns.replaceChildren();
+ const visible=ids.filter(id=>positions.has(id)&&indexed.has(id));
+ const maxBranches=96,maxCrowns=64;
+ let branches=0,crowns=0;
+ for(const id of visible){
+  const record=indexed.get(id),point=positions.get(id);
+  if(!record||!point||!growthPalette[record.kind])continue;
+  const parent=record.parent?indexed.get(record.parent):null;
+  const from=parent?positions.get(parent.id):null;
+  if(from&&branches<maxBranches){
+   const midY=(from.y+point.y)/2;
+   const path=make('path',{'class':'passage-growth-branch',
+    d:`M ${from.x} ${from.y} C ${from.x} ${midY} ${point.x} ${midY} ${point.x} ${point.y}`,
+    stroke:growthPalette[record.kind],'data-kind':record.kind});
+   architectureBranches.append(path);branches++;
+  }
+  if(crowns<maxCrowns&&['leaf','flower','fruit'].includes(record.kind)){
+   // A crown is a halo around a real projected record, never a new node.
+   const crown=make('circle',{'class':'passage-growth-crown',
+    cx:point.x,cy:point.y,r:Math.max(8,Math.min(fullW,fullH)*.014),
+    stroke:growthPalette[record.kind],'data-kind':record.kind});
+   architectureCrowns.append(crown);crowns++;
+  }
+ }
+ architecture.dataset.activeStage=stage;
+}
+
 const firstArt=[...tree.children].find(el=>!['title','desc','defs'].includes(el.tagName.toLowerCase()));
 tree.insertBefore(environment,firstArt||null);
 const lens=document.createElement('div');lens.className='passage-lens';lens.setAttribute('aria-hidden','true');
