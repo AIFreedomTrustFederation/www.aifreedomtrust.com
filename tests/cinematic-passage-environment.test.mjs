@@ -26,3 +26,16 @@ test('atmosphere avoids duplicate SVG gradients and survives missing matchMedia'
  assert.match(js,/if\(!gradient\.parentNode\)/);
  assert.match(js,/typeof matchMedia==='function'/);
 });
+
+test('cinematic energy currents are derived exclusively from projected published parent links',()=>{
+ for(const token of ['AIFT_LINEAGE_NODES','living-source-node[data-node]','indexed.get(record.parent)','positions.get(record.parent)','passage-current-edge','passage-source-glimmer','maxEdges=96,maxNodes=48','updateCurrents(stage)'])assert.ok(js.includes(token),token);
+ assert.match(js,/if\(!parent\|\|!start\)continue/);
+ assert.doesNotMatch(js,/Math\.random|fetch\(/);
+});
+test('source currents remain accessible and low-power safe',()=>{
+ assert.match(js,/passage-currents.*aria-hidden/);
+ assert.match(css,/passage-current-flow/);
+ assert.match(css,/prefers-reduced-motion:reduce/);
+ assert.match(css,/prefers-reduced-data:reduce/);
+ assert.match(css,/passage-static \.passage-current-edge/);
+});
