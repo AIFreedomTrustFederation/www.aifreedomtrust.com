@@ -447,3 +447,20 @@
 @media (prefers-reduced-data:reduce) {
   .world .pilgrimage:not(.pilgrimage-open) { box-shadow:none; }
 }
+
+/* Living Universe 3.1: preserve Android gate hit targets above decorative layers.
+   The stage rail and gates are distinct grid rows, not floating overlays.
+   This is intentionally scoped to the first-screen theatre; desktop stacking
+   and all published source/destination anchors remain unchanged. */
+@media (max-width:700px) {
+  .world .world-gates { isolation:isolate; z-index:20; }
+  .world .world-gates .world-gate {
+    position:relative; z-index:1; pointer-events:auto;
+    min-height:56px; touch-action:manipulation;
+  }
+  .world .world-gates .world-gate:focus-visible {
+    outline:3px solid #f7d18a; outline-offset:2px;
+  }
+  .world .world-stage-panel { pointer-events:none; }
+  .world .world-stage-panel a { pointer-events:auto; }
+}
