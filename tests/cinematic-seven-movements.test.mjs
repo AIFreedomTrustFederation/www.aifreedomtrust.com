@@ -165,3 +165,31 @@ test('in-world provenance compass navigates only published ancestry and children
  assert.match(css,/:focus-visible/);
  assert.doesNotMatch(js,/reward_xp|sendBeacon|localStorage|Math\.random/);
 });
+
+test('published root ancestry qualifies genuine outcomes and rejects cycles or missing parents',()=>{
+ const js=read('cinematic-seven-movements.js');
+ const start=js.indexOf('function lineage(n){'),end=js.indexOf('const state=',start);
+ assert.ok(start>=0&&end>start,'source lineage functions are present');
+ const sourceFunctions=js.slice(start,end);
+ const records=[
+  {id:'root',kind:'root',label:'Published repository',url:'https://github.com/example/source'},
+  {id:'trunk',kind:'trunk',parent:'root'},
+  {id:'fruit',kind:'fruit',parent:'trunk',url:'https://example.org/experience'},
+  {id:'repo-fruit',kind:'fruit',parent:'trunk',url:'https://github.com/example/source'},
+  {id:'missing',kind:'fruit',parent:'absent',url:'https://example.org/missing'},
+  {id:'cycle-a',kind:'branch',parent:'cycle-b'},
+  {id:'cycle-b',kind:'branch',parent:'cycle-a'},
+  {id:'orphan',kind:'branch'}
+ ];
+ const context={URL,location:{href:'https://example.org/',origin:'https://example.org'},
+  byId:new Map(records.map(n=>[n.id,n])),
+  safe:url=>{try{const u=new URL(url,'https://example.org/');return u.protocol==='https:'?u.href:null}catch{return null}}};
+ const inspect=vm.runInNewContext(sourceFunctions+';({lineage,qualified})',context);
+ assert.deepEqual(Array.from(inspect.lineage(records[2]),n=>n.id),['root','trunk','fruit']);
+ assert.deepEqual(Array.from(inspect.lineage(records[0]),n=>n.id),['root']);
+ assert.equal(inspect.qualified(records[2]),true,'verified experience can appear as fruit');
+ assert.equal(inspect.qualified(records[3]),false,'repository landing page is never a fruit');
+ assert.equal(inspect.qualified(records[4]),false,'missing ancestry never qualifies');
+ assert.equal(inspect.lineage(records[5]),null,'cycles are not evidence');
+ assert.equal(inspect.lineage(records[7]),null,'orphan branches are not rooted evidence');
+});
