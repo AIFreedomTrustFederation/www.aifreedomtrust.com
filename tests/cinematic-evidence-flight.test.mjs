@@ -25,3 +25,12 @@ test('flight routes require real ancestry and never treat repositories as fruits
  assert.match(js,/!byId\.get\(n\.parent\)\?\.parent/);
  assert.match(js,/seen\.has\(n\.id\)/);
 });
+
+test('source-only flight keeps documented ancestry navigable without manufacturing a fruit',()=>{
+ const js=read('cinematic-evidence-flight.js');
+ assert.match(js,/sourceJourney=\{chain:lineage\}/);
+ assert.match(js,/active=sourceJourney\?\.chain\|\|chosen\?\.chain\|\|\[\]/);
+ assert.match(js,/link\.hidden=!chosen\|\|!!sourceJourney/);
+ assert.match(js,/Source-only exploration: no verified outcome is claimed/);
+ assert.match(js,/sourceJourney=null/);
+});
