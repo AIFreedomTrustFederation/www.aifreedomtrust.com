@@ -118,7 +118,10 @@ for(const width of [360,390,768,1280]){
   assert.equal(await voyageToggle.getAttribute('aria-expanded'),'true','Voyage opens accessibly');
   // The first-viewport navigator must yield its hit area to the active voyage.
   assert.equal(await page.locator('.awakening-navigator').isVisible(),false,'Voyage must not be occluded by the Tree navigator');
-  const voyageHit=await voyageToggle.evaluate(el=>{const r=el.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2,t=document.elementFromPoint(x,y);return {hit:t===el||el.contains(t),interceptor:t?{tag:t.tagName,id:t.id,className:typeof t.className==='string'?t.className:''}:null,x,y}});
+  // Opening the sheet may scroll its original absolute-positioned toggle above
+  // the viewport on tablet/desktop. Reframe before measuring hit geometry.
+  await voyageToggle.scrollIntoViewIfNeeded();
+  const voyageHit=await voyageToggle.evaluate(el=>{const r=el.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2,within=x>=0&&y>=0&&x<innerWidth&&y<innerHeight,t=within?document.elementFromPoint(x,y):null;return {within,hit:within&&(t===el||el.contains(t)),interceptor:t?{tag:t.tagName,id:t.id,className:typeof t.className==='string'?t.className:''}:null,x,y}});
   assert.ok(voyageHit.hit,'Open voyage toggle remains pointer-reachable: '+JSON.stringify(voyageHit));
   const spatial=pilgrimage.locator('.pilgrimage-spatial-map');
   assert.equal(await spatial.count(),1,'Source-projected spatial chart exists');
