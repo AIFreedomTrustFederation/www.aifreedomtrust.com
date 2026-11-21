@@ -484,20 +484,3 @@
   .world .world-stage-panel { grid-row:7; }
 }
 
-
-/* Living Universe 3.1 — source-passage and voyage hit-test containment.
-   Source links remain operable within their own passage, but cannot paint
-   above the separate pilgrimage entrance on narrow Android screens. */
-@media (max-width:700px) {
-  .world .world-passage { position:relative; z-index:2; isolation:isolate; }
-  .world .world-passage-sources { position:relative; z-index:1; }
-  .world .pilgrimage:not(.pilgrimage-open) {
-    position:relative; z-index:21; isolation:isolate;
-  }
-  .world .pilgrimage:not(.pilgrimage-open) .pilgrimage-toggle {
-    position:relative; z-index:1; touch-action:manipulation;
-  }
-  .world .pilgrimage:not(.pilgrimage-open) .pilgrimage-toggle:focus-visible {
-    outline:3px solid #f7d18a; outline-offset:3px;
-  }
-}
