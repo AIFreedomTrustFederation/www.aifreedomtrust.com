@@ -116,6 +116,10 @@ for(const width of [360,390,768,1280]){
   }
   await voyageToggle.click();
   assert.equal(await voyageToggle.getAttribute('aria-expanded'),'true','Voyage opens accessibly');
+  // The first-viewport navigator must yield its hit area to the active voyage.
+  assert.equal(await page.locator('.awakening-navigator').isVisible(),false,'Voyage must not be occluded by the Tree navigator');
+  const voyageHit=await voyageToggle.evaluate(el=>{const r=el.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2,t=document.elementFromPoint(x,y);return t===el||el.contains(t)});
+  assert.ok(voyageHit,'Open voyage toggle remains pointer-reachable');
   const spatial=pilgrimage.locator('.pilgrimage-spatial-map');
   assert.equal(await spatial.count(),1,'Source-projected spatial chart exists');
   const markers=spatial.locator('.pilgrimage-spatial-marker');
