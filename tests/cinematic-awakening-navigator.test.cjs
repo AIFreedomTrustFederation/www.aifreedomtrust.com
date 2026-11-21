@@ -32,3 +32,10 @@ test('hero supports all six stages and traverses only published descendant edges
  assert.match(css,/repeat\(6,minmax\(0,1fr\)\)/);
  assert.match(css,/awakening-children/);
 });
+
+test('hero exposes reversible cross-surface selection and keyboard spatial navigation',()=>{
+ for(const needle of ['aift:lineage-selected','aift:lineage-select','aift:lineage-return','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','setCamera','resetCamera','announceSelection(n)'])assert.ok(js.includes(needle),needle);
+ assert.match(js,/e\.preventDefault\(\)/);
+ assert.match(js,/e\.target!==tree/);
+ assert.match(js,/all\.includes\(node\)/);
+});
