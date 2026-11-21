@@ -14,7 +14,8 @@ const rail=document.createElement('div');rail.className='awakening-cinema-rail';
 const detail=document.createElement('div');detail.className='awakening-cinema-detail';detail.setAttribute('role','status');detail.setAttribute('aria-live','polite');
 const source=document.createElement('a');source.className='awakening-cinema-source';source.rel='noopener noreferrer';source.hidden=true;
 const reset=document.createElement('button');reset.type='button';reset.className='awakening-cinema-reset';reset.textContent='View entire Tree';
-const nav=document.createElement('div');nav.className='awakening-cinema-actions';nav.append(source,reset);
+const flight=document.createElement('button');flight.type='button';flight.className='awakening-cinema-flight';flight.textContent='Enter Evidence Flight';flight.setAttribute('aria-label','Continue this documented source into the full interactive Evidence Flight');
+const nav=document.createElement('div');nav.className='awakening-cinema-actions';nav.append(source,flight,reset);
 layer.append(title,description,rail,detail,nav);world.append(layer);
 const view=tree.getAttribute('viewBox')||'0 0 1000 1000';
 let selected=null,focus=0;
@@ -118,6 +119,31 @@ function renderMatches(){
   button.addEventListener('click',()=>displayNode(n));matches.append(button);
  });
 }
+/* One continuous public journey: hand the exact selected lineage record to the
+   existing Evidence Flight without replacing its camera, contracts or history.
+   The destination owns its selection; no synthetic events or fabricated nodes. */
+function enterEvidenceFlight(){
+ const target=document.getElementById('evidence-world');
+ const index=document.getElementById('evidence-list');
+ if(!target||!index){detail.textContent='The full Evidence Flight is unavailable on this page.';return}
+ const record=selected&&allowed.get(selected.id);
+ if(record){
+  const controls=[...index.querySelectorAll('button')];
+  const matching=controls.find(button=>button.textContent?.startsWith(record.label+' · '));
+  if(matching)matching.click();
+  else{
+   const input=document.getElementById('evidence-search');
+   if(input){input.value=record.label;input.dispatchEvent(new Event('input',{bubbles:true}));
+    const refreshed=[...index.querySelectorAll('button')].find(button=>button.textContent?.startsWith(record.label+' · '));
+    if(refreshed)refreshed.click();
+   }
+  }
+ }
+ target.scrollIntoView({behavior:reduced.matches?'instant':'smooth',block:'start'});
+ const scene=document.getElementById('evidence-scene');
+ if(scene)scene.focus({preventScroll:true});
+}
+flight.addEventListener('click',enterEvidenceFlight);
 search.addEventListener('input',renderMatches);
 back.addEventListener('click',()=>{
  const previous=allowed.get(trail.pop());back.disabled=!trail.length;
