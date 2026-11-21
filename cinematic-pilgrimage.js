@@ -80,6 +80,11 @@ const spatialViewport=document.createElement('div');spatialViewport.className='p
 spatialViewport.setAttribute('aria-hidden','true');
 spatialMap.append(spatialViewport);spatial.append(spatialHeading,spatialHint,spatialMap);
 body.insertBefore(spatial,atlas);
+const spatialEvidence=document.createElement('p');
+spatialEvidence.className='pilgrimage-spatial-evidence';
+spatialEvidence.setAttribute('role','status');
+spatialEvidence.textContent='Spatial markers are drawn only from published Tree source coordinates.';
+spatial.append(spatialEvidence);
 function renderSpatial(){
  spatialMap.querySelectorAll('button').forEach(b=>b.remove());
  const view=tree.viewBox.baseVal;
@@ -102,6 +107,10 @@ function renderSpatial(){
   marker.title=record.label;marker.addEventListener('click',()=>navigateTo(record));
   spatialMap.append(marker);
  }
+ const markers=spatialMap.querySelectorAll('.pilgrimage-spatial-marker').length;
+ spatialEvidence.textContent=markers
+  ? markers+' published source positions shown. Select a marker to explore its verified lineage.'
+  : 'No published Tree coordinates are available yet. Use the documented chapter and source directory instead; no locations have been invented.';
 }
 
 // Keep the viewport frame synchronized with the canonical SVG camera, including
@@ -121,6 +130,18 @@ const cameraObserver=new MutationObserver(changes=>{
  spatialViewport.style.height=Math.max(1,Math.min(100,view.height/full[3]*100))+'%';
 });
 cameraObserver.observe(tree,{attributes:true,attributeFilter:['viewBox']});
+// Projection and pilgrimage are separate scripts. If the published SVG layer is
+// populated after the voyage mounts, refresh the map from actual DOM coordinates.
+// This observer never creates synthetic markers or edits the lineage contract.
+const sourceObserver=new MutationObserver(changes=>{
+ if(body.hidden)return;
+ if(changes.some(change=>change.addedNodes.length||change.removedNodes.length)){
+  const projected=tree.querySelectorAll('.living-source-node[data-node]').length;
+  const mapped=spatialMap.querySelectorAll('.pilgrimage-spatial-marker').length;
+  if(projected&&(!mapped||projected!==mapped))renderSpatial();
+ }
+});
+sourceObserver.observe(tree,{childList:true,subtree:true});
 const positions={root:[500,900],trunk:[500,650],branch:[500,350],leaf:[500,190],flower:[500,140],fruit:[500,125]};
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 function focusTree(kind){
