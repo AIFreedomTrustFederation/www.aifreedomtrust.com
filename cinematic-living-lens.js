@@ -51,4 +51,78 @@ if(!reduced.matches&&matchMedia('(pointer:fine)').matches){
  world.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse')return;const r=world.getBoundingClientRect();x=(e.clientX-r.left)/r.width-.5;y=(e.clientY-r.top)/r.height-.5;if(pending)return;pending=true;requestAnimationFrame(()=>{pending=false;world.style.setProperty('--cinema-parallax-x',(x*18).toFixed(2)+'px');world.style.setProperty('--cinema-parallax-y',(y*12).toFixed(2)+'px')})},{passive:true});
  world.addEventListener('pointerleave',()=>{world.style.removeProperty('--cinema-parallax-x');world.style.removeProperty('--cinema-parallax-y')});
 }
+
+/* Milestone: searchable, reversible source constellation and spatial navigator.
+   Uses the same published lineage records as the stage rail; never invents a fruit. */
+const explorer=document.createElement('section');
+explorer.className='awakening-explorer';
+explorer.setAttribute('aria-label','Explore documented lineage');
+const searchLabel=document.createElement('label');
+searchLabel.textContent='Find a source, system or documented outcome';
+const search=document.createElement('input');
+search.type='search';search.autocomplete='off';search.placeholder='Search the living Tree';
+search.setAttribute('aria-label','Search documented Tree nodes');
+searchLabel.append(search);
+const matches=document.createElement('div');
+matches.className='awakening-explorer-results';matches.setAttribute('role','group');matches.setAttribute('aria-label','Matching documented nodes');
+const crumbs=document.createElement('nav');
+crumbs.className='awakening-explorer-crumbs';crumbs.setAttribute('aria-label','Source lineage breadcrumbs');
+const historyActions=document.createElement('div');historyActions.className='awakening-explorer-history';
+const back=document.createElement('button');back.type='button';back.textContent='Previous place';back.disabled=true;
+const map=document.createElement('div');map.className='awakening-explorer-map';map.setAttribute('aria-label','Spatial overview of the Tree');
+const mapTitle=document.createElement('span');mapTitle.textContent='TREE OVERVIEW';
+const mapTrack=document.createElement('div');mapTrack.className='awakening-explorer-map-track';
+const mapFocus=document.createElement('span');mapFocus.className='awakening-explorer-map-focus';mapFocus.setAttribute('aria-hidden','true');
+mapTrack.append(mapFocus);map.append(mapTitle,mapTrack);
+historyActions.append(back,map);
+explorer.append(searchLabel,matches,crumbs,historyActions);layer.append(explorer);
+const trail=[];
+const inspectable=records.filter(n=>allowed.has(n.id)&&eligible(n));
+function displayNode(node,remember=true){
+ if(!node||!eligible(node))return;
+ if(remember&&selected?.id!==node.id){if(selected)trail.push(selected.id);back.disabled=!trail.length}
+ choose(node.kind);
+ selected=node;
+ camera(node);
+ const chain=lineage(node);
+ detail.replaceChildren();
+ const heading=document.createElement('strong');heading.textContent=node.label+' · '+labels[node.kind];
+ const explanation=document.createElement('p');
+ explanation.textContent=node.kind==='root'?'Verified source root; repositories are never outcomes.':node.kind==='fruit'?'Documented visitor-facing outcome with a source lineage.':'Published lineage record; no completion or system health is implied.';
+ detail.append(heading,explanation);
+ crumbs.replaceChildren();
+ chain.forEach((ancestor,i)=>{
+  if(i){const sep=document.createElement('span');sep.textContent=' / ';sep.setAttribute('aria-hidden','true');crumbs.append(sep)}
+  const button=document.createElement('button');button.type='button';button.textContent=ancestor.label;
+  button.setAttribute('aria-current',ancestor.id===node.id?'location':'false');
+  button.addEventListener('click',()=>displayNode(ancestor));
+  crumbs.append(button);
+ });
+ const link=safe(node.url);source.hidden=!link;
+ if(link){source.href=link;source.textContent=node.kind==='fruit'?'Open verified experience':'Inspect published source';
+ if(new URL(link).origin!==location.origin)source.target='_blank';else source.removeAttribute('target')}
+ else{source.removeAttribute('href');source.removeAttribute('target')}
+ const point=findPoint(node.id);
+ if(point){mapFocus.style.left=Math.max(0,Math.min(100,point.x/10))+'%';mapFocus.style.top=Math.max(0,Math.min(100,point.y/10))+'%';mapFocus.hidden=false}
+ else{mapFocus.hidden=true}
+}
+function renderMatches(){
+ const query=search.value.trim().toLocaleLowerCase();
+ matches.replaceChildren();
+ if(!query){matches.textContent='Search by name to inspect a documented node and its source lineage.';return}
+ const found=inspectable.filter(n=>(n.label+' '+n.id+' '+labels[n.kind]).toLocaleLowerCase().includes(query)).slice(0,12);
+ if(!found.length){matches.textContent='No documented match. No result has been invented.';return}
+ found.forEach(n=>{
+  const button=document.createElement('button');button.type='button';button.className='awakening-explorer-result';
+  button.textContent=n.label+' · '+labels[n.kind];
+  button.addEventListener('click',()=>displayNode(n));matches.append(button);
+ });
+}
+search.addEventListener('input',renderMatches);
+back.addEventListener('click',()=>{
+ const previous=allowed.get(trail.pop());back.disabled=!trail.length;
+ if(previous)displayNode(previous,false);
+});
+reset.addEventListener('click',()=>{trail.length=0;back.disabled=true;crumbs.replaceChildren();mapFocus.hidden=true;search.value='';renderMatches()});
+renderMatches();
 })();
