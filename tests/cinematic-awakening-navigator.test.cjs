@@ -21,3 +21,14 @@ test('reversible navigation, keyboard escape and reduced-motion exist',()=>{
  assert.match(css,/max-width:600px/);
  assert.match(css,/prefers-reduced-data:reduce/);
 });
+
+test('hero supports all six stages and traverses only published descendant edges',()=>{
+ assert.match(js,/const children=new Map\(\)/);
+ assert.match(js,/const p=parent\(n\)/);
+ assert.match(js,/children\.get\(n\.id\)/);
+ assert.match(js,/outcomes\.includes\(x\)/);
+ assert.match(js,/child\.kind\+' · '\+child\.label/);
+ assert.match(js,/flower:4,fruit:5/);
+ assert.match(css,/repeat\(6,minmax\(0,1fr\)\)/);
+ assert.match(css,/awakening-children/);
+});
