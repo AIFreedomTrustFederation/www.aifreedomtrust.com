@@ -110,3 +110,22 @@
 .pilgrimage-flight-controls button[aria-pressed=true]:focus-visible{outline:3px solid #f9d995;outline-offset:3px}
 @media(max-width:600px){.pilgrimage-flight-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.pilgrimage-flight-controls button{min-width:0;white-space:normal}}
 @media(prefers-reduced-motion:reduce){.pilgrimage-flight-controls button[aria-pressed=true]{box-shadow:none}}
+
+/* Living Universe 3.2: an opened voyage is a stable viewport-anchored
+   exploration sheet on tablet/desktop as well as Android. The prior
+   absolute-positioned sheet moved with the Tree/document scroll, causing
+   Chromium scrollIntoView to chase an unstable toggle indefinitely. */
+@media(min-width:701px){
+ .world .pilgrimage.pilgrimage-open{
+  position:fixed;inset:auto auto max(1rem,env(safe-area-inset-bottom,0px)) max(1rem,env(safe-area-inset-left,0px));
+  width:min(660px,calc(100vw - 2rem));max-width:calc(100vw - 2rem);
+  max-height:calc(100dvh - 2rem);z-index:100;
+  display:flex;flex-direction:column;
+ }
+ .world .pilgrimage.pilgrimage-open .pilgrimage-top{
+  flex:0 0 auto;position:relative;z-index:3;
+ }
+ .world .pilgrimage.pilgrimage-open .pilgrimage-body{
+  flex:1 1 auto;min-height:0;max-height:min(65dvh,590px);overflow-y:auto;
+ }
+}

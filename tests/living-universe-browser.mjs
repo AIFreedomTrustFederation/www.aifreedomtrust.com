@@ -12,6 +12,9 @@ for(const width of [360,390,768,1280]){
  try{
   const response=await page.goto(base,{waitUntil:'networkidle',timeout:30000});
   assert.equal(response.status(),200);
+  // Capture the untouched canonical landing world before any navigation or scroll.
+  // This is the baseline against which the journey and collision repairs are judged.
+  await page.screenshot({path:'artifacts/living-universe/BASELINE-'+width+'.png',animations:'disabled'});
   const host=page.locator('#seven-movements');
   await host.waitFor({state:'visible'});
   const svg=page.locator('#seven-movements .seven-stage svg').first();
@@ -90,7 +93,7 @@ for(const width of [360,390,768,1280]){
     const hit=await voyageToggle.evaluate(el=>{
       const r=el.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2;
       const within=x>=0&&y>=0&&x<innerWidth&&y<innerHeight;
-      const top=within?document.elementFromPoint(x,y):null;return {x,y,within,hit:within&&top?.closest('.pilgrimage-toggle')===el,interceptor:top?{tag:top.tagName,className:typeof top.className==='string'?top.className:'',id:top.id}:null};
+      const top=within?document.elementFromPoint(x,y):null;return {x,y,within,hit:within&&(top===el||el.contains(top)),interceptor:top?{tag:top.tagName,className:typeof top.className==='string'?top.className:'',id:top.id}:null};
     });
     assert.ok(hit.within,'Mobile entrance must be in viewport before pointer testing: '+JSON.stringify(hit));
     assert.ok(hit.hit,'Mobile pilgrimage entrance must receive pointer input: '+JSON.stringify(hit));
@@ -203,7 +206,11 @@ for(const width of [360,390,768,1280]){
   // First-viewport Tree: verify the same real camera responds to pointer, keyboard and reset.
   const heroTree=page.locator('.world svg.tree');
   const heroCamera=()=>heroTree.getAttribute('viewBox');
-  await heroTree.scrollIntoViewIfNeeded();
+  // The hero is an SVG inside a tall document. Chromium can keep retrying
+  // scrollIntoViewIfNeeded on an animated SVG whose bounds change every frame.
+  // Return to the actual landing viewport, then inspect its stable pointer area.
+  await page.evaluate(()=>window.scrollTo({top:0,behavior:'instant'}));
+  await page.waitForTimeout(150);
   await heroTree.focus();
   const keyboardBefore=await heroCamera();
   await page.keyboard.press('ArrowRight');
@@ -236,7 +243,27 @@ for(const width of [360,390,768,1280]){
   await page.screenshot({path:'artifacts/living-universe/tree-'+width+'.png',fullPage:true});
   assert.deepEqual(errors,[],'Browser JavaScript errors');
   console.log('PASS',width,'px',JSON.stringify(bounds));
- }catch(e){failures.push(width+': '+e.stack);console.error('FAIL',width,e)}
+ }catch(e){
+  // Preserve exact failing viewport, hit geometry and the rendered page even if
+  // a Playwright scroll/click times out before the normal screenshots are made.
+  let diagnostic={width,error:String(e?.stack||e)};
+  try{
+    diagnostic=await page.evaluate(({width,error})=>{
+      const selectors=['.world','.world-passage','.world-passage-source','.world-gate','.pilgrimage','.pilgrimage-toggle','.pilgrimage-body','.awakening-navigator'];
+      const elements=Object.fromEntries(selectors.map(selector=>{
+        const el=document.querySelector(selector);if(!el)return [selector,null];
+        const r=el.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2;
+        const top=x>=0&&x<innerWidth&&y>=0&&y<innerHeight?document.elementFromPoint(x,y):null;
+        const style=getComputedStyle(el);
+        return [selector,{rect:{x:r.x,y:r.y,width:r.width,height:r.height},position:style.position,zIndex:style.zIndex,display:style.display,visibility:style.visibility,hit:top===el||el.contains(top),interceptor:top?{tag:top.tagName,id:top.id,className:typeof top.className==='string'?top.className:''}:null}];
+      }));
+      return {width,error,scrollY,scrollWidth:document.documentElement.scrollWidth,viewport:{width:innerWidth,height:innerHeight},elements};
+    },diagnostic);
+    await page.screenshot({path:'artifacts/living-universe/FAIL-'+width+'.png',fullPage:true,animations:'disabled',timeout:10000});
+  }catch(captureError){diagnostic.captureError=String(captureError)}
+  failures.push(width+': '+e.stack+'\\nDIAGNOSTIC '+JSON.stringify(diagnostic));
+  console.error('FAIL',width,JSON.stringify(diagnostic));
+ }
  finally{await page.close()}
 }
 const reduced=await browser.newPage({viewport:{width:390,height:800},reducedMotion:'reduce'});
