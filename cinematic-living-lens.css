@@ -38,3 +38,9 @@
 .awakening-explorer-map-focus{position:absolute;width:9px;height:9px;transform:translate(-50%,-50%);border-radius:50%;background:#ffe3a0;box-shadow:0 0 0 3px #ffe3a033,0 0 12px #ffe3a0}
 @media(max-width:700px){.awakening-explorer-history{align-items:flex-start;flex-wrap:wrap}.awakening-explorer-map{margin-left:auto}.awakening-explorer-results{max-height:7rem}}
 @media(prefers-reduced-motion:reduce){.awakening-explorer *{scroll-behavior:auto!important;transition:none!important}}
+
+/* Evidence Flight transition is a primary, accessible continuation, not a dashboard. */
+.awakening-cinema-flight{min-height:44px;padding:.6rem 1rem;border:1px solid #f7d18a;border-radius:2rem;background:linear-gradient(110deg,#743a51,#216e61 55%,#284f91);color:#fff;font:700 .82rem system-ui,sans-serif;cursor:pointer;box-shadow:0 0 20px #65d9b133}
+.awakening-cinema-flight:hover{filter:brightness(1.18)}
+@media(max-width:700px){.awakening-cinema-flight{flex:1 1 100%;min-height:48px}}
+@media(prefers-reduced-motion:reduce){.awakening-cinema-flight{transition:none}}
