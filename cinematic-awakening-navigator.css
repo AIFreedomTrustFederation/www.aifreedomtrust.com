@@ -40,3 +40,19 @@
    exploration surfaces. When the voyage opens, its map, flight controls and
    provenance must remain pointer-accessible at every viewport width. */
 .world:has(.pilgrimage-open) .awakening-navigator{display:none}
+
+/* Living Universe Android theatre: collapsed navigation belongs to document flow.
+   Do not let the first-screen inspector float over the pilgrimage entrance or
+   verified source gates. The expanded voyage is the sole foreground surface. */
+@media (max-width:700px){
+ .world .awakening-navigator{position:relative;inset:auto;left:auto;right:auto;bottom:auto;grid-row:8;align-self:stretch;justify-self:stretch;width:100%;max-width:100%;margin:.5rem 0 0;z-index:2;pointer-events:auto}
+ .world .awakening-open{max-width:100%;min-height:48px}
+ .world .awakening-controls{max-height:none;overflow:visible}
+ .world:has(.pilgrimage-open) .awakening-navigator{display:none}
+}
+/* The pilgrimage toggle remains the foreground control when its evidence
+   sheet is open, including tablet/desktop widths. Never cover the rest of the
+   published page while the voyage is collapsed. */
+.world .pilgrimage.pilgrimage-open{z-index:100}
+.world .pilgrimage.pilgrimage-open .pilgrimage-top{position:relative;z-index:3}
+.world .pilgrimage.pilgrimage-open .pilgrimage-toggle{position:relative;z-index:4;pointer-events:auto}
