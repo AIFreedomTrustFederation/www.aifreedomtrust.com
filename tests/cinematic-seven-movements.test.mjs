@@ -219,3 +219,14 @@ test('collapsed Android pilgrimage follows destination gates in normal grid flow
  assert.match(last,/\.world \.world-stage-panel\s*\{\s*grid-row:7/);
  assert.match(last,/max-width:700px/);
 });
+
+test('first-viewport Tree offers bounded gesture camera and real stage selection',()=>{
+ const js=read('cinematic-awakening-navigator.js'),css=read('cinematic-awakening-navigator.css');
+ new vm.Script(js);
+ for(const kind of ['root','trunk','branch','leaf','flower','fruit'])assert.ok(js.includes('data-awakening-kind="'+kind+'"'),kind);
+ for(const token of ['setPointerCapture','pointercancel','lostpointercapture','Math.hypot','setCamera','resetCamera','data-camera','aria-pressed','chain(selected)','aift:lineage-flight'])assert.ok(js.includes(token),token);
+ assert.match(js,/const outcomes=.*kind==='fruit'.*!repo\(n.url\).*chain\(n\).length/);
+ assert.match(css,/\.awakening-map button\[aria-pressed="true"\]/);
+ assert.match(css,/\.awakening-camera-controls button\{min-width:44px;min-height:44px\}/);
+ assert.doesNotMatch(js,/fetch\(|sendBeacon|localStorage|reward_xp|Math\.random/);
+});
