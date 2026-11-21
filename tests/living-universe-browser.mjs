@@ -236,7 +236,27 @@ for(const width of [360,390,768,1280]){
   await page.screenshot({path:'artifacts/living-universe/tree-'+width+'.png',fullPage:true});
   assert.deepEqual(errors,[],'Browser JavaScript errors');
   console.log('PASS',width,'px',JSON.stringify(bounds));
- }catch(e){failures.push(width+': '+e.stack);console.error('FAIL',width,e)}
+ }catch(e){
+  // Preserve exact failing viewport, hit geometry and the rendered page even if
+  // a Playwright scroll/click times out before the normal screenshots are made.
+  let diagnostic={width,error:String(e?.stack||e)};
+  try{
+    diagnostic=await page.evaluate(({width,error})=>{
+      const selectors=['.world','.world-passage','.world-passage-source','.world-gate','.pilgrimage','.pilgrimage-toggle','.pilgrimage-body','.awakening-navigator'];
+      const elements=Object.fromEntries(selectors.map(selector=>{
+        const el=document.querySelector(selector);if(!el)return [selector,null];
+        const r=el.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2;
+        const top=x>=0&&x<innerWidth&&y>=0&&y<innerHeight?document.elementFromPoint(x,y):null;
+        const style=getComputedStyle(el);
+        return [selector,{rect:{x:r.x,y:r.y,width:r.width,height:r.height},position:style.position,zIndex:style.zIndex,display:style.display,visibility:style.visibility,hit:top===el||el.contains(top),interceptor:top?{tag:top.tagName,id:top.id,className:typeof top.className==='string'?top.className:''}:null}];
+      }));
+      return {width,error,scrollY,scrollWidth:document.documentElement.scrollWidth,viewport:{width:innerWidth,height:innerHeight},elements};
+    },diagnostic);
+    await page.screenshot({path:'artifacts/living-universe/FAIL-'+width+'.png',fullPage:true,animations:'disabled',timeout:10000});
+  }catch(captureError){diagnostic.captureError=String(captureError)}
+  failures.push(width+': '+e.stack+'\\nDIAGNOSTIC '+JSON.stringify(diagnostic));
+  console.error('FAIL',width,JSON.stringify(diagnostic));
+ }
  finally{await page.close()}
 }
 const reduced=await browser.newPage({viewport:{width:390,height:800},reducedMotion:'reduce'});
