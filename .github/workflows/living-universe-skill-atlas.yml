@@ -10,6 +10,8 @@ on:
       - 'living-universe-journey-cockpit*'
       - 'living-universe-expedition*'
       - 'living-universe-browser-acceptance*'
+      - 'cinematic-*'
+      - 'tests/cinematic-browser-trigger.test.mjs'
       - 'docs/uxi/living-universe-2.html'
       - 'docs/uxi/living-universe-skill-atlas*'
       - 'docs/uxi/living-universe-canopy*'
@@ -30,6 +32,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - name: Verify cinematic browser trigger contract
+        run: node --test tests/cinematic-browser-trigger.test.mjs
       - name: Run evidence skill atlas regression suite
         shell: bash
         run: |
