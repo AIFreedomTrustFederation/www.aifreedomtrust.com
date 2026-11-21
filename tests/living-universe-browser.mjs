@@ -93,7 +93,7 @@ for(const width of [360,390,768,1280]){
     const hit=await voyageToggle.evaluate(el=>{
       const r=el.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2;
       const within=x>=0&&y>=0&&x<innerWidth&&y<innerHeight;
-      const top=within?document.elementFromPoint(x,y):null;return {x,y,within,hit:within&&top?.closest('.pilgrimage-toggle')===el,interceptor:top?{tag:top.tagName,className:typeof top.className==='string'?top.className:'',id:top.id}:null};
+      const top=within?document.elementFromPoint(x,y):null;return {x,y,within,hit:within&&(top===el||el.contains(top)),interceptor:top?{tag:top.tagName,className:typeof top.className==='string'?top.className:'',id:top.id}:null};
     });
     assert.ok(hit.within,'Mobile entrance must be in viewport before pointer testing: '+JSON.stringify(hit));
     assert.ok(hit.hit,'Mobile pilgrimage entrance must receive pointer input: '+JSON.stringify(hit));
@@ -206,7 +206,11 @@ for(const width of [360,390,768,1280]){
   // First-viewport Tree: verify the same real camera responds to pointer, keyboard and reset.
   const heroTree=page.locator('.world svg.tree');
   const heroCamera=()=>heroTree.getAttribute('viewBox');
-  await heroTree.scrollIntoViewIfNeeded();
+  // The hero is an SVG inside a tall document. Chromium can keep retrying
+  // scrollIntoViewIfNeeded on an animated SVG whose bounds change every frame.
+  // Return to the actual landing viewport, then inspect its stable pointer area.
+  await page.evaluate(()=>window.scrollTo({top:0,behavior:'instant'}));
+  await page.waitForTimeout(150);
   await heroTree.focus();
   const keyboardBefore=await heroCamera();
   await page.keyboard.press('ArrowRight');
