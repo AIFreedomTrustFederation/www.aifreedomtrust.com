@@ -93,7 +93,7 @@ for(const width of [360,390,768,1280]){
     const hit=await voyageToggle.evaluate(el=>{
       const r=el.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2;
       const within=x>=0&&y>=0&&x<innerWidth&&y<innerHeight;
-      const top=within?document.elementFromPoint(x,y):null;return {x,y,within,hit:within&&(top===el||el.contains(top)),interceptor:top?{tag:top.tagName,className:typeof top.className==='string'?top.className:'',id:top.id}:null};
+      const top=within?document.elementFromPoint(x,y):null;return {x,y,within,hit:within&&(top===el||el.contains(top)||top?.closest?.('.pilgrimage-toggle')===el),interceptor:top?{tag:top.tagName,className:typeof top.className==='string'?top.className:'',id:top.id}:null};
     });
     assert.ok(hit.within,'Mobile entrance must be in viewport before pointer testing: '+JSON.stringify(hit));
     assert.ok(hit.hit,'Mobile pilgrimage entrance must receive pointer input: '+JSON.stringify(hit));
@@ -219,7 +219,22 @@ for(const width of [360,390,768,1280]){
   const pointerBefore=await heroCamera();
   const heroBounds=await heroTree.boundingBox();
   assert.ok(heroBounds?.width>80&&heroBounds?.height>80,'Playable Tree has a visible pointer surface');
-  const startX=heroBounds.x+heroBounds.width*.52,startY=heroBounds.y+heroBounds.height*.52;
+  // Find a genuinely exposed piece of the SVG, rather than dragging a panel,
+  // source node, or overlay at the geometric center of the artwork.
+  const exposed=await heroTree.evaluate(svg=>{
+    const rect=svg.getBoundingClientRect();
+    for(const fy of [.45,.35,.55,.25,.65,.15,.75]){
+      for(const fx of [.5,.4,.6,.3,.7,.2,.8]){
+        const x=rect.left+rect.width*fx,y=rect.top+rect.height*fy;
+        if(x<12||y<12||x>innerWidth-12||y>innerHeight-12)continue;
+        const hit=document.elementFromPoint(x,y);
+        if(hit&&(hit===svg||svg.contains(hit))&&!hit.closest?.('.living-source-node'))return {x,y,hit:hit.tagName};
+      }
+    }
+    return null;
+  });
+  assert.ok(exposed,'Tree needs an exposed pointer-drag surface not obscured by navigator or panels');
+  const startX=exposed.x,startY=exposed.y;
   // Mouse pointer drag also exercises the shared Pointer Events path used on Android.
   await page.mouse.move(startX,startY);
   await page.mouse.down();
