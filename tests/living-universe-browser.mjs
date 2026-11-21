@@ -12,6 +12,9 @@ for(const width of [360,390,768,1280]){
  try{
   const response=await page.goto(base,{waitUntil:'networkidle',timeout:30000});
   assert.equal(response.status(),200);
+  // Capture the untouched canonical landing world before any navigation or scroll.
+  // This is the baseline against which the journey and collision repairs are judged.
+  await page.screenshot({path:'artifacts/living-universe/BASELINE-'+width+'.png',animations:'disabled'});
   const host=page.locator('#seven-movements');
   await host.waitFor({state:'visible'});
   const svg=page.locator('#seven-movements .seven-stage svg').first();
