@@ -24,3 +24,14 @@
 .awakening-children button{flex:0 0 auto;max-width:min(270px,75vw);text-align:left;white-space:normal;font-size:.78rem}
 .awakening-evidence{font-size:.75rem;color:#b5dbd3;line-height:1.45;margin:.35rem 0}
 @media(max-width:600px){.awakening-map{font-size:.46rem;letter-spacing:0}.awakening-map span{overflow-wrap:anywhere}.awakening-children button{min-height:44px}}
+
+/* Integrated camera and source-backed spatial minimap. Buttons remain usable
+   with touch, keyboard and reduced-motion preferences. */
+.awakening-map button{min-height:44px;min-width:0;padding:.25rem .1rem;border:1px solid transparent;background:transparent;color:#bdebdc;font:700 .59rem system-ui;letter-spacing:0;overflow-wrap:anywhere}
+.awakening-map button[aria-pressed="true"]{color:#ffe7a2;border-color:#e7c77d;background:#214b50}
+.awakening-camera-controls{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin:.65rem 0}
+.awakening-camera-controls button{min-width:44px;min-height:44px}
+.awakening-camera-hint{font-size:.72rem;color:#c4e5de;flex:1 1 120px}
+.world svg.tree{touch-action:pan-y}
+@media(max-width:600px){.awakening-map button{font-size:.48rem}.awakening-camera-hint{font-size:.68rem}}
+@media(prefers-reduced-motion:reduce){.awakening-camera-controls,.awakening-map{scroll-behavior:auto}}
