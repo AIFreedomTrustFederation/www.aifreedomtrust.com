@@ -1,0 +1,23 @@
+/* Contract tests for the canonical first-viewport lineage journey. */
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const html=fs.readFileSync('cinematic-world.html','utf8');
+const js=fs.readFileSync('cinematic-awakening-navigator.js','utf8');
+const css=fs.readFileSync('cinematic-awakening-navigator.css','utf8');
+test('canonical HTML mounts both cinematic journey assets',()=>{
+ assert.match(html,/cinematic-awakening-navigator\.css/);
+ assert.match(html,/cinematic-awakening-navigator\.js/);
+ assert.ok(html.indexOf('lineage-data.js')<html.indexOf('cinematic-awakening-navigator.js'));
+});
+test('navigator script parses without a browser runtime',()=>assert.doesNotThrow(()=>new vm.Script(js)));
+test('lineage is source-backed and excludes repository fruits',()=>{
+ assert.match(js,/AIFT_LINEAGE_NODES/);
+ assert.match(js,/kind==='fruit'/);
+ assert.match(js,/!repo\(n\.url\)/);
+ assert.match(js,/kind==='root'/);
+ assert.match(js,/chain\(n\)/);
+});
+test('reversible navigation, keyboard escape and reduced-motion exist',()=>{
+ for(const needle of ['awakening-back','awakening-forward','Escape','prefers-reduced-motion','aria-live','awakening-breadcrumbs','awakening-map'])assert.ok(js.includes(needle),needle);
+ assert.match(css,/max-width:600px/);
+ assert.match(css,/prefers-reduced-data:reduce/);
+});
