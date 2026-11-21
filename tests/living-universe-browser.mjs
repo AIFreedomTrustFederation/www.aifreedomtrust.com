@@ -90,7 +90,7 @@ for(const width of [360,390,768,1280]){
     const hit=await voyageToggle.evaluate(el=>{
       const r=el.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2;
       const within=x>=0&&y>=0&&x<innerWidth&&y<innerHeight;
-      return {x,y,within,hit:within&&document.elementFromPoint(x,y)?.closest('.pilgrimage-toggle')===el};
+      const top=within?document.elementFromPoint(x,y):null;return {x,y,within,hit:within&&top?.closest('.pilgrimage-toggle')===el,interceptor:top?{tag:top.tagName,className:typeof top.className==='string'?top.className:'',id:top.id}:null};
     });
     assert.ok(hit.within,'Mobile entrance must be in viewport before pointer testing: '+JSON.stringify(hit));
     assert.ok(hit.hit,'Mobile pilgrimage entrance must receive pointer input: '+JSON.stringify(hit));
@@ -118,8 +118,8 @@ for(const width of [360,390,768,1280]){
   assert.equal(await voyageToggle.getAttribute('aria-expanded'),'true','Voyage opens accessibly');
   // The first-viewport navigator must yield its hit area to the active voyage.
   assert.equal(await page.locator('.awakening-navigator').isVisible(),false,'Voyage must not be occluded by the Tree navigator');
-  const voyageHit=await voyageToggle.evaluate(el=>{const r=el.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2,t=document.elementFromPoint(x,y);return t===el||el.contains(t)});
-  assert.ok(voyageHit,'Open voyage toggle remains pointer-reachable');
+  const voyageHit=await voyageToggle.evaluate(el=>{const r=el.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2,t=document.elementFromPoint(x,y);return {hit:t===el||el.contains(t),interceptor:t?{tag:t.tagName,id:t.id,className:typeof t.className==='string'?t.className:''}:null,x,y}});
+  assert.ok(voyageHit.hit,'Open voyage toggle remains pointer-reachable: '+JSON.stringify(voyageHit));
   const spatial=pilgrimage.locator('.pilgrimage-spatial-map');
   assert.equal(await spatial.count(),1,'Source-projected spatial chart exists');
   const markers=spatial.locator('.pilgrimage-spatial-marker');
