@@ -35,3 +35,8 @@
 .world svg.tree{touch-action:pan-y}
 @media(max-width:600px){.awakening-map button{font-size:.48rem}.awakening-camera-hint{font-size:.68rem}}
 @media(prefers-reduced-motion:reduce){.awakening-camera-controls,.awakening-map{scroll-behavior:auto}}
+
+/* The source pilgrimage and first-viewport navigator are mutually exclusive
+   exploration surfaces. When the voyage opens, its map, flight controls and
+   provenance must remain pointer-accessible at every viewport width. */
+.world:has(.pilgrimage-open) .awakening-navigator{display:none}
