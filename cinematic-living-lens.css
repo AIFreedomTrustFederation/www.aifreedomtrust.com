@@ -22,3 +22,19 @@
 .world .stars{transform:translate3d(var(--cinema-parallax-x,0px),var(--cinema-parallax-y,0px),0)}
 @media(max-width:700px){.world{min-height:100svh}.awakening-cinema{width:100%;margin:1rem 0 0;padding:.75rem;border-radius:1rem;backdrop-filter:none}.awakening-cinema-rail{grid-template-columns:repeat(2,minmax(0,1fr))}.awakening-cinema-step{min-height:48px;font-size:.75rem}.awakening-cinema-description{font-size:.8rem}}
 @media(prefers-reduced-motion:reduce){.awakening-cinema-step{transition:none}.awakening-cinema-step:hover:not(:disabled){transform:none}.world .aurora,.world .stars{transform:none!important}}
+
+/* Source constellation: interactive evidence trail within the cinematic world. */
+.awakening-explorer{display:grid;gap:.65rem;margin-top:1rem;padding-top:.85rem;border-top:1px solid #f7d18a40}
+.awakening-explorer label{display:grid;gap:.35rem;font-size:.78rem;color:#e4ebf3}
+.awakening-explorer input{width:100%;min-width:0;min-height:44px;padding:.65rem .8rem;border:1px solid #8ec4ff99;border-radius:.7rem;background:#061525;color:#fff;font:inherit}
+.awakening-explorer-results{display:flex;flex-wrap:wrap;gap:.4rem;max-height:9rem;overflow-y:auto;font-size:.78rem;color:#d9e5ee}
+.awakening-explorer-result,.awakening-explorer-crumbs button,.awakening-explorer-history button{min-height:44px;border:1px solid #8ec4ff66;border-radius:.65rem;padding:.45rem .65rem;background:#0b2540;color:#fff;font:600 .78rem system-ui,sans-serif;cursor:pointer}
+.awakening-explorer-crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:.25rem;font-size:.8rem}
+.awakening-explorer-crumbs button[aria-current=location]{border-color:#f7d18a;color:#ffe2a2}
+.awakening-explorer-history{display:flex;align-items:center;justify-content:space-between;gap:.7rem}
+.awakening-explorer-history button:disabled{opacity:.45;cursor:not-allowed}
+.awakening-explorer-map{display:flex;align-items:center;gap:.5rem;font-size:.62rem;letter-spacing:.08em;color:#d9e5ee}
+.awakening-explorer-map-track{position:relative;width:84px;height:42px;border:1px solid #f7d18a80;border-radius:50% 50% 40% 40%;background:radial-gradient(ellipse at 50% 40%,#64deb542,transparent 70%),linear-gradient(135deg,#d75d5740,#4caa8850,#477cdb50)}
+.awakening-explorer-map-focus{position:absolute;width:9px;height:9px;transform:translate(-50%,-50%);border-radius:50%;background:#ffe3a0;box-shadow:0 0 0 3px #ffe3a033,0 0 12px #ffe3a0}
+@media(max-width:700px){.awakening-explorer-history{align-items:flex-start;flex-wrap:wrap}.awakening-explorer-map{margin-left:auto}.awakening-explorer-results{max-height:7rem}}
+@media(prefers-reduced-motion:reduce){.awakening-explorer *{scroll-behavior:auto!important;transition:none!important}}
