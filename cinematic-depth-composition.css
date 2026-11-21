@@ -1,0 +1,73 @@
+/* Living Universe 3.1 — cinematic depth composition.
+   Pure presentation: no fabricated records, navigation, telemetry or state.
+   This sheet is loaded after the existing experience styles. */
+.world{
+  --depth-red:rgba(250,117,130,.22);
+  --depth-green:rgba(100,230,180,.24);
+  --depth-blue:rgba(108,188,255,.22);
+  --depth-gold:rgba(247,209,138,.17);
+  isolation:isolate;
+  background:
+    radial-gradient(ellipse 52% 64% at 76% 45%,var(--depth-green),transparent 78%),
+    radial-gradient(ellipse 38% 56% at 28% 83%,var(--depth-red),transparent 80%),
+    radial-gradient(ellipse 48% 64% at 84% 14%,var(--depth-blue),transparent 80%),
+    linear-gradient(160deg,#030712 2%,#0a1b31 48%,#040b17 100%);
+}
+.world .sky{z-index:0;opacity:.75;mix-blend-mode:screen}
+.world .aurora{z-index:0;opacity:.45}
+.world .stars{z-index:0;opacity:.5}
+.world .tree{
+  z-index:1;
+  filter:drop-shadow(0 0 16px rgba(100,230,180,.5))
+         drop-shadow(0 0 64px rgba(108,188,255,.32))
+         drop-shadow(0 30px 80px rgba(0,0,0,.7));
+}
+.world .intro{z-index:3;isolation:isolate}
+.world .intro::before{
+  content:"";position:absolute;z-index:-1;pointer-events:none;
+  inset:-2rem -3rem -2rem -2rem;border-radius:45%;
+  background:radial-gradient(ellipse at 38% 45%,rgba(2,9,23,.88),rgba(2,9,23,.45) 58%,transparent 78%);
+}
+.world .intro h1{max-width:14ch;text-wrap:balance}
+.world .intro p{overflow-wrap:break-word}
+.world .world-beacons{z-index:4}
+.world .world-gates{z-index:5}
+.world .world-gate,.world .world-beacon{
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+.world .living-source-status{z-index:6}
+.world .tree .roots{filter:drop-shadow(0 0 14px var(--depth-red))}
+.world .tree .branches{filter:drop-shadow(0 0 12px var(--depth-green))}
+.world .tree .canopy{filter:drop-shadow(0 0 17px var(--depth-blue))}
+.world :is(a,button):focus-visible{outline:3px solid #ffe3a8;outline-offset:4px}
+@media(max-width:800px){
+  .world{min-height:100svh;overflow:hidden}
+  .world .intro{max-width:min(100%,34rem)}
+  .world .intro::before{inset:-1rem -1rem -1.5rem -1rem}
+  .world .tree{max-height:67svh;filter:drop-shadow(0 0 20px rgba(100,230,180,.45))}
+  .world .world-beacons{max-width:100%;overflow:visible}
+  .world .world-gates{max-width:calc(100% - 2rem)}
+  .world .world-gate{min-width:0;overflow-wrap:anywhere}
+}
+@media(max-width:440px){
+  .world .intro h1{font-size:clamp(2.2rem,9.5vw,3.1rem);line-height:1.06}
+  .world .intro .eyebrow{font-size:.64rem;letter-spacing:.12em}
+  .world .intro>p:not(.eyebrow){font-size:.92rem;line-height:1.42}
+  .world .tree{max-height:63svh;opacity:.9}
+  .world .world-beacon{min-width:0;max-width:31vw}
+  .world .world-beacon strong,.world .world-beacon small{overflow-wrap:anywhere}
+}
+@media(max-height:640px) and (max-width:800px){
+  .world .intro h1{font-size:clamp(2rem,8vw,2.65rem)}
+  .world .intro>p:not(.eyebrow){font-size:.85rem;max-width:38ch}
+  .world .tree{max-height:57svh}
+}
+@media(prefers-reduced-motion:reduce){
+  .world,.world .tree,.world .world-gate,.world .world-beacon{animation:none!important;transition:none!important}
+}
+@media(prefers-reduced-data:reduce){
+  .world .aurora,.world .stars{display:none}
+  .world .tree,.world .tree .roots,.world .tree .branches,.world .tree .canopy{filter:none}
+  .world .world-gate,.world .world-beacon{backdrop-filter:none;-webkit-backdrop-filter:none}
+}

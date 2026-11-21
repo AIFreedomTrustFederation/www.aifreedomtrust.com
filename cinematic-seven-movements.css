@@ -1,0 +1,388 @@
+/* Seven-movement cinematic explorer: source-backed, mobile-first, no assets or telemetry. */
+.seven-movements{--seven-accent:#f7d18a;position:relative;isolation:isolate;overflow:hidden;min-height:100svh;background:radial-gradient(ellipse at 50% 30%,#173f4e,#08152b 58%,#040916);color:#f5f6f5}
+.seven-movements[data-movement="1"]{--seven-accent:#fa7582}.seven-movements[data-movement="2"]{--seven-accent:#f7d18a}.seven-movements[data-movement="3"]{--seven-accent:#64e6b4}.seven-movements[data-movement="4"]{--seven-accent:#6cbcff}.seven-movements[data-movement="5"]{--seven-accent:#b392fa}.seven-movements[data-movement="6"]{--seven-accent:#ffab72}
+.seven-sky{position:absolute;inset:0;pointer-events:none;overflow:hidden}.seven-orbit{position:absolute;width:min(100vw,850px);aspect-ratio:1;top:-15%;right:-18%;border:1px solid #f7d18a35;border-radius:50%;box-shadow:0 0 130px #64e6b422,inset 0 0 120px #6cbcff15;animation:seven-pulse 9s ease-in-out infinite alternate}.seven-ribbon{position:absolute;inset:0;background:conic-gradient(from 150deg at 70% 45%,transparent,#fa758224,transparent,#64e6b42b,transparent,#6cbcff2b,transparent);filter:blur(55px)}.seven-halo{position:absolute;inset:0;background:radial-gradient(circle at 60% 40%,#eac68b16,transparent 50%)}
+.seven-content{position:relative;max-width:1450px;margin:auto;padding:clamp(2rem,5vw,5rem) clamp(1rem,4vw,4rem)}.seven-eyebrow{letter-spacing:.2em;font-size:.72rem;color:#91e8d2;font-weight:800}.seven-content h2{font:clamp(2.4rem,7vw,6rem)/1.05 Georgia,serif;color:var(--seven-accent);margin:.5rem 0}.seven-content>p{max-width:68ch}.seven-controls{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin:1.3rem 0}.seven-controls button,.seven-rail button,.seven-list button{font:inherit;min-height:44px;cursor:pointer;color:#f5f8fb;background:#142b40;border:1px solid #87a6b7;border-radius:12px;padding:.65rem .9rem}.seven-controls button:disabled{opacity:.4;cursor:default}.seven-controls span{font-variant-numeric:tabular-nums;color:#e8d6a8}.seven-rail{display:flex;gap:.5rem;overflow-x:auto;scroll-snap-type:x proximity;padding:.3rem 0 1rem}.seven-rail button{flex:0 0 auto;scroll-snap-align:start;border-top:4px solid var(--seven-accent)}.seven-rail button[aria-pressed=true],.seven-list button[aria-pressed=true]{background:#31536a;border-color:#f7d18a}
+.seven-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,1fr);gap:clamp(1rem,3vw,3rem);align-items:center}.seven-stage{min-width:0;position:relative;filter:drop-shadow(0 0 45px #64e6b455)}.seven-stage svg{display:block;width:100%;max-height:65vh;animation:seven-float 9s ease-in-out infinite alternate}.seven-inspector{min-width:0;border:1px solid #6d9c9c;border-radius:22px;padding:clamp(1rem,3vw,2rem);background:#071727db;backdrop-filter:blur(12px)}.seven-inspector label{display:block;font-weight:700;color:#a3ead7}.seven-inspector input{display:block;width:100%;min-width:0;min-height:44px;padding:.7rem;background:#14283e;border:1px solid #a1bdc8;border-radius:9px;color:#fff;font:inherit}.seven-evidence{color:#b4d9d5;font-size:.85rem}.seven-list{display:grid;gap:.45rem;max-height:190px;overflow:auto}.seven-list button{text-align:left;overflow-wrap:anywhere}.seven-detail{border-left:3px solid var(--seven-accent);padding:.7rem 1rem;margin-top:1rem;background:#18354a;border-radius:9px;overflow-wrap:anywhere}.seven-detail h3{color:var(--seven-accent);margin:.2rem 0}.seven-detail a{display:inline-block;color:#b7f8e5;min-height:44px;padding:.5rem 0}.seven-trail{font-size:.85rem;color:#d3dce6}.seven-disclaimer{font-size:.8rem;color:#b6cad2;margin-top:1.5rem}
+.seven-movements :focus-visible{outline:3px solid #f7d18a;outline-offset:3px}@keyframes seven-pulse{to{opacity:.45;transform:scale(1.07)}}@keyframes seven-float{to{transform:translateY(-12px)}}
+@media(max-width:760px){.seven-grid{grid-template-columns:1fr}.seven-stage{order:0}.seven-stage svg{height:38svh;max-height:360px}.seven-inspector{order:1}.seven-rail{margin-inline:-1rem;padding-inline:1rem}.seven-content h2{font-size:clamp(2.4rem,11vw,4rem)}}
+@media(max-width:390px){.seven-controls{gap:.5rem}.seven-controls button{padding:.55rem}.seven-stage svg{height:31svh}.seven-inspector{padding:.85rem}}
+@media(prefers-reduced-motion:reduce){.seven-orbit,.seven-stage svg{animation:none!important}.seven-ribbon{filter:none;opacity:.35}.seven-rail{scroll-behavior:auto}}@media(prefers-reduced-data:reduce){.seven-ribbon{display:none}.seven-inspector{backdrop-filter:none}}
+
+/* Source-backed spatial overview and reversible ancestry controls */
+.seven-map{position:relative;display:flex;flex-wrap:wrap;justify-content:center;gap:.45rem;padding:.8rem;max-width:100%;border:1px solid #f7d18a55;border-radius:1rem;background:#07192ac9;backdrop-filter:blur(8px)}
+.seven-map button,.seven-detail nav button{font:inherit;font-size:.82rem;min-height:44px;min-width:44px;padding:.55rem .8rem;border:1px solid #64e6b477;border-radius:999px;background:#102c3c;color:#f5f6f5;cursor:pointer}
+.seven-map button[aria-pressed=true]{background:#326b65;border-color:#f7d18a;color:#fff}
+.seven-map button:focus-visible,.seven-detail nav button:focus-visible{outline:3px solid #f7d18a;outline-offset:3px}
+.seven-detail nav{display:flex;flex-wrap:wrap;gap:.45rem;margin-block:1rem}
+#seven-breadcrumb{overflow-wrap:anywhere;color:#f7d18a}
+@media(max-width:390px){.seven-map{gap:.25rem;padding:.4rem}.seven-map button{font-size:.72rem;padding:.4rem .5rem}}
+@media(prefers-reduced-motion:reduce){.seven-map,.seven-map button,.seven-detail nav button{transition:none!important}}
+
+/* Source-derived spatial camera: visible selection, touch-safe pan, readable focus. */
+.seven-stage svg{touch-action:none;overflow:visible}
+.seven-source-constellation circle{cursor:pointer;filter:drop-shadow(0 0 5px #64e6b4);transition:r .2s ease}
+.seven-source-constellation circle:focus-visible{stroke:#fff;stroke-width:4;outline:none}
+@media(prefers-reduced-motion:reduce){.seven-source-constellation circle{transition:none;filter:none}}
+
+/* Keep the cinematic world dominant on the first Android viewport while retaining every control below. */
+@media(max-width:760px){.seven-content{display:flex;flex-direction:column;padding-top:1rem}.seven-eyebrow{order:0;margin:.25rem 0}.seven-content h2{order:1;font-size:clamp(2rem,9vw,3.5rem)}#seven-subtitle{order:2;margin:.25rem 0}.seven-grid{display:contents}.seven-stage{order:3;min-height:42svh}.seven-stage svg{height:43svh;max-height:none}.seven-controls{order:4;margin:.5rem 0}.seven-rail{order:5}.seven-inspector{order:6}.seven-disclaimer{order:7}.seven-map{margin-top:.25rem}}
+@media(max-width:390px){.seven-stage{min-height:40svh}.seven-stage svg{height:40svh}.seven-content h2{font-size:clamp(2rem,9vw,3rem)}}
+@media(prefers-reduced-motion:reduce){.seven-stage{filter:none}}
+
+/* Spatial camera controls: usable without pinch, mouse wheel, or precision pointing. */
+.seven-camera-controls{position:absolute;left:clamp(.5rem,2vw,1rem);bottom:clamp(.5rem,2vw,1rem);z-index:3;display:flex;flex-wrap:wrap;gap:.5rem;max-width:calc(100% - 1rem)}
+.seven-camera-controls button{min-height:44px;min-width:44px;padding:.5rem .75rem;border:1px solid #f7d18a88;border-radius:.7rem;background:#071727e8;color:#f5f6f5;font:inherit;cursor:pointer}
+.seven-camera-controls button:focus-visible{outline:3px solid #f7d18a;outline-offset:3px}
+@media(max-width:390px){.seven-camera-controls{gap:.25rem}.seven-camera-controls button{font-size:.8rem;padding:.4rem .5rem}}
+
+/* Published-evidence journey: distinct from gamified XP or live CI. */
+.seven-journey{margin-top:1.25rem;padding:clamp(.85rem,2vw,1.25rem);border:1px solid #f7d18a70;border-radius:1rem;background:linear-gradient(145deg,#112c3edc,#071727f0)}
+.seven-journey-head h3{font:1.35rem Georgia,serif;color:#f7d18a;margin:.1rem 0 .4rem}
+.seven-journey-head p{color:#d2e6e5;font-size:.9rem;line-height:1.55}
+.seven-journey ol{list-style:none;counter-reset:lineage;margin:1rem 0;padding:0;display:grid;gap:.5rem}
+.seven-journey li{counter-increment:lineage;display:flex;align-items:stretch;gap:.6rem;min-width:0}
+.seven-journey li::before{content:counter(lineage,decimal-leading-zero);color:#f7d18a;font-size:.8rem;align-self:center;min-width:2rem}
+.seven-journey li button{min-height:44px;flex:1;min-width:0;text-align:left;overflow-wrap:anywhere;border:1px solid #6cbcff88;border-radius:.65rem;padding:.65rem .8rem;background:#15374b;color:#f5f6f5;font:inherit;cursor:pointer}
+.seven-journey li button[aria-current=true]{border-color:#f7d18a;background:#285c58}
+#seven-journey-reset{min-height:44px;border:1px solid #f7d18a88;border-radius:.65rem;background:#142b40;color:#fff;padding:.65rem .9rem;cursor:pointer}
+.seven-journey button:focus-visible{outline:3px solid #f7d18a;outline-offset:3px}
+@media(max-width:760px){.seven-journey{margin-top:1rem}.seven-journey ol{gap:.4rem}}
+@media(prefers-reduced-motion:reduce){.seven-journey *{scroll-behavior:auto;transition:none!important}}
+
+/* Published ancestry is rendered as actual parent-child light paths, never inferred edges. */
+.seven-source-connections{pointer-events:none}
+.seven-source-link{fill:none;stroke:#6cbcff;stroke-opacity:.25;stroke-width:1.5;vector-effect:non-scaling-stroke}
+.seven-source-link-active{stroke:#f7d18a;stroke-opacity:.95;stroke-width:3;filter:drop-shadow(0 0 5px #f7d18a)}
+.seven-lineage-node{stroke:#f7d18a!important;stroke-width:3!important;filter:drop-shadow(0 0 8px #f7d18a)}
+@media(prefers-reduced-motion:reduce){.seven-source-link-active,.seven-lineage-node{filter:none}}
+
+/* Reversible evidence voyage: readable and operable above the cinematic stage. */
+.seven-voyage-controls{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;margin-block:1rem}
+.seven-voyage-controls button{font:inherit;min-height:44px;min-width:44px;padding:.6rem .8rem;border:1px solid #f7d18a99;border-radius:.7rem;background:#15394c;color:#f5f6f5;cursor:pointer}
+.seven-voyage-controls button:disabled{opacity:.48;cursor:default}
+.seven-voyage-controls span{font-size:.85rem;color:#d2e6e5;font-variant-numeric:tabular-nums}
+.seven-voyage-controls button:focus-visible{outline:3px solid #f7d18a;outline-offset:3px}
+@media(max-width:390px){.seven-voyage-controls button{flex:1 1 44%;font-size:.85rem}}
+@media(prefers-reduced-motion:reduce){.seven-voyage-controls *{transition:none!important}}
+
+/* Evidence voyage: camera movement is bounded in JS and disabled for reduced motion. */
+.seven-source-constellation{will-change:auto}
+.seven-stage:focus-within .seven-source-link-active{stroke-opacity:1}
+@media(prefers-reduced-motion:reduce){.seven-source-constellation,.seven-source-link-active{animation:none!important;transition:none!important}}
+
+/* Vertical biological world: root depths glow red, the integrated trunk glows gold,
+   and the canopy rises through green and blue. The coordinates are source-derived. */
+.seven-stage{background:radial-gradient(ellipse 42% 38% at 50% 65%,#f7d18a13,transparent 80%),linear-gradient(180deg,#6cbcff0b 0%,#64e6b40b 44%,#fa758215 100%);border-radius:24px}
+.seven-stage svg{filter:drop-shadow(0 0 18px #64e6b433)}
+.seven-source-link{stroke-opacity:.4;stroke-width:1.8}
+.seven-source-link-active{stroke-width:3.5}
+@media(prefers-reduced-motion:reduce){.seven-stage svg{filter:none}}
+@media(max-width:390px){.seven-stage{border-radius:14px}}
+
+/* Source-backed spatial minimap: secondary to the playable world. */
+.seven-minimap-wrap{position:absolute;right:1rem;bottom:1rem;z-index:4;width:clamp(96px,20%,150px);padding:.55rem;background:#071727e8;border:1px solid #d6b77d;border-radius:14px;box-shadow:0 8px 30px #0008}
+.seven-minimap-wrap span{display:block;font:600 .65rem/1.3 system-ui;color:#e7d9b7;margin-bottom:.35rem}
+.seven-minimap{display:block;width:100%;aspect-ratio:1;cursor:crosshair;border:1px solid #446779;border-radius:8px;background:#09182a}
+.seven-minimap:focus-visible{outline:3px solid #f7d18a;outline-offset:3px}
+@media(max-width:390px){.seven-minimap-wrap{right:.5rem;bottom:.5rem;width:100px;padding:.35rem}.seven-minimap-wrap span{font-size:.58rem}}
+@media(prefers-reduced-motion:reduce){.seven-minimap{transition:none!important}}
+
+/* Accessible source-backed constellation pagination: secondary to the world. */
+.seven-page-controls{position:relative;z-index:3;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.65rem;padding:.75rem 1rem;color:#e7d9b7;background:#071727e8}
+.seven-page-controls button{min-height:44px;padding:.55rem .85rem;border:1px solid #d6b77d;border-radius:10px;background:#112c42;color:#fff;font:600 .85rem system-ui;cursor:pointer}
+.seven-page-controls button:disabled{opacity:.45;cursor:not-allowed}
+.seven-page-controls button:focus-visible{outline:3px solid #f7d18a;outline-offset:3px}
+.seven-page-controls span{font:600 .8rem system-ui;font-variant-numeric:tabular-nums}
+@media(max-width:390px){.seven-page-controls{gap:.35rem;padding:.5rem}.seven-page-controls button{font-size:.76rem;padding:.5rem}}
+
+/* Living Universe 3.1: cinematic focus world. The source-backed SVG remains
+   interactive; all inspectors and the full accessible index remain in the DOM. */
+.seven-stage{isolation:isolate;overflow:hidden;min-height:clamp(380px,62svh,840px);
+  box-shadow:inset 0 0 0 1px #d5b87a33,inset 0 -90px 110px #ee5b5520,0 22px 85px #0008;
+  background:radial-gradient(ellipse 48% 40% at 50% 46%,#eac68b24,transparent 80%),
+    radial-gradient(ellipse 55% 40% at 50% 8%,#609ffb30,transparent 80%),
+    radial-gradient(ellipse 65% 32% at 50% 100%,#ef5c6340,transparent 80%),
+    linear-gradient(180deg,#061329,#092a33 57%,#220d22)}
+.seven-stage::before,.seven-stage::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:0}
+.seven-stage::before{background:repeating-radial-gradient(circle at 50% 48%,transparent 0 74px,#d9bc7c12 75px 76px,transparent 77px 125px);mask-image:linear-gradient(transparent,#000 20%,#000 80%,transparent)}
+.seven-stage::after{background:linear-gradient(105deg,transparent 24%,#6cbcff10 37%,transparent 49%,#64e6b410 62%,transparent 78%);mix-blend-mode:screen}
+.seven-stage svg{position:relative;z-index:1;min-height:inherit;max-height:80svh}
+.seven-camera-controls,.seven-minimap-wrap,.seven-immerse-toggle{z-index:5}
+.seven-immerse-toggle{position:absolute;top:.75rem;left:.75rem;min-height:44px;min-width:44px;padding:.55rem .85rem;background:#08192eea;color:#f9f0da;border:1px solid #f7d18a;border-radius:.75rem;font:600 .85rem system-ui;cursor:pointer;box-shadow:0 5px 20px #0009}
+.seven-immerse-toggle:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.seven-immersive .seven-content{max-width:none;padding-inline:clamp(.5rem,2vw,2rem)}
+.seven-immersive .seven-grid{grid-template-columns:minmax(0,1fr)}
+.seven-immersive .seven-stage{min-height:78svh}
+.seven-immersive .seven-stage svg{height:78svh;max-height:none}
+.seven-immersive .seven-inspector{max-width:900px;width:100%;margin-inline:auto}
+.seven-immersive .seven-rail{max-width:100%}
+@media(max-width:760px){
+ .seven-stage{min-height:49svh}
+ .seven-stage svg{height:49svh;max-height:none;min-height:0}
+ .seven-immersive .seven-stage{min-height:76svh}
+ .seven-immersive .seven-stage svg{height:76svh}
+ .seven-immerse-toggle{top:.45rem;left:.45rem;font-size:.76rem;padding:.45rem .65rem}
+ .seven-immersive .seven-content{padding-inline:.5rem}
+ .seven-immersive .seven-stage{order:3}
+ .seven-immersive .seven-inspector{order:6}
+}
+@media(max-width:390px){
+ .seven-stage{min-height:46svh}
+ .seven-stage svg{height:46svh}
+ .seven-immersive .seven-stage{min-height:74svh}
+ .seven-immersive .seven-stage svg{height:74svh}
+ .seven-immerse-toggle{max-width:52%;line-height:1.2}
+}
+@media(prefers-reduced-motion:reduce){
+ .seven-stage,.seven-stage svg,.seven-immerse-toggle{animation:none!important;transition:none!important}
+ .seven-stage::after{display:none}
+}
+@media(prefers-reduced-data:reduce){.seven-stage::before,.seven-stage::after{display:none}}
+
+/* Living Universe 3.1: full-height exploration theatre, evidence-bound geometry.
+   These layers are purely atmospheric: only the published SVG nodes are interactive. */
+.seven-movements{--theatre-red:#fa7582;--theatre-green:#64e6b4;--theatre-blue:#6cbcff;--theatre-gold:#f7d18a;overflow:clip}
+.seven-stage{contain:layout paint;transform:translateZ(0);border:1px solid #d6b77d55}
+.seven-stage::before{background:
+ radial-gradient(circle at 50% 48%,transparent 0 15%,#d9bc7c17 15.1% 15.25%,transparent 15.4% 28%,#d9bc7c14 28.1% 28.25%,transparent 28.4%),
+ repeating-conic-gradient(from 0deg at 50% 48%,transparent 0deg 29.5deg,#d9bc7c12 30deg 30.4deg,transparent 31deg 60deg);
+ mask-image:radial-gradient(ellipse at 50% 48%,#000 15%,transparent 74%)}
+.seven-stage::after{background:
+ radial-gradient(ellipse 35% 25% at 50% 95%,#fa758233,transparent),
+ radial-gradient(ellipse 35% 25% at 50% 52%,#64e6b42a,transparent),
+ radial-gradient(ellipse 45% 25% at 50% 6%,#6cbcff2a,transparent);
+ mix-blend-mode:screen}
+.seven-stage svg{position:relative;z-index:1;max-width:100%;overflow:hidden}
+.seven-stage .seven-camera-controls{left:.75rem;bottom:.75rem;max-width:calc(100% - 170px)}
+.seven-stage .seven-minimap-wrap{right:.75rem;bottom:.75rem}
+.seven-immersive .seven-stage{box-shadow:inset 0 0 0 1px #f7d18a55,0 24px 100px #000a}
+.seven-immersive .seven-inspector{margin-top:1.5rem}
+@media(max-width:760px){
+ .seven-content{padding-inline:.65rem}
+ .seven-content h2{max-width:17ch;text-wrap:balance}
+ .seven-stage{min-height:62svh;border-radius:18px}
+ .seven-stage svg{height:62svh;min-height:0;max-height:none}
+ .seven-stage .seven-camera-controls{left:.45rem;bottom:.45rem;max-width:calc(100% - 115px);gap:.3rem}
+ .seven-stage .seven-camera-controls button{font-size:.75rem;padding:.4rem .5rem;min-width:44px;min-height:44px}
+ .seven-stage .seven-minimap-wrap{right:.45rem;bottom:.45rem;width:104px}
+ .seven-immersive .seven-stage,.seven-immersive .seven-stage svg{min-height:76svh;height:76svh}
+ .seven-inspector,.seven-journey{max-width:100%;overflow-wrap:anywhere}
+}
+@media(max-width:390px){
+ .seven-stage,.seven-stage svg{min-height:60svh;height:60svh}
+ .seven-immersive .seven-stage,.seven-immersive .seven-stage svg{min-height:74svh;height:74svh}
+ .seven-stage .seven-camera-controls{max-width:calc(100% - 112px)}
+}
+@media(prefers-reduced-motion:reduce){
+ .seven-stage,.seven-stage svg{transform:none;animation:none!important}
+ .seven-stage::after{display:none}
+}
+@media(prefers-reduced-data:reduce){
+ .seven-stage::before,.seven-stage::after{display:none}
+ .seven-stage{transform:none;box-shadow:none}
+}
+
+/* Evidence-grounded six-layer key: a compact HUD in the playable theatre.
+   Distinct spectral colors match source SVG and minimap, not invented products. */
+.seven-biological-key{position:absolute;z-index:4;top:4rem;left:.75rem;display:flex;flex-wrap:wrap;gap:.35rem .7rem;max-width:min(75%,430px);padding:.55rem .7rem;border:1px solid #d6b77d66;border-radius:12px;background:#071727dc;backdrop-filter:blur(8px);pointer-events:none}
+.seven-biological-key-item{display:inline-flex;align-items:center;gap:.35rem;font:600 .69rem/1.4 system-ui,sans-serif;color:#f5f6f5;text-transform:capitalize;white-space:nowrap}
+.seven-biological-key-item i{display:inline-block;width:.65rem;height:.65rem;border-radius:50%;box-shadow:0 0 8px currentColor;flex:none}
+@media(max-width:760px){.seven-biological-key{top:3.65rem;left:.45rem;max-width:calc(100% - .9rem);gap:.2rem .55rem;padding:.35rem .5rem}.seven-biological-key-item{font-size:.62rem}}
+@media(max-width:390px){.seven-biological-key{max-width:calc(100% - .9rem)}.seven-biological-key-item{font-size:.58rem}}
+@media(prefers-reduced-data:reduce){.seven-biological-key{backdrop-filter:none}.seven-biological-key-item i{box-shadow:none}}
+
+
+/* Living Universe 3.1 — cinematic biological ascent.
+   Each atmosphere follows the selected *published* biological viewpoint;
+   these layers never depict invented records or outcomes. */
+.seven-stage{--scene-sky:#6cbcff25;--scene-mid:#64e6b425;--scene-earth:#fa758230;--scene-focus:50%;
+  background:radial-gradient(ellipse 35% 24% at var(--scene-focus) 48%,var(--seven-accent) 0%,transparent 82%),
+  radial-gradient(ellipse 68% 34% at 50% 5%,var(--scene-sky),transparent 80%),
+  radial-gradient(ellipse 65% 32% at 50% 53%,var(--scene-mid),transparent 80%),
+  radial-gradient(ellipse 75% 38% at 50% 100%,var(--scene-earth),transparent 85%),
+  linear-gradient(180deg,#061329,#092a33 57%,#220d22);
+  transition:background-color .45s ease,box-shadow .45s ease}
+.seven-movements[data-movement="1"] .seven-stage{--scene-earth:#fa758258;--scene-mid:#fa75821c;--scene-sky:#6cbcff12}
+.seven-movements[data-movement="2"] .seven-stage{--scene-earth:#fa758233;--scene-mid:#f7d18a3c;--scene-sky:#6cbcff19}
+.seven-movements[data-movement="3"] .seven-stage{--scene-earth:#fa75821b;--scene-mid:#64e6b44c;--scene-sky:#6cbcff24}
+.seven-movements[data-movement="4"] .seven-stage{--scene-earth:#fa75821a;--scene-mid:#64e6b430;--scene-sky:#6cbcff50}
+.seven-movements[data-movement="5"] .seven-stage{--scene-earth:#fa75821b;--scene-mid:#b392fa39;--scene-sky:#b392fa45}
+.seven-movements[data-movement="6"] .seven-stage{--scene-earth:#fa75821c;--scene-mid:#ffab7239;--scene-sky:#6cbcff32}
+.seven-scene-caption{position:absolute;z-index:4;top:.65rem;right:.65rem;max-width:min(49%,19rem);padding:.55rem .7rem;border:1px solid #d6b77d88;border-radius:.75rem;background:#071727ed;color:#f8ead1;font:600 .72rem/1.45 system-ui,sans-serif;overflow-wrap:anywhere;pointer-events:none;text-align:right}
+.seven-scene-caption strong{display:block;color:var(--seven-accent);font-size:.8rem}
+.seven-scene-caption small{display:block;font-size:.68rem;font-weight:400;color:#d4e6e8}
+.seven-stage .seven-source-link-active{stroke-dasharray:8 4;filter:drop-shadow(0 0 7px #f7d18a)}
+@media(max-width:760px){.seven-scene-caption{top:3.5rem;right:.45rem;max-width:48%;padding:.35rem .45rem;font-size:.64rem}.seven-scene-caption strong{font-size:.7rem}.seven-scene-caption small{font-size:.61rem}}
+@media(max-width:390px){.seven-scene-caption{top:3.25rem;max-width:46%}}
+@media(prefers-reduced-motion:reduce){.seven-stage{transition:none!important}.seven-stage .seven-source-link-active{stroke-dasharray:none;filter:none}}
+@media(prefers-reduced-data:reduce){.seven-stage{background:linear-gradient(180deg,#061329,#092a33 57%,#220d22)}}
+
+
+/* Living Universe 3.1: legible cinematic cockpit.
+   The scene remains the dominant mobile surface; controls, provenance and
+   chapter context occupy distinct safe areas rather than overlapping. */
+.seven-stage{--hud-ink:#f7f2e6;--hud-glass:#061526ed;isolation:isolate;
+  box-shadow:inset 0 0 0 1px #f7d18a22,inset 0 -65px 95px #f36d5520,
+  inset 0 65px 110px #6cbcff18,0 18px 72px #0009}
+.seven-stage::before{opacity:.75}
+.seven-stage::after{opacity:.85}
+.seven-stage .seven-source-constellation{filter:drop-shadow(0 0 9px #64e6b43d)}
+.seven-immerse-toggle,.seven-scene-caption,.seven-biological-key,
+.seven-camera-controls,.seven-minimap-wrap{box-sizing:border-box}
+.seven-scene-caption{box-shadow:0 8px 28px #0007}
+.seven-biological-key{box-shadow:0 8px 28px #0007}
+.seven-camera-controls button{transition:background-color .18s ease,border-color .18s ease,transform .18s ease}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){
+ .seven-camera-controls button:hover{background:#24556a;border-color:#f7d18a;transform:translateY(-2px)}
+}
+@media(max-width:760px){
+ .seven-content{padding-top:.6rem}
+ .seven-content h2{font-size:clamp(1.85rem,8vw,3rem);line-height:1.05;margin:.3rem 0}
+ .seven-stage{min-height:62svh;height:62svh;overflow:hidden}
+ .seven-stage svg{height:100%;min-height:0;max-height:none}
+ .seven-immersive .seven-stage{min-height:76svh;height:76svh}
+ .seven-immersive .seven-stage svg{height:100%}
+ .seven-immerse-toggle{top:.5rem;left:.5rem;right:auto;max-width:calc(100% - 1rem);min-height:44px}
+ .seven-scene-caption{top:.55rem;right:.5rem;left:auto;max-width:45%;max-height:6.5rem;overflow:hidden}
+ /* The provenance key lives in its own band below the scene heading. */
+ .seven-biological-key{top:7.15rem;left:.5rem;right:.5rem;width:auto;max-width:none;
+   justify-content:center;gap:.2rem .65rem;padding:.35rem .5rem}
+ .seven-biological-key-item{font-size:.65rem}
+ .seven-stage .seven-camera-controls{bottom:.5rem;left:.5rem;max-width:calc(100% - 120px)}
+ .seven-stage .seven-minimap-wrap{bottom:.5rem;right:.5rem;width:105px}
+ .seven-stage .seven-source-constellation{filter:none}
+}
+@media(max-width:390px){
+ .seven-stage{height:60svh;min-height:60svh}
+ .seven-stage svg{height:100%}
+ .seven-immersive .seven-stage{height:74svh;min-height:74svh}
+ .seven-immersive .seven-stage svg{height:100%}
+ .seven-scene-caption{max-width:44%;font-size:.6rem}
+ .seven-biological-key{top:7.5rem;gap:.15rem .4rem}
+ .seven-biological-key-item{font-size:.59rem}
+ .seven-stage .seven-camera-controls{max-width:calc(100% - 112px)}
+}
+@media(prefers-reduced-motion:reduce){
+ .seven-stage .seven-source-constellation{filter:none}
+ .seven-camera-controls button{transition:none!important;transform:none!important}
+}
+@media(prefers-reduced-data:reduce){
+ .seven-stage{box-shadow:none}
+ .seven-stage .seven-source-constellation{filter:none}
+ .seven-biological-key,.seven-scene-caption{box-shadow:none;backdrop-filter:none}
+}
+
+/* Living Universe 3.1 — source-illuminated biological architecture.
+   All glow primitives are generated from visible, documented lineage nodes;
+   no decorative source marker can be mistaken for a real selectable record. */
+.seven-growth-light{pointer-events:none}
+.seven-growth-root{fill:#fa75821c;stroke:#fa7582a0;stroke-width:1.5;filter:drop-shadow(0 0 13px #fa7582)}
+.seven-growth-trunk{fill:none;stroke:#f7d18a;stroke-width:20;stroke-linecap:round;opacity:.16;filter:drop-shadow(0 0 24px #f7d18a)}
+.seven-growth-canopy{fill:#64e6b41b;stroke:#64e6b44d;stroke-width:1;filter:drop-shadow(0 0 10px #64e6b4)}
+.seven-growth-leaf{fill:#6cbcff1b;stroke:#6cbcff77}
+.seven-growth-flower{fill:#b392fa1b;stroke:#b392fa88}
+.seven-growth-outcome{fill:none;stroke:#ffab72;stroke-width:2;stroke-opacity:.8;filter:drop-shadow(0 0 8px #ffab72)}
+.seven-stage{background-attachment:local}
+.seven-stage svg .seven-source-connections{filter:drop-shadow(0 0 4px #64e6b455)}
+.seven-movements[data-movement="1"] .seven-growth-root{opacity:1}
+.seven-movements[data-movement="2"] .seven-growth-trunk{opacity:.3}
+.seven-movements[data-movement="4"] .seven-growth-leaf{stroke-opacity:1}
+.seven-movements[data-movement="5"] .seven-growth-flower{stroke-opacity:1}
+.seven-movements[data-movement="6"] .seven-growth-outcome{stroke-width:3}
+@media(max-width:760px){
+ .seven-growth-trunk{stroke-width:15}
+ .seven-stage svg .seven-source-connections{filter:none}
+ .seven-growth-canopy{filter:none}
+ .seven-growth-root{filter:none}
+}
+@media(prefers-reduced-motion:reduce){
+ .seven-growth-light *{animation:none!important;transition:none!important;filter:none!important}
+}
+@media(prefers-reduced-data:reduce){
+ .seven-growth-light *{filter:none!important}
+ .seven-growth-trunk{opacity:.09}
+ .seven-growth-canopy{opacity:.45}
+}
+
+/* Evidence voyage: the selected published ancestry becomes a luminous route.
+   Context stays selectable, and the static/reduced-power presentation stays legible. */
+.seven-source-constellation:has(.seven-lineage-node) .seven-context-node{opacity:.48;transition:opacity .24s ease}
+.seven-source-constellation:has(.seven-lineage-node) .seven-context-node:is(:hover,:focus-visible){opacity:1;stroke:#f7d18a;stroke-width:3}
+.seven-source-link[data-evidence-route="true"]{stroke:#f7d18a;stroke-width:3.5;stroke-opacity:1;filter:drop-shadow(0 0 8px #f7d18a)}
+.seven-lineage-node{filter:drop-shadow(0 0 10px #f7d18a);cursor:pointer}
+.seven-source-constellation circle[role="button"]:focus-visible{outline:none;stroke:#fff;stroke-width:4}
+@media(prefers-reduced-motion:reduce){
+ .seven-context-node{transition:none!important}
+ .seven-source-link[data-evidence-route="true"],.seven-lineage-node{filter:none}
+}
+@media(prefers-reduced-data:reduce){
+ .seven-source-link[data-evidence-route="true"],.seven-lineage-node{filter:none}
+ .seven-context-node{opacity:.72!important}
+}
+
+
+/* Source-only voyage deck: floats inside the world, never over the map controls. */
+.seven-route-deck{position:absolute;z-index:5;top:clamp(.5rem,2vw,1rem);left:clamp(.5rem,2vw,1rem);right:clamp(.5rem,2vw,1rem);display:flex;flex-wrap:wrap;align-items:center;gap:.45rem;padding:.65rem;border:1px solid #f7d18a88;border-radius:1rem;background:linear-gradient(120deg,#071727ed,#14364be8);box-shadow:0 10px 30px #02091499;max-width:min(100% - 1rem,600px);backdrop-filter:blur(8px)}
+.seven-route-deck[hidden]{display:none!important}
+.seven-route-deck strong{color:#f7d18a;font:600 .9rem Georgia,serif}
+.seven-route-status{flex:1 1 100%;font-size:.78rem;color:#e5f3f1;overflow-wrap:anywhere}
+.seven-route-deck button{font:inherit;font-size:.8rem;min-height:44px;min-width:44px;padding:.45rem .65rem;border:1px solid #64e6b499;border-radius:.65rem;color:#fff;background:#15374b;cursor:pointer}
+.seven-route-deck button:disabled{opacity:.42;cursor:default}
+.seven-route-deck button:focus-visible{outline:3px solid #f7d18a;outline-offset:2px}
+@media(max-width:390px){.seven-route-deck{gap:.25rem;padding:.4rem}.seven-route-deck button{font-size:.72rem;padding:.35rem .4rem}}
+@media(prefers-reduced-motion:reduce){.seven-route-deck{backdrop-filter:none}.seven-route-deck *{transition:none!important}}
+@media(prefers-reduced-data:reduce){.seven-route-deck{backdrop-filter:none}}
+
+
+/* Living Universe discovery atlas: source-backed stage journey, never simulated rewards. */
+.seven-discovery-atlas{position:relative;z-index:2;margin:clamp(.7rem,2vw,1.4rem) auto;padding:clamp(.8rem,2vw,1.35rem);max-width:1100px;border:1px solid #f7d18a55;border-radius:1.25rem;background:linear-gradient(115deg,#08172ae8,#12414a9c 55%,#261735c9);box-shadow:0 16px 44px #02081577;color:#f6f6f2}
+.seven-discovery-atlas h3{font:600 clamp(1.1rem,2.5vw,1.6rem) Georgia,serif;color:#f7d18a;margin:0 0 .35rem}
+.seven-discovery-atlas p{font-size:.9rem;line-height:1.5;margin:.35rem 0 .8rem}
+.seven-atlas-steps{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:.35rem}
+.seven-atlas-steps button{min-height:52px;padding:.5rem .25rem;border:1px solid #a9d5cc66;border-radius:.65rem;background:#0b2536;color:#f6f6f2;font:600 .76rem/1.25 system-ui,sans-serif;overflow-wrap:anywhere;cursor:pointer}
+.seven-atlas-steps button:nth-child(2){border-color:#fa7582}.seven-atlas-steps button:nth-child(3){border-color:#f7d18a}.seven-atlas-steps button:nth-child(4){border-color:#64e6b4}.seven-atlas-steps button:nth-child(5){border-color:#6cbcff}.seven-atlas-steps button:nth-child(6){border-color:#b392fa}.seven-atlas-steps button:nth-child(7){border-color:#ffab72}
+.seven-atlas-steps button[aria-current=step]{background:#f7d18a;color:#081523;box-shadow:0 0 18px #f7d18a55}
+.seven-atlas-actions{display:flex;flex-wrap:wrap;gap:.5rem}
+.seven-atlas-actions button{min-height:44px;padding:.55rem .8rem;border:1px solid #64e6b4aa;border-radius:.65rem;background:#16394b;color:#fff;cursor:pointer}
+.seven-atlas-actions button:disabled{opacity:.4;cursor:default}
+.seven-discovery-atlas button:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.seven-atlas-status{color:#dcebe7}
+@media(max-width:700px){.seven-atlas-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.seven-discovery-atlas{margin:.6rem .5rem}.seven-atlas-steps button{font-size:.78rem;text-align:left;padding:.55rem}.seven-atlas-actions button{flex:1 1 135px}}
+@media(max-width:390px){.seven-atlas-steps{gap:.3rem}.seven-discovery-atlas{padding:.65rem}}
+@media(prefers-reduced-motion:reduce){.seven-discovery-atlas *{transition:none!important;animation:none!important}}
+@media(prefers-reduced-data:reduce){.seven-discovery-atlas{box-shadow:none;background:#0b2434}.seven-atlas-steps button[aria-current=step]{box-shadow:none}}
+
+/* Living Universe source-to-outcome pathways, derived only from qualified manifest fruits. */
+.seven-outcome-pathways{position:relative;z-index:2;max-width:1100px;margin:1.2rem auto;padding:clamp(1rem,3vw,1.6rem);border:1px solid #64e6b477;border-radius:1.25rem;background:linear-gradient(135deg,#071827,#103c44 60%,#271a3b);color:#f4f8f5}
+.seven-outcome-pathways h3{font:600 clamp(1.35rem,3vw,2rem) Georgia,serif;color:#f7d18a;margin:0 0 .5rem}
+.seven-outcome-pathways>p{max-width:75ch;line-height:1.5}
+.seven-outcome-pathways select{width:100%;max-width:420px;min-height:48px;border:1px solid #b6d6c9;border-radius:.7rem;background:#112c3b;color:#fff;padding:.7rem;font:inherit}
+.seven-pathway-results{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:1rem;margin-top:1rem}
+.seven-pathway-card{min-width:0;padding:1rem;border:1px solid #6cbcff66;border-radius:1rem;background:#071827e8;box-shadow:0 10px 28px #02071355}
+.seven-pathway-card h4{color:#f7d18a;font:600 1.2rem Georgia,serif;margin:0 0 .5rem}
+.seven-pathway-ancestry{overflow-wrap:anywhere;color:#c8e5df;line-height:1.55;font-size:.9rem}
+.seven-pathway-actions{display:flex;flex-wrap:wrap;gap:.6rem}
+.seven-pathway-actions button,.seven-pathway-actions a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:.55rem .75rem;border:1px solid #64e6b4;border-radius:.7rem;background:#164356;color:#fff;font:inherit;text-decoration:none;cursor:pointer}
+.seven-outcome-pathways :focus-visible{outline:3px solid #f7d18a;outline-offset:3px}
+@media(max-width:700px){.seven-outcome-pathways{margin:1rem .5rem}.seven-pathway-results{grid-template-columns:1fr}.seven-pathway-actions>*{flex:1 1 160px}}
+@media(prefers-reduced-motion:reduce){.seven-outcome-pathways *{animation:none!important;transition:none!important}}
+@media(prefers-reduced-data:reduce){.seven-outcome-pathways{background:#0b2434}.seven-pathway-card{box-shadow:none}}
+
+
+/* Source-backed in-world compass: compact until explicitly opened. */
+.seven-provenance-compass{position:absolute;z-index:9;right:clamp(.5rem,2vw,1.5rem);bottom:clamp(.5rem,2vw,1.5rem);width:min(340px,calc(100% - 1rem));color:#f2faf6;font:inherit}
+.seven-provenance-compass{pointer-events:none}
+.seven-compass-toggle,.seven-compass-panel{pointer-events:auto}
+.seven-compass-toggle{display:block;margin-left:auto;min-height:48px;padding:.65rem 1rem;border:1px solid #f7d18a;border-radius:999px;background:#092536f2;color:#fff4ce;font:700 .9rem/1.3 system-ui;box-shadow:0 0 22px #64e6b43b;cursor:pointer}
+.seven-compass-panel{max-height:min(52svh,430px);overflow:auto;overscroll-behavior:contain;margin-top:.5rem;padding:1rem;border:1px solid #64e6b4a0;border-radius:1rem;background:linear-gradient(140deg,#071827f7,#143744f7);box-shadow:0 18px 50px #000a}
+.seven-compass-panel[hidden]{display:none}
+.seven-compass-panel strong{display:block;font:600 1.2rem Georgia,serif;color:#f7d18a;overflow-wrap:anywhere}
+.seven-compass-panel p{font-size:.85rem;line-height:1.5;color:#d7e8e4}
+.seven-compass-panel nav,.seven-compass-children{display:grid;gap:.45rem;margin:.6rem 0}
+.seven-compass-children span{font-size:.8rem;font-weight:700;color:#8ee6cf}
+.seven-compass-panel button,.seven-compass-panel a{display:block;width:100%;min-height:44px;padding:.65rem .75rem;border:1px solid #8ddbc0;border-radius:.65rem;background:#164255;color:#fff;text-align:left;text-decoration:none;font:inherit;cursor:pointer;overflow-wrap:anywhere}
+.seven-provenance-compass :focus-visible{outline:3px solid #fff0a8;outline-offset:3px}
+@media(max-width:700px){.seven-provenance-compass{left:.5rem;right:.5rem;bottom:.5rem;width:auto}.seven-compass-toggle{font-size:.8rem;padding:.55rem .8rem}.seven-compass-panel{max-height:44svh}}
+@media(prefers-reduced-motion:reduce){.seven-provenance-compass *{animation:none!important;transition:none!important}}
+@media(prefers-reduced-data:reduce){.seven-compass-toggle{box-shadow:none}.seven-compass-panel{background:#0b2434}}

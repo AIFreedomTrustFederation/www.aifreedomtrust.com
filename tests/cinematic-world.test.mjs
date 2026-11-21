@@ -43,7 +43,7 @@ test('stage dropdown and stage buttons share semantic focus behavior',()=>{
 test('touch gestures do not accidentally activate lineage nodes and search remains reversible',()=>{
  const js=read('cinematic-explorer.js');
  assert.match(js,/gestureMoved=true/);
- assert.match(js,/if\(gestureMoved\)\{e\.preventDefault\(\);return;/);
+ assert.match(js,/if\(gestureMoved\|\|pinchUsed\)\{e\.preventDefault\(\);return;/);
  assert.match(js,/if\(match\.id!==selected\)history\.push\(selected\)/);
  assert.match(js,/e\.pointerType==='mouse'/);
 });
@@ -254,4 +254,20 @@ test('cinematic energy follows only actual published ancestry and respects acces
  assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
  assert.match(css,/@media\(max-width:480px\)/);
  assert.doesNotMatch(js,/fetch\(|XMLHttpRequest|localStorage|sendBeacon|Math\.random|reward_xp/);
+});
+
+test('Android cinematic entrance retains source stage controls without overlay collisions',()=>{
+ const css=read('cinematic-world.css');
+ const html=read('cinematic-world.html');
+ assert.match(css,/Living Universe 3\.1 — Android cinematic-first composition/);
+ assert.match(css,/\.world \.world-beacons\s*\{[\s\S]*?overflow-x: auto/);
+ assert.match(css,/scroll-snap-type: x proximity/);
+ assert.match(css,/\.world \.tree\s*\{[\s\S]*?grid-row: 2/);
+ assert.match(css,/\.world \.world-gates\s*\{[\s\S]*?grid-row: 4/);
+ assert.match(css,/env\(safe-area-inset-bottom\)/);
+ assert.match(css,/prefers-reduced-data: reduce/);
+ for(const stage of ['root','trunk','branch','leaf','flower','fruit'])
+   assert.match(html,new RegExp('data-stage="'+stage+'"'));
+ assert.match(html,/id="world-beacons"/);
+ assert.match(html,/href="#evidence-world"/);
 });

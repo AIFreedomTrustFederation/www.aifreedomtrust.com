@@ -1,0 +1,112 @@
+/* Source-bound cinematic pilgrimage: overlays the world, never replaces published content. */
+.pilgrimage{--pilgrim:#f17b83;position:absolute;z-index:6;left:clamp(.75rem,3vw,2rem);right:clamp(.75rem,3vw,2rem);bottom:clamp(1rem,3svh,2rem);max-width:660px;color:#f5f7fa;border:1px solid #d4b87e8a;border-radius:22px;background:linear-gradient(145deg,#071526ef,#11243ce8);box-shadow:0 20px 70px #0009,0 0 50px #48d7ba18;backdrop-filter:blur(16px);font:inherit}
+.pilgrimage[data-stage=trunk]{--pilgrim:#f7d18a}.pilgrimage[data-stage=branch]{--pilgrim:#64e6b4}.pilgrimage[data-stage=leaf]{--pilgrim:#6cbcff}.pilgrimage[data-stage=flower]{--pilgrim:#b392fa}.pilgrimage[data-stage=fruit]{--pilgrim:#ffab72}
+.pilgrimage-top{display:flex;align-items:center;justify-content:space-between;gap:.7rem;padding:.65rem .8rem}.pilgrimage-kicker{font-size:.67rem;letter-spacing:.13em;color:#b7eadd;font-weight:750}
+.pilgrimage button,.pilgrimage select,.pilgrimage-destination{min-height:44px;border:1px solid #9cb5bf;border-radius:12px;background:#15344b;color:#fff;font:inherit;padding:.55rem .8rem}
+.pilgrimage button{cursor:pointer}.pilgrimage button:disabled{opacity:.48;cursor:default}.pilgrimage button:focus-visible,.pilgrimage select:focus-visible,.pilgrimage a:focus-visible{outline:3px solid #f9d995;outline-offset:3px}
+.pilgrimage-toggle{background:linear-gradient(110deg,#6b344e,#176e66,#285ea4)!important;border-color:#e5d19e!important;font-weight:750}
+.pilgrimage-body{padding:0 .85rem .8rem;max-height:min(65svh,590px);overflow-y:auto;overscroll-behavior:contain}
+.pilgrimage-body[hidden]{display:none}.pilgrimage-track{display:flex;gap:.35rem;overflow-x:auto;padding:.35rem 0 .8rem;scrollbar-width:thin}
+.pilgrimage-track button{flex:0 0 auto;white-space:nowrap;font-size:.77rem}.pilgrimage-track button[aria-current=true]{border-color:var(--pilgrim);box-shadow:inset 0 3px var(--pilgrim),0 0 15px #ffffff22}
+.pilgrimage-detail h2{font:clamp(1.35rem,3vw,2rem)/1.2 Georgia,serif;color:var(--pilgrim);margin:.15rem 0 .4rem}.pilgrimage-detail p{font-size:.84rem;line-height:1.5;color:#dbe8ee}
+.pilgrimage-detail label{display:grid;gap:.3rem;font-size:.8rem;color:#bdebdc}.pilgrimage-detail select{width:100%;min-width:0}.pilgrimage-provenance{overflow-wrap:anywhere;border-left:3px solid var(--pilgrim);padding-left:.7rem}
+.pilgrimage-actions{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.7rem}.pilgrimage-destination{display:inline-flex;align-items:center;text-decoration:none;background:#315a4d;border-color:#bfe9ce}.pilgrimage-destination[hidden]{display:none}
+.pilgrimage-disclaimer{font-size:.69rem;color:#bed0da;line-height:1.4;margin:.7rem 0 0}
+.pilgrimage-arrived .pilgrimage-detail{animation:pilgrimage-reveal .5s ease both}@keyframes pilgrimage-reveal{from{opacity:.4;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media(max-width:600px){.pilgrimage{max-width:none;left:.6rem;right:.6rem;bottom:.6rem}.pilgrimage-top{padding:.5rem}.pilgrimage-kicker{font-size:.58rem;max-width:17ch}.pilgrimage-body{max-height:56svh}.pilgrimage-track button{font-size:.72rem}.pilgrimage-detail h2{font-size:1.45rem}}
+@media(prefers-reduced-motion:reduce){.pilgrimage *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media(prefers-reduced-data:reduce){.pilgrimage{backdrop-filter:none;box-shadow:none;background:#071526}}
+
+/* Published lineage route: geometry comes exclusively from projected source nodes. */
+.pilgrimage-route-layer{pointer-events:none}
+.pilgrimage-route-edge{fill:none;stroke:#f7d18a;stroke-width:4;stroke-linecap:round;stroke-dasharray:10 7;filter:drop-shadow(0 0 7px #69efbc);opacity:.9}
+.pilgrimage-route-ring{fill:none;stroke:#f7d18a;stroke-width:3;filter:drop-shadow(0 0 8px #f7d18a)}
+.pilgrimage-lineage{display:flex;flex-wrap:wrap;gap:.4rem;list-style:none;margin:.7rem 0;padding:0}
+.pilgrimage-lineage li{min-width:0}
+.pilgrimage-lineage button{font-size:.77rem;text-align:left;overflow-wrap:anywhere}
+.pilgrimage-lineage button[aria-current=true]{border-color:#f7d18a;box-shadow:inset 0 3px #f7d18a}
+@media(prefers-reduced-motion:reduce){.pilgrimage-route-edge,.pilgrimage-route-ring{filter:none;animation:none}}
+@media(prefers-reduced-data:reduce){.pilgrimage-route-edge,.pilgrimage-route-ring{filter:none}}
+
+/* Evidence discovery is part of the playable voyage, not a detached dashboard. */
+.pilgrimage-search-label{display:grid;gap:.4rem;margin:.65rem 0;color:#bdebdc;font-size:.82rem}
+.pilgrimage-search{width:100%;min-width:0;min-height:44px;padding:.65rem .8rem;border:1px solid #9cb5bf;border-radius:12px;background:#0a2639;color:#fff;font:inherit}
+.pilgrimage-search::placeholder{color:#b8cad4}
+.pilgrimage-search:focus-visible{outline:3px solid #f9d995;outline-offset:3px}
+.pilgrimage-search-results,.pilgrimage-evidence-progress{font-size:.75rem;color:#c9e9df;line-height:1.5}
+.pilgrimage-evidence-progress{border-top:1px solid #d4b87e55;padding-top:.65rem;margin-top:.8rem}
+.pilgrimage-detail h3{font:1rem/1.35 Georgia,serif;color:#f7d18a;margin:.85rem 0 .4rem}
+.pilgrimage-children{display:flex;flex-wrap:wrap;gap:.45rem}
+.pilgrimage-children button{max-width:100%;overflow-wrap:anywhere;text-align:left;border-color:#69efbc}
+@media(max-width:600px){.pilgrimage-children{display:grid;grid-template-columns:minmax(0,1fr)}.pilgrimage-children button{width:100%}}
+
+/* Evidence-derived six-layer spatial atlas: a navigable alternative to the SVG camera. */
+.pilgrimage-atlas{margin:.8rem 0 1rem;padding:.7rem;border:1px solid #d4b87e66;border-radius:16px;background:linear-gradient(125deg,#15283b,#0a2434)}
+.pilgrimage-atlas h3{font:1.1rem/1.3 Georgia,serif;color:#f7d18a;margin:0 0 .3rem}
+.pilgrimage-atlas>p{font-size:.75rem;line-height:1.5;color:#d2e7e5;margin:.3rem 0 .7rem}
+.pilgrimage-atlas-map{display:grid;grid-template-columns:repeat(6,minmax(8.5rem,1fr));gap:.5rem;overflow-x:auto;scrollbar-width:thin;padding:.35rem .15rem .7rem}
+.pilgrimage-atlas-column{min-width:0;display:flex;flex-direction:column;gap:.4rem;padding:.45rem;border:1px solid #a6c9ca66;border-radius:12px;background:#071a2b}
+.pilgrimage-atlas-column h4{margin:0;text-transform:capitalize;font-size:.8rem;color:#cce9df}
+.pilgrimage-atlas-column p{font-size:.7rem;color:#b6cbd2;line-height:1.4}
+.pilgrimage-atlas-column button{width:100%;min-width:0;overflow-wrap:anywhere;text-align:left;font-size:.72rem;line-height:1.3;background:#123c50}
+.pilgrimage-atlas-column button[aria-current=true]{border-color:#f7d18a;box-shadow:inset 0 0 0 2px #f7d18a66}
+.pilgrimage-atlas-column[data-kind=root]{border-top:3px solid #f17b83}.pilgrimage-atlas-column[data-kind=trunk]{border-top:3px solid #f7d18a}.pilgrimage-atlas-column[data-kind=branch]{border-top:3px solid #64e6b4}.pilgrimage-atlas-column[data-kind=leaf]{border-top:3px solid #6cbcff}.pilgrimage-atlas-column[data-kind=flower]{border-top:3px solid #b392fa}.pilgrimage-atlas-column[data-kind=fruit]{border-top:3px solid #ffab72}
+@media(max-width:600px){.pilgrimage-atlas-map{grid-template-columns:repeat(6,minmax(8rem,1fr))}.pilgrimage-atlas{padding:.5rem}}
+@media(prefers-reduced-data:reduce){.pilgrimage-atlas{background:#071a2b}}
+
+/* Journey history and mobile-first immersive exploration sheet. */
+.pilgrimage-timeline{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;margin:.35rem 0 .65rem;padding-bottom:.55rem;border-bottom:1px solid #d4b87e55}
+.pilgrimage-timeline button{font-size:.76rem;min-height:44px}
+.pilgrimage-timeline-status{font-size:.72rem;line-height:1.4;color:#bdebdc;flex:1 1 180px}
+@media(max-width:600px){.pilgrimage.pilgrimage-open{position:fixed;z-index:30;inset:auto .4rem max(.4rem,env(safe-area-inset-bottom));max-width:none;border-radius:20px}.pilgrimage.pilgrimage-open .pilgrimage-body{max-height:min(74dvh,720px);overflow-y:auto}.pilgrimage.pilgrimage-open .pilgrimage-top{position:sticky;top:0;z-index:1;background:#071526;border-radius:18px}.pilgrimage-atlas-map{scroll-snap-type:x proximity}.pilgrimage-atlas-column{scroll-snap-align:start}}
+@media(max-height:580px){.pilgrimage.pilgrimage-open .pilgrimage-body{max-height:58dvh}}
+@media(prefers-reduced-motion:reduce){.pilgrimage-atlas-map{scroll-snap-type:none}}
+
+/* Source-projected spatial map: never introduces a fictional source or outcome. */
+.pilgrimage-spatial{margin:.7rem 0;padding:.7rem;border:1px solid #d4b87e66;border-radius:16px;background:#081a2b}
+.pilgrimage-spatial h3{font:1.05rem/1.3 Georgia,serif;color:#f7d18a;margin:0 0 .3rem}
+.pilgrimage-spatial p{font-size:.75rem;line-height:1.5;color:#d2e7e5;margin:.2rem 0 .7rem}
+.pilgrimage-spatial-map{position:relative;isolation:isolate;width:min(100%,330px);aspect-ratio:1;margin:auto;border:1px solid #a6c9ca88;border-radius:16px;overflow:hidden;background:radial-gradient(ellipse at 50% 70%,#27775d55,transparent 52%),radial-gradient(ellipse at 50% 20%,#3269b855,transparent 50%),linear-gradient(#06182b,#071c26)}
+.pilgrimage-spatial-map::before{content:"";position:absolute;inset:8%;border:1px solid #d4b87e55;border-radius:50%;pointer-events:none}
+.pilgrimage-spatial-viewport{position:absolute;border:2px solid #f7d18a;background:#f7d18a15;box-shadow:0 0 12px #f7d18a88;pointer-events:none;z-index:1}
+.pilgrimage-spatial .pilgrimage-spatial-marker{position:absolute;z-index:2;transform:translate(-50%,-50%);width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:2px solid #f7d18a;border-radius:50%;background:#64e6b4;box-shadow:0 0 12px #64e6b4aa}
+.pilgrimage-spatial-marker[data-kind=root]{background:#f17b83}.pilgrimage-spatial-marker[data-kind=trunk]{background:#f7d18a}.pilgrimage-spatial-marker[data-kind=leaf]{background:#6cbcff}.pilgrimage-spatial-marker[data-kind=flower]{background:#b392fa}.pilgrimage-spatial-marker[data-kind=fruit]{background:#ffab72}
+.pilgrimage-spatial .pilgrimage-spatial-marker[aria-pressed=true]{outline:3px solid #fff;outline-offset:2px}
+.pilgrimage-spatial .pilgrimage-spatial-marker:focus-visible{outline:3px solid #fff;outline-offset:3px}
+@media(prefers-reduced-motion:reduce){.pilgrimage-spatial-viewport,.pilgrimage-spatial-marker{transition:none!important}}
+@media(prefers-reduced-data:reduce){.pilgrimage-spatial-map{background:#071a2b}.pilgrimage-spatial .pilgrimage-spatial-marker{box-shadow:none}}
+
+/* Mobile collision repair: the pre-existing guided-voyage launch control occupies
+   the bottom action rail. Keep the closed pilgrimage entrance above that rail;
+   the expanded sheet takes the foreground only when explicitly opened. */
+@media (max-width:600px){
+ .world .pilgrimage:not(.pilgrimage-open){
+  bottom:calc(7.5rem + env(safe-area-inset-bottom,0px));
+  z-index:16;
+ }
+ .world .pilgrimage.pilgrimage-open{z-index:40}
+}
+
+/* Evidence flight: integrated within the source inspector, never a separate dashboard. */
+.pilgrimage-flight{margin-block:1rem;padding:clamp(.7rem,2vw,1.2rem);border:1px solid #d4b87e77;border-radius:18px;background:radial-gradient(ellipse at 85% 0%,#4a9ac126,transparent 65%),linear-gradient(140deg,#071727ed,#142d3de8);box-shadow:inset 0 0 28px #68d8ba12}
+.pilgrimage-flight h3{margin:.1rem 0 .45rem;color:#f8dca2;font-size:clamp(1rem,3vw,1.3rem)}
+.pilgrimage-flight p{line-height:1.5}
+.pilgrimage-flight-controls{display:flex;flex-wrap:wrap;gap:.5rem;margin-block:.8rem}
+.pilgrimage-flight button{min-height:44px;border:1px solid #a6d9cf88;border-radius:12px;padding:.55rem .8rem;background:#163748;color:#f6fafc;cursor:pointer;font:inherit}
+.pilgrimage-flight button:focus-visible{outline:3px solid #f4c776;outline-offset:3px}
+.pilgrimage-flight button:hover:not(:disabled){background:#24566b}
+.pilgrimage-flight button:disabled{opacity:.45;cursor:not-allowed}
+.pilgrimage-flight-status{color:#f9dba5;font-weight:650}
+.pilgrimage-flight-trail{display:flex;gap:.5rem;flex-wrap:wrap;list-style:none;margin:.7rem 0 0;padding:0}
+.pilgrimage-flight-trail li{min-width:0;max-width:100%}
+.pilgrimage-flight-trail button{max-width:100%;overflow-wrap:anywhere}
+.pilgrimage-flight-trail button[aria-current=true]{border-color:#f4c776;box-shadow:0 0 0 2px #f4c77644,0 0 22px #55d8c244}
+@media(max-width:390px){.pilgrimage-flight-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.pilgrimage-flight-controls button:first-child{grid-column:1/-1}.pilgrimage-flight-controls button{padding:.55rem .35rem}}
+@media(prefers-reduced-motion:reduce){.pilgrimage-flight *{transition:none!important;animation:none!important}}
+@media(prefers-reduced-data:reduce){.pilgrimage-flight{box-shadow:none;background:#0a2130}.pilgrimage-flight-trail button[aria-current=true]{box-shadow:none}}
+
+/* Guided source flight: a calm, explicitly controlled journey through real ancestry. */
+.pilgrimage-flight-controls button[aria-pressed=true]{border-color:#f7d18a;background:linear-gradient(110deg,#59384b,#176e66,#244d84);box-shadow:0 0 0 2px #f7d18a55}
+.pilgrimage-flight-controls button[aria-pressed=true]:focus-visible{outline:3px solid #f9d995;outline-offset:3px}
+@media(max-width:600px){.pilgrimage-flight-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.pilgrimage-flight-controls button{min-width:0;white-space:normal}}
+@media(prefers-reduced-motion:reduce){.pilgrimage-flight-controls button[aria-pressed=true]{box-shadow:none}}
