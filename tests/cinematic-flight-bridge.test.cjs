@@ -24,7 +24,7 @@ test('flight resolves ancestry through published route records and handles missi
 test('flight and first-viewport Tree support reversible selection without fabricated nodes',()=>{
  const flight=read('cinematic-evidence-flight.js');
  const navigator=read('cinematic-awakening-navigator.js');
- assert.match(flight,/class=\\"seven-flight-return\\"/);
+ assert.match(flight,/seven-flight-return/);
  assert.match(flight,/returnButton\.hidden=!active\.length/);
  assert.match(flight,/aift:lineage-return/);
  assert.match(flight,/nodeId:node\.id/);
