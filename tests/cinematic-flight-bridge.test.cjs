@@ -20,3 +20,16 @@ test('flight resolves ancestry through published route records and handles missi
  assert.match(source,/no verified public outcome/);
  assert.match(source,/chosen\.chain\.findIndex/);
 });
+
+test('flight and first-viewport Tree support reversible selection without fabricated nodes',()=>{
+ const flight=read('cinematic-evidence-flight.js');
+ const navigator=read('cinematic-awakening-navigator.js');
+ assert.match(flight,/class=\\"seven-flight-return\\"/);
+ assert.match(flight,/returnButton\.hidden=!active\.length/);
+ assert.match(flight,/aift:lineage-return/);
+ assert.match(flight,/nodeId:node\.id/);
+ assert.match(navigator,/addEventListener\('aift:lineage-return'/);
+ assert.match(navigator,/nodes\.get\(event\.detail\?\.nodeId\)/);
+ assert.match(navigator,/all\.includes\(node\)/);
+ assert.match(navigator,/show\(node\)/);
+});
