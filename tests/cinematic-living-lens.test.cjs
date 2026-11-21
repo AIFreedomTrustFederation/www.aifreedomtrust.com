@@ -20,3 +20,15 @@ test('search, lineage breadcrumbs, reversible selection and spatial overview are
  assert.match(css,/awakening-explorer-map-focus/);
  assert.match(css,/awakening-explorer-results/);
 });
+
+test('the cinematic lens continues into the existing source-backed Evidence Flight',()=>{
+ assert.match(js,/Enter Evidence Flight/);
+ assert.match(js,/getElementById\('evidence-world'\)/);
+ assert.match(js,/getElementById\('evidence-list'\)/);
+ assert.match(js,/getElementById\('evidence-search'\)/);
+ assert.match(js,/record\.label/);
+ assert.match(js,/scrollIntoView/);
+ assert.match(js,/prefers-reduced-motion/);
+ assert.match(css,/awakening-cinema-flight/);
+ assert.match(html,/id="evidence-world"/);
+});
