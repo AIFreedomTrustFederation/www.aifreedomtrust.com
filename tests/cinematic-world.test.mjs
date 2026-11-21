@@ -271,3 +271,18 @@ test('Android cinematic entrance retains source stage controls without overlay c
  assert.match(html,/id="world-beacons"/);
  assert.match(html,/href="#evidence-world"/);
 });
+
+test('cinematic chapter journey uses only published biological stages',()=>{
+ const js=read('cinematic-source-projection.js'),css=read('cinematic-world.css');
+ for(const stage of ['root','trunk','branch','leaf','flower','fruit'])
+   assert.match(js,new RegExp("'"+stage+"'"));
+ assert.match(js,/visible\.filter\(n=>n\.kind===kind\)/);
+ assert.match(js,/button\.disabled=!records\.length/);
+ assert.match(js,/renderChapters\(\)/);
+ assert.match(js,/pathTo\(selected\)/);
+ assert.match(js,/chapterRail\.setAttribute\('aria-label'/);
+ assert.match(css,/\.living-chapter-list/);
+ assert.match(css,/\.living-chapter-choice:focus-visible/);
+ assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
+ assert.doesNotMatch(js,/reward_xp|Math\.random|sendBeacon|localStorage/);
+});
