@@ -23,3 +23,19 @@
 .outcome-results{color:#b9d9df;font-size:.9rem;margin:.3rem 0 1rem}
 .outcome-card[hidden]{display:none!important}
 @media(max-width:600px){.outcome-search-label{max-width:100%}.outcome-search{font-size:16px}}
+
+/* Android action-rail separation: the outcome portal is a distinct destination,
+   not an overlay on the pilgrimage's collapsed entrance. The two controls
+   occupy separate vertical bands, retain 48px targets and remain source-bound. */
+@media(max-width:600px){
+ .world .outcome-open{
+  bottom:calc(.8rem + env(safe-area-inset-bottom,0px));
+  left:auto;right:.8rem;transform:none;
+  max-width:min(17rem,calc(100% - 1.6rem));
+  min-height:48px;z-index:15;
+ }
+ .world .pilgrimage:not(.pilgrimage-open){
+  bottom:calc(8rem + env(safe-area-inset-bottom,0px));
+  z-index:16;
+ }
+}
