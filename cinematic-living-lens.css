@@ -19,6 +19,6 @@
 .awakening-cinema-actions a,.awakening-cinema-reset{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:.55rem .85rem;border:1px solid #e6c67e;border-radius:2rem;background:#132d42;color:#fff;font:600 .8rem system-ui,sans-serif;text-decoration:none;cursor:pointer}
 .awakening-cinema-actions a[hidden]{display:none}
 .world .aurora{transform:translate3d(var(--cinema-parallax-x,0px),var(--cinema-parallax-y,0px),0)}
-.world .stars{transform:translate3d(calc(var(--cinema-parallax-x,0px)*-.5),calc(var(--cinema-parallax-y,0px)*-.5),0)}
+.world .stars{transform:translate3d(var(--cinema-parallax-x,0px),var(--cinema-parallax-y,0px),0)}
 @media(max-width:700px){.world{min-height:100svh}.awakening-cinema{width:100%;margin:1rem 0 0;padding:.75rem;border-radius:1rem;backdrop-filter:none}.awakening-cinema-rail{grid-template-columns:repeat(2,minmax(0,1fr))}.awakening-cinema-step{min-height:48px;font-size:.75rem}.awakening-cinema-description{font-size:.8rem}}
 @media(prefers-reduced-motion:reduce){.awakening-cinema-step{transition:none}.awakening-cinema-step:hover:not(:disabled){transform:none}.world .aurora,.world .stars{transform:none!important}}
