@@ -1,0 +1,46 @@
+name: Living Universe 3.2 Cinematic Browser Acceptance
+on:
+  pull_request:
+    paths:
+      - 'cinematic-*'
+      - 'lineage-data.js'
+      - 'tests/living-universe-browser.mjs'
+      - '.github/workflows/living-universe-cinematic-browser.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  cinematic-browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install isolated browser dependencies
+        run: |
+          npm install --no-save --no-package-lock playwright@1.58.2
+          npx playwright install --with-deps chromium
+      - name: Start canonical HTML server
+        run: |
+          python3 -m http.server 4178 --bind 127.0.0.1 > /tmp/aift-cinematic-http.log 2>&1 &
+          echo $! > /tmp/aift-cinematic-http.pid
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:4178/cinematic-world.html >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/aift-cinematic-http.log
+          exit 1
+      - name: Verify source-backed contracts
+        run: |
+          node --test tests/cinematic-world.test.mjs tests/cinematic-seven-movements.test.mjs
+      - name: Exercise real Chromium camera and pilgrimage journey at four widths
+        run: node tests/living-universe-browser.mjs
+      - name: Publish screenshots even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cinematic-tree-360-390-768-1280
+          path: artifacts/living-universe/
+          if-no-files-found: warn
