@@ -28,7 +28,7 @@ try{
   });
   for(const [name,path] of pages){
    const page=await context.newPage(),errors=[];
-   page.on('pageerror',e=>errors.push(e.message));
+   page.on('pageerror',e=>errors.push(e.stack||e.message));
    const entry={name,path,width,height,load:null,issues:[],metrics:{}};
    try{
     const response=await page.goto(origin+path,{waitUntil:'load',timeout:30000});
