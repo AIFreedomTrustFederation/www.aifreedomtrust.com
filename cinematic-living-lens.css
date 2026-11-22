@@ -45,3 +45,15 @@
 .awakening-cinema-flight:hover{filter:brightness(1.18)}
 @media(max-width:700px){.awakening-cinema-flight{flex:1 1 100%;min-height:48px}}
 @media(prefers-reduced-motion:reduce){.awakening-cinema-flight{transition:none}}
+
+/* Living Universe 3.3: source-to-outcome pathways, not fabricated products. */
+.awakening-pathways{display:grid;gap:.6rem;padding:.85rem;border:1px solid #7cbaa77a;border-radius:1rem;background:linear-gradient(130deg,#1c3148d9,#103a3ad9 50%,#2c2549d9);box-shadow:inset 0 1px 0 #ffffff18}
+.awakening-pathways h3{margin:0;color:#f7d18a;font-size:.95rem;letter-spacing:.03em}
+.awakening-pathways-status{margin:0;color:#e5f3ee;font-size:.8rem;line-height:1.55}
+.awakening-pathways-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:.55rem}
+.awakening-pathways-list p{margin:0;font-size:.8rem;color:#c9d9e4}
+.awakening-pathways-node{min-height:48px;min-width:0;padding:.65rem .75rem;text-align:left;border:1px solid #8ec4ff77;border-left:3px solid #f7d18a;border-radius:.75rem;background:#0a1d34;color:#fff;font:600 .8rem/1.4 system-ui,sans-serif;overflow-wrap:anywhere;cursor:pointer}
+.awakening-pathways-node:hover{border-color:#f7d18a;background:#18334b}
+.awakening-pathways-node:focus-visible{outline:3px solid #f7d18a;outline-offset:3px}
+@media(max-width:700px){.awakening-pathways{padding:.7rem}.awakening-pathways-list{grid-template-columns:1fr}.awakening-pathways-node{min-height:48px}}
+@media(prefers-reduced-motion:reduce){.awakening-pathways-node{transition:none!important}}
