@@ -57,3 +57,11 @@
 .awakening-pathways-node:focus-visible{outline:3px solid #f7d18a;outline-offset:3px}
 @media(max-width:700px){.awakening-pathways{padding:.7rem}.awakening-pathways-list{grid-template-columns:1fr}.awakening-pathways-node{min-height:48px}}
 @media(prefers-reduced-motion:reduce){.awakening-pathways-node{transition:none!important}}
+
+/* At tablet widths the absolute world-gates overlapped documented pathway
+   controls (Chromium 768px). Keep both navigation surfaces in normal flow;
+   neither is hidden or made pointer-inert. */
+@media (min-width:701px) and (max-width:800px){
+ .world>.world-gates{position:relative;inset:auto;left:auto;right:auto;bottom:auto;width:min(100%,420px);margin:1rem auto;z-index:2}
+ .world>.awakening-cinema{position:relative;z-index:4}
+}
