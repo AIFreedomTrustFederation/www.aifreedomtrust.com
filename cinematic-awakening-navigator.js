@@ -30,7 +30,7 @@ const announceSelection=n=>window.dispatchEvent(new CustomEvent('aift:lineage-se
 let raf=0;
 function move(kind){const p=positions[kind]||positions.trunk;const target={x:p[0]-p[2]/2,y:p[1]-p[2]/2,width:p[2],height:p[2]};const from={x:camera.x,y:camera.y,width:camera.width,height:camera.height};cancelAnimationFrame(raf);const start=performance.now();function frame(now){const t=reduced.matches?1:Math.min(1,(now-start)/650),e=t*t*(3-2*t);for(const k of ['x','y','width','height'])camera[k]=from[k]+(target[k]-from[k])*e;tree.setAttribute('viewBox',[camera.x,camera.y,camera.width,camera.height].join(' '));if(t<1)raf=requestAnimationFrame(frame)}if(reduced.matches){setCamera(p[0],p[1],p[2])}else raf=requestAnimationFrame(frame)}
 // One bounded camera for stage selection, touch gestures, and manual exploration.
-const bounds={min:190,max:1000};const pointers=new Map();let gesture=null;
+const bounds={min:250,max:1000};const pointers=new Map();let gesture=null;
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
 function setCamera(x,y,size){const w=clamp(size,bounds.min,bounds.max);const h=w;const cx=Math.max(w/2,Math.min(1000-w/2,x));const cy=Math.max(h/2,Math.min(1000-h/2,y));cancelAnimationFrame(raf);tree.setAttribute('viewBox',[cx-w/2,cy-h/2,w,h].join(' '))}
 function cameraState(){const v=tree.viewBox.baseVal;return{x:v.x+v.width/2,y:v.y+v.height/2,size:v.width}}
@@ -38,7 +38,7 @@ function zoom(factor){const c=cameraState();setCamera(c.x,c.y,c.size*factor)}
 function resetCamera(){cancelAnimationFrame(raf);tree.setAttribute('viewBox',[initial.x,initial.y,initial.width,initial.height].join(' '))}
 // Keyboard parity with touch navigation, without stealing keys from editable controls.
 tree.setAttribute('tabindex',tree.getAttribute('tabindex')||'0');
-tree.addEventListener('keydown',e=>{if(e.target!==tree||e.altKey||e.ctrlKey||e.metaKey)return;const c=cameraState(),step=c.size*.12;const shifts={ArrowLeft:[-step,0],ArrowRight:[step,0],ArrowUp:[0,-step],ArrowDown:[0,step]};if(shifts[e.key]){e.preventDefault();setCamera(c.x+shifts[e.key][0],c.y+shifts[e.key][1],c.size)}else if(e.key==='+'||e.key==='='){e.preventDefault();zoom(.8)}else if(e.key==='-'){e.preventDefault();zoom(1.25)}else if(e.key==='Home'){e.preventDefault();resetCamera()}});
+if(!window.AIFT_HERO_POINTER_OWNER)tree.addEventListener('keydown',e=>{if(e.target!==tree||e.altKey||e.ctrlKey||e.metaKey)return;const c=cameraState(),step=c.size*.12;const shifts={ArrowLeft:[-step,0],ArrowRight:[step,0],ArrowUp:[0,-step],ArrowDown:[0,step]};if(shifts[e.key]){e.preventDefault();setCamera(c.x+shifts[e.key][0],c.y+shifts[e.key][1],c.size)}else if(e.key==='+'||e.key==='='){e.preventDefault();zoom(.8)}else if(e.key==='-'){e.preventDefault();zoom(1.25)}else if(e.key==='Home'){e.preventDefault();resetCamera()}});
 function pointerSnapshot(){return [...pointers.values()]}
 function beginGesture(){const ps=pointerSnapshot(),c=cameraState();if(!ps.length){gesture=null;return}const mid={x:ps.reduce((a,p)=>a+p.x,0)/ps.length,y:ps.reduce((a,p)=>a+p.y,0)/ps.length};gesture={mid,c,distance:ps.length>1?Math.hypot(ps[0].x-ps[1].x,ps[0].y-ps[1].y):0}}
 // The source-backed camera owns gestures when installed. Do not attach a
