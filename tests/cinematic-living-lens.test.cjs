@@ -32,3 +32,15 @@ test('the cinematic lens continues into the existing source-backed Evidence Flig
  assert.match(css,/awakening-cinema-flight/);
  assert.match(html,/id="evidence-world"/);
 });
+
+
+test('stage selection, sibling exploration and back history use the same documented lineage',()=>{
+ assert.match(js,/siblingsFor\(node\)/);
+ assert.match(js,/moveSibling\(delta\)/);
+ assert.match(js,/previousSibling\.disabled/);
+ assert.match(js,/nextSibling\.disabled/);
+ assert.match(js,/button\[data-stage\]/);
+ assert.match(js,/if\(node\)displayNode\(node\)/);
+ assert.match(js,/displayNode\(previous,false\)/);
+ assert.match(js,/const inspectable=records\.filter/);
+});
