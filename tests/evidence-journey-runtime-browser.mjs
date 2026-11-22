@@ -24,7 +24,16 @@ try {
    const filter=host.locator('#jb-search');
    await filter.fill('not a documented source name');
    assert.match(await host.locator('#jb-filter-count').textContent(),/0 of \d+ documented destinations match/);
-   await host.locator('#jb-clear').click();
+   const clear=host.locator('#jb-clear');
+   const hit=await clear.evaluate(button=>{
+     const r=button.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2;
+     const target=document.elementFromPoint(x,y);
+     return {x,y,button:{left:r.left,right:r.right,top:r.top,bottom:r.bottom},
+       intercepted:!!target&&target!==button&&!button.contains(target),
+       interceptor:target?.outerHTML?.slice(0,220)};
+   });
+   assert.equal(hit.intercepted,false,'Clear-search button must receive a real touch: '+JSON.stringify(hit));
+   await clear.click();
    assert.equal(await filter.inputValue(),'');
    assert.deepEqual(errors,[],'No runtime errors during shared evidence journey');
    await page.screenshot({path:'artifacts/evidence-journey/'+name.replace('.html','')+'-'+width+'.png',animations:'disabled'});
