@@ -1,0 +1,43 @@
+{
+  "version": "3.1.0-rc2",
+  "status": "local-release-candidate",
+  "canonical_elements": {
+    "movements": 7,
+    "paired_articles": 7,
+    "fruit_worlds": 6
+  },
+  "build": "source/build.py",
+  "release_gate": "validation/release-checks.py",
+  "browser_smoke": "timed_out_not_verified",
+  "exact_head_github_ci": "not_verified",
+  "android_browser_acceptance": "not_verified",
+  "files": {
+    "CHANGELOG.md": "f8670eb122012aa5a4082bc23efc193e9d3f084f619e4aef73f5312b53134625",
+    "ENHANCEMENTS.md": "491d7a27de0e0de88ef90cf194c4b0683e32b126c2c016efadd3d0bbe09fa61c",
+    "README.md": "cee3b0ee85330d28b46f3784c4eb0a2091371c209afb3ac69649d3a2548df12a",
+    "RELEASE_NOTES.md": "2800a2577032ada4a9c18f7a02a40c746d80b34a25f2c59694fa1f3dc6be504d",
+    "UPGRADE_PLAN.md": "4cf8283af2ed14e877c1bddb98083a059c0e61c5eea32cad9583b677cdf927d7",
+    "index.html": "d49b9fe27e763eabc86e7ce654262a9a6e7190c5344cd88d5e6238dbabb59209",
+    "push-to-pr34.sh": "766f551e153c9f880841627c16ad75aa52f40bd243d1d5b8b04f68a6b3cea172",
+    "source/build.py": "709eb6178a13e0de11599519e6d13149d4d08c0b7a0e4c28eb4e3d6ebcb22122",
+    "source/dist/index.html": "d49b9fe27e763eabc86e7ce654262a9a6e7190c5344cd88d5e6238dbabb59209",
+    "source/src/app-core.js": "210ee3f28180fee0a0342da107c7d3a9fdb648e82f9158e0d52e26e65825ccb3",
+    "source/src/app-ui.js": "03bd6ffeceabf89c36f240c865f41b5197fd24bcacf7b1cca42d820e0518aabe",
+    "source/src/data.js": "2f3a0ac8dd112f2742bf2f53d6705754307e9e8620faecf9031becf55410f8d8",
+    "source/src/engine.js": "2f1cd9c5939497565b97ce126bd151409f99f4dfd086a528bf72ce8884f533b1",
+    "source/src/index.tpl.html": "68ddb24039ca38f33136b354348d9bbfbebd9ef018497c86ab8219b163f52365",
+    "source/src/style.css": "1c0a6db7b9a9f945f77059de1cf91deccbd933a018412a3200df12876be6ace2",
+    "source/src/tree.js": "14ccd4585cc8ec895e82d5735533c1d6b286ca98916a49e37e81774d23035ad7",
+    "source/src/worlds.js": "3705a6b1f154eea96e52a9ad38a61824e022a8b761818095189acd40a0906064",
+    "source/tests/test_build.py": "90dd448495be48ab8507a920fe64b1498ddb4b094230e82a705ea80e8e4a9f8c",
+    "source/tests/test_canonical.py": "aac339945e8fe56e51f6c0afe574ed3f0d1091e2dde105618c97b4a034960585",
+    "source/tests/test_preservation.py": "02825072b1a0ca0d2bd71e72e5b219ef9105c200af79833a5a025cb75760fcbd",
+    "validation/browser-acceptance.mjs": "c358cb0283099038cd517a6cab07218deda7daafc5526d4f3cd9d3fa5dd4b2db",
+    "validation/check-release-archive.py": "8ceb4e23e304fd5bfb01cfcbc3859c9ba04ef40a9d671641ac50fdfc73179e99",
+    "validation/original-data.sha256": "8b1a7ed48d0193bba6288db50a649d11a8a107411e08ede1702cc6fe9431d6fd",
+    "validation/original-parity-report.json": "46989829e71d28590e68aa511599f61bd1591054ce8cb1ca1bed915c1ca629af",
+    "validation/release-checks.py": "b411a5fab67a9398d2e57be3499394f7f7dc4c53cfcfec29d6bf37ee47156cf9",
+    "validation/verify-original-parity.py": "7a4626f5858ec5de1a489c83e4197c58f0b3a51167dee695fdf3939d8d586cf4"
+  },
+  "original_source_parity": "6 unchanged modules; 2 additive modified modules; 0 missing"
+}

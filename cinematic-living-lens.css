@@ -1,0 +1,67 @@
+/* Living Universe 3.2 — additive cinematic source journey, no fake outcomes. */
+.awakening-cinema{--cinema-glass:rgba(4,12,29,.76);position:relative;z-index:3;align-self:end;width:min(100%,690px);margin:1.5rem auto 0;padding:1rem 1.1rem;border:1px solid rgba(247,209,138,.36);border-radius:1.3rem;background:linear-gradient(145deg,rgba(27,47,78,.83),var(--cinema-glass) 60%,rgba(42,18,47,.8));box-shadow:0 24px 75px #0009,inset 0 1px 0 #ffffff20;backdrop-filter:blur(18px);color:#f6f4ed}
+.awakening-cinema:before{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(110deg,transparent 10%,#f17d7730 30%,#69e6b431 52%,#75aaff30 73%,transparent 90%);mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;padding:2px}
+.awakening-cinema-title{margin:0;color:#f7d18a;font-size:.72rem;font-weight:800;letter-spacing:.2em}
+.awakening-cinema-description{margin:.3rem 0 .8rem;font-size:.9rem;color:#e2e9f1}
+.awakening-cinema-rail{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.45rem}
+.awakening-cinema-step{min-width:0;min-height:56px;padding:.55rem .4rem;border:1px solid #ffffff38;border-radius:.75rem;background:#09182bd9;color:#f6f4ed;font:600 .82rem/1.25 system-ui,sans-serif;cursor:pointer;transition:transform .25s,border-color .25s,background .25s}
+.awakening-cinema-step small{display:block;margin-top:.25rem;color:#c9d9e4;font-size:.65rem;font-weight:400}
+.awakening-cinema-step:nth-child(1),.awakening-cinema-step:nth-child(2){border-bottom-color:#fa858b}
+.awakening-cinema-step:nth-child(3),.awakening-cinema-step:nth-child(4){border-bottom-color:#6be6bd}
+.awakening-cinema-step:nth-child(5),.awakening-cinema-step:nth-child(6){border-bottom-color:#8ec4ff}
+.awakening-cinema-step[aria-pressed=true]{border-color:#f7d18a;background:#374b61;box-shadow:0 0 24px #f7d18a2b}
+.awakening-cinema-step:hover:not(:disabled){transform:translateY(-2px);border-color:#f7d18a}
+.awakening-cinema-step:disabled{opacity:.48;cursor:not-allowed}
+.awakening-cinema :focus-visible{outline:3px solid #f7d18a;outline-offset:3px}
+.awakening-cinema-detail{min-height:2.5rem;margin:.8rem 0 .35rem;font-size:.82rem;line-height:1.5;color:#e1eaf0}
+.awakening-cinema-detail p{margin:.15rem 0}
+.awakening-cinema-actions{display:flex;flex-wrap:wrap;gap:.65rem;align-items:center}
+.awakening-cinema-actions a,.awakening-cinema-reset{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:.55rem .85rem;border:1px solid #e6c67e;border-radius:2rem;background:#132d42;color:#fff;font:600 .8rem system-ui,sans-serif;text-decoration:none;cursor:pointer}
+.awakening-cinema-actions a[hidden]{display:none}
+.world .aurora{transform:translate3d(var(--cinema-parallax-x,0px),var(--cinema-parallax-y,0px),0)}
+.world .stars{transform:translate3d(var(--cinema-parallax-x,0px),var(--cinema-parallax-y,0px),0)}
+@media(max-width:700px){.world{min-height:100svh}.awakening-cinema{width:100%;margin:1rem 0 0;padding:.75rem;border-radius:1rem;backdrop-filter:none}.awakening-cinema-rail{grid-template-columns:repeat(2,minmax(0,1fr))}.awakening-cinema-step{min-height:48px;font-size:.75rem}.awakening-cinema-description{font-size:.8rem}}
+@media (min-width:701px) and (max-width:920px){.world>.awakening-cinema{width:min(100%,420px)}}
+@media(prefers-reduced-motion:reduce){.awakening-cinema-step{transition:none}.awakening-cinema-step:hover:not(:disabled){transform:none}.world .aurora,.world .stars{transform:none!important}}
+
+/* Source constellation: interactive evidence trail within the cinematic world. */
+.awakening-explorer{display:grid;gap:.65rem;margin-top:1rem;padding-top:.85rem;border-top:1px solid #f7d18a40}
+.awakening-explorer label{display:grid;gap:.35rem;font-size:.78rem;color:#e4ebf3}
+.awakening-explorer input{width:100%;min-width:0;min-height:44px;padding:.65rem .8rem;border:1px solid #8ec4ff99;border-radius:.7rem;background:#061525;color:#fff;font:inherit}
+.awakening-explorer-results{display:flex;flex-wrap:wrap;gap:.4rem;max-height:9rem;overflow-y:auto;font-size:.78rem;color:#d9e5ee}
+.awakening-explorer-result,.awakening-explorer-crumbs button,.awakening-explorer-history button{min-height:44px;border:1px solid #8ec4ff66;border-radius:.65rem;padding:.45rem .65rem;background:#0b2540;color:#fff;font:600 .78rem system-ui,sans-serif;cursor:pointer}
+.awakening-explorer-crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:.25rem;font-size:.8rem}
+.awakening-explorer-crumbs button[aria-current=location]{border-color:#f7d18a;color:#ffe2a2}
+.awakening-explorer-history{display:flex;align-items:center;justify-content:space-between;gap:.7rem}
+.awakening-explorer-history button:disabled{opacity:.45;cursor:not-allowed}
+.awakening-explorer-map{display:flex;align-items:center;gap:.5rem;font-size:.62rem;letter-spacing:.08em;color:#d9e5ee}
+.awakening-explorer-map-track{position:relative;width:84px;height:42px;border:1px solid #f7d18a80;border-radius:50% 50% 40% 40%;background:radial-gradient(ellipse at 50% 40%,#64deb542,transparent 70%),linear-gradient(135deg,#d75d5740,#4caa8850,#477cdb50)}
+.awakening-explorer-map-focus{position:absolute;width:9px;height:9px;transform:translate(-50%,-50%);border-radius:50%;background:#ffe3a0;box-shadow:0 0 0 3px #ffe3a033,0 0 12px #ffe3a0}
+@media(max-width:700px){.awakening-explorer-history{align-items:flex-start;flex-wrap:wrap}.awakening-explorer-map{margin-left:auto}.awakening-explorer-results{max-height:7rem}}
+@media(prefers-reduced-motion:reduce){.awakening-explorer *{scroll-behavior:auto!important;transition:none!important}}
+
+/* Evidence Flight transition is a primary, accessible continuation, not a dashboard. */
+.awakening-cinema-flight{min-height:44px;padding:.6rem 1rem;border:1px solid #f7d18a;border-radius:2rem;background:linear-gradient(110deg,#743a51,#216e61 55%,#284f91);color:#fff;font:700 .82rem system-ui,sans-serif;cursor:pointer;box-shadow:0 0 20px #65d9b133}
+.awakening-cinema-flight:hover{filter:brightness(1.18)}
+@media(max-width:700px){.awakening-cinema-flight{flex:1 1 100%;min-height:48px}}
+@media(prefers-reduced-motion:reduce){.awakening-cinema-flight{transition:none}}
+
+/* Living Universe 3.3: source-to-outcome pathways, not fabricated products. */
+.awakening-pathways{display:grid;gap:.6rem;padding:.85rem;border:1px solid #7cbaa77a;border-radius:1rem;background:linear-gradient(130deg,#1c3148d9,#103a3ad9 50%,#2c2549d9);box-shadow:inset 0 1px 0 #ffffff18}
+.awakening-pathways h3{margin:0;color:#f7d18a;font-size:.95rem;letter-spacing:.03em}
+.awakening-pathways-status{margin:0;color:#e5f3ee;font-size:.8rem;line-height:1.55}
+.awakening-pathways-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:.55rem}
+.awakening-pathways-list p{margin:0;font-size:.8rem;color:#c9d9e4}
+.awakening-pathways-node{min-height:48px;min-width:0;padding:.65rem .75rem;text-align:left;border:1px solid #8ec4ff77;border-left:3px solid #f7d18a;border-radius:.75rem;background:#0a1d34;color:#fff;font:600 .8rem/1.4 system-ui,sans-serif;overflow-wrap:anywhere;cursor:pointer}
+.awakening-pathways-node:hover{border-color:#f7d18a;background:#18334b}
+.awakening-pathways-node:focus-visible{outline:3px solid #f7d18a;outline-offset:3px}
+@media(max-width:700px){.awakening-pathways{padding:.7rem}.awakening-pathways-list{grid-template-columns:1fr}.awakening-pathways-node{min-height:48px}}
+@media(prefers-reduced-motion:reduce){.awakening-pathways-node{transition:none!important}}
+
+/* At tablet widths the absolute world-gates overlapped documented pathway
+   controls (Chromium 768px). Keep both navigation surfaces in normal flow;
+   neither is hidden or made pointer-inert. */
+@media (min-width:701px) and (max-width:800px){
+ .world>.world-gates{position:relative;inset:auto;left:auto;right:auto;bottom:auto;width:min(100%,420px);margin:1rem auto;z-index:2}
+ .world>.awakening-cinema{position:relative;z-index:4}
+}

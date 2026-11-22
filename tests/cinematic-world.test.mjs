@@ -43,7 +43,7 @@ test('stage dropdown and stage buttons share semantic focus behavior',()=>{
 test('touch gestures do not accidentally activate lineage nodes and search remains reversible',()=>{
  const js=read('cinematic-explorer.js');
  assert.match(js,/gestureMoved=true/);
- assert.match(js,/if\(gestureMoved\)\{e\.preventDefault\(\);return;/);
+ assert.match(js,/if\(gestureMoved\|\|pinchUsed\)\{e\.preventDefault\(\);return;/);
  assert.match(js,/if\(match\.id!==selected\)history\.push\(selected\)/);
  assert.match(js,/e\.pointerType==='mouse'/);
 });
@@ -98,6 +98,19 @@ test('cinematic hero projects only real lineage records and preserves root-to-fr
  assert.match(css,/\.living-source-node:focus-visible/);
  assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
  assert.doesNotMatch(js,/fetch\(|localStorage|sendBeacon|Math\.random|reward_xp/);
+});
+
+test('source projection mounts voyage before chapter rail insertion',()=>{
+ const js=read('cinematic-source-projection.js');
+ const voyageInsert=js.indexOf('inspector.insertBefore(voyage,controls)');
+ const chapterInsert=js.indexOf('inspector.insertBefore(chapterRail,voyage)');
+ assert.ok(voyageInsert>=0,'Voyage mount statement exists');
+ assert.ok(chapterInsert>voyageInsert,'Chapter rail is inserted only after voyage is mounted');
+});
+
+test('tablet cinematic panel width cap is scoped to the hero world container',()=>{
+ const css=read('cinematic-living-lens.css');
+ assert.match(css,/@media \(min-width:701px\) and \(max-width:920px\)\{\.world>\.awakening-cinema\{width:min\(100%,420px\)\}\}/);
 });
 
 // Newly documented nodes must never silently disappear from the hero because their IDs
@@ -254,4 +267,47 @@ test('cinematic energy follows only actual published ancestry and respects acces
  assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
  assert.match(css,/@media\(max-width:480px\)/);
  assert.doesNotMatch(js,/fetch\(|XMLHttpRequest|localStorage|sendBeacon|Math\.random|reward_xp/);
+});
+
+test('Android cinematic entrance retains source stage controls without overlay collisions',()=>{
+ const css=read('cinematic-world.css');
+ const html=read('cinematic-world.html');
+ assert.match(css,/Living Universe 3\.1 — Android cinematic-first composition/);
+ assert.match(css,/\.world \.world-beacons\s*\{[\s\S]*?overflow-x: auto/);
+ assert.match(css,/scroll-snap-type: x proximity/);
+ assert.match(css,/\.world \.tree\s*\{[\s\S]*?grid-row: 2/);
+ assert.match(css,/\.world \.world-gates\s*\{[\s\S]*?grid-row: 4/);
+ assert.match(css,/env\(safe-area-inset-bottom\)/);
+ assert.match(css,/prefers-reduced-data: reduce/);
+ for(const stage of ['root','trunk','branch','leaf','flower','fruit'])
+   assert.match(html,new RegExp('data-stage="'+stage+'"'));
+ assert.match(html,/id="world-beacons"/);
+ assert.match(html,/href="#evidence-world"/);
+});
+
+test('cinematic chapter journey uses only published biological stages',()=>{
+ const js=read('cinematic-source-projection.js'),css=read('cinematic-world.css');
+ for(const stage of ['root','trunk','branch','leaf','flower','fruit'])
+   assert.match(js,new RegExp("'"+stage+"'"));
+ assert.match(js,/visible\.filter\(n=>n\.kind===kind\)/);
+ assert.match(js,/button\.disabled=!records\.length/);
+ assert.match(js,/renderChapters\(\)/);
+ assert.match(js,/pathTo\(selected\)/);
+ assert.match(js,/chapterRail\.setAttribute\('aria-label'/);
+ assert.match(css,/\.living-chapter-list/);
+ assert.match(css,/\.living-chapter-choice:focus-visible/);
+ assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
+ assert.doesNotMatch(js,/reward_xp|Math\.random|sendBeacon|localStorage/);
+});
+
+test('pilgrimage spatial map consumes canonical published projection with readiness handoff',()=>{
+ const producer=read('cinematic-source-projection.js');
+ const consumer=read('cinematic-pilgrimage.js');
+ assert.match(producer,/AIFT_TREE_SOURCE_COORDINATES/);
+ assert.match(producer,/Object\.freeze\(publishedCoordinates\)/);
+ assert.match(producer,/aift:tree-source-projection-ready/);
+ assert.match(consumer,/window\.AIFT_TREE_SOURCE_COORDINATES\?\.\[id\]/);
+ assert.match(consumer,/document\.addEventListener\('aift:tree-source-projection-ready'/);
+ assert.match(consumer,/No published Tree coordinates are available yet/);
+ assert.doesNotMatch(consumer,/Math\.random|reward_xp|sendBeacon/);
 });

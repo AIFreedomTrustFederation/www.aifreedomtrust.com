@@ -34,6 +34,15 @@ inspector.append(heading,description,lineage,destination,controls,count,director
 /* Evidence-bound voyage: a reversible source-to-outcome journey inside the hero.
    Camera framing is presentation only; no product, readiness or relationship is inferred. */
 const voyage=document.createElement('nav');voyage.className='living-voyage';voyage.setAttribute('aria-label','Explore documented source lineage');
+/* Source-backed chapter rail: chapters are biological stages, never invented products. */
+const chapterRail=document.createElement('nav');chapterRail.className='living-chapter-rail';
+chapterRail.setAttribute('aria-label','Journey through documented growth stages');
+const chapterHeading=document.createElement('p');chapterHeading.className='living-chapter-heading';
+chapterHeading.textContent='The six movements of emergence';
+const chapterList=document.createElement('ol');chapterList.className='living-chapter-list';
+chapterRail.append(chapterHeading,chapterList);
+const stageOrder=['root','trunk','branch','leaf','flower','fruit'];
+const stageNames={root:'Roots · Origins',trunk:'Trunk · Federation',branch:'Branches · Systems',leaf:'Leaves · Capabilities',flower:'Flowers · Emerging work',fruit:'Fruits · Experiences'};
 const voyageTitle=document.createElement('h3');voyageTitle.textContent='Follow the living lineage';
 const voyageHint=document.createElement('p');voyageHint.textContent='Choose a published root or source. Follow only documented parent-child connections.';
 const voyageTrail=document.createElement('ol');voyageTrail.className='living-voyage-trail';
@@ -51,7 +60,7 @@ const cameraHelp=document.createElement('p');cameraHelp.className='living-camera
 const cameraAnnounce=document.createElement('p');cameraAnnounce.className='living-camera-announcement';cameraAnnounce.setAttribute('role','status');cameraAnnounce.setAttribute('aria-live','polite');
 voyageControls.append(voyageBack,voyageReset,voyageZoomIn,voyageZoomOut);
 voyage.append(voyageTitle,voyageHint,voyageTrail,voyageNext,voyageControls,cameraHelp,cameraAnnounce,voyageMap);
-inspector.insertBefore(voyage,controls);
+inspector.insertBefore(voyage,controls);inspector.insertBefore(chapterRail,voyage);
 let view={x:0,y:0,w:1000,h:1000},previous=[];
 const setView=(x,y,w)=>{
  const size=Math.max(250,Math.min(1000,w)),max=1000-size;
@@ -173,11 +182,38 @@ for(const kind of Object.keys(stageBands)){
 }
 // A node may have an unpublished parent: never manufacture an edge in that case.
 const projectedIds=new Set(visible.map(n=>n.id));
+// A read-only projection contract for the pilgrimage minimap. These coordinates
+// are generated from the same curated records as the visible SVG source dots.
+const publishedCoordinates=Object.create(null);
+for(const node of visible)if(locations[node.id])publishedCoordinates[node.id]=Object.freeze([...locations[node.id]]);
+Object.defineProperty(window,'AIFT_TREE_SOURCE_COORDINATES',{value:Object.freeze(publishedCoordinates),configurable:true});
 let selectedId=null;
 const anchors=new Map();
+/* Only published records populate chapters. An empty fruit stage stays empty;
+   no repository or unverified destination can be promoted into a product. */
+function renderChapters(){
+ chapterList.replaceChildren();
+ for(const kind of stageOrder){
+  const records=visible.filter(n=>n.kind===kind);
+  const li=document.createElement('li'),button=document.createElement('button');
+  button.type='button';button.className='living-chapter-choice';
+  button.dataset.stage=kind;
+  button.disabled=!records.length;
+  button.textContent=stageNames[kind]+' · '+records.length+' documented';
+  button.setAttribute('aria-pressed',String(!!selectedId&&byId.get(selectedId)?.kind===kind));
+  button.addEventListener('click',()=>{
+   const selected=byId.get(selectedId);
+   const child=records.find(n=>n.parent===selected?.id);
+   const ancestral=records.find(n=>selected&&pathTo(selected).some(a=>a.id===n.id));
+   const target=child||ancestral||records[0];
+   if(target)selectNode(target);
+  });
+  li.append(button);chapterList.append(li);
+ }
+}
 function selectNode(node,record=true){
  if(record&&selectedId&&selectedId!==node.id)previous.push(selectedId);
- selectedId=node.id;focus(node);renderVoyage(node);
+ selectedId=node.id;focus(node);renderVoyage(node);renderChapters();
  const anchor=anchors.get(node.id);if(anchor){anchor.setAttribute('aria-current','true')}
  for(const [id,element] of anchors){if(id!==node.id)element.removeAttribute('aria-current')}
 }
@@ -227,6 +263,7 @@ function focus(node){
  else {destination.removeAttribute('href');destination.removeAttribute('target')}
  if(directory.children.length)for(const button of directory.querySelectorAll('button'))button.setAttribute('aria-pressed',String(button.textContent===node.label+' · '+node.kind));
 }
-renderDirectory();
+renderDirectory();renderChapters();
+document.dispatchEvent(new Event('aift:tree-source-projection-ready'));
 host.addEventListener('pointerleave',()=>{if(!reduced.matches&&!host.contains(document.activeElement)){dots.querySelectorAll('.living-source-active').forEach(n=>n.classList.remove('living-source-active'));lines.querySelectorAll('.living-source-active').forEach(n=>n.classList.remove('living-source-active'))}});
 })();

@@ -1,0 +1,133 @@
+/* Camera-coupled cinematic atmosphere. Visual decoration never claims provenance. */
+.world{--passage-x:0;--passage-y:0;--passage-focus:0;isolation:isolate}
+.passage-environment{pointer-events:none;transform-origin:500px 500px}
+.passage-halo{fill:url(#halo);opacity:.32;transform:translate(calc(var(--passage-x) * 18px),calc(var(--passage-y) * 12px));transition:transform .8s ease}
+.passage-horizon{fill:none;stroke:url(#passage-spectrum);stroke-width:3;opacity:.5;filter:drop-shadow(0 0 13px #6be6ca)}
+.passage-mote{fill:#d9f5e7;opacity:.5;filter:drop-shadow(0 0 8px #9af9d1)}
+.passage-lens{position:absolute;z-index:1;pointer-events:none;width:min(80vmin,690px);aspect-ratio:1;left:50%;top:45%;border-radius:50%;transform:translate(calc(-50% + var(--passage-x) * -22px),calc(-50% + var(--passage-y) * -18px)) scale(calc(1 + var(--passage-focus) * .2));background:radial-gradient(circle,transparent 36%,#57e8b408 57%,transparent 72%);transition:transform .8s ease}
+.passage-lens-orbit,.passage-lens-core{position:absolute;inset:8%;border:1px solid #e8c98a35;border-radius:50%;box-shadow:0 0 45px #64ddc014,inset 0 0 35px #5db3ef13}
+.passage-lens-core{inset:21%;border-style:dashed;opacity:.6;transform:rotate(30deg)}
+.passage-caption{position:absolute;z-index:2;top:clamp(4rem,12svh,8rem);left:50%;transform:translateX(-50%);width:max-content;max-width:80%;text-align:center;pointer-events:none;font-size:clamp(.55rem,1.6vw,.72rem);letter-spacing:.15em;color:#e9d6a8;text-shadow:0 2px 10px #000}
+.world[data-passage-stage=branch] .passage-horizon,.world[data-passage-stage=leaf] .passage-horizon{stroke:#6fe5bb}
+.world[data-passage-stage=flower] .passage-horizon{stroke:#bda1ff}
+.world[data-passage-stage=fruit] .passage-horizon{stroke:#f6bd8a}
+@media(max-width:600px){.passage-caption{top:5.3rem;letter-spacing:.08em;max-width:65%;white-space:normal}.passage-lens{width:96vmin;top:40%}.passage-mote{opacity:.3}}
+@media(prefers-reduced-motion:reduce){.passage-lens,.passage-halo{transition:none!important}.passage-mote{filter:none}}
+@media(prefers-reduced-data:reduce){.passage-lens{display:none}.passage-mote{filter:none}}
+.passage-static .passage-lens,.passage-static .passage-halo{transition:none!important}
+/* Layered, camera-coupled depth planes; entirely decorative, never source records. */
+.world{--passage-scale:1}
+.passage-parallax{pointer-events:none;transform:translate(calc(var(--passage-x) * -12px),calc(var(--passage-y) * -8px));transition:transform .65s ease}
+.passage-depth{fill:none;stroke:url(#passage-spectrum);stroke-linecap:round;vector-effect:non-scaling-stroke;opacity:.2;filter:drop-shadow(0 0 12px #7cdad5)}
+.passage-depth-0{stroke-width:1.5;opacity:.3}
+.passage-depth-1{stroke-width:3;opacity:.18}
+.passage-depth-2{stroke-width:5;opacity:.1}
+.world[data-passage-stage=root] .passage-depth{stroke:#e87674}
+.world[data-passage-stage=leaf] .passage-depth{stroke:#67dfb2}
+.world[data-passage-stage=fruit] .passage-depth{stroke:#f6bd8a}
+@media(prefers-reduced-motion:reduce){.passage-parallax{transition:none!important}}
+@media(prefers-reduced-data:reduce){.passage-depth{filter:none}.passage-depth-2{display:none}}
+.passage-static .passage-parallax{transition:none!important}
+
+/* Source-bound luminous currents. Only verified parent edges receive light. */
+.passage-currents{pointer-events:none;mix-blend-mode:screen}
+.passage-current-edge{fill:none;stroke:url(#passage-spectrum);stroke-width:2;stroke-linecap:round;opacity:.32;vector-effect:non-scaling-stroke;filter:drop-shadow(0 0 7px #68e9cc);stroke-dasharray:12 22;animation:passage-current-flow 11s linear infinite}
+.passage-source-glimmer{fill:#e9d5a4;opacity:.78;filter:drop-shadow(0 0 10px #a9f6db);animation:passage-source-breathe 5s ease-in-out infinite}
+.world[data-passage-stage=root] .passage-current-edge{stroke:#f18a80}
+.world[data-passage-stage=leaf] .passage-current-edge{stroke:#72e8b4}
+.world[data-passage-stage=fruit] .passage-current-edge{stroke:#eac38b}
+@keyframes passage-current-flow{to{stroke-dashoffset:-136}}
+@keyframes passage-source-breathe{50%{opacity:.36}}
+@media(prefers-reduced-motion:reduce){.passage-current-edge,.passage-source-glimmer{animation:none!important;stroke-dasharray:none}}
+@media(prefers-reduced-data:reduce){.passage-current-edge{filter:none;animation:none;stroke-dasharray:none}.passage-source-glimmer{filter:none;animation:none}}
+.passage-static .passage-current-edge,.passage-static .passage-source-glimmer{animation:none!important}
+@media(max-width:600px){.passage-current-edge{stroke-width:1.5;opacity:.25}.passage-source-glimmer{opacity:.6}}
+
+/* Dimensional architecture is strictly anchored to real projected lineage. */
+.passage-architecture{pointer-events:none;mix-blend-mode:screen}
+.passage-growth-branch{fill:none;stroke-width:clamp(2px,0.35vw,5px);stroke-linecap:round;opacity:.48;vector-effect:non-scaling-stroke;filter:drop-shadow(0 0 9px currentColor)}
+.passage-growth-crown{fill:none;stroke-width:2;opacity:.56;vector-effect:non-scaling-stroke;filter:drop-shadow(0 0 12px #9be6d0)}
+.world[data-passage-stage=branch] .passage-growth-branch[data-kind=branch],
+.world[data-passage-stage=leaf] .passage-growth-crown[data-kind=leaf],
+.world[data-passage-stage=flower] .passage-growth-crown[data-kind=flower],
+.world[data-passage-stage=fruit] .passage-growth-crown[data-kind=fruit]{opacity:.95;stroke-width:3}
+@media(max-width:600px){.passage-growth-branch{opacity:.27;stroke-width:1.5}.passage-growth-crown{opacity:.4}}
+@media(prefers-reduced-motion:reduce){.passage-growth-branch,.passage-growth-crown{transition:none!important}}
+@media(prefers-reduced-data:reduce){.passage-growth-branch,.passage-growth-crown{filter:none}.passage-growth-crown{opacity:.3}}
+
+
+/* Living Universe 3.1: coherent cinematic depth across the documented journey.
+   These layers are purely atmospheric; all source nodes and destinations remain
+   controlled by the existing published lineage renderer. */
+.world{
+  --awakening-red: #f38b7e;
+  --awakening-green: #73eac2;
+  --awakening-blue: #8ab9ff;
+  --awakening-gold: #e8c98a;
+  --awakening-glow: var(--awakening-red);
+  --awakening-secondary: var(--awakening-blue);
+}
+.world[data-passage-stage="trunk"]{--awakening-glow:var(--awakening-gold);--awakening-secondary:var(--awakening-green)}
+.world[data-passage-stage="branch"],.world[data-passage-stage="leaf"]{--awakening-glow:var(--awakening-green);--awakening-secondary:var(--awakening-blue)}
+.world[data-passage-stage="flower"]{--awakening-glow:#c3a2f6;--awakening-secondary:var(--awakening-blue)}
+.world[data-passage-stage="fruit"]{--awakening-glow:var(--awakening-gold);--awakening-secondary:var(--awakening-green)}
+/* A composited sky field changes with the actual selected biological stage.
+   No additional DOM markers, synthetic achievements, or network assets. */
+.world::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  background:
+    radial-gradient(ellipse 50% 40% at calc(50% - var(--passage-x) * 7%) calc(62% - var(--passage-y) * 6%),color-mix(in srgb,var(--awakening-glow) 23%,transparent),transparent 78%),
+    radial-gradient(ellipse 54% 38% at calc(50% + var(--passage-x) * 8%) 17%,color-mix(in srgb,var(--awakening-secondary) 16%,transparent),transparent 85%),
+    linear-gradient(165deg,transparent 15%,#e9bd7620 51%,transparent 85%);
+  opacity:.85;
+  transition:background-color .7s ease,opacity .7s ease;
+}
+.passage-halo{
+  stroke:var(--awakening-glow);
+  stroke-width:1.5;
+  stroke-opacity:.28;
+  vector-effect:non-scaling-stroke;
+}
+.passage-lens-orbit{
+  border-color:color-mix(in srgb,var(--awakening-gold) 42%,transparent);
+  box-shadow:0 0 54px color-mix(in srgb,var(--awakening-glow) 16%,transparent),inset 0 0 46px #78bfff14;
+}
+.passage-lens-core{
+  border-color:color-mix(in srgb,var(--awakening-secondary) 35%,transparent);
+}
+.passage-growth-branch{
+  stroke-linejoin:round;
+  transition:opacity .45s ease;
+}
+.passage-growth-crown{
+  transition:opacity .45s ease,stroke-width .45s ease;
+}
+.world[data-passage-stage="root"] .passage-growth-branch[data-kind="root"],
+.world[data-passage-stage="trunk"] .passage-growth-branch[data-kind="trunk"],
+.world[data-passage-stage="branch"] .passage-growth-branch[data-kind="branch"],
+.world[data-passage-stage="leaf"] .passage-growth-branch[data-kind="leaf"],
+.world[data-passage-stage="flower"] .passage-growth-branch[data-kind="flower"],
+.world[data-passage-stage="fruit"] .passage-growth-branch[data-kind="fruit"]{
+  opacity:.92;
+  stroke-width:3.5;
+}
+@media(max-width:600px){
+  .world::before{opacity:.6;background:
+    radial-gradient(ellipse 65% 38% at 50% 58%,color-mix(in srgb,var(--awakening-glow) 18%,transparent),transparent 85%),
+    linear-gradient(165deg,transparent,#7cb6ff0c,transparent)}
+  .passage-lens{width:min(92vw,520px);max-width:100%;overflow:hidden}
+  .passage-growth-branch{filter:none}
+  .passage-growth-crown{filter:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .world::before,.passage-growth-branch,.passage-growth-crown{transition:none!important}
+}
+@media(prefers-reduced-data:reduce){
+  .world::before{background:none}
+  .passage-lens-orbit,.passage-lens-core{box-shadow:none}
+}
+.passage-static .world::before,.passage-static .passage-growth-branch,.passage-static .passage-growth-crown{transition:none!important}
