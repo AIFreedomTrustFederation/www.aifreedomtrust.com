@@ -182,6 +182,11 @@ for(const kind of Object.keys(stageBands)){
 }
 // A node may have an unpublished parent: never manufacture an edge in that case.
 const projectedIds=new Set(visible.map(n=>n.id));
+// A read-only projection contract for the pilgrimage minimap. These coordinates
+// are generated from the same curated records as the visible SVG source dots.
+const publishedCoordinates=Object.create(null);
+for(const node of visible)if(locations[node.id])publishedCoordinates[node.id]=Object.freeze([...locations[node.id]]);
+Object.defineProperty(window,'AIFT_TREE_SOURCE_COORDINATES',{value:Object.freeze(publishedCoordinates),configurable:true});
 let selectedId=null;
 const anchors=new Map();
 /* Only published records populate chapters. An empty fruit stage stays empty;
@@ -259,5 +264,6 @@ function focus(node){
  if(directory.children.length)for(const button of directory.querySelectorAll('button'))button.setAttribute('aria-pressed',String(button.textContent===node.label+' · '+node.kind));
 }
 renderDirectory();renderChapters();
+document.dispatchEvent(new Event('aift:tree-source-projection-ready'));
 host.addEventListener('pointerleave',()=>{if(!reduced.matches&&!host.contains(document.activeElement)){dots.querySelectorAll('.living-source-active').forEach(n=>n.classList.remove('living-source-active'));lines.querySelectorAll('.living-source-active').forEach(n=>n.classList.remove('living-source-active'))}});
 })();
