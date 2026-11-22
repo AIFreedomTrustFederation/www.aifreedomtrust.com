@@ -42,12 +42,12 @@
 .world .tree .canopy{filter:drop-shadow(0 0 17px var(--depth-blue))}
 .world :is(a,button):focus-visible{outline:3px solid #ffe3a8;outline-offset:4px}
 @media(max-width:800px){
-  .world{min-height:100svh;overflow:hidden}
+  .world{min-height:100svh;overflow:clip}
   .world .intro{max-width:min(100%,34rem)}
   .world .intro::before{inset:-1rem -1rem -1.5rem -1rem}
   .world .tree{max-height:67svh;filter:drop-shadow(0 0 20px rgba(100,230,180,.45))}
-  .world .world-beacons{max-width:100%;overflow:visible}
-  .world .world-gates{max-width:calc(100% - 2rem)}
+  .world .world-beacons{max-width:100%;overflow-x:auto;overflow-y:hidden}
+  .world .world-gates{max-width:100%}
   .world .world-gate{min-width:0;overflow-wrap:anywhere}
 }
 @media(max-width:440px){
@@ -55,7 +55,7 @@
   .world .intro .eyebrow{font-size:.64rem;letter-spacing:.12em}
   .world .intro>p:not(.eyebrow){font-size:.92rem;line-height:1.42}
   .world .tree{max-height:63svh;opacity:.9}
-  .world .world-beacon{min-width:0;max-width:31vw}
+  .world .world-beacon{min-width:clamp(102px,30vw,112px);max-width:none}
   .world .world-beacon strong,.world .world-beacon small{overflow-wrap:anywhere}
 }
 @media(max-height:640px) and (max-width:800px){
