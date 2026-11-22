@@ -38,7 +38,7 @@ try {
   });
   assert.equal(frame.worldDisplay,'grid','The mobile theatre must remain a grid: '+JSON.stringify({width,frame}));
   assert.equal(frame.treePosition,'relative','Tree must stay in flow: '+JSON.stringify({width,frame}));
-  assert.equal(frame.treeRow,'2','Tree should have its own scene row: '+JSON.stringify({width,frame}));
+  assert.equal(frame.treeRow,'auto','Tree row should be fluid rather than a legacy fixed-height track: '+JSON.stringify({width,frame}));
   assert.ok(frame.width>=120,'Tree must be large enough to explore: '+JSON.stringify({width,frame}));
   assert.ok(frame.left>=-4&&frame.right<=frame.screenWidth+4,
    'Full Tree viewport must remain horizontally visible: '+JSON.stringify({width,frame}));
