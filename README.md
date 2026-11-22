@@ -122,3 +122,8 @@ The live portal is published through GitHub Pages at <https://aifreedomtrustfede
 ### The Return of the Word
 
 At the public boundary, the Word returns as direction. A reader encounters the mission, understands the architecture, sees the difference between doctrine, implementation, and applied service, and arrives at the repository where the real work can be inspected. The portal succeeds when it does not trap the reader in branding, but leads them toward truth.
+
+
+## Related AIFT-OS operating-system research (not a public-site capability)
+
+The separate [universal OS experience integration guide](docs/aift-universal-os-alignment.md) records how the Living Universe could inform a native/hosted desktop and pre-boot aesthetic. This does **not** make the current public portal a bootable or privileged operating system. The engineering architecture remains under review in [AIFT-OS PR #92](https://github.com/AIFreedomTrustFederation/AIFT-OS/pull/92).
