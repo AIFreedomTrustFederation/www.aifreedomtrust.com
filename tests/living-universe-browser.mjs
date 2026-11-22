@@ -244,6 +244,26 @@ for(const width of [360,390,768,1280]){
     }
     return null;
   });
+  if(!exposed){
+    // Report actual hit-test stacks rather than guessing which HUD layer blocks
+    // the Tree. The probe is read-only and preserves the user journey.
+    const hitMap=await heroTree.evaluate(svg=>{
+      const r=svg.getBoundingClientRect(),samples=[];
+      for(const fy of [.05,.15,.25,.35,.45,.55,.65,.75,.85,.95]){
+        for(const fx of [.05,.15,.25,.35,.45,.55,.65,.75,.85,.95]){
+          const x=r.left+r.width*fx,y=r.top+r.height*fy;
+          if(x<0||y<0||x>=innerWidth||y>=innerHeight)continue;
+          const top=document.elementFromPoint(x,y);
+          const stack=document.elementsFromPoint(x,y).slice(0,5).map(el=>({
+            tag:el.tagName,id:el.id||'',className:typeof el.className==='string'?el.className:(el.className?.baseVal||'')
+          }));
+          samples.push({fx,fy,x:Math.round(x),y:Math.round(y),treeHit:!!top&&(top===svg||svg.contains(top)),stack});
+        }
+      }
+      return {treeRect:r.toJSON(),samples};
+    });
+    console.error('TREE_POINTER_OCCLUSION_DIAGNOSTIC '+JSON.stringify({width,hitMap}));
+  }
   assert.ok(exposed,'Tree needs an exposed pointer-drag surface not obscured by navigator or panels');
   const startX=exposed.x,startY=exposed.y;
   // Mouse pointer drag also exercises the shared Pointer Events path used on Android.
