@@ -308,7 +308,7 @@ for(const width of [360,390,768,1280]){
   await outcomes.filter({hasText:'Federation Atlas'}).click();
   assert.match(await living.locator('.awakening-cinema-detail').innerText(),/Federation Atlas/);
   assert.equal(await living.locator('.awakening-explorer-crumbs button').last().getAttribute('aria-current'),'location');
-  assert.match(await living.locator('.awakening-cinema-source').getAttribute('href'),/atlas\\.html$/);
+  assert.match(await living.locator('.awakening-cinema-source').getAttribute('href'),/atlas\.html$/);
   await living.locator('.awakening-explorer-history button').filter({hasText:'Previous place'}).click();
   assert.match(await living.locator('.awakening-cinema-detail').innerText(),/Public Exploration/);
   // Flight handoff must carry the selected source to the existing evidence
