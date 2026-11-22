@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Living Universe</title>
+<meta name="description" content="AI Freedom Trust Federation: a living federation for human freedom in the age of intelligence. Explore the Tree of Emergence, its seven movements and six living worlds.">
+<meta name="theme-color" content="#04050b">
+<meta property="og:type" content="website">
+<meta property="og:title" content="The Living Universe · AI Freedom Trust Federation">
+<meta property="og:description" content="Explore the complete Tree of Emergence, seven movements, six worlds, journeys and Celestial Atlas.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/*__CSS__*/
+</style>
+</head>
+<body>
+<a class="skip" href="#reflect" id="skiplink">Skip the visual universe and read everything as text</a>
+<div id="app" class="arriving" data-mode="explore" data-loc="tree">
+
+  <div id="stage" tabindex="0" role="group" aria-label="The Tree of Emergence. Every branch, fruit and star is a button. Arrow keys turn the view, plus and minus move closer or farther.">
+    <canvas id="sky" aria-hidden="true"></canvas>
+    <div id="nodes"></div>
+  </div>
+  <div id="bloom" aria-hidden="true"></div>
+
+  <header id="top">
+    <div class="brand">
+      <button type="button" class="wordmark" id="home" data-go="tree">AI Freedom Trust Federation</button>
+      <nav id="crumbs" aria-label="Where you are"></nav>
+      <p id="count" hidden></p>
+    </div>
+    <div class="tools">
+      <button type="button" class="icon" id="btn-sound" aria-pressed="false" aria-label="Sound" title="Sound">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4h3l4 4V6L7 10H4z"/><path d="M15 9.5a3.5 3.5 0 0 1 0 5M17.5 7a7 7 0 0 1 0 10"/></svg>
+      </button>
+      <button type="button" class="icon" id="btn-pause" aria-pressed="false" aria-label="Pause all motion" title="Pause all motion">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg>
+      </button>
+      <button type="button" class="icon" id="btn-menu" aria-label="Comfort and preferences" title="Comfort and preferences">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14M5 16h14"/><circle cx="9" cy="8" r="2.2" fill="#0b0c1c"/><circle cx="15" cy="16" r="2.2" fill="#0b0c1c"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div id="zoom">
+    <button type="button" class="icon" id="z-in" aria-label="Move closer">+</button>
+    <button type="button" class="icon" id="z-out" aria-label="Move farther">&minus;</button>
+    <button type="button" class="icon" id="z-fit" aria-label="See the whole view">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+    </button>
+  </div>
+
+  <nav id="mnav" aria-label="The seven movements" hidden>
+    <button type="button" class="pill" id="m-prev"></button>
+    <span id="m-pos"></span>
+    <button type="button" class="pill" id="m-next"></button>
+  </nav>
+
+  <aside id="panel" aria-label="What you found" hidden>
+    <div class="p-top"><button type="button" class="icon" id="panel-close" aria-label="Close this panel">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div id="panel-body"></div>
+  </aside>
+
+  <div id="journey" hidden>
+    <p id="j-cap" aria-live="polite"></p>
+    <div class="j-row">
+      <button type="button" class="pill" id="j-prev">Back</button>
+      <button type="button" class="pill" id="j-play" aria-pressed="true">Pause</button>
+      <button type="button" class="pill" id="j-next">Next</button>
+      <button type="button" class="pill" id="j-voice" aria-pressed="false" hidden>Narrate</button>
+      <span id="j-count"></span>
+    </div>
+    <button type="button" class="primary" id="j-go" hidden></button>
+  </div>
+
+  <main id="reflect" tabindex="-1" hidden></main>
+
+  <footer id="dock">
+    <button type="button" class="pill" id="btn-tree" hidden>Tree</button>
+    <div class="modes" role="group" aria-label="Ways to explore">
+      <button type="button" data-mode="journey" aria-pressed="false">Journey</button>
+      <button type="button" data-mode="explore" aria-pressed="true">Explore</button>
+      <button type="button" data-mode="reflect" aria-pressed="false">Reflect</button>
+    </div>
+    <button type="button" class="pill" id="btn-import" title="Restore a previously exported journey">Import journey</button>
+    <input id="journey-file" type="file" accept=".json,application/json" hidden aria-label="Choose a previously exported journey">
+    <button type="button" class="pill" id="btn-export" title="Save a private copy of your discoveries">Export journey</button>
+    <button type="button" class="pill" id="btn-atlas">Atlas</button>
+  </footer>
+
+  <section id="atlas" role="dialog" aria-modal="true" aria-labelledby="a-title" hidden>
+    <div class="a-head">
+      <h2 id="a-title">Celestial Atlas</h2>
+      <label class="sr" for="a-search">Search every world and discovery</label>
+      <input id="a-search" type="search" placeholder="Search the universe" autocomplete="off">
+      <button type="button" class="icon" id="a-close" aria-label="Close the atlas">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <p id="a-trail"></p>
+    <div id="a-map">
+      <div id="a-results" hidden></div>
+      <div id="a-zoom">
+        <button type="button" class="icon" id="az-in" aria-label="Zoom in">+</button>
+        <button type="button" class="icon" id="az-out" aria-label="Zoom out">&minus;</button>
+        <button type="button" class="icon" id="az-fit" aria-label="See the whole atlas">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+      </div>
+    </div>
+    <div id="a-card"></div>
+  </section>
+
+  <section id="prefs" role="dialog" aria-modal="true" aria-labelledby="prefs-title" hidden>
+    <div class="sheet">
+      <div class="sheet-head">
+        <h2 id="prefs-title">Comfort</h2>
+        <button type="button" class="icon" id="prefs-close" aria-label="Close">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+      <fieldset>
+        <legend>Motion</legend>
+        <div class="seg">
+          <label><input type="radio" name="motion" id="motion-full" value="full"><span>Full</span></label>
+          <label><input type="radio" name="motion" id="motion-gentle" value="gentle"><span>Gentle</span></label>
+          <label><input type="radio" name="motion" id="motion-still" value="still"><span>Still</span></label>
+        </div>
+        <p class="fine">Gentle keeps the worlds alive and stops the camera from flying. Still holds every picture in place.</p>
+      </fieldset>
+      <fieldset>
+        <legend>Visual richness</legend>
+        <div class="seg">
+          <label><input type="radio" name="intensity" id="int-rich" value="rich"><span>Rich</span></label>
+          <label><input type="radio" name="intensity" id="int-balanced" value="balanced"><span>Balanced</span></label>
+          <label><input type="radio" name="intensity" id="int-light" value="light"><span>Light</span></label>
+        </div>
+        <p class="fine">Light is kinder to older phones and to batteries. Nothing you can read is removed.</p>
+      </fieldset>
+      <fieldset>
+        <legend>Sound</legend>
+        <label class="check"><input type="checkbox" id="pref-sound"> Play the soundscape</label>
+        <label for="pref-vol" class="sr">Volume</label>
+        <input type="range" id="pref-vol" min="0" max="1" step="0.05" value="0.6">
+        <p class="fine">Every sound is made on your device as you travel. Nothing you need to know is carried by sound alone.</p>
+      </fieldset>
+      <fieldset>
+        <legend>Your journey</legend>
+        <label class="check"><input type="checkbox" id="pref-remember"> Remember my journey on this device</label>
+        <p class="fine">Off until you choose it. Kept only in this browser. Nothing is sent anywhere.</p>
+        <p><button type="button" class="go" id="pref-forget">Forget my journey</button></p>
+      </fieldset>
+      <fieldset>
+        <legend>The Awakening</legend>
+        <p><button type="button" class="go" id="pref-replay">Watch the arrival again</button></p>
+      </fieldset>
+      <h3>How to read the labels</h3>
+      <dl class="defs" id="legend"></dl>
+      <p class="fine">Everything here comes from the federation's published works. Symbolic pairings are labeled as metaphor, and nothing is presented as established science.</p>
+    </div>
+  </section>
+
+  <div id="arrival">
+    <p class="a-mark">AI Freedom Trust Federation</p>
+    <p id="a-cap" aria-live="polite"></p>
+    <div class="a-invite" id="a-invite" hidden>
+      <h1>A living federation for human freedom in the age of intelligence</h1>
+      <p>One root. Many branches. Every fruit returns to its source.</p>
+    </div>
+    <div class="a-row">
+      <button type="button" class="primary" id="a-enter" hidden>Enter the Living Universe</button>
+      <button type="button" class="quiet" id="a-skip">Skip the arrival</button>
+      <button type="button" class="quiet" id="a-quiet">Arrive quietly</button>
+    </div>
+  </div>
+
+  <div id="hint" role="status"></div>
+  <div id="live" class="sr" aria-live="polite"></div>
+</div>
+<noscript>
+  <div style="position:fixed;inset:0;z-index:99;background:#04050b;color:#f5eede;padding:24px;font:16px/1.5 system-ui,sans-serif;overflow:auto">
+    <h1 style="font-weight:400">AI Freedom Trust Federation</h1>
+    <p>A living federation for human freedom in the age of intelligence. One root. Many branches. Every fruit returns to its source.</p>
+    <p>The Living Universe needs scripting to draw the Tree of Emergence. You can read the federation's public home at
+    <a style="color:#f4dfae" href="https://aifreedomtrustfederation.github.io/www.aifreedomtrust.com/">aifreedomtrust.com</a>.</p>
+  </div>
+</noscript>
+<script>
+(function () {
+'use strict';
+/*__JS__*/
+})();
+</script>
+</body>
+</html>
