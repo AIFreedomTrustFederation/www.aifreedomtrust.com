@@ -69,6 +69,8 @@ const setView=(x,y,w)=>{
  mapWindow.setAttribute('x',String(view.x/10));mapWindow.setAttribute('y',String(view.y/10));
  mapWindow.setAttribute('width',String(view.w/10));mapWindow.setAttribute('height',String(view.h/10));
 };
+// The accessible navigator may move the same hero camera between gestures.
+const readView=()=>{const v=scene.viewBox.baseVal;view={x:v.x,y:v.y,w:v.width,h:v.height};return {...view}};
 function frame(node){
  const p=locations[node.id];if(!p)return;
  const size=reduced.matches?800:560;
@@ -99,26 +101,27 @@ voyageBack.addEventListener('click',()=>{
  const id=previous.pop(),node=byId.get(id);if(node)selectNode(node,false);
 });
 voyageReset.addEventListener('click',()=>{setView(0,0,1000);mapMarker.setAttribute('cx','50');mapMarker.setAttribute('cy','50')});
-voyageZoomIn.addEventListener('click',()=>setView(view.x+view.w*.125,view.y+view.h*.125,view.w*.75));
-voyageZoomOut.addEventListener('click',()=>setView(view.x-view.w/6,view.y-view.h/6,view.w*4/3));
+voyageZoomIn.addEventListener('click',()=>{readView();setView(view.x+view.w*.125,view.y+view.h*.125,view.w*.75)});
+voyageZoomOut.addEventListener('click',()=>{readView();setView(view.x-view.w/6,view.y-view.h/6,view.w*4/3)});
 /* Pan the actual SVG camera with one finger or a mouse; pinch with two fingers.
    Gesture recognition never invents nodes or changes documented selection. */
-const pointers=new Map();let dragStart=null,pinchStart=null,gestureMoved=false;
+const pointers=new Map();let dragStart=null,pinchStart=null,gestureMoved=false,suppressTapUntil=0;
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+const screenWorld=(x,y)=>{const p=scene.createSVGPoint();p.x=x;p.y=y;const m=scene.getScreenCTM();return m?p.matrixTransform(m.inverse()):{x:500,y:500}};
 scene.setAttribute('tabindex','0');
 scene.setAttribute('aria-keyshortcuts','ArrowUp ArrowDown ArrowLeft ArrowRight + - Home');
 scene.setAttribute('aria-describedby','tree-desc');
 const zoomAt=(factor,x,y)=>{const next=view.w*factor;const ratio=Math.max(0,Math.min(1,(x-view.x)/view.w)),vertical=Math.max(0,Math.min(1,(y-view.y)/view.h));setView(x-next*ratio,y-next*vertical,next)};
 scene.addEventListener('wheel',e=>{
  if(!e.ctrlKey&&!e.metaKey)return; // preserve normal page scrolling
- e.preventDefault();const point=scene.createSVGPoint();point.x=e.clientX;point.y=e.clientY;
+ readView();e.preventDefault();const point=scene.createSVGPoint();point.x=e.clientX;point.y=e.clientY;
  const matrix=scene.getScreenCTM();if(!matrix)return;
  const local=point.matrixTransform(matrix.inverse());
  zoomAt(e.deltaY>0?1.12:.89,local.x,local.y);
 },{passive:false});
 scene.addEventListener('keydown',e=>{
  if(e.target!==scene)return;
- const shift=view.w*.12;
+ readView();const shift=view.w*.12;
  if(e.key==='ArrowLeft')setView(view.x-shift,view.y,view.w);
  else if(e.key==='ArrowRight')setView(view.x+shift,view.y,view.w);
  else if(e.key==='ArrowUp')setView(view.x,view.y-shift,view.w);
@@ -129,13 +132,26 @@ scene.addEventListener('keydown',e=>{
  else return;
  e.preventDefault();cameraAnnounce.textContent='Tree camera '+Math.round(1000/view.w*100)+'% zoom.';
 });
+// Exactly one controller owns the opening Tree's gesture stream. The
+// navigator still provides stage selection and accessible camera buttons.
 scene.style.touchAction='none';
+window.AIFT_HERO_POINTER_OWNER='source-projection';
 scene.addEventListener('pointerdown',e=>{
- if(e.target.closest?.('.living-source-node'))return;
+ if(e.pointerType==='mouse'&&e.button!==0)return;
+ const nodeHit=e.target.closest?.('.living-source-node');
+ if(nodeHit&&e.pointerType!=='touch')return; // preserve mouse links
  pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
- if(pointers.size===1){dragStart={x:e.clientX,y:e.clientY,view:{...view}};pinchStart=null;gestureMoved=false}
- if(pointers.size===2){const [a,b]=[...pointers.values()];pinchStart={distance:Math.max(1,distance(a,b)),view:{...view}};dragStart=null;gestureMoved=true}
- scene.setPointerCapture?.(e.pointerId);
+ if(pointers.size===1){
+  readView();dragStart=nodeHit?null:{x:e.clientX,y:e.clientY,view:{...view}};
+  pinchStart=null;gestureMoved=false;
+ }
+ if(pointers.size===2){
+  const [a,b]=[...pointers.values()],mid={x:(a.x+b.x)/2,y:(a.y+b.y)/2};
+  pinchStart={distance:Math.max(1,distance(a,b)),view:readView(),anchor:screenWorld(mid.x,mid.y)};
+  dragStart=null;gestureMoved=true;suppressTapUntil=performance.now()+450;
+  // A touch beginning on a source node must still be able to join a pinch.
+  for(const id of pointers.keys())try{scene.setPointerCapture(id)}catch{}
+ }else if(!nodeHit)try{scene.setPointerCapture(e.pointerId)}catch{}
 });
 scene.addEventListener('pointermove',e=>{
  if(!pointers.has(e.pointerId))return;
@@ -143,12 +159,21 @@ scene.addEventListener('pointermove',e=>{
  const matrix=scene.getScreenCTM();if(!matrix)return;
  const localDelta=(dx,dy)=>{const inverse=matrix.inverse();return {x:dx*inverse.a+dy*inverse.c,y:dx*inverse.b+dy*inverse.d}};
  if(pointers.size===2&&pinchStart){
-  const [a,b]=[...pointers.values()],size=pinchStart.view.w*pinchStart.distance/Math.max(1,distance(a,b));
-  const cx=pinchStart.view.x+pinchStart.view.w/2,cy=pinchStart.view.y+pinchStart.view.h/2;
-  setView(cx-size/2,cy-size/2,size);gestureMoved=true;
+  const [a,b]=[...pointers.values()],mid={x:(a.x+b.x)/2,y:(a.y+b.y)/2};
+  const ratio=Math.max(1,distance(a,b))/pinchStart.distance;
+  const next=window.AIFT_UNIVERSAL_ZOOM?.frame({
+   start:pinchStart.view,anchor:pinchStart.anchor,center:mid,
+   rect:scene.getBoundingClientRect(),ratio
+  });
+  if(next)setView(next.x,next.y,next.w);
+  else{
+   const size=pinchStart.view.w/ratio,cx=pinchStart.view.x+pinchStart.view.w/2,cy=pinchStart.view.y+pinchStart.view.h/2;
+   setView(cx-size/2,cy-size/2,size);
+  }
+  gestureMoved=true;suppressTapUntil=performance.now()+450;
  }else if(pointers.size===1&&dragStart){
   const dx=e.clientX-dragStart.x,dy=e.clientY-dragStart.y;
-  if(Math.hypot(dx,dy)>5)gestureMoved=true;
+  if(Math.hypot(dx,dy)>5){gestureMoved=true;suppressTapUntil=performance.now()+450;}
   if(gestureMoved){const delta=localDelta(dx,dy);setView(dragStart.view.x-delta.x,dragStart.view.y-delta.y,dragStart.view.w)}
  }
 });
@@ -159,7 +184,7 @@ const finishGesture=e=>{
  if(pointers.size===0){dragStart=null;pinchStart=null;gestureMoved=false}
  else if(pointers.size===1){dragStart=null;pinchStart=null}
 };
-scene.addEventListener('pointerup',finishGesture);scene.addEventListener('pointercancel',finishGesture);
+scene.addEventListener('pointerup',finishGesture);scene.addEventListener('pointercancel',finishGesture);scene.addEventListener('lostpointercapture',finishGesture);
 voyageMap.setAttribute('tabindex','0');voyageMap.setAttribute('role','button');
 voyageMap.setAttribute('aria-label','Spatial overview: activate to view the entire Tree');
 const resetMap=()=>{setView(0,0,1000);mapMarker.setAttribute('cx','50');mapMarker.setAttribute('cy','50')};
@@ -244,7 +269,7 @@ for(const node of visible){
  anchor.append(halo,dot,title);
  anchor.addEventListener('pointerenter',()=>focus(node));
  anchor.addEventListener('focus',()=>selectNode(node));
- anchor.addEventListener('click',e=>{e.preventDefault();selectNode(node)});
+ anchor.addEventListener('click',e=>{e.preventDefault();if(performance.now()<suppressTapUntil)return;selectNode(node)});
  anchor.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();selectNode(node)}});
  dots.append(anchor);anchors.set(node.id,anchor);
 }
