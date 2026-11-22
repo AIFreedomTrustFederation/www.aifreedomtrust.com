@@ -100,6 +100,19 @@ test('cinematic hero projects only real lineage records and preserves root-to-fr
  assert.doesNotMatch(js,/fetch\(|localStorage|sendBeacon|Math\.random|reward_xp/);
 });
 
+test('source projection mounts voyage before chapter rail insertion',()=>{
+ const js=read('cinematic-source-projection.js');
+ const voyageInsert=js.indexOf('inspector.insertBefore(voyage,controls)');
+ const chapterInsert=js.indexOf('inspector.insertBefore(chapterRail,voyage)');
+ assert.ok(voyageInsert>=0,'Voyage mount statement exists');
+ assert.ok(chapterInsert>voyageInsert,'Chapter rail is inserted only after voyage is mounted');
+});
+
+test('tablet cinematic panel width cap is scoped to the hero world container',()=>{
+ const css=read('cinematic-living-lens.css');
+ assert.match(css,/@media \(min-width:701px\) and \(max-width:920px\)\{\.world>\.awakening-cinema\{width:min\(100%,420px\)\}\}/);
+});
+
 // Newly documented nodes must never silently disappear from the hero because their IDs
 // were absent from an older decorative placement table.
 test('source projection includes future published nodes and keyboard fallback',()=>{
@@ -270,4 +283,31 @@ test('Android cinematic entrance retains source stage controls without overlay c
    assert.match(html,new RegExp('data-stage="'+stage+'"'));
  assert.match(html,/id="world-beacons"/);
  assert.match(html,/href="#evidence-world"/);
+});
+
+test('cinematic chapter journey uses only published biological stages',()=>{
+ const js=read('cinematic-source-projection.js'),css=read('cinematic-world.css');
+ for(const stage of ['root','trunk','branch','leaf','flower','fruit'])
+   assert.match(js,new RegExp("'"+stage+"'"));
+ assert.match(js,/visible\.filter\(n=>n\.kind===kind\)/);
+ assert.match(js,/button\.disabled=!records\.length/);
+ assert.match(js,/renderChapters\(\)/);
+ assert.match(js,/pathTo\(selected\)/);
+ assert.match(js,/chapterRail\.setAttribute\('aria-label'/);
+ assert.match(css,/\.living-chapter-list/);
+ assert.match(css,/\.living-chapter-choice:focus-visible/);
+ assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
+ assert.doesNotMatch(js,/reward_xp|Math\.random|sendBeacon|localStorage/);
+});
+
+test('pilgrimage spatial map consumes canonical published projection with readiness handoff',()=>{
+ const producer=read('cinematic-source-projection.js');
+ const consumer=read('cinematic-pilgrimage.js');
+ assert.match(producer,/AIFT_TREE_SOURCE_COORDINATES/);
+ assert.match(producer,/Object\.freeze\(publishedCoordinates\)/);
+ assert.match(producer,/aift:tree-source-projection-ready/);
+ assert.match(consumer,/window\.AIFT_TREE_SOURCE_COORDINATES\?\.\[id\]/);
+ assert.match(consumer,/document\.addEventListener\('aift:tree-source-projection-ready'/);
+ assert.match(consumer,/No published Tree coordinates are available yet/);
+ assert.doesNotMatch(consumer,/Math\.random|reward_xp|sendBeacon/);
 });

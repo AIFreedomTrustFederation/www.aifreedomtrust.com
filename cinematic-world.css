@@ -484,3 +484,40 @@
   .world .world-stage-panel { grid-row:7; }
 }
 
+
+/* Living Universe 3.2: evidence-bound chapter constellation, not XP or fake fruit.
+   Chapters reflect only published lineage records. */
+.living-chapter-rail {
+  position:relative; isolation:isolate; margin:clamp(1rem,3vw,2rem) 0;
+  padding:clamp(.85rem,2vw,1.5rem); border:1px solid rgba(242,205,137,.32);
+  border-radius:1.4rem; overflow:hidden;
+  background:radial-gradient(ellipse at 50% -40%,rgba(246,199,105,.15),transparent 65%),
+    linear-gradient(125deg,rgba(112,35,65,.28),rgba(18,54,61,.34) 55%,rgba(36,45,100,.28));
+  box-shadow:0 18px 52px rgba(0,0,0,.24),inset 0 1px rgba(255,230,178,.13);
+}
+.living-chapter-rail::before {
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.38;
+  background:linear-gradient(105deg,transparent 5%,rgba(251,110,127,.15) 30%,rgba(111,237,190,.12) 55%,rgba(120,166,255,.18) 85%,transparent);
+}
+.living-chapter-heading {position:relative;color:#f7dfaa;font-weight:700;letter-spacing:.09em;text-transform:uppercase;font-size:.82rem}
+.living-chapter-list {position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.65rem;list-style:none;padding:0;margin:.85rem 0 0}
+.living-chapter-list li {min-width:0}
+.living-chapter-choice {
+  display:flex;align-items:center;justify-content:center;text-align:center;width:100%;min-height:52px;
+  padding:.75rem .6rem;border:1px solid rgba(227,229,255,.22);border-radius:.9rem;
+  background:rgba(7,15,34,.68);color:#f5f5ff;line-height:1.4;font:inherit;
+  cursor:pointer;transition:transform .2s ease,background .2s ease,border-color .2s ease;
+}
+.living-chapter-choice:hover:not(:disabled),.living-chapter-choice[aria-pressed="true"] {
+  border-color:#e9c984;background:rgba(83,70,103,.72);transform:translateY(-2px)
+}
+.living-chapter-choice:focus-visible {outline:3px solid #f5d68c;outline-offset:3px}
+.living-chapter-choice:disabled {opacity:.5;cursor:not-allowed}
+@media(max-width:700px) {
+  .living-chapter-list {grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem}
+  .living-chapter-choice {min-height:48px;font-size:.84rem}
+}
+@media(prefers-reduced-motion:reduce) {
+  .living-chapter-choice {transition:none}
+  .living-chapter-choice:hover:not(:disabled),.living-chapter-choice[aria-pressed="true"] {transform:none}
+}
