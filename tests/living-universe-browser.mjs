@@ -234,12 +234,20 @@ for(const width of [360,390,768,1280]){
   }
   const exposed=await heroTree.evaluate(svg=>{
     const rect=svg.getBoundingClientRect();
-    for(const fy of [.45,.35,.55,.25,.65,.15,.75,.1,.05]){
-      for(const fx of [.5,.4,.6,.3,.7,.2,.8]){
+    // The cinematic rail covers the middle of the desktop SVG. Probe the
+    // exposed canopy edges and require the entire drag corridor to stay on
+    // the SVG instead of crossing a real HUD control.
+    const dragX=Math.min(45,rect.width*.12),dragY=20;
+    const isTreeSurface=(x,y)=>{
+      if(x<12||y<12||x>=innerWidth-12||y>=innerHeight-12)return false;
+      const hit=document.elementFromPoint(x,y);
+      return !!hit&&(hit===svg||svg.contains(hit))&&!hit.closest?.('.living-source-node');
+    };
+    for(const fy of [.45,.35,.55,.25,.65,.15,.75,.1,.05,.85,.95]){
+      for(const fx of [.5,.4,.6,.3,.7,.2,.8,.15,.05,.9,.95]){
         const x=rect.left+rect.width*fx,y=rect.top+rect.height*fy;
-        if(x<12||y<12||x>innerWidth-12||y>innerHeight-12)continue;
-        const hit=document.elementFromPoint(x,y);
-        if(hit&&(hit===svg||svg.contains(hit))&&!hit.closest?.('.living-source-node'))return {x,y,hit:hit.tagName};
+        if([0,.5,1].every(t=>isTreeSurface(x+dragX*t,y+dragY*t)))
+          return {x,y,hit:document.elementFromPoint(x,y).tagName};
       }
     }
     return null;
