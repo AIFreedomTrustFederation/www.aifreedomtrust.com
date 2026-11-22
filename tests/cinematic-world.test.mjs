@@ -299,3 +299,15 @@ test('cinematic chapter journey uses only published biological stages',()=>{
  assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
  assert.doesNotMatch(js,/reward_xp|Math\.random|sendBeacon|localStorage/);
 });
+
+test('pilgrimage spatial map consumes canonical published projection with readiness handoff',()=>{
+ const producer=read('cinematic-source-projection.js');
+ const consumer=read('cinematic-pilgrimage.js');
+ assert.match(producer,/AIFT_TREE_SOURCE_COORDINATES/);
+ assert.match(producer,/Object\.freeze\(publishedCoordinates\)/);
+ assert.match(producer,/aift:tree-source-projection-ready/);
+ assert.match(consumer,/window\.AIFT_TREE_SOURCE_COORDINATES\?\.\[id\]/);
+ assert.match(consumer,/document\.addEventListener\('aift:tree-source-projection-ready'/);
+ assert.match(consumer,/No published Tree coordinates are available yet/);
+ assert.doesNotMatch(consumer,/Math\.random|reward_xp|sendBeacon/);
+});
