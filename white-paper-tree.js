@@ -5,6 +5,13 @@
  */
 (()=>{'use strict';
 if(document.documentElement.classList.contains('embedded-world'))return;
+document.title='The Living White Paper · AIFT Tree of Emergence';
+const headerTitle=document.querySelector('.hud-title');
+if(headerTitle){
+ headerTitle.firstChild.textContent='THE LIVING WHITE PAPER ';
+ const small=headerTitle.querySelector('small');
+ if(small)small.textContent='THE READING ATLAS';
+}
 const scene=document.querySelector('.world svg.tree');
 const world=document.querySelector('.world');
 const reader=document.getElementById('white-paper-atlas');
