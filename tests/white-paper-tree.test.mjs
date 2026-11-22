@@ -50,7 +50,7 @@ test('Every chapter cites the published website or approved public documentation
 });
 
 test('Standalone atlas augments source projection while embedded public entrance is isolated',()=>{
- assert.ok(html.indexOf('cinematic-responsive-frame.css')<html.indexOf('white-paper-tree.css'));
+ assert.ok(html.indexOf('white-paper-tree.css')<html.indexOf('cinematic-responsive-frame.css'));
  assert.ok(html.indexOf('cinematic-source-projection.js')<html.indexOf('white-paper-tree.js'));
  assert.match(script,/classList\.contains\('embedded-world'\)\)return/);
  assert.match(css,/html\.embedded-world \.white-paper-reader/);
