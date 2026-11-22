@@ -3,6 +3,8 @@ on:
   pull_request:
     paths:
       - 'cinematic-*'
+      - 'universal-zoom.js'
+      - 'tests/universal-zoom*'
       - 'lineage-data.js'
       - 'tests/living-universe-browser.mjs'
       - '.github/workflows/living-universe-cinematic-browser.yml'
@@ -34,9 +36,11 @@ jobs:
           exit 1
       - name: Verify source-backed contracts
         run: |
-          node --test tests/cinematic-world.test.mjs tests/cinematic-seven-movements.test.mjs
+          node --test tests/cinematic-world.test.mjs tests/cinematic-seven-movements.test.mjs tests/universal-zoom.test.mjs
       - name: Exercise real Chromium camera and pilgrimage journey at four widths
         run: node tests/living-universe-browser.mjs
+      - name: Exercise native two-pointer zoom on mobile and tablet
+        run: node tests/universal-zoom-browser.mjs
       - name: Publish screenshots even on failure
         if: always()
         uses: actions/upload-artifact@v4
