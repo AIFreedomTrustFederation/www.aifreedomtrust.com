@@ -27,6 +27,7 @@ try{
    const tree=world.querySelector('svg.tree');
    const intro=world.querySelector('.intro');
    const bar=world.querySelector('.aift-scene-toolbar');
+   const caption=world.querySelector('.passage-caption');
    const beacons=world.querySelector('.world-beacons');
    const gates=world.querySelector('.world-gates');
    const rect=el=>{
@@ -41,7 +42,7 @@ try{
     gridRows:getComputedStyle(world).gridTemplateRows,
     scrollWidth:document.documentElement.scrollWidth,
     world:rect(world),tree:rect(tree),intro:rect(intro),
-    toolbar:rect(bar),beacons:rect(beacons),gates:rect(gates)
+    toolbar:rect(bar),caption:rect(caption),beacons:rect(beacons),gates:rect(gates)
    };
   });
   const diagnostic=()=>JSON.stringify({width,height,layout});
@@ -51,10 +52,12 @@ try{
   assert.equal(layout.translate,'none','Atmospheric offsets cannot displace Tree: '+diagnostic());
   assert.ok(layout.tree.width>=120&&layout.tree.height>=120,'Tree must be playable: '+diagnostic());
   for(const [name,box] of [['tree',layout.tree],['toolbar',layout.toolbar],
-    ['beacons',layout.beacons],['gates',layout.gates]]){
+    ['caption',layout.caption],['beacons',layout.beacons],['gates',layout.gates]]){
    assert.ok(box.width>0&&box.left>=-4&&box.right<=width+4,
     name+' must fit horizontally: '+diagnostic());
   }
+  assert.ok(layout.caption.top>=Math.max(layout.intro.bottom,layout.toolbar.bottom)-4,
+   'Stage caption must follow intro and toolbar, not overlap the opening copy: '+diagnostic());
   assert.ok(layout.scrollWidth<=width+20,'No full-page horizontal overflow: '+diagnostic());
   const columns=width>=900||(width>=560&&height<=540&&width>height);
   if(columns){
