@@ -177,16 +177,9 @@ function enterEvidenceFlight(){
  if(!target||!index){detail.textContent='The full Evidence Flight is unavailable on this page.';return}
  const record=selected&&allowed.get(selected.id);
  if(record){
-  const controls=[...index.querySelectorAll('button')];
-  const matching=controls.find(button=>button.textContent?.startsWith(record.label+' · '));
-  if(matching)matching.click();
-  else{
-   const input=document.getElementById('evidence-search');
-   if(input){input.value=record.label;input.dispatchEvent(new Event('input',{bubbles:true}));
-    const refreshed=[...index.querySelectorAll('button')].find(button=>button.textContent?.startsWith(record.label+' · '));
-    if(refreshed)refreshed.click();
-   }
-  }
+  // The destination owns its own selection and validates the published ID.
+  // Avoid matching mutable labels or filtered index buttons.
+  window.dispatchEvent(new CustomEvent('aift:evidence-select',{detail:{nodeId:record.id}}));
  }
  target.scrollIntoView({behavior:reduced.matches?'instant':'smooth',block:'start'});
  const scene=document.getElementById('evidence-scene');
