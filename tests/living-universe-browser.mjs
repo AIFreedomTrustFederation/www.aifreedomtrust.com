@@ -293,6 +293,30 @@ for(const width of [360,390,768,1280]){
   assert.match(await navigator.locator('.awakening-results').innerText(),/No documented match/);
   await navigatorSearch.fill('');
   assert.ok(await navigator.locator('.awakening-results button').count()>0,'Published records populate hero exploration');
+  // Living Universe 3.3 acceptance: exercise the actual published pathway,
+  // not only static contracts. The public branch has three documented page fruits.
+  const living=page.locator('.awakening-cinema');
+  const finder=living.locator('.awakening-explorer input[type="search"]');
+  await finder.fill('Public Exploration');
+  const publicBranch=living.locator('.awakening-explorer-result').filter({hasText:'Public Exploration'}).first();
+  assert.equal(await publicBranch.count(),1,'Published public branch is searchable');
+  await publicBranch.click();
+  const pathways=living.locator('.awakening-pathways');
+  assert.match(await pathways.locator('.awakening-pathways-status').innerText(),/3 documented visitor-facing outcomes/);
+  const outcomes=pathways.locator('.awakening-pathways-node');
+  assert.equal(await outcomes.count(),3,'Three real published page outcomes, no synthetic fruit');
+  await outcomes.filter({hasText:'Federation Atlas'}).click();
+  assert.match(await living.locator('.awakening-cinema-detail').innerText(),/Federation Atlas/);
+  assert.equal(await living.locator('.awakening-explorer-crumbs button').last().getAttribute('aria-current'),'location');
+  assert.match(await living.locator('.awakening-cinema-source').getAttribute('href'),/atlas\\.html$/);
+  await living.locator('.awakening-explorer-history button').filter({hasText:'Previous place'}).click();
+  assert.match(await living.locator('.awakening-cinema-detail').innerText(),/Public Exploration/);
+  // Flight handoff must carry the selected source to the existing evidence
+  // experience and focus its real SVG rather than merely scrolling the page.
+  await living.locator('.awakening-cinema-flight').click();
+  assert.equal(await page.locator('#evidence-scene').evaluate(el=>document.activeElement===el),true,
+    'Evidence Flight receives keyboard focus after source handoff');
+  assert.match(await page.locator('#evidence-info').innerText(),/Public Exploration/);
   await navigator.locator('.awakening-close').click();
   assert.equal(await navigatorOpen.getAttribute('aria-expanded'),'false');
   await page.screenshot({path:'artifacts/living-universe/tree-'+width+'.png',fullPage:true});
