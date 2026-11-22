@@ -43,7 +43,7 @@ function choose(kind){
  world.dataset.cinemaStage=kind;
  camera(selected);
 }
-for(const c of chapter){const b=document.createElement('button');b.type='button';b.className='awakening-cinema-step';b.dataset.stage=c.kind;b.disabled=!c.items.length;b.setAttribute('aria-pressed','false');b.textContent=labels[c.kind];const small=document.createElement('small');small.textContent=c.items.length?String(c.items.length)+' documented':'No verified records';b.append(small);b.addEventListener('click',()=>choose(c.kind));rail.append(b)}
+for(const c of chapter){const b=document.createElement('button');b.type='button';b.className='awakening-cinema-step';b.dataset.stage=c.kind;b.disabled=!c.items.length;b.setAttribute('aria-pressed','false');b.textContent=labels[c.kind];const small=document.createElement('small');small.textContent=c.items.length?String(c.items.length)+' documented':'No verified records';b.append(small);rail.append(b)}
 reset.addEventListener('click',()=>{selected=null;world.removeAttribute('data-cinema-stage');tree.setAttribute('viewBox',view);rail.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed','false'));detail.textContent='The entire documented Tree is visible. Choose a stage to explore.';source.hidden=true});
 detail.textContent='Choose a stage to begin your source-backed journey.';
 /* Do not animate on low-power/reduced-motion devices. No timers, network or telemetry. */
