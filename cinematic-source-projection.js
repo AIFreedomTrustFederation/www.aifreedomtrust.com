@@ -138,7 +138,7 @@ scene.style.touchAction='none';
 window.AIFT_HERO_POINTER_OWNER='source-projection';
 scene.addEventListener('pointerdown',e=>{
  if(e.pointerType==='mouse'&&e.button!==0)return;
- const nodeHit=e.target.closest?.('.living-source-node');
+ const nodeHit=e.target.closest?.('.living-source-node, .wp-tree-marker');
  if(nodeHit&&e.pointerType!=='touch')return; // preserve mouse links
  pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
  if(pointers.size===1){
