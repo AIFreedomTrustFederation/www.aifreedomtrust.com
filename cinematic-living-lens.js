@@ -70,14 +70,20 @@ const crumbs=document.createElement('nav');
 crumbs.className='awakening-explorer-crumbs';crumbs.setAttribute('aria-label','Source lineage breadcrumbs');
 const historyActions=document.createElement('div');historyActions.className='awakening-explorer-history';
 const back=document.createElement('button');back.type='button';back.textContent='Previous place';back.disabled=true;
+const previousSibling=document.createElement('button');previousSibling.type='button';previousSibling.textContent='Previous documented record';previousSibling.disabled=true;
+const nextSibling=document.createElement('button');nextSibling.type='button';nextSibling.textContent='Next documented record';nextSibling.disabled=true;
 const map=document.createElement('div');map.className='awakening-explorer-map';map.setAttribute('aria-label','Spatial overview of the Tree');
 const mapTitle=document.createElement('span');mapTitle.textContent='TREE OVERVIEW';
 const mapTrack=document.createElement('div');mapTrack.className='awakening-explorer-map-track';
 const mapFocus=document.createElement('span');mapFocus.className='awakening-explorer-map-focus';mapFocus.setAttribute('aria-hidden','true');
 mapTrack.append(mapFocus);map.append(mapTitle,mapTrack);
-historyActions.append(back,map);
+historyActions.append(back,previousSibling,nextSibling,map);
 explorer.append(searchLabel,matches,crumbs,historyActions);layer.append(explorer);
 const trail=[];
+function siblingsFor(node){return inspectable.filter(n=>n.kind===node.kind&&n.parent===node.parent)}
+function moveSibling(delta){if(!selected)return;const siblings=siblingsFor(selected),at=siblings.findIndex(n=>n.id===selected.id),next=siblings[at+delta];if(next)displayNode(next)}
+previousSibling.addEventListener('click',()=>moveSibling(-1));
+nextSibling.addEventListener('click',()=>moveSibling(1));
 const inspectable=records.filter(n=>allowed.has(n.id)&&eligible(n));
 function displayNode(node,remember=true){
  if(!node||!eligible(node))return;
@@ -85,6 +91,8 @@ function displayNode(node,remember=true){
  choose(node.kind);
  selected=node;
  camera(node);
+ const siblings=siblingsFor(node),position=siblings.findIndex(n=>n.id===node.id);
+ previousSibling.disabled=position<=0;nextSibling.disabled=position<0||position>=siblings.length-1;
  const chain=lineage(node);
  detail.replaceChildren();
  const heading=document.createElement('strong');heading.textContent=node.label+' · '+labels[node.kind];
@@ -149,6 +157,12 @@ back.addEventListener('click',()=>{
  const previous=allowed.get(trail.pop());back.disabled=!trail.length;
  if(previous)displayNode(previous,false);
 });
-reset.addEventListener('click',()=>{trail.length=0;back.disabled=true;crumbs.replaceChildren();mapFocus.hidden=true;search.value='';renderMatches()});
+reset.addEventListener('click',()=>{trail.length=0;back.disabled=true;previousSibling.disabled=true;nextSibling.disabled=true;crumbs.replaceChildren();mapFocus.hidden=true;search.value='';renderMatches()});
+/* Stage choices and search share one reversible selection state and lineage inspector. */
+rail.querySelectorAll('button[data-stage]').forEach(button=>button.addEventListener('click',()=>{
+ const group=chapter.find(c=>c.kind===button.dataset.stage);
+ const node=group?.items.find(n=>findPoint(n.id))||group?.items[0];
+ if(node)displayNode(node);
+}));
 renderMatches();
 })();
