@@ -21,6 +21,7 @@
 .world .aurora{transform:translate3d(var(--cinema-parallax-x,0px),var(--cinema-parallax-y,0px),0)}
 .world .stars{transform:translate3d(var(--cinema-parallax-x,0px),var(--cinema-parallax-y,0px),0)}
 @media(max-width:700px){.world{min-height:100svh}.awakening-cinema{width:100%;margin:1rem 0 0;padding:.75rem;border-radius:1rem;backdrop-filter:none}.awakening-cinema-rail{grid-template-columns:repeat(2,minmax(0,1fr))}.awakening-cinema-step{min-height:48px;font-size:.75rem}.awakening-cinema-description{font-size:.8rem}}
+@media (min-width:701px) and (max-width:920px){.world>.awakening-cinema{width:min(100%,420px)}}
 @media(prefers-reduced-motion:reduce){.awakening-cinema-step{transition:none}.awakening-cinema-step:hover:not(:disabled){transform:none}.world .aurora,.world .stars{transform:none!important}}
 
 /* Source constellation: interactive evidence trail within the cinematic world. */

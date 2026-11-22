@@ -60,7 +60,7 @@ const cameraHelp=document.createElement('p');cameraHelp.className='living-camera
 const cameraAnnounce=document.createElement('p');cameraAnnounce.className='living-camera-announcement';cameraAnnounce.setAttribute('role','status');cameraAnnounce.setAttribute('aria-live','polite');
 voyageControls.append(voyageBack,voyageReset,voyageZoomIn,voyageZoomOut);
 voyage.append(voyageTitle,voyageHint,voyageTrail,voyageNext,voyageControls,cameraHelp,cameraAnnounce,voyageMap);
-inspector.insertBefore(chapterRail,voyage);inspector.insertBefore(voyage,controls);
+inspector.insertBefore(voyage,controls);inspector.insertBefore(chapterRail,voyage);
 let view={x:0,y:0,w:1000,h:1000},previous=[];
 const setView=(x,y,w)=>{
  const size=Math.max(250,Math.min(1000,w)),max=1000-size;
