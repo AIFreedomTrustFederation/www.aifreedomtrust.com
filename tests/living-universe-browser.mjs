@@ -293,6 +293,10 @@ for(const width of [360,390,768,1280]){
   assert.match(await navigator.locator('.awakening-results').innerText(),/No documented match/);
   await navigatorSearch.fill('');
   assert.ok(await navigator.locator('.awakening-results button').count()>0,'Published records populate hero exploration');
+  // The source navigator is an overlay; close it before using the cinematic
+  // pathway controls, especially at tablet widths where panels overlap.
+  await navigator.locator('.awakening-close').click();
+  assert.equal(await navigatorOpen.getAttribute('aria-expanded'),'false');
   // Living Universe 3.3 acceptance: exercise the actual published pathway,
   // not only static contracts. The public branch has three documented page fruits.
   const living=page.locator('.awakening-cinema');
@@ -300,7 +304,11 @@ for(const width of [360,390,768,1280]){
   await finder.fill('Public Exploration');
   const publicBranch=living.locator('.awakening-explorer-result').filter({hasText:'Public Exploration'}).first();
   assert.equal(await publicBranch.count(),1,'Published public branch is searchable');
-  await publicBranch.click();
+  // Keyboard activation validates accessible selection without a moving SVG hit target.
+  await publicBranch.focus();
+  await publicBranch.press('Enter');
+  assert.match(await living.locator('.awakening-cinema-detail').innerText(),/Public Exploration/,
+    'Branch selection updates the cinematic inspector');
   const pathways=living.locator('.awakening-pathways');
   assert.match(await pathways.locator('.awakening-pathways-status').innerText(),/3 documented visitor-facing outcomes/);
   const outcomes=pathways.locator('.awakening-pathways-node');
@@ -317,8 +325,6 @@ for(const width of [360,390,768,1280]){
   assert.equal(await page.locator('#evidence-scene').evaluate(el=>document.activeElement===el),true,
     'Evidence Flight receives keyboard focus after source handoff');
   assert.match(await page.locator('#evidence-info').innerText(),/Public Exploration/);
-  await navigator.locator('.awakening-close').click();
-  assert.equal(await navigatorOpen.getAttribute('aria-expanded'),'false');
   await page.screenshot({path:'artifacts/living-universe/tree-'+width+'.png',fullPage:true});
   assert.deepEqual(errors,[],'Browser JavaScript errors');
   console.log('PASS',width,'px',JSON.stringify(bounds));
