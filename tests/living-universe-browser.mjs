@@ -234,16 +234,44 @@ for(const width of [360,390,768,1280]){
   }
   const exposed=await heroTree.evaluate(svg=>{
     const rect=svg.getBoundingClientRect();
-    for(const fy of [.45,.35,.55,.25,.65,.15,.75,.1,.05]){
-      for(const fx of [.5,.4,.6,.3,.7,.2,.8]){
+    // The cinematic rail covers the middle of the desktop SVG. Probe the
+    // exposed canopy edges and require the entire drag corridor to stay on
+    // the SVG instead of crossing a real HUD control.
+    const dragX=Math.min(45,rect.width*.12),dragY=20;
+    const isTreeSurface=(x,y)=>{
+      if(x<12||y<12||x>=innerWidth-12||y>=innerHeight-12)return false;
+      const hit=document.elementFromPoint(x,y);
+      return !!hit&&(hit===svg||svg.contains(hit))&&!hit.closest?.('.living-source-node');
+    };
+    for(const fy of [.45,.35,.55,.25,.65,.15,.75,.1,.05,.85,.95]){
+      for(const fx of [.5,.4,.6,.3,.7,.2,.8,.15,.05,.9,.95]){
         const x=rect.left+rect.width*fx,y=rect.top+rect.height*fy;
-        if(x<12||y<12||x>innerWidth-12||y>innerHeight-12)continue;
-        const hit=document.elementFromPoint(x,y);
-        if(hit&&(hit===svg||svg.contains(hit))&&!hit.closest?.('.living-source-node'))return {x,y,hit:hit.tagName};
+        if([0,.5,1].every(t=>isTreeSurface(x+dragX*t,y+dragY*t)))
+          return {x,y,hit:document.elementFromPoint(x,y).tagName};
       }
     }
     return null;
   });
+  if(!exposed){
+    // Report actual hit-test stacks rather than guessing which HUD layer blocks
+    // the Tree. The probe is read-only and preserves the user journey.
+    const hitMap=await heroTree.evaluate(svg=>{
+      const r=svg.getBoundingClientRect(),samples=[];
+      for(const fy of [.05,.15,.25,.35,.45,.55,.65,.75,.85,.95]){
+        for(const fx of [.05,.15,.25,.35,.45,.55,.65,.75,.85,.95]){
+          const x=r.left+r.width*fx,y=r.top+r.height*fy;
+          if(x<0||y<0||x>=innerWidth||y>=innerHeight)continue;
+          const top=document.elementFromPoint(x,y);
+          const stack=document.elementsFromPoint(x,y).slice(0,5).map(el=>({
+            tag:el.tagName,id:el.id||'',className:typeof el.className==='string'?el.className:(el.className?.baseVal||'')
+          }));
+          samples.push({fx,fy,x:Math.round(x),y:Math.round(y),treeHit:!!top&&(top===svg||svg.contains(top)),stack});
+        }
+      }
+      return {treeRect:r.toJSON(),samples};
+    });
+    console.error('TREE_POINTER_OCCLUSION_DIAGNOSTIC '+JSON.stringify({width,hitMap}));
+  }
   assert.ok(exposed,'Tree needs an exposed pointer-drag surface not obscured by navigator or panels');
   const startX=exposed.x,startY=exposed.y;
   // Mouse pointer drag also exercises the shared Pointer Events path used on Android.
@@ -265,8 +293,51 @@ for(const width of [360,390,768,1280]){
   assert.match(await navigator.locator('.awakening-results').innerText(),/No documented match/);
   await navigatorSearch.fill('');
   assert.ok(await navigator.locator('.awakening-results button').count()>0,'Published records populate hero exploration');
+  // The source navigator is an overlay; close it before using the cinematic
+  // pathway controls, especially at tablet widths where panels overlap.
   await navigator.locator('.awakening-close').click();
   assert.equal(await navigatorOpen.getAttribute('aria-expanded'),'false');
+  // Living Universe 3.3 acceptance: exercise the actual published pathway,
+  // not only static contracts. The public branch has three documented page fruits.
+  const living=page.locator('.awakening-cinema');
+  const finder=living.locator('.awakening-explorer input[type="search"]');
+  await finder.fill('Public Exploration');
+  const publicBranch=living.locator('.awakening-explorer-result').filter({hasText:'Public Exploration'}).first();
+  assert.equal(await publicBranch.count(),1,'Published public branch is searchable');
+  // Keyboard activation validates accessible selection without a moving SVG hit target.
+  await publicBranch.focus();
+  await publicBranch.press('Enter');
+  assert.match(await living.locator('.awakening-cinema-detail').innerText(),/Public Exploration/,
+    'Branch selection updates the cinematic inspector');
+  const pathways=living.locator('.awakening-pathways');
+  assert.match(await pathways.locator('.awakening-pathways-status').innerText(),/3 documented visitor-facing outcomes/);
+  const outcomes=pathways.locator('.awakening-pathways-node');
+  assert.equal(await outcomes.count(),3,'Three real published page outcomes, no synthetic fruit');
+  await outcomes.filter({hasText:'Federation Atlas'}).click();
+  assert.match(await living.locator('.awakening-cinema-detail').innerText(),/Federation Atlas/);
+  assert.equal(await living.locator('.awakening-explorer-crumbs button').last().getAttribute('aria-current'),'location');
+  assert.match(await living.locator('.awakening-cinema-source').getAttribute('href'),/atlas\.html$/);
+  await living.locator('.awakening-explorer-history button').filter({hasText:'Previous place'}).click();
+  assert.match(await living.locator('.awakening-cinema-detail').innerText(),/Public Exploration/);
+  // Flight handoff must carry the selected source to the existing evidence
+  // experience and focus its real SVG rather than merely scrolling the page.
+  await living.locator('.awakening-cinema-flight').click();
+  assert.equal(await page.locator('#evidence-scene').evaluate(el=>document.activeElement===el),true,
+    'Evidence Flight receives keyboard focus after source handoff');
+  assert.match(await page.locator('#evidence-info').innerText(),/Public Exploration/);
+  assert.equal(await page.locator('#evidence-list button[aria-current="true"]').count(),1,
+    'Evidence handoff selects exactly one canonical published record');
+  assert.match(await page.locator('#evidence-list button[aria-current="true"]').innerText(),/Public Exploration/,
+    'Accessible evidence index reflects the same selected source');
+  // Re-enter after a different evidence selection: no stale source or filter may win.
+  await page.locator('#evidence-search').fill('Federation Atlas');
+  assert.match(await page.locator('#evidence-info').innerText(),/Federation Atlas/,
+    'Evidence search can independently select a different published outcome');
+  await living.locator('.awakening-cinema-flight').click();
+  assert.match(await page.locator('#evidence-info').innerText(),/Public Exploration/,
+    'Repeat flight restores the canonical cinematic selection by ID');
+  assert.equal(await page.locator('#evidence-search').inputValue(),'',
+    'Repeat flight clears stale evidence filters');
   await page.screenshot({path:'artifacts/living-universe/tree-'+width+'.png',fullPage:true});
   assert.deepEqual(errors,[],'Browser JavaScript errors');
   console.log('PASS',width,'px',JSON.stringify(bounds));

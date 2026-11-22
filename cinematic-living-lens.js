@@ -78,22 +78,63 @@ const mapTrack=document.createElement('div');mapTrack.className='awakening-explo
 const mapFocus=document.createElement('span');mapFocus.className='awakening-explorer-map-focus';mapFocus.setAttribute('aria-hidden','true');
 mapTrack.append(mapFocus);map.append(mapTitle,mapTrack);
 historyActions.append(back,previousSibling,nextSibling,map);
-explorer.append(searchLabel,matches,crumbs,historyActions);layer.append(explorer);
+/* The public path finder uses only published parent IDs and qualified outcomes.
+   It never treats a source repository as a fruit or assumes a product exists. */
+const pathways=document.createElement('section');
+pathways.className='awakening-pathways';
+pathways.setAttribute('aria-label','Documented paths and outcomes');
+const pathwaysTitle=document.createElement('h3');pathwaysTitle.textContent='Where this source can lead';
+const pathwaysStatus=document.createElement('p');pathwaysStatus.className='awakening-pathways-status';pathwaysStatus.setAttribute('role','status');
+const pathwaysList=document.createElement('div');pathwaysList.className='awakening-pathways-list';
+pathwaysList.setAttribute('role','group');pathwaysList.setAttribute('aria-label','Published downstream lineage');
+pathways.append(pathwaysTitle,pathwaysStatus,pathwaysList);
+explorer.append(searchLabel,matches,crumbs,historyActions,pathways);layer.append(explorer);
 const trail=[];
 function siblingsFor(node){return inspectable.filter(n=>n.kind===node.kind&&n.parent===node.parent)}
 function moveSibling(delta){if(!selected)return;const siblings=siblingsFor(selected),at=siblings.findIndex(n=>n.id===selected.id),next=siblings[at+delta];if(next)displayNode(next)}
 previousSibling.addEventListener('click',()=>moveSibling(-1));
 nextSibling.addEventListener('click',()=>moveSibling(1));
 const inspectable=records.filter(n=>allowed.has(n.id)&&eligible(n));
+const childrenByParent=new Map();
+for(const n of inspectable){if(!n.parent)continue;const children=childrenByParent.get(n.parent)||[];children.push(n);childrenByParent.set(n.parent,children)}
+function downstream(node){
+ const queue=[{node,depth:0}],seen=new Set([node.id]),found=[];
+ while(queue.length){const item=queue.shift();for(const child of childrenByParent.get(item.node.id)||[]){
+  if(seen.has(child.id))continue;seen.add(child.id);
+  found.push({node:child,depth:item.depth+1});queue.push({node:child,depth:item.depth+1});
+ }}
+ return found;
+}
+function renderPathways(node){
+ pathwaysList.replaceChildren();
+ const found=downstream(node),outcomes=found.filter(item=>item.node.kind==='fruit'&&isFruit(item.node));
+ const next=childrenByParent.get(node.id)||[];
+ pathwaysStatus.textContent=outcomes.length
+  ?outcomes.length+' documented visitor-facing outcome'+(outcomes.length===1?'':'s')+' reachable through published lineage. This is not live readiness.'
+  :'No verified visitor-facing outcome is linked downstream of this source. Its documented branches and leaves remain explorable.';
+ const candidates=[...next,...outcomes.map(item=>item.node)].filter((n,i,arr)=>arr.findIndex(x=>x.id===n.id)===i);
+ if(!candidates.length){const p=document.createElement('p');p.textContent='No further published descendants. No missing relationship has been invented.';pathwaysList.append(p);return}
+ for(const child of candidates){
+  const button=document.createElement('button');button.type='button';button.className='awakening-pathways-node';
+  button.textContent=(child.kind==='fruit'?'Visit outcome lineage: ':'Follow '+labels[child.kind]+': ')+child.label;
+  button.addEventListener('click',()=>displayNode(child));pathwaysList.append(button);
+ }
+}
 function displayNode(node,remember=true){
  if(!node||!eligible(node))return;
  if(remember&&selected?.id!==node.id){if(selected)trail.push(selected.id);back.disabled=!trail.length}
- choose(node.kind);
+ // Select the requested published record atomically. Calling choose() here
+ // first selects an unrelated default record and can desynchronize the
+ // inspector, camera and keyboard-driven pathway navigation.
+ focus=stages.indexOf(node.kind);
+ rail.querySelectorAll('button[data-stage]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.stage===node.kind)));
+ world.dataset.cinemaStage=node.kind;
  selected=node;
  camera(node);
  const siblings=siblingsFor(node),position=siblings.findIndex(n=>n.id===node.id);
  previousSibling.disabled=position<=0;nextSibling.disabled=position<0||position>=siblings.length-1;
  const chain=lineage(node);
+ renderPathways(node);
  detail.replaceChildren();
  const heading=document.createElement('strong');heading.textContent=node.label+' · '+labels[node.kind];
  const explanation=document.createElement('p');
@@ -136,16 +177,9 @@ function enterEvidenceFlight(){
  if(!target||!index){detail.textContent='The full Evidence Flight is unavailable on this page.';return}
  const record=selected&&allowed.get(selected.id);
  if(record){
-  const controls=[...index.querySelectorAll('button')];
-  const matching=controls.find(button=>button.textContent?.startsWith(record.label+' · '));
-  if(matching)matching.click();
-  else{
-   const input=document.getElementById('evidence-search');
-   if(input){input.value=record.label;input.dispatchEvent(new Event('input',{bubbles:true}));
-    const refreshed=[...index.querySelectorAll('button')].find(button=>button.textContent?.startsWith(record.label+' · '));
-    if(refreshed)refreshed.click();
-   }
-  }
+  // The destination owns its own selection and validates the published ID.
+  // Avoid matching mutable labels or filtered index buttons.
+  window.dispatchEvent(new CustomEvent('aift:evidence-select',{detail:{nodeId:record.id}}));
  }
  target.scrollIntoView({behavior:reduced.matches?'instant':'smooth',block:'start'});
  const scene=document.getElementById('evidence-scene');
@@ -157,12 +191,13 @@ back.addEventListener('click',()=>{
  const previous=allowed.get(trail.pop());back.disabled=!trail.length;
  if(previous)displayNode(previous,false);
 });
-reset.addEventListener('click',()=>{trail.length=0;back.disabled=true;previousSibling.disabled=true;nextSibling.disabled=true;crumbs.replaceChildren();mapFocus.hidden=true;search.value='';renderMatches()});
+reset.addEventListener('click',()=>{trail.length=0;back.disabled=true;previousSibling.disabled=true;nextSibling.disabled=true;crumbs.replaceChildren();mapFocus.hidden=true;pathwaysList.replaceChildren();pathwaysStatus.textContent='Choose a documented source to discover its downstream lineage.';search.value='';renderMatches()});
 /* Stage choices and search share one reversible selection state and lineage inspector. */
 rail.querySelectorAll('button[data-stage]').forEach(button=>button.addEventListener('click',()=>{
  const group=chapter.find(c=>c.kind===button.dataset.stage);
  const node=group?.items.find(n=>findPoint(n.id))||group?.items[0];
  if(node)displayNode(node);
 }));
+pathwaysStatus.textContent='Choose a documented source to discover its downstream lineage.';
 renderMatches();
 })();
