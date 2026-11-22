@@ -105,7 +105,7 @@ voyageZoomIn.addEventListener('click',()=>{readView();setView(view.x+view.w*.125
 voyageZoomOut.addEventListener('click',()=>{readView();setView(view.x-view.w/6,view.y-view.h/6,view.w*4/3)});
 /* Pan the actual SVG camera with one finger or a mouse; pinch with two fingers.
    Gesture recognition never invents nodes or changes documented selection. */
-const pointers=new Map();let dragStart=null,pinchStart=null,gestureMoved=false;
+const pointers=new Map();let dragStart=null,pinchStart=null,gestureMoved=false,suppressTapUntil=0;
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 const screenWorld=(x,y)=>{const p=scene.createSVGPoint();p.x=x;p.y=y;const m=scene.getScreenCTM();return m?p.matrixTransform(m.inverse()):{x:500,y:500}};
 scene.setAttribute('tabindex','0');
@@ -148,7 +148,7 @@ scene.addEventListener('pointerdown',e=>{
  if(pointers.size===2){
   const [a,b]=[...pointers.values()],mid={x:(a.x+b.x)/2,y:(a.y+b.y)/2};
   pinchStart={distance:Math.max(1,distance(a,b)),view:readView(),anchor:screenWorld(mid.x,mid.y)};
-  dragStart=null;gestureMoved=true;
+  dragStart=null;gestureMoved=true;suppressTapUntil=performance.now()+450;
   // A touch beginning on a source node must still be able to join a pinch.
   for(const id of pointers.keys())try{scene.setPointerCapture(id)}catch{}
  }else if(!nodeHit)try{scene.setPointerCapture(e.pointerId)}catch{}
@@ -170,10 +170,10 @@ scene.addEventListener('pointermove',e=>{
    const size=pinchStart.view.w/ratio,cx=pinchStart.view.x+pinchStart.view.w/2,cy=pinchStart.view.y+pinchStart.view.h/2;
    setView(cx-size/2,cy-size/2,size);
   }
-  gestureMoved=true;
+  gestureMoved=true;suppressTapUntil=performance.now()+450;
  }else if(pointers.size===1&&dragStart){
   const dx=e.clientX-dragStart.x,dy=e.clientY-dragStart.y;
-  if(Math.hypot(dx,dy)>5)gestureMoved=true;
+  if(Math.hypot(dx,dy)>5){gestureMoved=true;suppressTapUntil=performance.now()+450;}
   if(gestureMoved){const delta=localDelta(dx,dy);setView(dragStart.view.x-delta.x,dragStart.view.y-delta.y,dragStart.view.w)}
  }
 });
@@ -269,7 +269,7 @@ for(const node of visible){
  anchor.append(halo,dot,title);
  anchor.addEventListener('pointerenter',()=>focus(node));
  anchor.addEventListener('focus',()=>selectNode(node));
- anchor.addEventListener('click',e=>{e.preventDefault();selectNode(node)});
+ anchor.addEventListener('click',e=>{e.preventDefault();if(performance.now()<suppressTapUntil)return;selectNode(node)});
  anchor.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();selectNode(node)}});
  dots.append(anchor);anchors.set(node.id,anchor);
 }
