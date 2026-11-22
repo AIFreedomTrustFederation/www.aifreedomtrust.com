@@ -12,6 +12,7 @@ test('one final stylesheet owns theatre framing at every resolution',()=>{
  for(const token of ['grid-template-rows: none','grid-auto-flow: row',
    '.world > svg.tree','.world > .intro','.world > .world-beacons',
    '.world > .world-gates','.world > .aift-scene-toolbar',
+   '.world > .passage-caption','order: 35',
    '@media (max-width: 440px)','@media (min-width: 900px)',
    'orientation: landscape','prefers-reduced-motion:reduce',
    'env(safe-area-inset-bottom)'])assert.ok(css.includes(token),token);
