@@ -18,11 +18,11 @@
 @media(max-width:360px){.world-passage{bottom:2rem}.world-passage-sources{max-height:38px}}
 @media(prefers-reduced-motion:reduce){.world::after{transition:none}.world-passage{backdrop-filter:none}}
 
-/* Living Universe 3.2: mobile source inspector participates in the same
-   document-flow theatre as the Tree, source gates and pilgrimage. Absolute
-   positioning previously covered the pilgrimage toggle at 360/390px.
+/* Living Universe 3.2: the source inspector participates in the same
+   document-flow theatre as the Tree, source gates and pilgrimage at every
+   resolution. Absolute positioning previously covered the pilgrimage toggle.
    Keep all published source anchors clickable instead of masking them. */
-@media(max-width:700px){
+
  .world .world-passage{
   position:relative;inset:auto;left:auto;right:auto;top:auto;bottom:auto;
   grid-row:9;align-self:stretch;justify-self:stretch;
@@ -31,4 +31,3 @@
  }
  .world .world-passage-sources{max-height:none;overflow:visible}
  .world .world-passage-source{min-height:44px;display:inline-flex;align-items:center}
-}

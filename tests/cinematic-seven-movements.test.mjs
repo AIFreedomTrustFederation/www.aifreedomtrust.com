@@ -211,13 +211,15 @@ test('evidence flight provides source-bound camera focus and accessible step con
  assert.doesNotMatch(js,/Math\.random|reward_xp|sendBeacon|localStorage|fetch\(/);
 });
 
-test('collapsed Android pilgrimage follows destination gates in normal grid flow',()=>{
+test('collapsed pilgrimage follows destination gates in normal grid flow at every resolution',()=>{
  const css=read('cinematic-world.css');
- const last=css.slice(css.lastIndexOf('/* Android theatre: keep the collapsed voyage'));
- assert.match(last,/\.world \.world-gates\s*\{\s*grid-row:4/);
- assert.match(last,/\.world \.pilgrimage:not\(\.pilgrimage-open\)\s*\{[\s\S]*?position:static;\s*grid-row:6/);
- assert.match(last,/\.world \.world-stage-panel\s*\{\s*grid-row:7/);
- assert.match(last,/max-width:700px/);
+ const section=css.slice(css.lastIndexOf('/* Theatre composition: keep the collapsed voyage'));
+ // The theatre rows are intentionally unconditional: no width breakpoint may
+ // reintroduce floating overlays that collide with interactive panels.
+ const unconditional=section.split('@media')[0];
+ assert.match(unconditional,/\.world \.world-gates\s*\{\s*grid-row:4/);
+ assert.match(unconditional,/\.world \.pilgrimage:not\(\.pilgrimage-open\)\s*\{[\s\S]*?position:static;\s*grid-row:6/);
+ assert.match(unconditional,/\.world \.world-stage-panel\s*\{\s*grid-row:7/);
 });
 
 test('first-viewport Tree offers bounded gesture camera and real stage selection',()=>{

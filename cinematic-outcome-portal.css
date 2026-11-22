@@ -1,5 +1,6 @@
 /* Outcome-first cinematic portal, visually distinct from technical source inspectors. */
 .world .outcome-open{position:absolute;z-index:15;bottom:clamp(5.5rem,13vh,9rem);left:50%;transform:translateX(-50%);min-height:48px;padding:.8rem 1.4rem;border:1px solid #e7c888;border-radius:999px;background:linear-gradient(110deg,#542c40,#125047,#233e73);color:#fff8e7;font:700 clamp(.85rem,2.5vw,1rem)/1.3 system-ui;box-shadow:0 8px 36px #020c1cb8;cursor:pointer;max-width:calc(100% - 2rem)}
+.world .outcome-open{position:relative;inset:auto;transform:none;justify-self:center;align-self:start;margin:.65rem auto 0;z-index:2}
 .world .outcome-open:focus-visible,.outcome-portal :focus-visible{outline:3px solid #f7d897;outline-offset:3px}
 .outcome-portal[hidden]{display:none}
 .outcome-portal{position:fixed;z-index:1000;inset:0;overflow:auto;overscroll-behavior:contain;background:radial-gradient(ellipse at 55% 12%,#164d58 0%,#071622 58%,#090d20 100%);color:#f3f8fa;padding:clamp(1rem,4vw,3rem);font-family:system-ui}
