@@ -89,7 +89,7 @@ const path=paths[current],seen=visited.get(path.id),pct=path.items.length?Math.r
 const matches=path.items.filter(n=>(!activeStage||n.kind===activeStage)&&(n.label+' '+(n.desc||'')+' '+lineage(n).map(a=>a.label).join(' ')).toLocaleLowerCase().includes(query.toLocaleLowerCase()));
 renderStageMap();
 $('.jb-steps').replaceChildren(...paths.map((p,i)=>{const b=document.createElement('button');b.type='button';b.textContent=p.name+' · '+p.items.length+' documented destinations';b.setAttribute('aria-pressed',String(i===current));b.addEventListener('click',()=>{current=i;selected=null;render()});return b}));
-$('.jb-summary').textContent=seen.size+' of '+path.items.length+' visited · session exploration, not verified achievement';
+$('#jb-summary').textContent=seen.size+' of '+path.items.length+' visited · session exploration, not verified achievement';
 const meter=$('[role=progressbar]');meter.setAttribute('aria-valuenow',String(pct));meter.querySelector('span').style.width=pct+'%';
 const node=matches.find(n=>n.id===selected)||matches.find(n=>!seen.has(n.id))||matches[0];
 $('#jb-filter-count').textContent=matches.length+' of '+path.items.length+' documented destinations match. Search does not alter evidence or progress.';
