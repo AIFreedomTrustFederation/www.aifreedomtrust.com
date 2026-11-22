@@ -100,6 +100,19 @@ test('cinematic hero projects only real lineage records and preserves root-to-fr
  assert.doesNotMatch(js,/fetch\(|localStorage|sendBeacon|Math\.random|reward_xp/);
 });
 
+test('source projection mounts voyage before chapter rail insertion',()=>{
+ const js=read('cinematic-source-projection.js');
+ const voyageInsert=js.indexOf('inspector.insertBefore(voyage,controls)');
+ const chapterInsert=js.indexOf('inspector.insertBefore(chapterRail,voyage)');
+ assert.ok(voyageInsert>=0,'Voyage mount statement exists');
+ assert.ok(chapterInsert>voyageInsert,'Chapter rail is inserted only after voyage is mounted');
+});
+
+test('tablet cinematic panel width cap is scoped to the hero world container',()=>{
+ const css=read('cinematic-living-lens.css');
+ assert.match(css,/@media \(min-width:701px\) and \(max-width:920px\)\{\.world>\.awakening-cinema\{width:min\(100%,420px\)\}\}/);
+});
+
 // Newly documented nodes must never silently disappear from the hero because their IDs
 // were absent from an older decorative placement table.
 test('source projection includes future published nodes and keyboard fallback',()=>{

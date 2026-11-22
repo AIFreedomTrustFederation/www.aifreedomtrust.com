@@ -216,14 +216,25 @@ for(const width of [360,390,768,1280]){
   await page.keyboard.press('ArrowRight');
   assert.notEqual(await heroCamera(),keyboardBefore,'Focusable Tree must support spatial keyboard panning');
   await page.keyboard.press('Home');
+  const fullCamera=await heroCamera();
+  // A full-Tree camera has no off-screen area to pan into, so zoom in before dragging.
+  await page.keyboard.press('+');
   const pointerBefore=await heroCamera();
+  assert.notEqual(pointerBefore,fullCamera,'Tree keyboard zoom must narrow the camera');
   const heroBounds=await heroTree.boundingBox();
   assert.ok(heroBounds?.width>80&&heroBounds?.height>80,'Playable Tree has a visible pointer surface');
   // Find a genuinely exposed piece of the SVG, rather than dragging a panel,
   // source node, or overlay at the geometric center of the artwork.
+  // An auto-opened navigator would legitimately cover the Tree on tablet widths.
+  const openNavigator=page.locator('.awakening-open[aria-expanded="true"]');
+  if(await openNavigator.count()){
+    await page.evaluate(()=>document.querySelector('.awakening-close').click());
+    await page.evaluate(()=>window.scrollTo({top:0,behavior:'instant'}));
+    await page.waitForTimeout(150);
+  }
   const exposed=await heroTree.evaluate(svg=>{
     const rect=svg.getBoundingClientRect();
-    for(const fy of [.45,.35,.55,.25,.65,.15,.75]){
+    for(const fy of [.45,.35,.55,.25,.65,.15,.75,.1,.05]){
       for(const fx of [.5,.4,.6,.3,.7,.2,.8]){
         const x=rect.left+rect.width*fx,y=rect.top+rect.height*fy;
         if(x<12||y<12||x>innerWidth-12||y>innerHeight-12)continue;
@@ -242,11 +253,12 @@ for(const width of [360,390,768,1280]){
   await page.mouse.up();
   assert.notEqual(await heroCamera(),pointerBefore,'Tree pointer drag must actually move the camera');
   await page.keyboard.press('Home');
-  assert.equal(await heroCamera(),pointerBefore,'Whole Tree keyboard reset restores the initial camera');
+  assert.equal(await heroCamera(),fullCamera,'Whole Tree keyboard reset restores the initial camera');
   const navigator=page.locator('.awakening-navigator');
   assert.equal(await navigator.count(),1,'Canonical hero navigator mounts once');
   const navigatorOpen=navigator.locator('.awakening-open');
-  await navigatorOpen.click();
+  // Earlier source selections legitimately auto-open the navigator; only toggle when it is closed.
+  if(await navigatorOpen.getAttribute('aria-expanded')!=='true')await navigatorOpen.click();
   assert.equal(await navigatorOpen.getAttribute('aria-expanded'),'true');
   const navigatorSearch=navigator.locator('.awakening-search');
   await navigatorSearch.fill('___no_published_record___');
