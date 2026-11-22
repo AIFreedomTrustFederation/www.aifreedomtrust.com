@@ -139,7 +139,7 @@ test('cinematic source inspector provides ancestry and safe real destinations wi
 test('cinematic source directory is searchable, filtered and keyboard navigable',()=>{
  const js=read('cinematic-source-projection.js'),css=read('cinematic-world.css');
  for(const token of ['living-source-directory','living-source-controls','renderDirectory','search.addEventListener(\'input\'','filter.addEventListener(\'change\'','aria-pressed','aria-current','anchors.get(node.id)','selectNode(node)'])assert.ok(js.includes(token),token);
- assert.match(js,/anchor.addEventListener\('click',e=>\{e.preventDefault\(\);selectNode\(node\)\}\)/);
+ assert.match(js,/anchor.addEventListener\('click',e=>\{e.preventDefault\(\);if\(performance.now\(\)<suppressTapUntil\)return;selectNode\(node\)\}\)/);
  assert.match(js,/destination.hidden=!link/);
  assert.match(css,/\.living-source-directory/);
  assert.match(css,/\.living-source-controls/);
