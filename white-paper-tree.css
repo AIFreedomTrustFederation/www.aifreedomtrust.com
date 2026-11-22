@@ -2,6 +2,8 @@
    Original cinematic artwork and existing source lineage remain unchanged. */
 html.embedded-world .white-paper-reader,
 html.embedded-world .world > .white-paper-focus{display:none!important}
+html.embedded-world .wp-nav-link{display:none!important}
+.hud nav .wp-nav-link{color:#ffe0a1;text-decoration:underline;text-underline-offset:.25rem}
 
 .world > .white-paper-focus{
   order:32;grid-row:auto;grid-column:1;position:relative;inset:auto;
