@@ -40,6 +40,12 @@ try{
   assert.ok(point,'There must be a genuine exposed two-finger Tree surface at '+width+'px');
   const cdp=await context.newCDPSession(page);
   const two=spread=>[{x:point.x-spread,y:point.y,id:1},{x:point.x+spread,y:point.y,id:2}];
+  const beforeBox=await tree.boundingBox();
+  assert.ok(beforeBox&&beforeBox.width>=120,'Tree must have a visible viewport at '+width+'px');
+  assert.ok(beforeBox.x>=-3&&beforeBox.x+beforeBox.width<=width+3,
+   'Tree may not be displaced outside phone width before pinch');
+  assert.ok(Math.abs(beforeBox.x+beforeBox.width/2-width/2)<=Math.max(14,width*.08),
+   'Camera surface must start centered, not off to the right');
   const before=await viewport();
   await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:two(25)});
   for(const s of [35,45,60])await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:two(s)});
@@ -49,6 +55,11 @@ try{
   for(const s of [45,30,15])await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:two(s)});
   await page.waitForTimeout(50);
   const backed=await viewport();
+  const afterBox=await tree.boundingBox();
+  assert.ok(afterBox,'Tree must remain measurable after two-finger input');
+  assert.ok(Math.abs(afterBox.x-beforeBox.x)<=2&&Math.abs(afterBox.width-beforeBox.width)<=2,
+   'Pinch must change SVG viewBox only, not move or scale its CSS layout box: '
+   +JSON.stringify({width,beforeBox,afterBox}));
   assert.ok(backed>zoomed,'Pinch-in must zoom out of Tree: '+JSON.stringify({width,zoomed,backed}));
   await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
   await page.screenshot({path:'artifacts/living-universe/universal-zoom-'+width+'.png',animations:'disabled'});
