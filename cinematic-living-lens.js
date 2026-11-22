@@ -123,7 +123,12 @@ function renderPathways(node){
 function displayNode(node,remember=true){
  if(!node||!eligible(node))return;
  if(remember&&selected?.id!==node.id){if(selected)trail.push(selected.id);back.disabled=!trail.length}
- choose(node.kind);
+ // Select the requested published record atomically. Calling choose() here
+ // first selects an unrelated default record and can desynchronize the
+ // inspector, camera and keyboard-driven pathway navigation.
+ focus=stages.indexOf(node.kind);
+ rail.querySelectorAll('button[data-stage]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.stage===node.kind)));
+ world.dataset.cinemaStage=node.kind;
  selected=node;
  camera(node);
  const siblings=siblingsFor(node),position=siblings.findIndex(n=>n.id===node.id);
