@@ -325,6 +325,19 @@ for(const width of [360,390,768,1280]){
   assert.equal(await page.locator('#evidence-scene').evaluate(el=>document.activeElement===el),true,
     'Evidence Flight receives keyboard focus after source handoff');
   assert.match(await page.locator('#evidence-info').innerText(),/Public Exploration/);
+  assert.equal(await page.locator('#evidence-list button[aria-current="true"]').count(),1,
+    'Evidence handoff selects exactly one canonical published record');
+  assert.match(await page.locator('#evidence-list button[aria-current="true"]').innerText(),/Public Exploration/,
+    'Accessible evidence index reflects the same selected source');
+  // Re-enter after a different evidence selection: no stale source or filter may win.
+  await page.locator('#evidence-search').fill('Federation Atlas');
+  assert.match(await page.locator('#evidence-info').innerText(),/Federation Atlas/,
+    'Evidence search can independently select a different published outcome');
+  await living.locator('.awakening-cinema-flight').click();
+  assert.match(await page.locator('#evidence-info').innerText(),/Public Exploration/,
+    'Repeat flight restores the canonical cinematic selection by ID');
+  assert.equal(await page.locator('#evidence-search').inputValue(),'',
+    'Repeat flight clears stale evidence filters');
   await page.screenshot({path:'artifacts/living-universe/tree-'+width+'.png',fullPage:true});
   assert.deepEqual(errors,[],'Browser JavaScript errors');
   console.log('PASS',width,'px',JSON.stringify(bounds));
