@@ -13,6 +13,7 @@
   --aift-frame-gap: clamp(.65rem, 2vw, 1.25rem);
   display: grid;
   grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: none; /* retire older min-height grid tracks */
   grid-auto-flow: row;
   grid-auto-rows: auto;
   align-items: start;
