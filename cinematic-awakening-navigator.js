@@ -41,9 +41,15 @@ tree.setAttribute('tabindex',tree.getAttribute('tabindex')||'0');
 tree.addEventListener('keydown',e=>{if(e.target!==tree||e.altKey||e.ctrlKey||e.metaKey)return;const c=cameraState(),step=c.size*.12;const shifts={ArrowLeft:[-step,0],ArrowRight:[step,0],ArrowUp:[0,-step],ArrowDown:[0,step]};if(shifts[e.key]){e.preventDefault();setCamera(c.x+shifts[e.key][0],c.y+shifts[e.key][1],c.size)}else if(e.key==='+'||e.key==='='){e.preventDefault();zoom(.8)}else if(e.key==='-'){e.preventDefault();zoom(1.25)}else if(e.key==='Home'){e.preventDefault();resetCamera()}});
 function pointerSnapshot(){return [...pointers.values()]}
 function beginGesture(){const ps=pointerSnapshot(),c=cameraState();if(!ps.length){gesture=null;return}const mid={x:ps.reduce((a,p)=>a+p.x,0)/ps.length,y:ps.reduce((a,p)=>a+p.y,0)/ps.length};gesture={mid,c,distance:ps.length>1?Math.hypot(ps[0].x-ps[1].x,ps[0].y-ps[1].y):0}}
+// The source-backed camera owns gestures when installed. Do not attach a
+// second pinch/pan listener to the same SVG: two controllers otherwise race
+// to write viewBox during every two-finger movement.
+if(!window.AIFT_HERO_POINTER_OWNER){
+ tree.style.touchAction='none';
 tree.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0)return;if(e.pointerType==='touch'&&pointers.size===0&&e.isPrimary&&e.target.closest('[data-lineage-id]'))return;const interactive=e.target.closest('a,button,[role="button"],[tabindex]');if(interactive&&interactive!==tree)return;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});tree.setPointerCapture(e.pointerId);beginGesture()});
 tree.addEventListener('pointermove',e=>{if(!pointers.has(e.pointerId)||!gesture)return;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});const ps=pointerSnapshot(),rect=tree.getBoundingClientRect();if(!rect.width||!rect.height)return;const mid={x:ps.reduce((a,p)=>a+p.x,0)/ps.length,y:ps.reduce((a,p)=>a+p.y,0)/ps.length};const d=ps.length>1?Math.hypot(ps[0].x-ps[1].x,ps[0].y-ps[1].y):0;const size=gesture.distance&&d?gesture.c.size*gesture.distance/d:gesture.c.size;setCamera(gesture.c.x-(mid.x-gesture.mid.x)*gesture.c.size/rect.width,gesture.c.y-(mid.y-gesture.mid.y)*gesture.c.size/rect.height,size)});
 for(const event of ['pointerup','pointercancel','lostpointercapture'])tree.addEventListener(event,e=>{if(!pointers.delete(e.pointerId))return;beginGesture()});
+}
 panel.querySelectorAll('[data-camera]').forEach(b=>b.addEventListener('click',()=>{const action=b.dataset.camera;if(action==='reset')resetCamera();else zoom(action==='in'?.8:1.25)}));
 panel.querySelectorAll('[data-awakening-kind]').forEach(b=>b.addEventListener('click',()=>{const kind=b.dataset.awakeningKind;const node=kind==='root'?roots[0]:kind==='fruit'?outcomes[0]:all.find(n=>n.kind===kind);if(node)show(node);else status.textContent='No documented '+kind+' is available. No destination is inferred.'}));
 function button(text,fn){const b=document.createElement('button');b.type='button';b.textContent=text;b.addEventListener('click',fn);return b}
