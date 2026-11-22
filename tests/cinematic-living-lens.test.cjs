@@ -44,3 +44,19 @@ test('stage selection, sibling exploration and back history use the same documen
  assert.match(js,/displayNode\(previous,false\)/);
  assert.match(js,/const inspectable=records\.filter/);
 });
+
+test('downstream pathway inspector is derived from documented parent IDs',()=>{
+ assert.match(js,/const childrenByParent=new Map\(\)/);
+ assert.match(js,/childrenByParent\.get\(n\.parent\)/);
+ assert.match(js,/function downstream\(node\)/);
+ assert.match(js,/const queue=\[\{node,depth:0\}\]/);
+ assert.match(js,/seen\.has\(child\.id\)/);
+ assert.match(js,/outcomes=found\.filter\(item=>item\.node\.kind==='fruit'&&isFruit\(item\.node\)\)/);
+ assert.match(js,/renderPathways\(node\)/);
+ assert.match(js,/No verified visitor-facing outcome is linked downstream/);
+ assert.match(js,/No further published descendants/);
+ assert.match(js,/button\.addEventListener\('click',\(\)=>displayNode\(child\)\)/);
+ assert.match(css,/\.awakening-pathways-list/);
+ assert.match(css,/\.awakening-pathways-node:focus-visible/);
+ assert.match(css,/min-height:48px/);
+});
