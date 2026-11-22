@@ -140,6 +140,36 @@
   min-width: 5ch;
   text-align: center;
 }
+/* Published-stage caption remains readable, but no longer floats
+   over the introduction or overlaps mobile navigation. */
+.world > .passage-caption {
+  order: 35;
+  display: block;
+  position: relative;
+  grid-column: 1;
+  grid-row: auto;
+  inset: auto;
+  left: auto;
+  top: auto;
+  right: auto;
+  bottom: auto;
+  justify-self: center;
+  align-self: center;
+  transform: none;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0;
+  padding: .3rem .65rem;
+  border: 1px solid #8dc8ad66;
+  border-radius: .55rem;
+  background: #0b2737a8;
+  text-align: center;
+  font-size: clamp(.6rem, 1.65vw, .75rem);
+  line-height: 1.35;
+  letter-spacing: .07em;
+  overflow-wrap: anywhere;
+  z-index: 2;
+}
 .world > .world-beacons {
   order: 40;
   display: flex;
@@ -294,6 +324,7 @@
   .world > .intro {grid-column: 1; grid-row: 1; justify-self:start}
   .world > svg.tree {grid-column: 2; grid-row: 1 / span 2; width: min(100%, 78svh)}
   .world > .aift-scene-toolbar {grid-column: 1; grid-row: 2}
+  .world > .passage-caption,
   .world > .world-beacons,
   .world > .world-gates,
   .world > .world-note,
@@ -313,6 +344,7 @@
   .world > .intro {grid-column: 1; grid-row: 1; justify-self:start}
   .world > svg.tree {grid-column: 2; grid-row: 1 / span 2; width:min(100%, 76svh, 55rem)}
   .world > .aift-scene-toolbar {grid-column: 1; grid-row: 2}
+  .world > .passage-caption,
   .world > .world-beacons,
   .world > .world-gates,
   .world > .world-note,
