@@ -290,7 +290,7 @@
    The existing six real stage beacons remain accessible, but become a
    scrollable tactile exploration rail rather than overlapping the Tree.
    The original copy, anchors, source links and JS controls are unchanged. */
-@media (max-width: 700px) {
+
   .world {
     display: grid;
     grid-template-rows: auto minmax(35svh, 1fr) auto auto;
@@ -387,7 +387,7 @@
   .hud nav {gap: .35rem;flex-wrap: nowrap;max-width: calc(100vw - 6rem)}
   .hud nav a {display: inline-flex;align-items: center;min-height: 44px;font-size: .67rem;white-space: nowrap}
   .world .passage-lens {top: 50%}
-}
+
 @media (max-width: 370px) {
   .hud nav {gap: .25rem}
   .hud nav a {font-size: .6rem}
@@ -403,10 +403,12 @@
 }
 
 
-/* Living Universe 3.1 · Android theatre collision-safe composition.
-   The source Tree remains the dominant playable region; overlays never
-   obscure the source beacons or the documented destination gates. */
-@media (max-width:700px) {
+/* Living Universe 3.1 · collision-safe theatre composition at every resolution.
+   The source Tree remains the dominant playable region, anchored to the
+   viewport like a game scene; overlays are document-flow rows that never
+   obscure the source beacons or the documented destination gates, at any
+   screen size or zoom level. */
+
   .world { isolation:isolate; grid-template-rows:auto minmax(40svh,1fr) auto auto auto; }
   .world .tree { z-index:1; pointer-events:auto; }
   .world .world-beacons { z-index:7; position:relative; }
@@ -432,7 +434,7 @@
   }
   .world .world-gates a { min-height:56px; }
   .world .world-beacon { min-height:48px; }
-}
+
 @media (max-width:390px) {
   .world .pilgrimage:not(.pilgrimage-open) .pilgrimage-top {
     align-items:stretch;
@@ -448,11 +450,11 @@
   .world .pilgrimage:not(.pilgrimage-open) { box-shadow:none; }
 }
 
-/* Living Universe 3.1: preserve Android gate hit targets above decorative layers.
-   The stage rail and gates are distinct grid rows, not floating overlays.
-   This is intentionally scoped to the first-screen theatre; desktop stacking
-   and all published source/destination anchors remain unchanged. */
-@media (max-width:700px) {
+/* Living Universe 3.1: preserve gate hit targets above decorative layers.
+   The stage rail and gates are distinct grid rows, not floating overlays,
+   at every resolution. All published source/destination anchors remain
+   unchanged. */
+
   .world .world-gates { isolation:isolate; z-index:20; }
   .world .world-gates .world-gate {
     position:relative; z-index:1; pointer-events:auto;
@@ -463,13 +465,13 @@
   }
   .world .world-stage-panel { pointer-events:none; }
   .world .world-stage-panel a { pointer-events:auto; }
-}
 
-/* Android theatre: keep the collapsed voyage in normal document flow.
+
+/* Theatre composition: keep the collapsed voyage in normal document flow.
    Prevent its entrance button from overlaying the two source gates when
    scrollIntoView centers a gate at 360/390px. Expanded voyage remains a
    deliberately modal-like fixed panel with its existing close control. */
-@media (max-width:700px) {
+
   .world { grid-template-rows:auto minmax(40svh,1fr) auto auto auto auto auto; height:auto; }
   .world .world-gates { grid-row:4; align-self:stretch; }
   .world .world-note { grid-row:5; }
@@ -482,7 +484,7 @@
     position:static; transform:none; max-width:100%;
   }
   .world .world-stage-panel { grid-row:7; }
-}
+
 
 
 /* Living Universe 3.2: evidence-bound chapter constellation, not XP or fake fruit.
