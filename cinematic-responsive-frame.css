@@ -1,0 +1,333 @@
+/* AIFT White Paper Portal — responsive scene shell.
+ *
+ * This is the one authoritative layout owner for the opening theatre.
+ * It is deliberately loaded LAST, after atmospheric and depth effects.
+ * World painting, source content, lineage, and SVG camera are unchanged.
+ * Every surface remains fluid across phone, tablet, desktop and page zoom.
+ *
+ * Do not add viewport-dependent offsets or absolute positioning for the Tree
+ * in decorative stylesheets. Camera movement belongs inside SVG viewBox.
+ */
+.world {
+  --aift-frame-gutter: clamp(.75rem, 3.5vw, 3rem);
+  --aift-frame-gap: clamp(.65rem, 2vw, 1.25rem);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-auto-flow: row;
+  grid-auto-rows: auto;
+  align-items: start;
+  align-content: start;
+  justify-items: stretch;
+  gap: var(--aift-frame-gap);
+  position: relative;
+  isolation: isolate;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  height: auto;
+  min-height: 100svh;
+  padding: clamp(4.75rem, 8svh, 6.5rem) var(--aift-frame-gutter)
+    max(1.25rem, env(safe-area-inset-bottom));
+  overflow: clip;
+}
+.world > .intro,
+.world > svg.tree,
+.world > .aift-scene-toolbar,
+.world > .world-beacons,
+.world > .world-gates,
+.world > .world-note,
+.world > .living-source-status,
+.world > .pilgrimage:not(.pilgrimage-open),
+.world > .world-stage-panel,
+.world > .awakening-navigator,
+.world > .outcome-open,
+.world > .cinematic-portal,
+.world > .awakening-cinema {
+  grid-column: 1;
+  grid-row: auto;
+  min-width: 0;
+}
+.world > .intro {
+  order: 10;
+  position: relative;
+  inset: auto;
+  width: 100%;
+  max-width: min(100%, 54ch);
+  margin: 0;
+  padding: 0;
+  justify-self: center;
+  align-self: start;
+  z-index: 3;
+}
+.world > .intro h1 {
+  font-size: clamp(2rem, 7.3vw, 4.3rem);
+  line-height: 1.06;
+  max-width: 16ch;
+  margin: .4rem 0;
+  text-wrap: balance;
+}
+.world > .intro > p:not(.eyebrow) {
+  font-size: clamp(.9rem, 2.2vw, 1.1rem);
+  line-height: 1.5;
+  max-width: 46ch;
+  margin: .5rem 0;
+}
+.world > .intro .enter {
+  min-height: 48px;
+  margin-block: .45rem .15rem;
+}
+.world > svg.tree {
+  order: 20;
+  display: block;
+  position: relative;
+  inset: auto;
+  left: auto;
+  right: auto;
+  top: auto;
+  bottom: auto;
+  width: min(100%, 72svh, 52rem);
+  height: auto;
+  max-width: 100%;
+  max-height: none;
+  aspect-ratio: 1 / 1;
+  justify-self: center;
+  align-self: center;
+  margin: 0 auto;
+  padding: 0;
+  opacity: 1;
+  transform: none;
+  translate: none;
+  animation: none;
+  transform-origin: center;
+  touch-action: none;
+  pointer-events: auto;
+  z-index: 1;
+}
+.world > .aift-scene-toolbar {
+  order: 30;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .55rem;
+  width: 100%;
+  max-width: 40rem;
+  margin: -.1rem auto .1rem;
+  padding: .2rem;
+  position: relative;
+  z-index: 4;
+}
+.world > .aift-scene-toolbar button {
+  flex: 0 0 auto;
+  min-height: 44px;
+  min-width: 48px;
+  padding: .55rem .8rem;
+  border: 1px solid #8ccac0;
+  border-radius: .8rem;
+  background: #0d2b3ee8;
+  color: #fff;
+  font: 700 .85rem system-ui, sans-serif;
+  cursor: pointer;
+}
+.world > .aift-scene-toolbar button:focus-visible {
+  outline: 3px solid #f7d18a;
+  outline-offset: 3px;
+}
+.world > .aift-scene-toolbar output {
+  font: 600 .75rem system-ui, sans-serif;
+  color: #ddf5ed;
+  min-width: 5ch;
+  text-align: center;
+}
+.world > .world-beacons {
+  order: 40;
+  display: flex;
+  position: relative;
+  inset: auto;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-inline: contain;
+  gap: .55rem;
+  padding: .45rem .25rem .75rem;
+  scroll-snap-type: x proximity;
+  z-index: 5;
+}
+.world > .world-beacons .world-beacon {
+  position: relative;
+  inset: auto;
+  left: auto;
+  top: auto;
+  right: auto;
+  bottom: auto;
+  flex: 0 0 clamp(108px, 26vw, 165px);
+  min-width: 108px;
+  max-width: none;
+  min-height: 48px;
+  margin: 0;
+  transform: none;
+  scroll-snap-align: start;
+}
+.world > .world-gates {
+  order: 50;
+  position: relative;
+  inset: auto;
+  left: auto;
+  right: auto;
+  top: auto;
+  bottom: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  gap: .6rem;
+  margin: 0;
+  transform: none;
+  z-index: 5;
+}
+.world > .world-gates .world-gate {
+  min-width: 0;
+  min-height: 56px;
+  width: 100%;
+  padding: .75rem;
+  transform: none;
+}
+.world > .world-note {
+  order: 60;
+  position: relative;
+  inset: auto;
+  margin: 0;
+  width: 100%;
+  max-width: none;
+  color: #c0cbd3;
+  z-index: 3;
+}
+.world > .living-source-status {
+  order: 70;
+  position: relative;
+  inset: auto;
+  margin: 0;
+  max-width: 100%;
+  width: 100%;
+  z-index: 3;
+}
+.world > .pilgrimage:not(.pilgrimage-open) {
+  order: 80;
+  position: relative;
+  inset: auto;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+  transform: none;
+  z-index: 3;
+}
+.world > .world-stage-panel {
+  order: 90;
+  position: relative;
+  inset: auto;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  transform: none;
+  z-index: 3;
+}
+.world > .awakening-navigator {
+  order: 100;
+  position: relative;
+  inset: auto;
+  left: auto;
+  right: auto;
+  bottom: auto;
+  top: auto;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+  transform: none;
+  z-index: 4;
+}
+.world > .outcome-open {
+  order: 110;
+  position: relative;
+  inset: auto;
+  transform: none;
+  max-width: 100%;
+  margin: 0 auto;
+  justify-self: center;
+}
+.world > .cinematic-portal {order: 120}
+.world > .awakening-cinema {order: 130}
+/* Decorative and tool overlays must never own layout space. */
+.world > :is(.sky, .aurora, .stars, .world-lightfield, .passage-field) {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+/* No fixed-height clipping: browser text zoom and landscape rotation remain usable. */
+@media (max-width: 899px) {
+  .world {grid-template-columns: minmax(0, 1fr)}
+  .world > svg.tree {width: min(100%, 64svh, 42rem)}
+  .world > .intro h1 {font-size: clamp(2rem, 7.6vw, 3.25rem)}
+  .world > .world-gates .world-gate {min-height: 56px}
+}
+@media (max-width: 440px) {
+  .world {--aift-frame-gap: .55rem; padding-top: 4.75rem}
+  .world > .intro h1 {font-size: clamp(2rem, 8vw, 2.6rem)}
+  .world > .intro > p:not(.eyebrow) {font-size: .93rem; line-height: 1.43}
+  .world > svg.tree {width: 100%}
+  .world > .world-beacons .world-beacon {flex-basis: min(35vw, 140px)}
+}
+/* A small landscape phone may use the same two-column design as a tablet. */
+@media (min-width: 560px) and (max-height: 540px) and (orientation: landscape) {
+  .world {
+    grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr);
+    padding-top: 4.25rem;
+    align-items: center;
+  }
+  .world > .intro {grid-column: 1; grid-row: 1; justify-self:start}
+  .world > svg.tree {grid-column: 2; grid-row: 1 / span 2; width: min(100%, 78svh)}
+  .world > .aift-scene-toolbar {grid-column: 1; grid-row: 2}
+  .world > .world-beacons,
+  .world > .world-gates,
+  .world > .world-note,
+  .world > .living-source-status,
+  .world > .pilgrimage:not(.pilgrimage-open),
+  .world > .world-stage-panel,
+  .world > .awakening-navigator,
+  .world > .outcome-open {grid-column: 1 / -1;grid-row:auto}
+}
+@media (min-width: 900px) {
+  .world {
+    grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+    align-items: center;
+    min-height: 100svh;
+    padding-top: clamp(6rem, 9svh, 8rem);
+  }
+  .world > .intro {grid-column: 1; grid-row: 1; justify-self:start}
+  .world > svg.tree {grid-column: 2; grid-row: 1 / span 2; width:min(100%, 76svh, 55rem)}
+  .world > .aift-scene-toolbar {grid-column: 1; grid-row: 2}
+  .world > .world-beacons,
+  .world > .world-gates,
+  .world > .world-note,
+  .world > .living-source-status,
+  .world > .pilgrimage:not(.pilgrimage-open),
+  .world > .world-stage-panel,
+  .world > .awakening-navigator,
+  .world > .outcome-open,
+  .world > .cinematic-portal,
+  .world > .awakening-cinema {grid-column: 1 / -1;grid-row:auto}
+}
+@media (prefers-reduced-motion:reduce) {
+  .world > svg.tree {animation:none;transition:none;translate:none}
+  .world > .world-beacons {scroll-behavior:auto}
+}
+@media (prefers-reduced-data:reduce) {
+  .world > svg.tree {filter:none}
+  .world > .world-gates .world-gate {backdrop-filter:none}
+}
