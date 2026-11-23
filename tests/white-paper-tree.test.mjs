@@ -36,6 +36,7 @@ test('Every chapter cites the published website or approved public documentation
  for(const href of links){
   assert.ok(href.startsWith('index.html#')||href.startsWith('docs/')||
     href.startsWith('https://aifreedomtrustfederation.github.io/AI-Freedom-Trust/docs/pdf/')||
+    href.startsWith('https://github.com/AIFreedomTrustFederation/AI-Freedom-Trust/blob/main/docs/')||
     ['atlas.html','constellations.html','index.html','lineage-data.js'].includes(href)||
     href.startsWith('#wp-chapter-')||href==='#white-paper-atlas'||href==='#tree-of-emergence'||href==='#wp-library',
     'Unexpected citation or chapter link: '+href);
@@ -72,4 +73,21 @@ test('Tree markers are accessible and focus actual chapter source references',()
  assert.match(css,/\.wp-chapter/);
  assert.match(css,/prefers-reduced-motion:reduce/);
  assert.match(css,/prefers-reduced-data:reduce/);
+});
+
+test('Professional White Paper labels preserve the Tree metaphor without reducing subjects to organs',()=>{
+ const labels=['HUMAN AGENCY','SHARED COVENANT','FEDERATION STRUCTURE','SOURCE EVIDENCE','EMERGING WORK','PUBLIC EXPERIENCES'];
+ for(const name of labels)assert.equal(html.split(' · '+name+' <small class="wp-metaphor">').length-1,2,'Navigation and chapter must agree: '+name);
+ for(const name of ['Human Agency','Shared Covenant','Federation Structure','Source Evidence','Emerging Work','Public Experiences'])assert.ok(script.includes("label:'"+name+"'"),'Missing Tree landmark: '+name);
+ assert.equal((html.match(/class="wp-claim-note"/g)||[]).length,6,'Six documented claim boundaries');
+});
+
+test('Readable source editions and original papers remain distinct and accountable',()=>{
+ const block=html.slice(html.indexOf('<section id="white-paper-atlas"'),html.indexOf('<section id="seven-movements"'));
+ assert.equal((block.match(/class="wp-edition"/g)||[]).length,7);
+ const originals=block.split('https://github.com/AIFreedomTrustFederation/AI-Freedom-Trust/blob/main/docs/').length-1;
+ assert.equal(originals,4,'Four readable source editions, not invented full-paper coverage');
+ for(const path of ['docs/federation-operating-model.md','docs/organization-map.md','docs/security-and-privacy.md','docs/public-repo-inventory.md','lineage-data.js'])assert.ok(block.includes('href="'+path+'"'),'Missing documented foundation '+path);
+ assert.match(block,/not independently reviewed/);
+ assert.match(block,/does not claim causal proof, peer review, or independent replication/);
 });

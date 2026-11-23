@@ -21,12 +21,12 @@ const read=document.getElementById('wp-read-current');
 if(!scene||!world||!reader||!title||!summary||!read)return;
 
 const stageMap=[
- {id:'root',label:'Roots',extra:'Human authorship',x:390,y:865},
- {id:'trunk',label:'Trunk',extra:'Shared covenant',x:500,y:575},
- {id:'branch',label:'Branches',extra:'Distinct systems',x:758,y:416},
- {id:'leaf',label:'Leaves',extra:'Source knowledge',x:185,y:298},
- {id:'flower',label:'Flowers',extra:'Emerging work',x:400,y:122},
- {id:'fruit',label:'Fruits',extra:'Published pages',x:785,y:180}
+ {id:'root',label:'Human Agency',extra:'Consent and conscience',x:390,y:865},
+ {id:'trunk',label:'Shared Covenant',extra:'Common purpose',x:500,y:575},
+ {id:'branch',label:'Federation Structure',extra:'Distinct responsibilities',x:758,y:416},
+ {id:'leaf',label:'Source Evidence',extra:'Accountable knowledge',x:185,y:298},
+ {id:'flower',label:'Emerging Work',extra:'Research and incubation',x:400,y:122},
+ {id:'fruit',label:'Public Experiences',extra:'Published destinations',x:785,y:180}
 ];
 const ns='http://www.w3.org/2000/svg';
 const make=(tag,attrs,parent)=>{
