@@ -37,6 +37,7 @@ test('Every chapter cites the published website or approved public documentation
   assert.ok(href.startsWith('index.html#')||href.startsWith('docs/')||
     href.startsWith('https://aifreedomtrustfederation.github.io/AI-Freedom-Trust/docs/pdf/')||
     href.startsWith('https://github.com/AIFreedomTrustFederation/AI-Freedom-Trust/blob/main/docs/')||
+    href.startsWith('https://github.com/AIFreedomTrustFederation/www.aifreedomtrust.com/blob/main/')||
     ['atlas.html','constellations.html','index.html','lineage-data.js'].includes(href)||
     href.startsWith('#wp-chapter-')||href==='#white-paper-atlas'||href==='#tree-of-emergence'||href==='#wp-library',
     'Unexpected citation or chapter link: '+href);
@@ -87,7 +88,17 @@ test('Readable source editions and original papers remain distinct and accountab
  assert.equal((block.match(/class="wp-edition"/g)||[]).length,7);
  const originals=block.split('https://github.com/AIFreedomTrustFederation/AI-Freedom-Trust/blob/main/docs/').length-1;
  assert.equal(originals,4,'Four readable source editions, not invented full-paper coverage');
- for(const path of ['docs/federation-operating-model.md','docs/organization-map.md','docs/security-and-privacy.md','docs/public-repo-inventory.md','lineage-data.js'])assert.ok(block.includes('href="'+path+'"'),'Missing documented foundation '+path);
+ for(const path of ['docs/federation-operating-model.md','docs/organization-map.md','docs/security-and-privacy.md','docs/public-repo-inventory.md','lineage-data.js'])assert.ok(block.includes('href="https://github.com/AIFreedomTrustFederation/www.aifreedomtrust.com/blob/main/'+path+'"'),'Missing canonical source link '+path);
  assert.match(block,/not been independently reviewed/);
  assert.match(block,/does not claim causal proof, peer review, or independent replication/);
+});
+
+test('Canonical primary-source links are not raw Markdown or JavaScript routes',()=>{
+ const block=html.slice(html.indexOf('<section id="white-paper-atlas"'),html.indexOf('<section id="seven-movements"'));
+ for(const path of ['docs/federation-operating-model.md','docs/organization-map.md','docs/security-and-privacy.md','docs/public-repo-inventory.md','lineage-data.js']){
+  assert.ok(!block.includes('href="'+path+'"'),'Raw source URL remains: '+path);
+  assert.ok(block.includes('https://github.com/AIFreedomTrustFederation/www.aifreedomtrust.com/blob/main/'+path),'Canonical source URL missing: '+path);
+ }
+ assert.match(script,/x:-150,y:-48,width:300,height:112/,'Tree badges need sufficient width for full editorial names');
+ assert.match(read('cinematic-responsive-frame.css'),/grid-template-columns: repeat\(2,minmax\(0,1fr\)\)/);
 });

@@ -61,6 +61,35 @@ try {
   assert.ok(geometry.reader.left>=-4&&geometry.reader.right<=width+4,
     'White Paper reading room must fit viewport: '+JSON.stringify(geometry));
 
+  // Readability must be tested, not inferred from no-horizontal-overflow alone.
+  const markerFits=await page.evaluate(()=>[...document.querySelectorAll('.wp-tree-marker')].map(marker=>{
+   const text=marker.querySelector('.wp-marker-title').getBBox();
+   const backdrop=marker.querySelector('.wp-marker-back').getBBox();
+   return {stage:marker.dataset.wpStage,
+    left:text.x-backdrop.x, right:(backdrop.x+backdrop.width)-(text.x+text.width)};
+  }));
+  assert.ok(markerFits.every(({left,right})=>left>=8&&right>=8),
+    'Professional Tree labels must fit inside their visible badges: '+JSON.stringify(markerFits));
+  const sourceRegister=page.locator('#wp-source-register');
+  assert.equal(await sourceRegister.getByRole('link').count(),10,
+    'Six public sources and four original Aetherion source editions remain available');
+  if(width<=440){
+   const nav=await page.evaluate(()=>{
+    const header=document.querySelector('.hud').getBoundingClientRect();
+    const intro=document.querySelector('.world > .intro').getBoundingClientRect();
+    return {headerBottom:header.bottom,introTop:intro.top,
+     links:[...document.querySelectorAll('.hud nav a')].map(link=>{
+      const rect=link.getBoundingClientRect(),style=getComputedStyle(link);
+      return {name:link.textContent.trim(),height:rect.height,left:rect.left,right:rect.right,
+        fontSize:parseFloat(style.fontSize)};
+     })};
+   });
+   assert.equal(nav.links.length,4,'All four primary links must remain visible');
+   assert.ok(nav.links.every(link=>link.height>=44&&link.fontSize>=13&&link.left>=-1&&link.right<=width+1),
+     'Mobile navigation must have accessible size and fit screen: '+JSON.stringify(nav));
+   assert.ok(nav.headerBottom<=nav.introTop-4,'Navigation must never cover the White Paper heading: '+JSON.stringify(nav));
+  }
+  
   // Directly interact with a landmark and confirm it operates the SAME SVG camera.
   await page.locator('.wp-tree-marker[data-wp-stage="root"]').click();
   const zoomed=await page.locator('.world svg.tree').getAttribute('viewBox');

@@ -52,7 +52,7 @@ for(const item of stageMap){
   transform:'translate('+item.x+' '+item.y+')'
  },layer);
  const help=make('title',{},marker);help.textContent='White Paper: '+heading.textContent.trim()+'. Double tap or press Enter to explore.';
- make('rect',{'class':'wp-marker-back',x:-116,y:-48,width:232,height:112,rx:24},marker);
+ make('rect',{'class':'wp-marker-back',x:-150,y:-48,width:300,height:112,rx:24},marker);
  const label=make('text',{'class':'wp-marker-title','text-anchor':'middle',x:0,y:-4},marker);
  label.textContent=item.label;
  const detail=make('text',{'class':'wp-marker-detail','text-anchor':'middle',x:0,y:34},marker);
