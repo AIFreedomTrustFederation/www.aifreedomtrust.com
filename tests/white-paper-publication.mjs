@@ -26,9 +26,6 @@ try{
  await page.getByRole('link',{name:'Browse the original papers'}).tap();
  assert.equal(new URL(page.url()).hash,'#wp-library');
 
- const catalog=await page.request.get('https://api.github.com/repos/AIFreedomTrustFederation/AI-Freedom-Trust/contents/docs/pdf');
- assert.equal(catalog.status(),200,'Publisher document catalog');
- const files=new Map((await catalog.json()).map(file=>[file.name,file]));
  const links=page.locator('.wp-library-links a');
  assert.equal(await links.count(),editions.size);
  const verified=new Set();
@@ -42,8 +39,11 @@ try{
   assert.equal(response.status(),200,href);
   const bytes=await response.body();
   assert.equal(bytes.subarray(0,5).toString(),'%PDF-',name);
-  const sha=createHash('sha1').update('blob '+bytes.length+'\0').update(bytes).digest('hex');
-  assert.equal(sha,files.get(name)?.sha,'Published bytes differ from the original '+name);
+  const original=await page.request.get('https://raw.githubusercontent.com/AIFreedomTrustFederation/AI-Freedom-Trust/main/docs/pdf/'+name);
+  assert.equal(original.status(),200,'Publisher repository copy of '+name);
+  const sha=createHash('sha256').update(bytes).digest('hex');
+  assert.equal(sha,createHash('sha256').update(await original.body()).digest('hex'),
+   'Published bytes differ from the original '+name);
   verified.add(name);
   console.log('Verified original PDF',name,bytes.length,sha);
  }
