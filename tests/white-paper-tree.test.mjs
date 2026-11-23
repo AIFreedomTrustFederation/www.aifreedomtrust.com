@@ -102,3 +102,14 @@ test('Canonical primary-source links are not raw Markdown or JavaScript routes',
  assert.match(script,/x:-150,y:-48,width:300,height:112/,'Tree badges need sufficient width for full editorial names');
  assert.match(read('cinematic-responsive-frame.css'),/grid-template-columns: repeat\(2,minmax\(0,1fr\)\)/);
 });
+
+test('White Paper offers reversible label previews and independent text magnification',()=>{
+ for(const e of ['pointerenter','pointerleave','focus','blur'])assert.ok(script.includes("marker.addEventListener('"+e+"'"));
+ assert.match(script,/const clearPreview=/);
+ assert.match(script,/reader\.style\.setProperty\('--wp-reader-scale'/);
+ assert.match(script,/Math\.max\(1,Math\.min\(2/);
+ assert.doesNotMatch(script,/localStorage|sessionStorage|sendBeacon/);
+ for(const id of ['wp-text-smaller','wp-text-larger','wp-text-reset','wp-text-size'])assert.ok(html.includes('id="'+id+'"'));
+ assert.match(css,/\.white-paper-reader\{--wp-reader-scale:1\}/);
+ assert.match(css,/\.wp-reading-controls button:disabled/);
+});

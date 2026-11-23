@@ -90,6 +90,37 @@ try {
    assert.ok(nav.headerBottom<=nav.introTop-4,'Navigation must never cover the White Paper heading: '+JSON.stringify(nav));
   }
   
+  if(width===320||width===390){
+   const paragraph=page.locator('#wp-chapter-root .wp-chapter-lead');
+   const baseFont=await paragraph.evaluate(el=>parseFloat(getComputedStyle(el).fontSize));
+   const treeView=await page.locator('.world svg.tree').getAttribute('viewBox');
+   for(let i=0;i<4;i++)await page.locator('#wp-text-larger').click();
+   assert.equal((await page.locator('#wp-text-size').textContent()).trim(),'200%');
+   assert.ok(await page.locator('#wp-text-larger').isDisabled());
+   const largeFont=await paragraph.evaluate(el=>parseFloat(getComputedStyle(el).fontSize));
+   assert.ok(largeFont>=baseFont*1.9,'Text failed magnification '+JSON.stringify({baseFont,largeFont}));
+   assert.equal(await page.locator('.world svg.tree').getAttribute('viewBox'),treeView);
+   const extent=await page.evaluate(()=>({width:document.documentElement.scrollWidth,viewport:innerWidth}));
+   assert.ok(extent.width<=width+4,'Magnified text overflow '+JSON.stringify(extent));
+   await page.locator('#wp-text-reset').click();
+   assert.equal((await page.locator('#wp-text-size').textContent()).trim(),'100%');
+   assert.ok(await page.locator('#wp-text-smaller').isDisabled());
+  }
+  if(width===1280){
+   const leaf=page.locator('.wp-tree-marker[data-wp-stage="leaf"]');
+   const camera=await page.locator('.world svg.tree').getAttribute('viewBox');
+   await leaf.hover();
+   assert.match(await page.locator('#wp-focus-title').textContent(),/Knowledge must return to its sources/);
+   assert.equal(await page.locator('.world').getAttribute('data-wp-preview'),'leaf');
+   assert.equal(await page.locator('.world svg.tree').getAttribute('viewBox'),camera);
+   await page.mouse.move(0,0);
+   assert.equal(await page.locator('#wp-focus-title').textContent(),'Select a Tree chapter');
+   await leaf.focus();
+   assert.equal(await page.locator('.world').getAttribute('data-wp-preview'),'leaf');
+   await page.keyboard.press('Enter');
+   assert.equal(await page.locator('#wp-chapter-leaf').getAttribute('data-wp-selected'),'true');
+  }
+
   // Directly interact with a landmark and confirm it operates the SAME SVG camera.
   await page.locator('.wp-tree-marker[data-wp-stage="root"]').click();
   const zoomed=await page.locator('.world svg.tree').getAttribute('viewBox');

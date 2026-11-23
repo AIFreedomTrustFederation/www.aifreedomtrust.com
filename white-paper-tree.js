@@ -19,6 +19,25 @@ const title=document.getElementById('wp-focus-title');
 const summary=document.getElementById('wp-focus-summary');
 const read=document.getElementById('wp-read-current');
 if(!scene||!world||!reader||!title||!summary||!read)return;
+const smaller=reader.querySelector('#wp-text-smaller');
+const larger=reader.querySelector('#wp-text-larger');
+const resetText=reader.querySelector('#wp-text-reset');
+const sizeOutput=reader.querySelector('#wp-text-size');
+let textScale=1;
+const setTextScale=next=>{
+ textScale=Math.max(1,Math.min(2,Math.round(next*4)/4));
+ reader.style.setProperty('--wp-reader-scale',String(textScale));
+ sizeOutput.textContent=Math.round(textScale*100)+'%';
+ smaller.disabled=textScale===1;
+ larger.disabled=textScale===2;
+ resetText.disabled=textScale===1;
+};
+if(smaller&&larger&&resetText&&sizeOutput){
+ smaller.addEventListener('click',()=>setTextScale(textScale-.25));
+ larger.addEventListener('click',()=>setTextScale(textScale+.25));
+ resetText.addEventListener('click',()=>setTextScale(1));
+ setTextScale(1);
+}
 
 const stageMap=[
  {id:'root',label:'Human Agency',extra:'Consent and conscience',x:390,y:865},
@@ -37,6 +56,7 @@ const make=(tag,attrs,parent)=>{
 };
 const layer=make('g',{'class':'wp-tree-label-layer','aria-label':'Source-linked White Paper chapter landmarks'},scene);
 const chapters=new Map;
+const initialPanel={title:title.textContent,summary:summary.textContent,href:read.getAttribute('href'),label:read.textContent};
 let active=null,blockedUntil=0;
 const touchPoints=new Map;
 for(const item of stageMap){
@@ -75,13 +95,36 @@ for(const event of ['pointerup','pointercancel','lostpointercapture']){
  scene.addEventListener(event,e=>touchPoints.delete(e.pointerId),true);
 }
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+const showChapter=(chapter,preview=false)=>{
+ title.textContent=chapter.heading.textContent;
+ summary.textContent=chapter.lead.textContent;
+ read.href='#wp-chapter-'+chapter.id;
+ read.textContent=(preview?'Explore ':'Read the ')+chapter.label+' chapter ↓';
+};
+const clearPreview=()=>{
+ if(active)showChapter(chapters.get(active));
+ else{
+  title.textContent=initialPanel.title;
+  summary.textContent=initialPanel.summary;
+  read.setAttribute('href',initialPanel.href);
+  read.textContent=initialPanel.label;
+ }
+ world.removeAttribute('data-wp-preview');
+ for(const chapter of stageMap)chapter.marker.removeAttribute('data-wp-preview');
+};
+const preview=id=>{
+ const chapter=chapters.get(id);
+ if(!chapter)return;
+ showChapter(chapter,true);
+ world.dataset.wpPreview=id;
+ for(const item of stageMap)item.marker.dataset.wpPreview=String(item.id===id);
+};
 const focus=(id,{zoom=true}={})=>{
  const chapter=chapters.get(id);if(!chapter)return;
  active=id;
- title.textContent=chapter.heading.textContent;
- summary.textContent=chapter.lead.textContent;
- read.href='#wp-chapter-'+id;
- read.textContent='Read the '+chapter.label+' chapter ↓';
+ showChapter(chapter);
+ world.removeAttribute('data-wp-preview');
+ for(const item of stageMap)item.marker.removeAttribute('data-wp-preview');
  for(const el of reader.querySelectorAll('.wp-chapter')){
   if(el.dataset.wpStage===id)el.dataset.wpSelected='true';
   else delete el.dataset.wpSelected;
@@ -105,6 +148,12 @@ new MutationObserver(updateZoom).observe(scene,{attributes:true,attributeFilter:
 updateZoom();
 for(const item of stageMap){
  const marker=item.marker;
+ marker.addEventListener('pointerenter',e=>{
+  if(e.pointerType==='mouse'||e.pointerType==='pen')preview(item.id);
+ });
+ marker.addEventListener('pointerleave',()=>{if(document.activeElement!==marker)clearPreview()});
+ marker.addEventListener('focus',()=>preview(item.id));
+ marker.addEventListener('blur',()=>{if(!marker.matches(':hover'))clearPreview()});
  marker.addEventListener('click',e=>{
   if(performance.now()<blockedUntil)return;
   e.preventDefault();focus(item.id);
