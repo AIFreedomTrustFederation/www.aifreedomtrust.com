@@ -10,7 +10,7 @@ const css=read('white-paper-tree.css');
 
 test('White Paper is a source-linked six-chapter reading document, not a claim of 14 verified worlds',()=>{
  assert.match(html,/id="white-paper-atlas"/);
- assert.match(html,/Read the Tree\. Trace every meaning\./);
+ assert.match(html,/Explore the Federation\. Follow the sources\./);
  const positions=stages.map(s=>html.indexOf('id="wp-chapter-'+s+'"'));
  assert.ok(positions.every(p=>p>=0),'All six chapters must be present');
  assert.deepEqual([...positions].sort((a,b)=>a-b),positions,'Chapters must follow source lineage order');
