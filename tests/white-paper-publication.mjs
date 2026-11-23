@@ -47,7 +47,7 @@ try{
   verified.add(name);
   console.log('Verified original PDF',name,bytes.length,sha);
  }
- const genesis=page.getByRole('link',{name:/Genesis White Paper/});
+ const genesis=page.locator('.wp-library-links').getByRole('link',{name:/Genesis White Paper/});
  const url=await genesis.getAttribute('href');
  await genesis.tap();
  await page.waitForURL(url);

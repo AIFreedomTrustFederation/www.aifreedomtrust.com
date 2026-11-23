@@ -1,7 +1,5 @@
-/* Cross-page Android/Tablet census. Observational diagnostics for the pages
- * outside the current White Paper slice: do not misrepresent an audit as a
- * passing end-to-end test. Every finding records its measured viewport.
- */
+/* Measure public routes at phone and tablet widths. Save the report and
+ * screenshots before failing on route, layout or browser errors. */
 import {mkdir,writeFile} from 'node:fs/promises';
 import {chromium} from 'playwright';
 

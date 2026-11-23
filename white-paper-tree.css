@@ -159,6 +159,10 @@ html.embedded-world .wp-nav-link{display:none!important}
  .wp-chapter{box-shadow:none}
 }
 
-.wp-further-reading a, .wp-source-list-link {
+.wp-further-reading a {
  display: inline-flex; align-items: center; min-height: 44px; text-underline-offset: .2em;
+}
+
+@media (max-width: 800px) {
+ .hud .brand {display: inline-flex; align-items: center; min-height: 44px}
 }

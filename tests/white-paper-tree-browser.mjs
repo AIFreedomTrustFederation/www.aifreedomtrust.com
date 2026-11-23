@@ -106,7 +106,7 @@ try {
    if(!id)assert.equal(await page.evaluate(()=>scrollY),0);
    else await atDestination(page,id);
    if(id==='white-paper-atlas'){
-    await page.getByRole('link',{name:'Back to the Tree',exact:true}).tap();
+    await page.locator('.wp-intro').getByRole('link',{name:'Back to the Tree',exact:true}).tap();
     await atDestination(page,'tree-of-emergence');
     await page.locator('.world-beacon-trunk').tap();
     await atDestination(page,'evidence-world');
