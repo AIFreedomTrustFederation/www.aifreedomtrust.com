@@ -861,12 +861,21 @@ h3 {
   }
 
   .site-header {
-    position: absolute;
+    position: relative;
+    gap: 8px;
   }
 
   .nav {
     width: 100%;
-    justify-content: space-between;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 0 14px;
+  }
+
+  .site-header .nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
   }
 
   .intro,
