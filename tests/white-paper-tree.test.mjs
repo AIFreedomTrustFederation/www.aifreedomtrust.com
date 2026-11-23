@@ -39,7 +39,7 @@ test('Every chapter cites the published website or approved public documentation
     href.startsWith('https://github.com/AIFreedomTrustFederation/AI-Freedom-Trust/blob/main/docs/')||
     href.startsWith('https://github.com/AIFreedomTrustFederation/www.aifreedomtrust.com/blob/main/')||
     ['atlas.html','constellations.html','index.html','lineage-data.js'].includes(href)||
-    href.startsWith('#wp-chapter-')||href==='#white-paper-atlas'||href==='#tree-of-emergence'||href==='#wp-library',
+    href.startsWith('#wp-chapter-')||href==='#white-paper-atlas'||href==='#tree-of-emergence'||href==='#wp-library'||href==='#wp-source-inspector',
     'Unexpected citation or chapter link: '+href);
   assert.doesNotMatch(href,/javascript:|data:/i);
  }
@@ -112,4 +112,38 @@ test('White Paper offers reversible label previews and independent text magnific
  for(const id of ['wp-text-smaller','wp-text-larger','wp-text-reset','wp-text-size'])assert.ok(html.includes('id="'+id+'"'));
  assert.match(css,/\.white-paper-reader\{--wp-reader-scale:1\}/);
  assert.match(css,/\.wp-reading-controls button:disabled/);
+});
+
+const inspector=read('white-paper-source-inspector.js');
+const inspectorCSS=read('white-paper-source-inspector.css');
+
+test('Standalone source inspector has six chapter triggers, documented concept index and accessible reading panel',()=>{
+ const section=html.slice(html.indexOf('id="wp-source-inspector"'),html.indexOf('<div class="wp-chapters">'));
+ assert.ok(section.includes('id="wp-term-search"'));
+ assert.ok(section.includes('id="wp-inspector-detail"'));
+ assert.ok(section.includes('id="wp-inspector-title" tabindex="-1"'));
+ assert.ok(section.includes('id="wp-inspector-sources"'));
+ assert.ok(section.includes('id="wp-inspector-related"'));
+ for(const id of stages)assert.ok(html.includes('data-wp-inspect="chapter:'+id+'"'),'Missing chapter source inspector for '+id);
+ assert.equal((html.match(/data-wp-inspect="chapter:(root|trunk|branch|leaf|flower|fruit)"/g)||[]).length,6);
+ assert.ok(html.indexOf('white-paper-source-inspector.css')<html.indexOf('cinematic-responsive-frame.css'));
+ assert.ok(html.indexOf('white-paper-tree.js')<html.indexOf('white-paper-source-inspector.js'));
+ assert.match(inspector,/classList\.contains\('embedded-world'\)\)return/);
+ assert.doesNotMatch(inspector,/\bfetch\s*\(|XMLHttpRequest|localStorage|sessionStorage|sendBeacon|navigator\.sendBeacon/);
+});
+
+test('Source inspector uses authored chapter prose, bounded concepts, original references and reversible controls',()=>{
+ assert.match(inspector,/\.querySelector\('\.wp-chapter-lead'\)/);
+ assert.match(inspector,/\.querySelector\('\.wp-claim-note'\)/);
+ assert.match(inspector,/\.querySelectorAll\('\.wp-sources a'\)/);
+ for(const id of ['human-authorship','sovereignty','public-trust','circleunchain','biozoe','restorative-economics','source-evidence']){
+  assert.ok(inspector.includes("id:'"+id+"'"),'Missing grounded concept '+id);
+ }
+ assert.match(inspector,/const terms=\[/);
+ assert.match(inspector,/const chapters=\[/);
+ assert.match(inspector,/detail\.hidden=true/);
+ assert.match(inspector,/search\.addEventListener\('input',renderTerms\)/);
+ assert.match(inspector,/linksFor\(data\.refs,data\.chapter\)/);
+ assert.match(inspectorCSS,/var\(--wp-reader-scale,1\)/);
+ assert.match(inspectorCSS,/\.wp-inspector-detail\[hidden\]/);
 });

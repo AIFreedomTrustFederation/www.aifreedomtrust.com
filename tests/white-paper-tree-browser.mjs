@@ -146,6 +146,33 @@ try {
   await page.locator('#wp-chapter-fruit [data-wp-focus="fruit"]').click();
   assert.equal(await page.locator('#wp-read-current').getAttribute('href'),'#wp-chapter-fruit');
 
+  // Source inspector is a real document panel, not a hover-only overlay.
+  if(width===320||width===390||width===1280){
+   const viewBefore=await page.locator('.world svg.tree').getAttribute('viewBox');
+   await page.locator('#wp-chapter-leaf [data-wp-inspect="chapter:leaf"]').click();
+   assert.equal(await page.locator('#wp-inspector-detail').isVisible(),true);
+   assert.match(await page.locator('#wp-inspector-title').textContent(),/Source Evidence/);
+   assert.ok(await page.locator('#wp-inspector-sources a').count()>=2,'Chapter inspector needs source links');
+   assert.match(await page.locator('#wp-inspector-boundary').textContent(),/evidence boundary/i);
+   assert.equal(await page.locator('.world svg.tree').getAttribute('viewBox'),viewBefore,
+    'Source inspection may not modify the Tree camera');
+   await page.locator('#wp-term-search').fill('Circleunchain');
+   assert.equal(await page.locator('#wp-term-index button').count(),1,'Search should filter to a grounded term');
+   await page.locator('#wp-term-index button').click();
+   assert.match(await page.locator('#wp-inspector-title').textContent(),/Circleunchain/);
+   assert.match(await page.locator('#wp-inspector-status').textContent(),/Concept-stage/);
+   assert.ok((await page.locator('#wp-inspector-sources a').allTextContents()).some(s=>s.includes('Circleunchain')));
+   await page.locator('#wp-inspector-related button').filter({hasText:'Biozoe'}).click();
+   assert.match(await page.locator('#wp-inspector-title').textContent(),/Biozoe/);
+   await page.locator('#wp-inspector-return').click();
+   assert.match(new URL(page.url()).hash,/wp-chapter-flower/);
+   await page.locator('#wp-inspector-close').click();
+   assert.equal(await page.locator('#wp-inspector-detail').isVisible(),false);
+   await page.locator('#wp-term-search').fill('');
+   const widthInfo=await page.evaluate(()=>({page:document.documentElement.scrollWidth,viewport:innerWidth}));
+   assert.ok(widthInfo.page<=width+20,'Inspector must not cause horizontal overflow '+JSON.stringify(widthInfo));
+  }
+
   // Inspect the page's actual top/middle/bottom during a full reader scroll.
   for(const [name,location] of [['top',0],['middle',.5],['bottom',1]]){
    await page.evaluate(r=>{
