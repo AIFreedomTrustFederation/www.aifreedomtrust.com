@@ -88,6 +88,6 @@ test('Readable source editions and original papers remain distinct and accountab
  const originals=block.split('https://github.com/AIFreedomTrustFederation/AI-Freedom-Trust/blob/main/docs/').length-1;
  assert.equal(originals,4,'Four readable source editions, not invented full-paper coverage');
  for(const path of ['docs/federation-operating-model.md','docs/organization-map.md','docs/security-and-privacy.md','docs/public-repo-inventory.md','lineage-data.js'])assert.ok(block.includes('href="'+path+'"'),'Missing documented foundation '+path);
- assert.match(block,/not independently reviewed/);
+ assert.match(block,/not been independently reviewed/);
  assert.match(block,/does not claim causal proof, peer review, or independent replication/);
 });
