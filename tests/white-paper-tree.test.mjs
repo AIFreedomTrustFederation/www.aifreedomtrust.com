@@ -1,0 +1,149 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+
+const read=path=>readFileSync(new URL('../'+path,import.meta.url),'utf8');
+const stages=['root','trunk','branch','leaf','flower','fruit'];
+const html=read('cinematic-world.html');
+const script=read('white-paper-tree.js');
+const css=read('white-paper-tree.css');
+
+test('White Paper is a source-linked six-chapter reading document, not a claim of 14 verified worlds',()=>{
+ assert.match(html,/id="white-paper-atlas"/);
+ assert.match(html,/Explore the Federation\. Follow the sources\./);
+ const positions=stages.map(s=>html.indexOf('id="wp-chapter-'+s+'"'));
+ assert.ok(positions.every(p=>p>=0),'All six chapters must be present');
+ assert.deepEqual([...positions].sort((a,b)=>a-b),positions,'Chapters must follow source lineage order');
+ for(const stage of stages){
+  assert.match(html,new RegExp('data-wp-stage="'+stage+'"'));
+  assert.match(html,new RegExp('data-wp-focus="'+stage+'"'));
+  assert.match(html,new RegExp('href="#wp-chapter-'+stage+'"'));
+  assert.match(html,new RegExp('id="wp-heading-'+stage+'"'));
+ }
+ assert.match(html,/not an exhaustive transcription/i);
+ assert.match(html,/not proof of wider technical readiness/i);
+ assert.doesNotMatch(html,/>14 verified worlds</);
+});
+
+test('Every chapter cites the published website or approved public documentation',()=>{
+ const block=html.slice(html.indexOf('<section id="white-paper-atlas"'),html.indexOf('<section id="seven-movements"'));
+ const links=[...block.matchAll(/href="([^"]+)"/g)].map(x=>x[1]);
+ for(const stage of stages){
+  const segment=block.slice(block.indexOf('id="wp-chapter-'+stage+'"'),block.indexOf('</article>',block.indexOf('id="wp-chapter-'+stage+'"')));
+  assert.match(segment,/class="wp-sources"/,'Chapter '+stage+' must have citations');
+  assert.match(segment,/<a href=/,'Chapter '+stage+' must have an original source');
+ }
+ for(const href of links){
+  assert.ok(href.startsWith('index.html#')||href.startsWith('docs/')||
+    href.startsWith('https://aifreedomtrustfederation.github.io/AI-Freedom-Trust/docs/pdf/')||
+    href.startsWith('https://github.com/AIFreedomTrustFederation/AI-Freedom-Trust/blob/main/docs/')||
+    href.startsWith('https://github.com/AIFreedomTrustFederation/www.aifreedomtrust.com/blob/main/')||
+    ['atlas.html','constellations.html','index.html','lineage-data.js'].includes(href)||
+    href.startsWith('#wp-chapter-')||href==='#white-paper-atlas'||href==='#tree-of-emergence'||href==='#wp-library'||href==='#wp-source-inspector'||href==='#wp-source-register',
+    'Unexpected citation or chapter link: '+href);
+  assert.doesNotMatch(href,/javascript:|data:/i);
+ }
+ const paper=block.slice(block.indexOf('<section class="wp-source-library"'),block.indexOf('</section>',block.indexOf('<section class="wp-source-library"')));
+ assert.equal((paper.match(/\.pdf"/g)||[]).length,7,'Use all seven established Library of Living Works links');
+ assert.match(block,/Redshift/);
+ assert.match(block,/Greenshift/);
+ assert.match(block,/Blueshift/);
+ assert.match(block,/Violetshift/);
+});
+
+test('Standalone atlas augments source projection while embedded public entrance is isolated',()=>{
+ assert.ok(html.indexOf('white-paper-tree.css')<html.indexOf('cinematic-responsive-frame.css'));
+ assert.ok(html.indexOf('cinematic-source-projection.js')<html.indexOf('white-paper-tree.js'));
+ assert.match(script,/classList\.contains\('embedded-world'\)\)return/);
+ assert.match(css,/html\.embedded-world \.white-paper-reader/);
+ assert.match(css,/html\.embedded-world \.wp-nav-link/);
+ assert.match(script,/scene\.setAttribute\('viewBox'/);
+ assert.match(script,/new MutationObserver\(updateZoom\)/);
+ assert.match(read('cinematic-source-projection.js'),/living-source-node, \.wp-tree-marker/);
+ assert.doesNotMatch(script,/fetch\(|XMLHttpRequest|localStorage|sendBeacon/);
+});
+
+test('Tree markers are accessible and focus actual chapter source references',()=>{
+ assert.equal((script.match(/id:'(?:root|trunk|branch|leaf|flower|fruit)'/g)||[]).length,6);
+ assert.match(script,/role:'button',tabindex:'0'/);
+ assert.match(script,/aria-label':'Zoom to White Paper chapter:/);
+ assert.match(script,/if\(touchPoints\.size>=2\)blockedUntil/);
+ assert.match(script,/e\.key==='Enter'\|\|e\.key===' '/);
+ assert.match(css,/data-wp-zoom="reading"/);
+ assert.match(css,/\.wp-toc a/);
+ assert.match(css,/\.wp-chapter/);
+ assert.match(css,/prefers-reduced-motion:reduce/);
+ assert.match(css,/prefers-reduced-data:reduce/);
+});
+
+test('Professional White Paper labels preserve the Tree metaphor without reducing subjects to organs',()=>{
+ const labels=['HUMAN AGENCY','SHARED COVENANT','FEDERATION STRUCTURE','SOURCE EVIDENCE','EMERGING WORK','PUBLIC EXPERIENCES'];
+ for(const name of labels)assert.equal(html.split(' · '+name+' <small class="wp-metaphor">').length-1,2,'Navigation and chapter must agree: '+name);
+ for(const name of ['Human Agency','Shared Covenant','Federation Structure','Source Evidence','Emerging Work','Public Experiences'])assert.ok(script.includes("label:'"+name+"'"),'Missing Tree landmark: '+name);
+ assert.equal((html.match(/class="wp-claim-note"/g)||[]).length,6,'Six documented claim boundaries');
+});
+
+test('Readable source editions and original papers remain distinct and accountable',()=>{
+ const block=html.slice(html.indexOf('<section id="white-paper-atlas"'),html.indexOf('<section id="seven-movements"'));
+ assert.equal((block.match(/class="wp-edition"/g)||[]).length,7);
+ const originals=block.split('https://github.com/AIFreedomTrustFederation/AI-Freedom-Trust/blob/main/docs/').length-1;
+ assert.equal(originals,4,'Four readable source editions, not invented full-paper coverage');
+ for(const path of ['docs/federation-operating-model.md','docs/organization-map.md','docs/security-and-privacy.md','docs/public-repo-inventory.md','lineage-data.js'])assert.ok(block.includes('href="https://github.com/AIFreedomTrustFederation/www.aifreedomtrust.com/blob/main/'+path+'"'),'Missing canonical source link '+path);
+ assert.match(block,/not been independently reviewed/);
+ assert.match(block,/does not claim causal proof, peer review, or independent replication/);
+});
+
+test('Canonical primary-source links are not raw Markdown or JavaScript routes',()=>{
+ const block=html.slice(html.indexOf('<section id="white-paper-atlas"'),html.indexOf('<section id="seven-movements"'));
+ for(const path of ['docs/federation-operating-model.md','docs/organization-map.md','docs/security-and-privacy.md','docs/public-repo-inventory.md','lineage-data.js']){
+  assert.ok(!block.includes('href="'+path+'"'),'Raw source URL remains: '+path);
+  assert.ok(block.includes('https://github.com/AIFreedomTrustFederation/www.aifreedomtrust.com/blob/main/'+path),'Canonical source URL missing: '+path);
+ }
+ assert.match(script,/x:-150,y:-48,width:300,height:112/,'Tree badges need sufficient width for full editorial names');
+ assert.match(read('cinematic-responsive-frame.css'),/grid-template-columns: repeat\(2,minmax\(0,1fr\)\)/);
+});
+
+test('White Paper offers reversible label previews and independent text magnification',()=>{
+ for(const e of ['pointerenter','pointerleave','focus','blur'])assert.ok(script.includes("marker.addEventListener('"+e+"'"));
+ assert.match(script,/const clearPreview=/);
+ assert.match(script,/reader\.style\.setProperty\('--wp-reader-scale'/);
+ assert.match(script,/Math\.max\(1,Math\.min\(2/);
+ assert.doesNotMatch(script,/localStorage|sessionStorage|sendBeacon/);
+ for(const id of ['wp-text-smaller','wp-text-larger','wp-text-reset','wp-text-size'])assert.ok(html.includes('id="'+id+'"'));
+ assert.match(css,/\.white-paper-reader\{--wp-reader-scale:1\}/);
+ assert.match(css,/\.wp-reading-controls button:disabled/);
+});
+
+const inspector=read('white-paper-source-inspector.js');
+const inspectorCSS=read('white-paper-source-inspector.css');
+
+test('Standalone source inspector has six chapter triggers, documented concept index and accessible reading panel',()=>{
+ const section=html.slice(html.indexOf('id="wp-source-inspector"'),html.indexOf('<div class="wp-chapters">'));
+ assert.ok(section.includes('id="wp-term-search"'));
+ assert.ok(section.includes('id="wp-inspector-detail"'));
+ assert.ok(section.includes('id="wp-inspector-title" tabindex="-1"'));
+ assert.ok(section.includes('id="wp-inspector-sources"'));
+ assert.ok(section.includes('id="wp-inspector-related"'));
+ for(const id of stages)assert.ok(html.includes('data-wp-inspect="chapter:'+id+'"'),'Missing chapter source inspector for '+id);
+ assert.equal((html.match(/data-wp-inspect="chapter:(root|trunk|branch|leaf|flower|fruit)"/g)||[]).length,6);
+ assert.ok(html.indexOf('white-paper-source-inspector.css')<html.indexOf('cinematic-responsive-frame.css'));
+ assert.ok(html.indexOf('white-paper-tree.js')<html.indexOf('white-paper-source-inspector.js'));
+ assert.match(inspector,/classList\.contains\('embedded-world'\)\)return/);
+ assert.doesNotMatch(inspector,/\bfetch\s*\(|XMLHttpRequest|localStorage|sessionStorage|sendBeacon|navigator\.sendBeacon/);
+});
+
+test('Source inspector uses authored chapter prose, bounded concepts, original references and reversible controls',()=>{
+ assert.match(inspector,/\.querySelector\('\.wp-chapter-lead'\)/);
+ assert.match(inspector,/\.querySelector\('\.wp-claim-note'\)/);
+ assert.match(inspector,/\.querySelectorAll\('\.wp-sources a'\)/);
+ for(const id of ['human-authorship','sovereignty','public-trust','circleunchain','biozoe','restorative-economics','source-evidence']){
+  assert.ok(inspector.includes("id:'"+id+"'"),'Missing grounded concept '+id);
+ }
+ assert.match(inspector,/const terms=\[/);
+ assert.match(inspector,/const chapters=\[/);
+ assert.match(inspector,/detail\.hidden=true/);
+ assert.match(inspector,/search\.addEventListener\('input',renderTerms\)/);
+ assert.match(inspector,/linksFor\(data\.refs,data\.chapter\)/);
+ assert.match(inspectorCSS,/var\(--wp-reader-scale,1\)/);
+ assert.match(inspectorCSS,/\.wp-inspector-detail\[hidden\]/);
+});

@@ -364,3 +364,48 @@
   .world > svg.tree {filter:none}
   .world > .world-gates .world-gate {backdrop-filter:none}
 }
+
+/* Mobile-first reading navigation: readable two-column links, not tiny one-line text.
+   Scope to the standalone White Paper; never change the embedded public homepage. */
+@media (max-width: 440px) {
+ html:not(.embedded-world) .hud {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0,1fr);
+  align-items: start;
+  gap: .35rem;
+  padding: .5rem .75rem .7rem;
+  background: #061321;
+ }
+ html:not(.embedded-world) .hud .brand {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-inline: .25rem;
+ }
+ html:not(.embedded-world) .hud nav {
+  width: 100%;
+  max-width: none;
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: .4rem;
+  justify-content: stretch;
+ }
+ html:not(.embedded-world) .hud nav a {
+  min-width: 0;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: .4rem .45rem;
+  border: 1px solid #8fc5b27a;
+  border-radius: .6rem;
+  font-size: clamp(.83rem,3.6vw,.92rem);
+  line-height: 1.25;
+  white-space: normal;
+  text-align: center;
+  background: #102d40;
+ }
+ html:not(.embedded-world) .world {padding-top: 1.15rem}
+}

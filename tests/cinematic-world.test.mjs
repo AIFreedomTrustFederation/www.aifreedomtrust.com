@@ -65,7 +65,7 @@ test('stage controls expose synchronized aria-pressed state',()=>{
  const js=read('cinematic-explorer.js');
  assert.match(js,/function syncStageControls\(kind\)/);
  assert.match(js,/button\.setAttribute\('aria-pressed',String\(active\)\)/);
- assert.match(js,/function focusStage\(kind\)\{\s*syncStageControls\(kind\)/);
+ assert.match(js,/choose\(target\.id,remember\);\s*syncStageControls\(kind\)/);
  assert.match(js,/syncStageControls\('root'\);transform\(\)/);
  assert.match(js,/syncStageControls\(null\)/);
 });

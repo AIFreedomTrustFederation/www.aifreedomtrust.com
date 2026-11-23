@@ -10,18 +10,13 @@ const safeLink=value=>{try{const u=new URL(value,location.href);return (u.protoc
 const count=kind=>nodes.filter(n=>n.kind===kind).length;
 const stageButtons=Array.from(document.querySelectorAll('[data-stage]'));
 const camera=document.querySelector('.tree');
-let active='root';
 const status=document.getElementById('world-stage-status');
-function choose(kind,scroll=true){
+function renderBeacon(kind){
  if(!stages.some(([k])=>k===kind))return;
- active=kind;
  host.querySelectorAll('button[data-world-stage]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.worldStage===kind)));
  const matches=nodes.filter(n=>n.kind===kind);
  const first=matches[0];
  status.textContent=matches.length?kind==='fruit'?count(kind)+' documented visitor experiences; select a destination in the explorer.':count(kind)+' documented '+kind+' nodes in the published lineage.':'No documented '+kind+' nodes are published; no outcome is implied.';
- const peer=stageButtons.find(b=>b.dataset.stage===kind);
- if(peer)peer.click();
- if(scroll){document.getElementById('evidence-world')?.scrollIntoView({behavior:reduced.matches?'auto':'smooth'});}
  if(first&&kind==='fruit'&&safeLink(first.url)){const link=document.getElementById('world-destination');link.href=safeLink(first.url);link.hidden=false;link.textContent='Visit documented experience: '+first.label;}
  else document.getElementById('world-destination').hidden=true;
 }
@@ -29,7 +24,12 @@ for(const [kind,label] of stages){
  const button=document.createElement('button');button.type='button';button.dataset.worldStage=kind;button.className='world-beacon world-beacon-'+kind;
  const name=document.createElement('strong');name.textContent=label;
  const number=document.createElement('small');number.textContent=count(kind)+' documented';
- button.append(name,number);button.addEventListener('click',()=>choose(kind));
+ button.append(name,number);button.addEventListener('click',()=>{
+  renderBeacon(kind);
+  const peer=stageButtons.find(b=>b.dataset.stage===kind);
+  if(peer)peer.click();
+  else document.getElementById('evidence-world')?.scrollIntoView({behavior:reduced.matches?'auto':'smooth'});
+ });
  host.append(button);
 }
 const reset=()=>{if(camera){camera.style.removeProperty('--look-x');camera.style.removeProperty('--look-y');}};
@@ -41,5 +41,5 @@ world.addEventListener('pointermove',event=>{
 },{passive:true});
 world.addEventListener('pointerleave',reset);
 reduced.addEventListener?.('change',reset);
-choose('root',false);
+renderBeacon('root');
 })();
