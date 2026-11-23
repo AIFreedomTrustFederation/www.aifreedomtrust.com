@@ -4,6 +4,8 @@ on:
     paths:
       - 'cinematic-*'
       - 'universal-zoom.js'
+      - 'white-paper-*'
+      - 'tests/white-paper-*'
       - 'tests/universal-zoom*'
       - 'lineage-data.js'
       - 'tests/living-universe-browser.mjs'
@@ -36,15 +38,28 @@ jobs:
           exit 1
       - name: Verify source-backed contracts
         run: |
-          node --test tests/cinematic-world.test.mjs tests/cinematic-seven-movements.test.mjs tests/universal-zoom.test.mjs
+          node --test tests/cinematic-world.test.mjs tests/cinematic-seven-movements.test.mjs tests/universal-zoom.test.mjs tests/cinematic-mobile-framing.test.mjs tests/cinematic-universal-frame.test.mjs tests/white-paper-tree.test.mjs
+      - name: Follow the public reading journey and verify the seven published PDFs
+        run: node tests/white-paper-publication.mjs
       - name: Exercise real Chromium camera and pilgrimage journey at four widths
         run: node tests/living-universe-browser.mjs
       - name: Exercise native two-pointer zoom on mobile and tablet
         run: node tests/universal-zoom-browser.mjs
+      - name: Verify centered mobile Tree framing and capture screenshots
+        run: node tests/cinematic-mobile-framing-browser.mjs
+      - name: Verify universal mobile, landscape, tablet, desktop framing and browser magnification
+        run: node tests/cinematic-universal-frame-browser.mjs
+      - name: Walk the mobile White Paper, source chapters and Tree labels
+        run: node tests/white-paper-tree-browser.mjs
+      - name: Audit all major mobile portal routes, preserving diagnostics
+        run: node tests/white-paper-mobile-site-audit.mjs
       - name: Publish screenshots even on failure
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: cinematic-tree-360-390-768-1280
-          path: artifacts/living-universe/
+          path: |
+            artifacts/living-universe/
+            artifacts/white-paper/
+            artifacts/mobile-site-audit/
           if-no-files-found: warn

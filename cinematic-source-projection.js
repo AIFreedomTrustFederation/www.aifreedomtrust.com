@@ -138,7 +138,7 @@ scene.style.touchAction='none';
 window.AIFT_HERO_POINTER_OWNER='source-projection';
 scene.addEventListener('pointerdown',e=>{
  if(e.pointerType==='mouse'&&e.button!==0)return;
- const nodeHit=e.target.closest?.('.living-source-node');
+ const nodeHit=e.target.closest?.('.living-source-node, .wp-tree-marker');
  if(nodeHit&&e.pointerType!=='touch')return; // preserve mouse links
  pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
  if(pointers.size===1){
@@ -185,6 +185,37 @@ const finishGesture=e=>{
  else if(pointers.size===1){dragStart=null;pinchStart=null}
 };
 scene.addEventListener('pointerup',finishGesture);scene.addEventListener('pointercancel',finishGesture);scene.addEventListener('lostpointercapture',finishGesture);
+
+/* Visible scene controls are in document flow, not above the painted Tree.
+   Their camera is exactly the same SVG viewBox used by touch and keyboard. */
+const sceneToolbar=document.createElement('div');
+sceneToolbar.className='aift-scene-toolbar';
+sceneToolbar.setAttribute('role','group');
+sceneToolbar.setAttribute('aria-label','Tree zoom controls');
+const cameraValue=document.createElement('output');
+cameraValue.setAttribute('aria-label','Tree zoom percentage');
+cameraValue.setAttribute('aria-live','off');
+const addSceneAction=(label,text,action)=>{
+ const button=document.createElement('button');
+ button.type='button';
+ button.setAttribute('aria-label',label);
+ button.textContent=text;
+ button.addEventListener('click',action);
+ sceneToolbar.append(button);
+ return button;
+};
+addSceneAction('Zoom out of Tree','−',()=>{const v=readView();const s=v.w*1.25;setView(v.x-(s-v.w)/2,v.y-(s-v.h)/2,s)});
+addSceneAction('Fit entire Tree','Fit Tree',()=>setView(0,0,1000));
+addSceneAction('Zoom into Tree','+',()=>{const v=readView();const s=v.w*.8;setView(v.x+(v.w-s)/2,v.y+(v.h-s)/2,s)});
+sceneToolbar.append(cameraValue);
+scene.insertAdjacentElement('afterend',sceneToolbar);
+const updateCameraValue=()=>{
+ const v=readView();
+ cameraValue.textContent=Math.round(1000/v.w*100)+'%';
+};
+new MutationObserver(updateCameraValue).observe(scene,{attributes:true,attributeFilter:['viewBox']});
+updateCameraValue();
+
 voyageMap.setAttribute('tabindex','0');voyageMap.setAttribute('role','button');
 voyageMap.setAttribute('aria-label','Spatial overview: activate to view the entire Tree');
 const resetMap=()=>{setView(0,0,1000);mapMarker.setAttribute('cx','50');mapMarker.setAttribute('cy','50')};
@@ -250,7 +281,7 @@ function renderDirectory(){
   const item=document.createElement('li'),button=document.createElement('button');
   button.type='button';button.textContent=node.label+' · '+node.kind;
   button.setAttribute('aria-pressed',String(node.id===selectedId));
-  button.addEventListener('click',()=>{selectNode(node);const anchor=anchors.get(node.id);anchor?.focus({preventScroll:true});});
+  button.addEventListener('click',()=>selectNode(node));
   item.append(button);directory.append(item);
  }
  count.textContent=matches.length+' of '+visible.length+' documented nodes shown. No live status is implied.';

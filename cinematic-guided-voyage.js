@@ -15,7 +15,7 @@ for(const b of [prev,next,reset,toggle])b.type='button';
 prev.textContent='← Previous';next.textContent='Next chapter →';reset.textContent='Return to roots';toggle.textContent='Play journey';
 actions.append(prev,next,reset,toggle);
 const route=document.createElement('nav');route.className='living-guided-route';route.setAttribute('aria-label','Journey chapter map');
-const routeButtons=stages.map((kind,i)=>{const b=document.createElement('button');b.type='button';b.dataset.chapter=kind;b.textContent=String(i+1).padStart(2,'0')+' · '+({root:'Roots',trunk:'Trunk',branch:'Systems',leaf:'Capabilities',flower:'Emergence',fruit:'Outcomes'}[kind]);b.addEventListener('click',()=>{stop();render(i)});route.append(b);return b});
+const routeButtons=stages.map((kind,i)=>{const b=document.createElement('button');b.type='button';b.dataset.chapter=kind;b.textContent=String(i+1).padStart(2,'0')+' · '+({root:'Roots',trunk:'Trunk',branch:'Systems',leaf:'Capabilities',flower:'Emergence',fruit:'Outcomes'}[kind]);b.addEventListener('click',()=>{stop();selectChapter(i)});route.append(b);return b});
 const discovery=document.createElement('div');discovery.className='living-guided-discovery';
 const searchLabel=document.createElement('label');searchLabel.textContent='Find a documented source ';
 const searchInput=document.createElement('input');searchInput.type='search';searchInput.placeholder='Search the published lineage';searchInput.setAttribute('aria-label','Search published lineage');searchLabel.append(searchInput);
@@ -29,13 +29,13 @@ function showPath(id){
  activeSource=id;pathNav.replaceChildren();const seen=new Set();const chain=[];let cursor=source,problem='';
  while(cursor){if(seen.has(cursor.id)){problem='Circular lineage detected';break}seen.add(cursor.id);chain.unshift(cursor);if(!cursor.parent)break;cursor=byId.get(cursor.parent);if(!cursor)problem='Unresolved parent record'}
  pathStatus.textContent='Documented path: '+chain.map(n=>n.label).join(' → ')+(problem?' · '+problem:'');
- for(const n of chain){const b=document.createElement('button');b.type='button';b.textContent=n.kind+' · '+n.label;b.setAttribute('aria-current',String(n.id===id));b.addEventListener('click',()=>{stop();render(stages.indexOf(n.kind));showPath(n.id)});pathNav.append(b)}
+ for(const n of chain){const b=document.createElement('button');b.type='button';b.textContent=n.kind+' · '+n.label;b.setAttribute('aria-current',String(n.id===id));b.addEventListener('click',()=>{stop();selectChapter(stages.indexOf(n.kind));showPath(n.id)});pathNav.append(b)}
 }
 function showSearch(){
  searchResults.replaceChildren();const term=searchInput.value.trim().toLocaleLowerCase();if(!term)return;
  const matches=[...byId.values()].filter(n=>[n.label,n.desc,n.kind].join(' ').toLocaleLowerCase().includes(term)).slice(0,30);
  if(!matches.length){const p=document.createElement('p');p.textContent='No published source matches. No relationship is inferred.';searchResults.append(p);return}
- for(const n of matches){const b=document.createElement('button');b.type='button';b.textContent=n.label+' · '+n.kind;b.addEventListener('click',()=>{stop();render(stages.indexOf(n.kind));showPath(n.id);discovery.scrollIntoView({behavior:reduced.matches?'auto':'smooth',block:'nearest'})});searchResults.append(b)}
+ for(const n of matches){const b=document.createElement('button');b.type='button';b.textContent=n.label+' · '+n.kind;b.addEventListener('click',()=>{stop();selectChapter(stages.indexOf(n.kind));showPath(n.id);discovery.scrollIntoView({behavior:reduced.matches?'auto':'smooth',block:'nearest'})});searchResults.append(b)}
 }
 searchInput.addEventListener('input',showSearch);
 const entries=document.createElement('div');entries.className='living-guided-evidence';entries.setAttribute('aria-label','Documented sources in current chapter');
@@ -44,7 +44,7 @@ world.after(container);
 let current=0,playing=false,timer=null;
 function stop(){playing=false;if(timer!==null)clearTimeout(timer);timer=null;toggle.textContent='Play journey';toggle.setAttribute('aria-pressed','false')}
 function safeUrl(raw){if(typeof raw!=='string'||!raw.trim()||raw.startsWith('//'))return null;try{const u=new URL(raw,location.href);return ['http:','https:'].includes(u.protocol)?u:null}catch{return null}}
-function render(index){
+function renderChapter(index){
  current=Math.max(0,Math.min(stages.length-1,index));const stage=stages[current],matches=[...byId.values()].filter(n=>n.kind===stage);
  world.dataset.guidedStage=stage;
  routeButtons.forEach((b,i)=>{b.setAttribute('aria-current',i===current?'step':'false');b.setAttribute('aria-label','Chapter '+(i+1)+' of six: '+b.textContent)});
@@ -64,16 +64,22 @@ function render(index){
   if(url){const link=document.createElement('a');link.href=url.href;link.textContent=n.kind==='fruit'?'Open documented experience':'Inspect published source';if(url.origin!==location.origin){link.target='_blank';link.rel='noopener noreferrer'}item.append(link)}
   entries.append(item);
  }
- const canonical=document.querySelector('.stages [data-stage="'+stage+'"]');if(canonical)canonical.click();
- const passage=document.querySelector('.world-passage-step[data-passage-stage="'+stage+'"]');if(passage)passage.click();
  prev.disabled=current===0;next.disabled=current===stages.length-1;
 }
-function schedule(){if(!playing)return;if(current===stages.length-1){stop();return}timer=setTimeout(()=>{render(current+1);schedule()},4600)}
-prev.addEventListener('click',()=>{stop();render(current-1)});
-next.addEventListener('click',()=>{stop();render(current+1)});
-reset.addEventListener('click',()=>{stop();render(0);container.scrollIntoView({behavior:reduced.matches?'instant':'smooth',block:'start'})});
-toggle.addEventListener('click',()=>{if(playing){stop();return}if(reduced.matches){progress.textContent='Automatic movement is disabled by your reduced-motion preference. Use Next chapter.';return}if(current===5)render(0);playing=true;toggle.textContent='Pause journey';toggle.setAttribute('aria-pressed','true');schedule()});
+function selectChapter(index){
+ renderChapter(index);
+ const stage=stages[current];
+ // The passage forwards a visitor's choice to the canonical stage control.
+ const passage=document.querySelector('.world-passage-step[data-passage-stage="'+stage+'"]');
+ const destination=passage||document.querySelector('.stages [data-stage="'+stage+'"]');
+ destination?.click();
+}
+function schedule(){if(!playing)return;if(current===stages.length-1){stop();return}timer=setTimeout(()=>{selectChapter(current+1);schedule()},4600)}
+prev.addEventListener('click',()=>{stop();selectChapter(current-1)});
+next.addEventListener('click',()=>{stop();selectChapter(current+1)});
+reset.addEventListener('click',()=>{stop();selectChapter(0);container.scrollIntoView({behavior:reduced.matches?'instant':'smooth',block:'start'})});
+toggle.addEventListener('click',()=>{if(playing){stop();return}if(reduced.matches){progress.textContent='Automatic movement is disabled by your reduced-motion preference. Use Next chapter.';return}if(current===5)selectChapter(0);playing=true;toggle.textContent='Pause journey';toggle.setAttribute('aria-pressed','true');schedule()});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stop()});
 reduced.addEventListener?.('change',()=>{if(reduced.matches)stop()});
-render(0);
+renderChapter(0);
 })();
