@@ -2,7 +2,10 @@ name: Living Universe Android browser acceptance
 on:
   pull_request:
     paths:
-      - 'cinematic-world.html'
+      - '*.html'
+      - '*.css'
+      - '*.js'
+      - 'tests/public-route-browser.mjs'
       - 'cinematic-seven-movements.*'
       - 'tests/living-universe-browser.mjs'
       - '.github/workflows/living-universe-browser.yml'
@@ -34,6 +37,8 @@ jobs:
           for i in $(seq 1 30); do curl -fsS http://127.0.0.1:4178/cinematic-world.html >/dev/null && exit 0; sleep 1; done
           cat /tmp/aift-browser-server.log
           exit 1
+      - name: Check public routes, mobile layout and shared journey navigation
+        run: node tests/public-route-browser.mjs
       - name: Verify Android-sized and desktop browser journeys
         run: node tests/living-universe-browser.mjs
       - uses: actions/upload-artifact@v4

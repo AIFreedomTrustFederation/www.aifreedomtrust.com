@@ -28,3 +28,14 @@ body.atlas-v3{background:radial-gradient(ellipse at 50% 10%,#112d2d,#060d19 68%)
 @media(max-width:950px){.atlas-v3 .layout{gap:.6rem}.atlas-v3 .scene{height:65vh;min-height:520px}.atlas-v3 .aside{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){.atlas-v3 .hero{padding:1rem .85rem .5rem}.atlas-v3 .hero h1{font-size:clamp(2.25rem,10vw,3.3rem)}.atlas-v3 .hero p{font-size:.91rem;line-height:1.5}.atlas-v3 .layout{margin:.5rem auto 2rem}.atlas-v3 .scene{height:min(71vh,670px);min-height:480px}.atlas-v3 .worldbar{align-items:flex-start}.atlas-v3 .worldbar .pill{max-width:55%;line-height:1.3}.atlas-v3 .worldbar .controls{gap:.25rem}.atlas-v3 .aside{display:flex}.atlas-v3 .panel{padding:1rem}.atlas-v3 .top nav a:nth-child(3){display:none}}
 @media(prefers-reduced-motion:reduce){.atlas-v3 .fruit{transition:none}}
+
+@media (max-width: 950px) {
+  .atlas-v3 .layout {grid-template-columns: minmax(0,1fr)}
+  .atlas-v3 .aside, .atlas-v3 .panel {min-width: 0; overflow-wrap: anywhere}
+}
+@media (max-width: 600px) {
+  .atlas-v3 .top {flex-wrap: wrap}
+  .atlas-v3 .top nav a {display: inline-flex; align-items: center; min-height: 44px}
+  .atlas-v3 .top nav a:nth-child(3) {display: inline-flex}
+  .atlas-v3 .worldbar .controls button {width: 44px; height: 44px; pointer-events: auto}
+}

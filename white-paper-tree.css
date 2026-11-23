@@ -158,3 +158,7 @@ html.embedded-world .wp-nav-link{display:none!important}
  .white-paper-reader{background:#081622}
  .wp-chapter{box-shadow:none}
 }
+
+.wp-further-reading a, .wp-source-list-link {
+ display: inline-flex; align-items: center; min-height: 44px; text-underline-offset: .2em;
+}

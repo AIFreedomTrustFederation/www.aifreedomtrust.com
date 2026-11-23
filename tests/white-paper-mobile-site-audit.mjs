@@ -76,5 +76,5 @@ try{
 }finally{await browser.close()}
 await writeFile('artifacts/mobile-site-audit/report.json',JSON.stringify(report,null,2));
 console.log('MOBILE CENSUS SUMMARY',JSON.stringify(report.summary));
-// This file is intentionally an evidence report, not a green check for legacy
-// pages that have not been repaired. White Paper journeys are asserted separately.
+const failed=report.pages.filter(entry=>entry.issues.length);
+if(failed.length)throw new Error(failed.map(entry=>entry.name+' at '+entry.width+'px: '+entry.issues.join(' | ')).join('\n'));

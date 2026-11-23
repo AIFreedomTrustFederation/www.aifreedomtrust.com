@@ -62,6 +62,9 @@ try{
    +JSON.stringify({width,beforeBox,afterBox}));
   assert.ok(backed>zoomed,'Pinch-in must zoom out of Tree: '+JSON.stringify({width,zoomed,backed}));
   await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+  assert.equal(await page.locator('.wp-tree-marker[data-wp-active="true"]').count(),0,
+   'A pinch must not select a white paper chapter');
+  assert.equal(new URL(page.url()).hash,'','A pinch must not navigate to a chapter');
   await page.screenshot({path:'artifacts/living-universe/universal-zoom-'+width+'.png',animations:'disabled'});
   assert.deepEqual(errors,[],'No runtime errors during pinch gestures');
   await context.close();

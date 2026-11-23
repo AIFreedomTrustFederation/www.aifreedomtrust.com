@@ -49,6 +49,8 @@ jobs:
         run: node tests/cinematic-universal-frame-browser.mjs
       - name: Walk the mobile White Paper, source chapters and Tree labels
         run: node tests/white-paper-tree-browser.mjs
+      - name: Follow the public reading journey and verify the seven published PDFs
+        run: node tests/white-paper-publication.mjs
       - name: Audit all major mobile portal routes, preserving diagnostics
         run: node tests/white-paper-mobile-site-audit.mjs
       - name: Publish screenshots even on failure

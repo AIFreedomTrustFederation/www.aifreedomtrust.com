@@ -281,7 +281,7 @@ function renderDirectory(){
   const item=document.createElement('li'),button=document.createElement('button');
   button.type='button';button.textContent=node.label+' · '+node.kind;
   button.setAttribute('aria-pressed',String(node.id===selectedId));
-  button.addEventListener('click',()=>{selectNode(node);const anchor=anchors.get(node.id);anchor?.focus({preventScroll:true});});
+  button.addEventListener('click',()=>selectNode(node));
   item.append(button);directory.append(item);
  }
  count.textContent=matches.length+' of '+visible.length+' documented nodes shown. No live status is implied.';
