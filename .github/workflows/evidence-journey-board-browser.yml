@@ -1,0 +1,46 @@
+name: Evidence Journey Browser Regression
+on:
+  pull_request:
+    paths:
+      - 'evidence-journey-board.js'
+      - 'tests/evidence-journey-board.test.cjs'
+      - 'tests/evidence-journey-runtime-browser.mjs'
+      - '.github/workflows/evidence-journey-board-browser.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify source and selector contract
+        run: |
+          node --check evidence-journey-board.js
+          node --test tests/evidence-journey-board.test.cjs
+      - name: Install pinned Chromium acceptance runtime
+        run: |
+          npm install --no-save --no-package-lock playwright@1.58.2
+          npx playwright install --with-deps chromium
+      - name: Serve source-backed pages
+        run: |
+          python3 -m http.server 4178 --bind 127.0.0.1 >/tmp/aift-evidence-http.log 2>&1 &
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:4178/atlas.html >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/aift-evidence-http.log
+          exit 1
+      - name: Verify mobile and tablet journey interactions
+        run: node tests/evidence-journey-runtime-browser.mjs
+      - name: Capture screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: evidence-journey-browser
+          path: artifacts/evidence-journey/
+          if-no-files-found: warn
