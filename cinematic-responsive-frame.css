@@ -409,10 +409,3 @@
  }
  html:not(.embedded-world) .world {padding-top: 1.15rem}
 }
-
-/* Keep the actual Tree's accessible SVG labels above the adjacent stage chips
-   on narrow screens. The stage chips remain in normal document flow and
-   clickable outside the Tree; avoid force-clicking obscured markers in tests. */
-@media (max-width: 899px) {
-  html:not(.embedded-world) .world > svg.tree { z-index: 6; }
-}

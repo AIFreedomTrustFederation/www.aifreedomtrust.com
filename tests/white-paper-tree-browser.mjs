@@ -119,6 +119,10 @@ try {
    assert.equal(await page.locator('.world').getAttribute('data-wp-preview'),'leaf');
    await page.keyboard.press('Enter');
    assert.equal(await page.locator('#wp-chapter-leaf').getAttribute('data-wp-selected'),'true');
+   // The selected leaf intentionally changes the camera. Return to the overview
+   // before verifying the root label is physically clickable in that viewport.
+   await page.getByRole('button',{name:'Fit entire Tree'}).click();
+   assert.equal(await page.locator('.world svg.tree').getAttribute('viewBox'),'0 0 1000 1000');
   }
 
   // Directly interact with a landmark and confirm it operates the SAME SVG camera.
