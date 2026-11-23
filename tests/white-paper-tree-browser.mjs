@@ -4,6 +4,31 @@ import assert from 'node:assert/strict';
 import {mkdir} from 'node:fs/promises';
 import {chromium} from 'playwright';
 
+const preview='http://127.0.0.1:4178/cinematic-world.html';
+
+// Record startup navigation before Playwright can scroll an element into view.
+async function openPreview(page,fragment=''){
+ await page.addInitScript(()=>{
+  window.startupStageClicks=[];
+  document.addEventListener('click',event=>{
+   const stage=event.target.closest?.('button[data-stage]');
+   if(stage)window.startupStageClicks.push(stage.dataset.stage);
+  },true);
+ });
+ const response=await page.goto(preview+fragment,{waitUntil:'load'});
+ assert.equal(response?.status(),200);
+ await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+ assert.deepEqual(await page.evaluate(()=>window.startupStageClicks),[],
+  'Loading the preview must never activate a stage button');
+}
+
+async function atDestination(page,id){
+ await page.waitForFunction(id=>{
+  const rect=document.getElementById(id).getBoundingClientRect();
+  return rect.top>=-2&&rect.top<innerHeight/4&&rect.bottom>0;
+ },id,{timeout:5000});
+}
+
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
 await mkdir('artifacts/white-paper',{recursive:true});
 try {
@@ -12,8 +37,11 @@ try {
    isMobile:width<900,hasTouch:width<900,deviceScaleFactor:1,reducedMotion:'reduce'});
   const errors=[];
   page.on('pageerror',e=>errors.push(e.message));
-  const response=await page.goto('http://127.0.0.1:4178/cinematic-world.html',{waitUntil:'load'});
-  assert.equal(response?.status(),200);
+  await openPreview(page);
+  assert.equal(await page.evaluate(()=>scrollY),0,'Fresh preview must stay at the Tree entrance');
+  assert.equal(await page.locator('#evidence-stage').inputValue(),'root');
+  assert.equal(await page.locator('.stages [data-stage="root"]').getAttribute('aria-pressed'),'true');
+  assert.ok(await page.locator('#evidence-back').isDisabled(),'Startup must not add a navigation step');
 
   assert.equal(await page.title(),'The Living White Paper · AIFT Tree of Emergence');
   const markers=page.locator('.wp-tree-marker');
@@ -68,6 +96,27 @@ try {
   }
   assert.deepEqual(errors,[],'No JavaScript page errors');
   await page.close();
+ }
+
+ // Cold links, rather than same-document clicks, exercise the startup race.
+ for(const reducedMotion of ['reduce','no-preference']){
+  for(const id of ['','white-paper-atlas','wp-chapter-root','wp-chapter-leaf']){
+   const page=await browser.newPage({viewport:{width:390,height:850},isMobile:true,hasTouch:true,reducedMotion});
+   await openPreview(page,id?'#'+id:'');
+   if(!id)assert.equal(await page.evaluate(()=>scrollY),0);
+   else await atDestination(page,id);
+   if(id==='white-paper-atlas'){
+    await page.getByRole('link',{name:'Back to the Tree',exact:true}).tap();
+    await atDestination(page,'tree-of-emergence');
+    await page.locator('.world-beacon-trunk').tap();
+    await atDestination(page,'evidence-world');
+    assert.equal(await page.locator('#evidence-stage').inputValue(),'trunk');
+    assert.deepEqual(await page.evaluate(()=>window.startupStageClicks),['trunk']);
+   }else if(id){
+    assert.equal(await page.locator('#'+id).getAttribute('data-wp-selected'),'true');
+   }
+   await page.close();
+  }
  }
 
  const embedded=await browser.newPage({viewport:{width:390,height:850},isMobile:true,hasTouch:true});

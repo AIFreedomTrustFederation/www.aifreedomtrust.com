@@ -139,24 +139,27 @@ function syncStageControls(kind){
     button.setAttribute('aria-pressed',String(active));
   }
 }
-function focusStage(kind){
-  syncStageControls(kind);
+function setStage(kind,remember=true){
   const candidates=nodes.filter(n=>n.kind===kind);
   filter='';search.value='';
   if(!candidates.length){
-    stage.value=kind;draw();render();
+    stage.value=kind;syncStageControls(kind);draw();render();
     const note=document.createElement('p');
     note.textContent='No documented '+kind+' nodes exist in the published lineage. Nothing has been invented or unlocked.';
-    info.prepend(note);$('evidence-world').scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+    info.prepend(note);
     return;
   }
   // Keep the user's current context when the requested stage contains it.
   const target=candidates.find(n=>n.id===selected)||candidates[0];
-  choose(target.id);
+  choose(target.id,remember);
+  syncStageControls(kind);
   stage.value=kind;draw();render();
   // Semantic zoom makes each growth layer an actual camera destination.
   const targetScale={root:1.25,trunk:.8,branch:1.2,leaf:1.55,flower:1.8,fruit:1.8}[kind]||1;
   scale=targetScale;center(pos.get(target.id));
+}
+function focusStage(kind){
+  setStage(kind);
   $('evidence-world').scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
 }
 for(const button of document.querySelectorAll('[data-stage]')){
@@ -203,5 +206,6 @@ prev.addEventListener('click',()=>travel(step-1));
 next.addEventListener('click',()=>travel(step+1));
 paintVoyage();
 
-transform();draw();render();
+// Render the initial selection without scrolling or creating a Back entry.
+setStage('root',false);
 })();

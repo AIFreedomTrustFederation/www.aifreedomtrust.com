@@ -19,17 +19,21 @@ panel.append(details,sources,explore);
 const buttons=stages.map((stage,i)=>{const b=document.createElement('button');b.type='button';b.className='world-passage-step';b.dataset.passageStage=stage;b.setAttribute('aria-pressed','false');b.style.setProperty('--passage-color',palette[i]);b.textContent=String(i+1).padStart(2,'0')+' · '+names[i];b.addEventListener('click',()=>select(i));rail.append(b);return b});
 wrap.append(heading,subtitle,rail,panel);world.append(wrap);
 let current=0;
-function select(i,focus=false){
+function renderPassage(i){
  current=(i+stages.length)%stages.length;const stage=stages[current],found=valid.filter(n=>n.kind===stage);
  buttons.forEach((b,j)=>b.setAttribute('aria-pressed',String(j===current)));
  world.style.setProperty('--passage-glow',palette[current]);world.dataset.passageStage=stage;
  details.textContent=found.length?found.length+' published '+names[current].toLowerCase()+' record'+(found.length===1?'':'s')+'. Select a source to inspect its published destination.':'No published '+names[current].toLowerCase()+' records. This stage has no asserted outcome.';
  sources.replaceChildren();
  for(const n of found){const href=safe(n.url);const a=document.createElement(href?'a':'span');a.className='world-passage-source';a.textContent=n.label;if(href){a.href=href;if(new URL(href).origin!==location.origin){a.target='_blank';a.rel='noopener noreferrer'}}else{a.title='No safe published destination'}sources.append(a)}
+}
+function select(i,focus=false){
+ renderPassage(i);
+ const stage=stages[current];
  const canonical=document.querySelector('.stages [data-stage="'+stage+'"]');
  if(canonical){canonical.click()} // reuse the published stage description, not a competing data model
  if(focus)buttons[current].focus();
 }
 rail.addEventListener('keydown',e=>{if(!['ArrowRight','ArrowLeft','Home','End'].includes(e.key))return;e.preventDefault();select(e.key==='Home'?0:e.key==='End'?stages.length-1:current+(e.key==='ArrowRight'?1:-1),true)});
-select(0);
+renderPassage(0);
 })();
