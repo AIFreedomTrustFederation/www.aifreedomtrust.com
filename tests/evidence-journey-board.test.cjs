@@ -35,3 +35,9 @@ test('shared six-stage biological map and evidence theatre are bounded and acces
  assert.match(source,/max-width:520px/);
  assert.doesNotMatch(source,/fetch\s*\(|XMLHttpRequest|localStorage|sessionStorage|sendBeacon|Math\.random\s*\(/);
 });
+
+test('journey summary binding matches its actual DOM element on Atlas and Root Lineage',()=>{
+ assert.match(source,/id="jb-summary"/);
+ assert.ok(source.includes("$('#jb-summary').textContent="));
+ assert.doesNotMatch(source,/\$\('\.jb-summary'\)\.textContent=/);
+});
