@@ -39,7 +39,7 @@ test('Every chapter cites the published website or approved public documentation
     href.startsWith('https://github.com/AIFreedomTrustFederation/AI-Freedom-Trust/blob/main/docs/')||
     href.startsWith('https://github.com/AIFreedomTrustFederation/www.aifreedomtrust.com/blob/main/')||
     ['atlas.html','constellations.html','index.html','lineage-data.js'].includes(href)||
-    href.startsWith('#wp-chapter-')||href==='#white-paper-atlas'||href==='#tree-of-emergence'||href==='#wp-library'||href==='#wp-source-inspector',
+    href.startsWith('#wp-chapter-')||href==='#white-paper-atlas'||href==='#tree-of-emergence'||href==='#wp-library'||href==='#wp-source-inspector'||href==='#wp-source-register',
     'Unexpected citation or chapter link: '+href);
   assert.doesNotMatch(href,/javascript:|data:/i);
  }
