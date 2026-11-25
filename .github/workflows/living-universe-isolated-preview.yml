@@ -15,7 +15,7 @@ jobs:
       CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       CF_PREVIEW_PROJECT: ${{ vars.LIVING_UNIVERSE_PREVIEW_PROJECT }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Require complete integrated source
         shell: bash
         run: |
