@@ -42,7 +42,7 @@ jobs:
           cp living-universe-full.html /tmp/lu-preview/index.html
           printf '%s\n' 'User-initiated preview. Not production.' > /tmp/lu-preview/README.txt
       - name: Upload browser-openable preview artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: living-universe-complete-preview
           path: /tmp/lu-preview/
